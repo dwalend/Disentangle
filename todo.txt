@@ -1,0 +1,18 @@
+Pulblicize
+
+* Post on github
+* Post on mvnrepo
+* Blog a bit
+
+Algorithms
+
+* Dijkstra's algorithm
+* Dijkstra with a Fibonacci heap
+* A* algorithm
+* Parallel queued minimization
+* Basic betweenness and closeness
+* Efficient betweenness and closeness
+
+Semirings
+
+* Most probable Semiring
