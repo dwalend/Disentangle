@@ -102,14 +102,31 @@ trait Semiring[Label] {
     }
   }
 
+}
+
+trait LabelGraphBuilder[Label] {
+
   def identityEdgeFromGraphNode[N](originalGraph:Graph[N,LDiEdge])
-                               (nodeT:originalGraph.NodeT):LDiEdge[N] = {
+                                  (nodeT:originalGraph.NodeT)
+                                  (semiring:Semiring[Label]):LDiEdge[N] = {
     val node:N = nodeT.value
-    (node ~+> node)(I)
+    (node ~+> node)(semiring.I)
   }
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                              (edgeT:originalGraph.EdgeT):LDiEdge[N]
+                                 (edgeT:originalGraph.EdgeT):LDiEdge[N]
+
+  //Here the type fairies stop sticking pins in me and play nice. Thank you, Manifest.
+  def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
+                                         (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
+
+    val nodes:Set[N] = originalGraph.nodes.map(_.value).to[Set].asInstanceOf[Set[N]]
+
+    val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring)).to[Set]
+    val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph)).to[Set]
+    val initEdges:Set[LDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
+    MutableGraph.from(nodes,initEdges)
+  }
 }
 
 /**
@@ -133,12 +150,17 @@ object TransitiveClosureSemiring extends Semiring[Boolean] {
     fromThroughLabel & throughToLabel
   }
 
+}
+
+object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
+
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                              (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
+                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
     (edge._1 ~+> edge._2)(true)
   }
 }
+
 
 /**
  * Finds the length of a path that traverses the fewest nodes. This is about the simplest semiring I can come up with.
@@ -166,13 +188,15 @@ object CountFewestNodesBetweenSemiring extends Semiring[Int] {
   def extend(fromThroughLabel:Int,throughToLabel:Int):Int = {
     fromThroughLabel + throughToLabel
   }
+}
+
+object CountFewestNodesBetweenGraphBuilder extends LabelGraphBuilder[Int] {
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                              (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
+                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
     (edge._1 ~+> edge._2)(1)
   }
-
 }
 
 /**
@@ -215,9 +239,12 @@ class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
       case _ => None
     }
   }
+}
+
+class OneShortestPathGraphBuilder[N] extends LabelGraphBuilder[Option[List[N]]] {
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                              (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
+                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
     (edge._1 ~+> edge._2)(Some(List(edge._2)))
   }
@@ -269,26 +296,18 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
       case _ => None
     }
   }
+}
+
+class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder[Option[NextStep[N]]] {
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                              (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
+                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
     (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[N](edge._2))))
   }
 }
 
 object FloydWarshall {
-
-  //Here the type fairies stop sticking pins in me and play nice. Thank you, Manifest.
-  def initialLabelGraph[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
-
-    val nodes:Set[N] = originalGraph.nodes.map(_.value).to[Set].asInstanceOf[Set[N]]
-
-    val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(semiring.identityEdgeFromGraphNode(originalGraph)).to[Set]
-    val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(semiring.initialEdgeFromGraphEdge(originalGraph)).to[Set]
-    val initEdges:Set[LDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
-    MutableGraph.from(nodes,initEdges)
-  }
 
   def floydWarshall[N,Label](labelGraph:MutableGraph[N,LDiEdge])(semiring:Semiring[Label]):Unit = {
     val nodeTs = labelGraph.nodes
@@ -297,8 +316,8 @@ object FloydWarshall {
     }
   }
 
-  def allPairsShortestPaths[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
-    val labelGraph:MutableGraph[N,LDiEdge] = initialLabelGraph(originalGraph)(semiring)
+  def allPairsShortestPaths[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):MutableGraph[N,LDiEdge] = {
+    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph
   }

@@ -9,7 +9,9 @@ val graph = SomeGraph.graph
 
 
 
-FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)
+
+
+FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
 
 
 
@@ -19,14 +21,14 @@ FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)
 
 
 
-FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesBetweenSemiring)
+FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesBetweenSemiring)(CountFewestNodesBetweenGraphBuilder)
 
 
 
 
 
 
-FloydWarshall.allPairsShortestPaths(graph)(new OneShortestPathSemiring[String])
+FloydWarshall.allPairsShortestPaths(graph)(new OneShortestPathSemiring[String])(new OneShortestPathGraphBuilder[String])
 
 
 
@@ -38,7 +40,7 @@ FloydWarshall.allPairsShortestPaths(graph)(new OneShortestPathSemiring[String])
 
 
 
-val allPairs = FloydWarshall.allPairsShortestPaths(graph)(new AllShortestPathsSemiring[String])
+val allPairs = FloydWarshall.allPairsShortestPaths(graph)(new AllShortestPathsSemiring[String])(new AllShortestPathsGraphBuilder[String])
 
 
 
@@ -51,6 +53,44 @@ val allPairs = FloydWarshall.allPairsShortestPaths(graph)(new AllShortestPathsSe
 
 
 println(allPairs.edges.mkString("\n"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
