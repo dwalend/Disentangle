@@ -119,11 +119,12 @@ trait LabelGraphBuilder[Label] {
   //Here the type fairies stop sticking pins in me and play nice. Thank you, Manifest.
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
                                          (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
+    import scala.collection.Set
 
-    val nodes:Set[N] = originalGraph.nodes.map(_.value).to[Set]
+    val nodes:Set[N] = originalGraph.nodes.toNodeInSet
 
-    val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring)).to[Set]
-    val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph)).to[Set]
+    val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
+    val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
     val initEdges:Set[LDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
     MutableGraph.from(nodes,initEdges)
   }
