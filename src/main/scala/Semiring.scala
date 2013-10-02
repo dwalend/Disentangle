@@ -3,7 +3,13 @@ import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LDiEdge
 import scalax.collection.mutable.{Graph => MutableGraph}
 
-trait Semiring[Label] {
+import scala.reflect.ClassTag
+import scalax.collection.edge.LBase._
+
+abstract class Semiring[Label: ClassTag] {
+
+  object ImplicitLabel extends LEdgeImplicits[Label]
+  import ImplicitLabel._
 
   //identity
   def I:Label
@@ -34,7 +40,7 @@ trait Semiring[Label] {
       val fromTo:Option[labelGraph.EdgeT] = from ~>? to
       //todo use a match/case here
       val currentLabel:Label = if(fromTo == None) O
-                              else fromTo.get.toEdgeIn.label.asInstanceOf[Label]   // todo why do I need this cast?
+                              else fromTo.get.toEdgeIn.label
 
       summary(fromThroughToLabel,currentLabel) match {
         case Some(labelUpdate) => Some((from.value ~+> to.value)(labelUpdate))
@@ -53,8 +59,8 @@ trait Semiring[Label] {
 
     (fromThrough,throughTo) match {
       case (Some(fromThroughEdgeT),Some(throughToEdgeT)) => {
-        val fromThroughLabel:Label = fromThrough.get.label.asInstanceOf[Label] //todo why do I need these casts?
-        val throughToLabel:Label = throughTo.get.label.asInstanceOf[Label]
+        val fromThroughLabel:Label = fromThrough.get.label
+        val throughToLabel:Label = throughTo.get.label
 
         val fromToLabel:Label = extend(fromThroughLabel,throughToLabel)
         fromToLabel
@@ -101,7 +107,6 @@ trait Semiring[Label] {
       case None => ;
     }
   }
-
 }
 
 trait LabelGraphBuilder[Label] {
