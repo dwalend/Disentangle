@@ -120,7 +120,7 @@ trait LabelGraphBuilder[Label] {
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
                                          (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
 
-    val nodes:Set[N] = originalGraph.nodes.map(_.value).to[Set].asInstanceOf[Set[N]]
+    val nodes:Set[N] = originalGraph.nodes.map(_.value).to[Set]
 
     val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring)).to[Set]
     val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph)).to[Set]
@@ -316,7 +316,7 @@ object FloydWarshall {
     }
   }
 
-  def allPairsShortestPaths[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):MutableGraph[N,LDiEdge] = {
+  def allPairsShortestPaths[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph

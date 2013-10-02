@@ -1,5 +1,6 @@
 Pulblicize
 
+* Format for README.md
 * Post on github
 * Post on mvnrepo
 * Blog a bit
@@ -8,11 +9,17 @@ Algorithms
 
 * Dijkstra's algorithm
 * Dijkstra with a Fibonacci heap
-* A* algorithm
-* Parallel queued minimization
 * Basic betweenness and closeness
 * Efficient betweenness and closeness
+* Lazy Label Graph. (Single-Source graph)
+* A* algorithm
+* Parallel queued minimization
 
 Semirings
 
 * Most probable Semiring
+* Combined Semirings.
+* MultiPath representation (Probably a subgraph)
+
+* Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
+
