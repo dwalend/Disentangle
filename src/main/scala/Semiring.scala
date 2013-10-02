@@ -38,9 +38,10 @@ abstract class Semiring[Label: ClassTag] {
 
     if(fromThroughToLabel != O) {
       val fromTo:Option[labelGraph.EdgeT] = from ~>? to
-      //todo use a match/case here
-      val currentLabel:Label = if(fromTo == None) O
-                              else fromTo.get.toEdgeIn.label
+      val currentLabel:Label = fromTo match {
+        case None => O
+        case Some(edgeIn) => edgeIn.label
+      }
 
       summary(fromThroughToLabel,currentLabel) match {
         case Some(labelUpdate) => Some((from.value ~+> to.value)(labelUpdate))
