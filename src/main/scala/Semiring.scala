@@ -122,9 +122,7 @@ trait LabelGraphBuilder[Label] {
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[N]
 
-  //Here the type fairies stop sticking pins in me and play nice. Thank you, Manifest.
-  //todo when from starts using ClassTag or TypeTag, do the same.
-  //todo move N to the trait since it has to match everywhere anyway
+  //todo when from starts using ClassTag or TypeTag, do the same. Graph.from uses a Manifest.
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
                                          (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
     import scala.collection.Set
