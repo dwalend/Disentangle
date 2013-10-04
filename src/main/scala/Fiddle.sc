@@ -1,3 +1,4 @@
+import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, CountFewestNodesBetweenGraphBuilder, CountFewestNodesBetweenSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
 
 /**
  *

@@ -1,11 +1,19 @@
-import scalax.collection.Graph
-import scalax.collection.edge.Implicits._
-import scalax.collection.edge.LDiEdge
-import scalax.collection.mutable.{Graph => MutableGraph}
+package walend.scalax.semiring
 
 import scala.reflect.ClassTag
-import scalax.collection.edge.LBase._
+import scalax.collection.edge.LBase.LEdgeImplicits
+import scalax.collection.edge.LDiEdge
+import scalax.collection.Graph
+import scalax.collection.mutable.{Graph => MutableGraph}
 
+import scalax.collection.edge.Implicits._
+
+/**
+ *
+ *
+ * @author dwalend
+ * @since 10/4/13 4:32 PM
+ */
 abstract class Semiring[Label: ClassTag] {
 
   object ImplicitLabel extends LEdgeImplicits[Label]
@@ -37,12 +45,10 @@ abstract class Semiring[Label: ClassTag] {
                   fromThroughToLabel:Label):Option[LDiEdge[N]] = {
 
     if(fromThroughToLabel != O) {
-      val fromTo:Option[labelGraph.EdgeT] = from ~>? to
-      val currentLabel:Label = fromTo match {
+      val currentLabel:Label = from ~>? to match {
         case None => O
         case Some(edgeIn) => edgeIn.label
       }
-
       summary(fromThroughToLabel,currentLabel) match {
         case Some(labelUpdate) => Some((from.value ~+> to.value)(labelUpdate))
         case None => None
@@ -167,7 +173,6 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
     (edge._1 ~+> edge._2)(true)
   }
 }
-
 
 /**
  * Finds the length of a path that traverses the fewest nodes. This is about the simplest semiring I can come up with.
@@ -332,7 +337,7 @@ object FloydWarshall {
 
 object SomeGraph {
 
-   //boring example graph 
+   //boring example graph
 
   val A = "A"
   val B = "B"

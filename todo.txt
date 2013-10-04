@@ -5,6 +5,11 @@ Pulblicize
 * Post on mvnrepo
 * Blog a bit
 
+Structures
+
+* MultiPath representation (Probably a subgraph via having)
+* Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
+
 Algorithms
 
 * Dijkstra's algorithm
@@ -19,7 +24,4 @@ Semirings
 
 * Most probable Semiring
 * Combined Semirings.
-* MultiPath representation (Probably a subgraph)
-
-* Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
 
