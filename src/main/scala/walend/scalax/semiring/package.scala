@@ -1,10 +1,10 @@
 package walend.scalax
 
 /**
- *
+ * A toolkit for graph minimization algorithms.
  *
  * @author dwalend
- * @since 10/4/13 4:31 PM
+ * @since v1
  */
 package object semiring {
 

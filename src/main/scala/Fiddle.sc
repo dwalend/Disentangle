@@ -1,4 +1,7 @@
-import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, CountFewestNodesBetweenGraphBuilder, CountFewestNodesBetweenSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
+import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, CountFewestNodesBetweenGraphBuilder, CountFewestNodesSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
+
+
+
 
 /**
  *
@@ -9,12 +12,84 @@ import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSem
 
 val graph = SomeGraph.graph
 
+
+
 FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
 
-FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesBetweenSemiring)(CountFewestNodesBetweenGraphBuilder)
+
+
+
+
+
+
+
+FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesSemiring)(CountFewestNodesBetweenGraphBuilder)
+
+
+
+
+
 
 FloydWarshall.allPairsShortestPaths(graph)(new OneShortestPathSemiring[String])(new OneShortestPathGraphBuilder[String])
 
+
+
+
+
+
+
+
+
+
+
 val allPairs = FloydWarshall.allPairsShortestPaths(graph)(new AllShortestPathsSemiring[String])(new AllShortestPathsGraphBuilder[String])
+
+
+
+
+
+
+
+
+
+
 println(allPairs.edges.mkString("\n"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

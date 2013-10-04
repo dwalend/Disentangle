@@ -5,10 +5,15 @@ Pulblicize
 * Post on mvnrepo
 * Blog a bit
 
+Overall
+* Add more to the package doc.
+* Add tests and move SomeGraph to tests
+
 Structures
 
 * MultiPath representation (Probably a subgraph via having)
 * Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
+* Fibonacci heap
 
 Algorithms
 
@@ -19,9 +24,13 @@ Algorithms
 * Lazy Label Graph. (Single-Source graph)
 * A* algorithm
 * Parallel queued minimization
+* Minimum spanning trees
 
 Semirings
 
 * Most probable Semiring
 * Combined Semirings.
 
+Figure out
+
+* path representations on the original graph with hyperedges and multiple edges.
