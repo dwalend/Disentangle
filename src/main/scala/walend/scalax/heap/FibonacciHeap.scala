@@ -1,6 +1,6 @@
 package walend.scalax.heap
 
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ArraySeq
 
 /**
  * A generic Fibonacci heap
@@ -36,7 +36,8 @@ public FibDoubleHeap(DoubleHeap heap)
   }
 
   private def consolidate():Unit = {
-    val fibNodes:ArrayBuffer[DoubleHeapMember] = new ArrayBuffer[DoubleHeapMember](size)
+
+    val fibNodes:ArraySeq[DoubleHeapMember] = new ArraySeq[DoubleHeapMember](size)
 
     var rootCount:Int = 0
     var x:DoubleHeapMember = top
@@ -49,7 +50,7 @@ public FibDoubleHeap(DoubleHeap heap)
   
       while(rootCount>0) {
         var d:Int = x.getChildCount(this)
-        //can this
+
         val next:DoubleHeapMember = x.getRight(this)
         while(fibNodes(d) != null) {
           var y:DoubleHeapMember = fibNodes(d)
@@ -277,7 +278,7 @@ DoubleHeapMember implements DoubleHeap's HeapMember interface.
 
 @author @dwalend@
   */
-abstract class DoubleHeapMember {
+class DoubleHeapMember(any:Any) {
 
   private var key: Double = .0
   private var parent: DoubleHeapMember = null

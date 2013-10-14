@@ -11,14 +11,48 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
+  def emptyHeap = new FibDoubleHeap
+  def oneMemberHeap:FibDoubleHeap = {
+    val heap = emptyHeap
+    heap.insert(1,new DoubleHeapMember("A"))
+    heap
+  }
+
+  def twoMemberHeap:FibDoubleHeap = {
+    val heap = emptyHeap
+    heap.insert(1,new DoubleHeapMember("A"))
+    heap.insert(2,new DoubleHeapMember("B"))
+    heap
+  }
+
+
   "A newly created heap" should " be empty" in {
-    val heap:FibDoubleHeap = new FibDoubleHeap()
-    heap.isEmpty should be(true)
+    emptyHeap.isEmpty should be(true)
   }
 
   it should "throw an IllegalStateException when asked for its min value" in {
-    val heap:FibDoubleHeap = new FibDoubleHeap
-    a [IllegalStateException] should be thrownBy {heap.getMin}
+    a [IllegalStateException] should be thrownBy {emptyHeap.getMin}
   }
 
+  it should "throw an IllegalStateException when asked for its min key value" in {
+    a [IllegalStateException] should be thrownBy {emptyHeap.getMinKey}
+  }
+
+  it should "not be empty after an item is added" in {
+    oneMemberHeap.isEmpty should be (false)
+  }
+
+  it should "be empty after a heap with one item has that item removed" in {
+    val heap = oneMemberHeap
+    heap.takeMin()
+    heap.isEmpty should be(true)
+  }
+
+  it should "not be empty after a heap with one item has that item removed" in {
+    val heap = twoMemberHeap
+
+    heap.takeMin()
+
+    heap.isEmpty should be(false)
+  }
 }
