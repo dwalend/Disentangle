@@ -336,19 +336,11 @@ class FibonacciHeap //todo implement heap
       key
     }
 
-    //todo probably don't need this one anymore.
-    private def validateHeap(heap: FibonacciHeap):Unit = {
-      if (heap == null) {
-        throw new NullPointerException("These methods should only be called by an DoubleHeap.")
-      }
-    }
-
     def isInHeap: Boolean = {
       inHeap
     }
 
     private[FibonacciHeap] def setKey(key: Double, heap: FibonacciHeap):Unit = {
-      validateHeap(heap)
       this.key = key
       inHeap = true
     }
@@ -359,7 +351,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def remove(heap: FibonacciHeap):Unit = {
-      validateHeap(heap)
       remove()
     }
 
@@ -371,12 +362,10 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def cat(node: HeapMember, heap: FibonacciHeap) {
-      validateHeap(heap)
       cat(node)
     }
 
     private[FibonacciHeap] def addChild(childNode: HeapMember, heap: FibonacciHeap) {
-      validateHeap(heap)
       if (getChild == null) {
         setChild(childNode)
         childNode.setRight(childNode)
@@ -391,7 +380,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def removeChild(childNode: HeapMember, heap: FibonacciHeap) {
-      validateHeap(heap)
       childNode.remove()
       childCount -= 1
       if (getChild eq childNode) {
@@ -405,7 +393,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def getParent(heap: FibonacciHeap): HeapMember = {
-      validateHeap(heap)
       parent
     }
 
@@ -422,7 +409,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def getLeft(heap: FibonacciHeap): HeapMember = {
-      validateHeap(heap)
       left
     }
 
@@ -435,7 +421,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def getRight(heap: FibonacciHeap): HeapMember = {
-      validateHeap(heap)
       right
     }
 
@@ -448,7 +433,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def getChild(heap: FibonacciHeap): HeapMember = {
-      validateHeap(heap)
       child
     }
 
@@ -457,12 +441,10 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def getChildCount(heap: FibonacciHeap): Int = {
-      validateHeap(heap)
       childCount
     }
 
     private[FibonacciHeap] def lostChild(heap: FibonacciHeap): Boolean = {
-      validateHeap(heap)
       lostChild
     }
 
@@ -471,7 +453,6 @@ class FibonacciHeap //todo implement heap
     }
 
     private[FibonacciHeap] def setLostChild(lostChild: Boolean, heap: FibonacciHeap) {
-      validateHeap(heap)
       setLostChild(lostChild)
     }
   }
