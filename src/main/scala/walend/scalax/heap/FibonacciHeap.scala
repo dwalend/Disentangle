@@ -141,7 +141,7 @@ class FibonacciHeap //todo implement heap
     val z: HeapMember = y.getParent
     if (z != null) {
       if (!y.lostChild) {
-        y.setLostChild(lostChild = true, this)
+        y.setLostChild(lostChild = true)
       }
       else {
         cut(y, z)
@@ -246,7 +246,7 @@ class FibonacciHeap //todo implement heap
     }
   }
 
-  private class ChildIterator(startNode:HeapMember,heap:FibonacciHeap) {
+  private class ChildIterator(startNode:HeapMember) {
   
     private var currentNode:HeapMember = null
     private var currentChildIterator:ChildIterator = null
@@ -266,7 +266,7 @@ class FibonacciHeap //todo implement heap
         val oldCurrentNode = currentNode
         currentNode = currentNode.getRight
         if(currentNode.getChild!=null){
-          currentChildIterator = new ChildIterator(currentNode.getChild,heap)
+          currentChildIterator = new ChildIterator(currentNode.getChild)
         }
         oldCurrentNode
       }
@@ -274,7 +274,7 @@ class FibonacciHeap //todo implement heap
       {
         currentNode = startNode.getRight
         if(startNode.getChild!=null) {
-          currentChildIterator = new ChildIterator(startNode.getChild,heap)
+          currentChildIterator = new ChildIterator(startNode.getChild)
         }
         startNode
       }
@@ -284,10 +284,11 @@ class FibonacciHeap //todo implement heap
   }
 
   private def iterator():ChildIterator = {
-    new ChildIterator(top,this)
+    new ChildIterator(top)
   }
 
-  //todo move changeKey and remvoe into here
+  //todo move changeKey and remove into here
+  //todo more scala-eque access to variables
   class HeapMember(val value:Any) {
 
     private var key: Double = .0
@@ -421,12 +422,8 @@ class FibonacciHeap //todo implement heap
       childCount
     }
 
-    private def setLostChild(lostChild: Boolean) {
+    private[FibonacciHeap] def setLostChild(lostChild: Boolean) {
       this.lostChild = lostChild
-    }
-
-    private[FibonacciHeap] def setLostChild(lostChild: Boolean, heap: FibonacciHeap) {
-      setLostChild(lostChild)
     }
   }
 }
