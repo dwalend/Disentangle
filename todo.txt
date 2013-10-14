@@ -17,7 +17,11 @@ Structures
 
 Algorithms
 
+* Binomial heap
+* Minimum spanning tree
 * Dijkstra's algorithm
+* Fibonacci heap
+* MST with Fibonacci heap
 * Dijkstra with a Fibonacci heap
 * Basic betweenness and closeness
 * Efficient betweenness and closeness
@@ -34,3 +38,22 @@ Semirings
 Figure out
 
 * path representations on the original graph with hyperedges and multiple edges.
+
+
+---
+
+Prim's MST algorithm
+
+Put all the verticies in a priority queue with variable key values
+Initialize all the keys to O.
+Pick the root and set its key to I.
+While the queue is not empty
+    extract the minimum edge and node
+        if the node isn't in the MST
+            for each node reachable from it not currently in the MST
+                if some node is closer by using this node
+                    replace the key with the closer value
+
+---
+
+
