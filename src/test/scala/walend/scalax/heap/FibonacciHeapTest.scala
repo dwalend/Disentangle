@@ -11,14 +11,14 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
-  def emptyHeap = new FibonacciHeap
-  def oneMemberHeap:FibonacciHeap = {
+  def emptyHeap = new FibonacciHeap[String]
+  def oneMemberHeap:FibonacciHeap[String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap
   }
 
-  def twoMemberHeap:FibonacciHeap = {
+  def twoMemberHeap:FibonacciHeap[String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap.insert(2,"B")

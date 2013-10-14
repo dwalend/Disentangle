@@ -8,15 +8,14 @@ package walend.scalax.heap
  */
 
 //todo make generic key
-//todo make generic value
 //todo custom comparator with magic lowest value
-class FibonacciHeap //todo implement heap
+class FibonacciHeap[V] //todo implement heap
 {
   def isEmpty:Boolean = {
     size==0
   }
 
-  def insert(key:Double,value:Any):HeapMember = {
+  def insert(key:Double,value:V):HeapMember = {
     checkKeyValue(key)
 
     val fibNode:HeapMember = new HeapMember(value)
@@ -29,7 +28,7 @@ class FibonacciHeap //todo implement heap
     top
   }
 
-  def topValue:Any = {
+  def topValue:V = {
     topMember.value
   }
   
@@ -289,7 +288,7 @@ class FibonacciHeap //todo implement heap
 
   //todo move changeKey and remove into here
   //todo more scala-eque access to variables
-  class HeapMember(val value:Any) {
+  class HeapMember(val value:V) {
 
     private var key: Double = .0
     private var parent: HeapMember = null
