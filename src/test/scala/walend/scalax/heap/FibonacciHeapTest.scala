@@ -14,14 +14,14 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   def emptyHeap = new FibDoubleHeap
   def oneMemberHeap:FibDoubleHeap = {
     val heap = emptyHeap
-    heap.insert(1,new DoubleHeapMember("A"))
+    heap.insert(1,"A")
     heap
   }
 
   def twoMemberHeap:FibDoubleHeap = {
     val heap = emptyHeap
-    heap.insert(1,new DoubleHeapMember("A"))
-    heap.insert(2,new DoubleHeapMember("B"))
+    heap.insert(1,"A")
+    heap.insert(2,"B")
     heap
   }
 
@@ -57,11 +57,8 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   it should "not change what is at the top of the heap if a key in the heap changes to be higher" in {
 
     val heap = emptyHeap
-    val a = new DoubleHeapMember("A")
-    val b = new DoubleHeapMember("B")
-
-    heap.insert(1,a)
-    heap.insert(2,b)
+    val a = heap.insert(1,"A")
+    val b = heap.insert(2,"B")
 
     heap.changeKey(3,b)
 
@@ -71,11 +68,8 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   it should "change what is at the top of the heap if a key in the heap changes to be lower than the min" in {
 
     val heap = emptyHeap
-    val a = new DoubleHeapMember("A")
-    val b = new DoubleHeapMember("B")
-
-    heap.insert(1,a)
-    heap.insert(2,b)
+    val a = heap.insert(1,"A")
+    val b = heap.insert(2,"B")
 
     heap.changeKey(0,b)
 
@@ -85,11 +79,8 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   it should "change what is at the top of the heap if the current min in the heap changes to be lower than another key" in {
 
     val heap = emptyHeap
-    val a = new DoubleHeapMember("A")
-    val b = new DoubleHeapMember("B")
-
-    heap.insert(1,a)
-    heap.insert(2,b)
+    val a = heap.insert(1,"A")
+    val b = heap.insert(2,"B")
 
     heap.changeKey(3,a)
 
@@ -98,23 +89,15 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
   it should "be able to handle a lot of operations on a larger heap" in {
     val heap = emptyHeap
-    val a = new DoubleHeapMember("A")
-    val b = new DoubleHeapMember("B")
-    val c = new DoubleHeapMember("C")
-    val d = new DoubleHeapMember("D")
-    val e = new DoubleHeapMember("E")
-    val f = new DoubleHeapMember("F")
-    val g = new DoubleHeapMember("G")
-    val h = new DoubleHeapMember("H")
 
-    heap.insert(8,a)
-    heap.insert(7,b)
-    heap.insert(6,c)
-    heap.insert(5,d)
-    heap.insert(4,e)
-    heap.insert(3,f)
-    heap.insert(2,g)
-    heap.insert(1,h)
+    val a = heap.insert(8,"A")
+    val b = heap.insert(7,"B")
+    val c = heap.insert(6,"C")
+    val d = heap.insert(5,"D")
+    val e = heap.insert(4,"E")
+    val f = heap.insert(3,"F")
+    val g = heap.insert(2,"G")
+    val h = heap.insert(1,"H")
 
     heap.takeMin() should be(h)
     heap.changeKey(0,g)
@@ -134,5 +117,4 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     heap.takeMin() should be(g)
     heap.isEmpty should be (true)
   }
-
 }

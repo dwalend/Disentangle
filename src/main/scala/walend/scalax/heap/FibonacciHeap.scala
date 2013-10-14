@@ -17,9 +17,11 @@ class FibDoubleHeap //todo implement heap
     size==0
   }
 
-  //todo rewrite to insert an object of the right type that the comparator can handle, and hand back the HeapMember
-  def insert(key:Double,fibNode:DoubleHeapMember):Unit = {
+  def insert(key:Double,value:Any):DoubleHeapMember = {
     checkKeyValue(key)
+
+    val fibNode:DoubleHeapMember = new DoubleHeapMember(value)
+
     fibNode.setKey(key,this)
 
     if(top != null) {
@@ -283,7 +285,7 @@ DoubleHeapMember implements DoubleHeap's HeapMember interface.
 @author @dwalend@
   */
 //todo move into fibonacci heap class
-class DoubleHeapMember(any:Any) {
+class DoubleHeapMember(value:Any) {
 
   private var key: Double = .0
   private var parent: DoubleHeapMember = null
@@ -294,9 +296,9 @@ class DoubleHeapMember(any:Any) {
   private var lostChild: Boolean = false
   private var inHeap: Boolean = false
 
-  override def toString: String = {
+  def toDebugString: String = {
     val builder: StringBuffer = new StringBuffer
-    builder.append("key: " + key)
+    builder.append("key: " + key + "value: "+value)
     builder.append(" lostChild: " + lostChild)
     builder.append(" left: " + left.getKey)
     builder.append(" right: " + right.getKey)
@@ -309,6 +311,10 @@ class DoubleHeapMember(any:Any) {
     builder.append(" count: " + childCount)
     builder.append(" inHeap:" + inHeap)
     builder.toString
+  }
+
+  override def toString:String = {
+    "key: "+key+" value: "+value
   }
 
   def clean():Unit = {
