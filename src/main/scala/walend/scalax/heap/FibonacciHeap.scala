@@ -10,7 +10,7 @@ import scala.collection.mutable.ArraySeq
  */
 
 //todo make generic
-//todo custom comparator
+//todo custom comparator with magic lowest value
 class FibDoubleHeap //todo implement heap
 {
   def isEmpty:Boolean = {
@@ -22,15 +22,7 @@ class FibDoubleHeap //todo implement heap
 
     val fibNode:DoubleHeapMember = new DoubleHeapMember(value)
 
-    fibNode.setKey(key,this)
-
-    if(top != null) {
-      top.cat(fibNode,this)
-    }
-    if((top==null)||(fibNode.getKey<top.getKey)) {
-      top = fibNode
-    }
-    size = size +1
+    reinsert(key,fibNode)
   }
 
   //todo add a getMinValue and a takeMinValue
@@ -71,7 +63,7 @@ class FibDoubleHeap //todo implement heap
     checkKeyValue(key)
     if(key > fibNode.getKey) {
       remove(fibNode)
-      insert(key,fibNode)
+      reinsert(key,fibNode)
     }
     else {
       decreaseKey(key,fibNode)
@@ -119,13 +111,29 @@ class FibDoubleHeap //todo implement heap
   private var top:DoubleHeapMember = null
   private var size:Int = 0
 
-/*
-public FibDoubleHeap(DoubleHeap heap)
-{
-    //todo union
-    //        union(heap);
-}
-*/
+  private def reinsert(key:Double,fibNode:DoubleHeapMember):DoubleHeapMember = {
+    checkKeyValue(key)
+
+    fibNode.setKey(key,this)
+
+    if(top != null) {
+      top.cat(fibNode,this)
+    }
+    if((top==null)||(fibNode.getKey<top.getKey)) {
+      top = fibNode
+    }
+    size = size +1
+
+    fibNode
+  }
+
+  /*
+  public FibDoubleHeap(DoubleHeap heap)
+  {
+      //todo union
+      //        union(heap);
+  }
+  */
 
   private def cascadingCut(y: DoubleHeapMember): Unit = {
     val z: DoubleHeapMember = y.getParent(this)
@@ -223,8 +231,6 @@ public FibDoubleHeap(DoubleHeap heap)
     }
   }
 
-//todo    public void union(DoubleHeap heap);
-
   private def decreaseKey(key:Double,fibNode:DoubleHeapMember):Unit = {
     fibNode.setKey(key,this)
     val y:DoubleHeapMember = fibNode.getParent(this)
@@ -279,13 +285,9 @@ public FibDoubleHeap(DoubleHeap heap)
   }
 }
 
-/**
-DoubleHeapMember implements DoubleHeap's HeapMember interface.
-
-@author @dwalend@
-  */
 //todo move into fibonacci heap class
-class DoubleHeapMember(value:Any) {
+//todo rename HeapMember later
+class DoubleHeapMember(val value:Any) {
 
   private var key: Double = .0
   private var parent: DoubleHeapMember = null

@@ -99,22 +99,25 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val g = heap.insert(2,"G")
     val h = heap.insert(1,"H")
 
-    heap.takeMin() should be(h)
+    heap.takeMin().value should be("H")
     heap.changeKey(0,g)
     heap.changeKey(9,f)
 
     heap.remove(b)
 
-    heap.getMin should be(g)
+    heap.getMin.value should be("G")
 
     heap.changeKey(10,g)
 
-    heap.takeMin() should be(e)
-    heap.takeMin() should be(d)
-    heap.takeMin() should be(c)
-    heap.takeMin() should be(a)
-    heap.takeMin() should be(f)
-    heap.takeMin() should be(g)
+    heap.takeMin().value should be("E")
+    heap.takeMin().value should be("D")
+    heap.takeMin().value should be("C")
+    heap.takeMin().value should be("A")
+
+    println(heap.getMin)
+
+    heap.takeMin().value should be("F")
+    heap.takeMin().value should be("G")
     heap.isEmpty should be (true)
   }
 }
