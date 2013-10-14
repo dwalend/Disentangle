@@ -8,14 +8,11 @@ import scala.collection.mutable.ArrayBuffer
  * @author dwalend
  * @since 10/14/13 10:17 AM
  */
-class FibonacciHeap {
-
-}
 
 class FibDoubleHeap //todo implement heap
 {
-  var top:DoubleHeapMember = null
-  var size:Int = 0
+  private var top:DoubleHeapMember = null
+  private var size:Int = 0
 
 /*
 public FibDoubleHeap(DoubleHeap heap)
