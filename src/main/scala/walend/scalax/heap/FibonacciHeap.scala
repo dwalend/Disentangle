@@ -41,18 +41,18 @@ class FibonacciHeap //todo implement heap
   def takeTop():HeapMember = {
     checkTop()
     val z:HeapMember = top
-    while(z.getChild(this)!=null) {
-      val x:HeapMember = z.getChild(this)
-      z.removeChild(x,this)
-      z.cat(x,this)
+    while(z.getChild!=null) {
+      val x:HeapMember = z.getChild
+      z.releaseChild(x)
+      z.cat(x)
     }
-    z.remove(this)
+    z.release()
 
-    if(z==z.getRight(this)) {
+    if(z==z.getRight) {
       top = null
     }
     else {
-      top = z.getRight(this)
+      top = z.getRight
       consolidate()
     }
 
@@ -116,10 +116,10 @@ class FibonacciHeap //todo implement heap
   private def reinsert(key:Double,fibNode:HeapMember):HeapMember = {
     checkKeyValue(key)
 
-    fibNode.setKey(key,this)
+    fibNode.setKey(key)
 
     if(top != null) {
-      top.cat(fibNode,this)
+      top.cat(fibNode)
     }
     if((top==null)||(fibNode.getKey<top.getKey)) {
       top = fibNode
@@ -138,9 +138,9 @@ class FibonacciHeap //todo implement heap
   */
 
   private def cascadingCut(y: HeapMember): Unit = {
-    val z: HeapMember = y.getParent(this)
+    val z: HeapMember = y.getParent
     if (z != null) {
-      if (!y.lostChild(this)) {
+      if (!y.lostChild) {
         y.setLostChild(lostChild = true, this)
       }
       else {
@@ -160,14 +160,14 @@ class FibonacciHeap //todo implement heap
     if(x!=null) {
       do {
         rootCount = rootCount + 1
-        x = x.getRight(this)
+        x = x.getRight
       }//do
       while(x!=top)
   
       while(rootCount>0) {
-        var d:Int = x.getChildCount(this)
+        var d:Int = x.getChildCount
 
-        val next:HeapMember = x.getRight(this)
+        val next:HeapMember = x.getRight
         while(fibNodes(d) != null) {
           var y:HeapMember = fibNodes(d)
           if(x.getKey>y.getKey) {
@@ -189,8 +189,8 @@ class FibonacciHeap //todo implement heap
       for (i <- 0 until fibNodes.length) {
         if(fibNodes(i)!=null) {
           if(top!=null) {
-            fibNodes(i).remove(this)
-            top.cat(fibNodes(i),this)
+            fibNodes(i).release()
+            top.cat(fibNodes(i))
             if(fibNodes(i).getKey < top.getKey){
               top = fibNodes(i)
             }
@@ -207,8 +207,8 @@ class FibonacciHeap //todo implement heap
   Removes x from the child list of y.
     */
   private def cut(x:HeapMember,y:HeapMember):Unit = {
-    y.removeChild(x,this)
-    top.cat(x,this)
+    y.releaseChild(x)
+    top.cat(x)
   }
 
   /**
@@ -216,10 +216,10 @@ class FibonacciHeap //todo implement heap
     */
   private def link(y:HeapMember,x:HeapMember):Unit = {
     //remove y from the list of the heap
-    y.remove(this)
+    y.release()
     
     //make y a child of x
-    x.addChild(y,this)
+    x.addChild(y)
   }
 
   private def checkKeyValue(key:Double):Unit = {
@@ -235,8 +235,8 @@ class FibonacciHeap //todo implement heap
   }
 
   private def decreaseKey(key:Double,fibNode:HeapMember):Unit = {
-    fibNode.setKey(key,this)
-    val y:HeapMember = fibNode.getParent(this)
+    fibNode.setKey(key)
+    val y:HeapMember = fibNode.getParent
     if((y!=null)&&(fibNode.getKey<y.getKey)){
       cut(fibNode,y)
       cascadingCut(y)
@@ -264,17 +264,17 @@ class FibonacciHeap //todo implement heap
       }
       else if(currentNode!=null) {
         val oldCurrentNode = currentNode
-        currentNode = currentNode.getRight(heap)
-        if(currentNode.getChild(heap)!=null){
-          currentChildIterator = new ChildIterator(currentNode.getChild(heap),heap)
+        currentNode = currentNode.getRight
+        if(currentNode.getChild!=null){
+          currentChildIterator = new ChildIterator(currentNode.getChild,heap)
         }
         oldCurrentNode
       }
       else
       {
-        currentNode = startNode.getRight(heap)
-        if(startNode.getChild(heap)!=null) {
-          currentChildIterator = new ChildIterator(startNode.getChild(heap),heap)
+        currentNode = startNode.getRight
+        if(startNode.getChild!=null) {
+          currentChildIterator = new ChildIterator(startNode.getChild,heap)
         }
         startNode
       }
@@ -296,7 +296,7 @@ class FibonacciHeap //todo implement heap
     private var left: HeapMember = this
     private var right: HeapMember = this
     private var childCount: Int = 0
-    private var lostChild: Boolean = false
+    private[FibonacciHeap] var lostChild: Boolean = false
     private var inHeap: Boolean = false
 
     private def toDebugString: String = {
@@ -340,59 +340,51 @@ class FibonacciHeap //todo implement heap
       inHeap
     }
 
-    private[FibonacciHeap] def setKey(key: Double, heap: FibonacciHeap):Unit = {
+    private[FibonacciHeap] def setKey(key: Double):Unit = {
       this.key = key
       inHeap = true
     }
 
-    private def remove():Unit = {
+    private[FibonacciHeap] def release():Unit = {
       getLeft.setRight(getRight)
       getRight.setLeft(getLeft)
     }
 
-    private[FibonacciHeap] def remove(heap: FibonacciHeap):Unit = {
-      remove()
-    }
-
-    private def cat(node: HeapMember) {
+    private[FibonacciHeap] def cat(node: HeapMember) {
       node.setLeft(this)
       node.setRight(getRight)
       setRight(node)
       node.getRight.setLeft(node)
     }
 
-    private[FibonacciHeap] def cat(node: HeapMember, heap: FibonacciHeap) {
-      cat(node)
-    }
-
-    private[FibonacciHeap] def addChild(childNode: HeapMember, heap: FibonacciHeap) {
-      if (getChild == null) {
+    private[FibonacciHeap] def addChild(childNode: HeapMember) {
+      if (child == null) {
         setChild(childNode)
         childNode.setRight(childNode)
         childNode.setLeft(childNode)
       }
       else {
-        getChild.cat(childNode)
+        child.cat(childNode)
       }
       childNode.setParent(this)
       childCount += 1
       childNode.setLostChild(lostChild = false)
     }
 
-    private[FibonacciHeap] def removeChild(childNode: HeapMember, heap: FibonacciHeap) {
-      childNode.remove()
+    private[FibonacciHeap] def releaseChild(childNode: HeapMember) {
+      childNode.release()
       childCount -= 1
-      if (getChild eq childNode) {
+      if (child == childNode) {
         setChild(childNode.getRight)
       }
-      if (getChildCount == 0) {
+      if (childCount == 0) {
         setChild(null)
       }
       childNode.setParent(null)
       childNode.setLostChild(lostChild = true)
     }
 
-    private[FibonacciHeap] def getParent(heap: FibonacciHeap): HeapMember = {
+    private[FibonacciHeap] def getParent: HeapMember = {
       parent
     }
 
@@ -400,7 +392,7 @@ class FibonacciHeap //todo implement heap
       this.parent = parent
     }
 
-    private def getLeft: HeapMember = {
+    private[FibonacciHeap] def getLeft: HeapMember = {
       left
     }
 
@@ -408,11 +400,7 @@ class FibonacciHeap //todo implement heap
       this.left = left
     }
 
-    private[FibonacciHeap] def getLeft(heap: FibonacciHeap): HeapMember = {
-      left
-    }
-
-    private def getRight: HeapMember = {
+    private[FibonacciHeap] def getRight: HeapMember = {
       right
     }
 
@@ -420,11 +408,8 @@ class FibonacciHeap //todo implement heap
       this.right = right
     }
 
-    private[FibonacciHeap] def getRight(heap: FibonacciHeap): HeapMember = {
-      right
-    }
 
-    private def getChild: HeapMember = {
+    private[FibonacciHeap] def getChild: HeapMember = {
       child
     }
 
@@ -432,20 +417,8 @@ class FibonacciHeap //todo implement heap
       this.child = child
     }
 
-    private[FibonacciHeap] def getChild(heap: FibonacciHeap): HeapMember = {
-      child
-    }
-
-    private def getChildCount: Int = {
+    private[FibonacciHeap] def getChildCount: Int = {
       childCount
-    }
-
-    private[FibonacciHeap] def getChildCount(heap: FibonacciHeap): Int = {
-      childCount
-    }
-
-    private[FibonacciHeap] def lostChild(heap: FibonacciHeap): Boolean = {
-      lostChild
     }
 
     private def setLostChild(lostChild: Boolean) {
