@@ -90,7 +90,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   it should "be able to handle a lot of operations on a larger heap" in {
     val heap = emptyHeap
 
-    val a:heap.DoubleHeapMember = heap.insert(8,"A")
+    val a:heap.HeapMember = heap.insert(8,"A")
     val b = heap.insert(7,"B")
     val c = heap.insert(6,"C")
     val d = heap.insert(5,"D")

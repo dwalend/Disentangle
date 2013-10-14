@@ -1,7 +1,5 @@
 package walend.scalax.heap
 
-import scala.collection.mutable.ArraySeq
-
 /**
  * A generic Fibonacci heap
  *
@@ -18,15 +16,15 @@ class FibonacciHeap //todo implement heap
     size==0
   }
 
-  def insert(key:Double,value:Any):DoubleHeapMember = {
+  def insert(key:Double,value:Any):HeapMember = {
     checkKeyValue(key)
 
-    val fibNode:DoubleHeapMember = new DoubleHeapMember(value)
+    val fibNode:HeapMember = new HeapMember(value)
 
     reinsert(key,fibNode)
   }
 
-  def topMember:DoubleHeapMember = {
+  def topMember:HeapMember = {
     checkTop()
     top
   }
@@ -40,11 +38,11 @@ class FibonacciHeap //todo implement heap
     top.getKey
   }
 
-  def takeTop():DoubleHeapMember = {
+  def takeTop():HeapMember = {
     checkTop()
-    val z:DoubleHeapMember = top
+    val z:HeapMember = top
     while(z.getChild(this)!=null) {
-      val x:DoubleHeapMember = z.getChild(this)
+      val x:HeapMember = z.getChild(this)
       z.removeChild(x,this)
       z.cat(x,this)
     }
@@ -63,7 +61,7 @@ class FibonacciHeap //todo implement heap
     z
   }
 
-  def changeKey(key:Double,fibNode:DoubleHeapMember):Unit = {
+  def changeKey(key:Double,fibNode:HeapMember):Unit = {
     checkKeyValue(key)
     if(key > fibNode.getKey) {
       remove(fibNode)
@@ -74,7 +72,7 @@ class FibonacciHeap //todo implement heap
     }
   }
 
-  def remove(fibNode:DoubleHeapMember):Unit = {
+  def remove(fibNode:HeapMember):Unit = {
     decreaseKey(-Double.MaxValue,fibNode)
     takeTop()
   }
@@ -112,10 +110,10 @@ class FibonacciHeap //todo implement heap
     builder.toString()
   }
 
-  private var top:DoubleHeapMember = null
+  private var top:HeapMember = null
   private var size:Int = 0
 
-  private def reinsert(key:Double,fibNode:DoubleHeapMember):DoubleHeapMember = {
+  private def reinsert(key:Double,fibNode:HeapMember):HeapMember = {
     checkKeyValue(key)
 
     fibNode.setKey(key,this)
@@ -139,8 +137,8 @@ class FibonacciHeap //todo implement heap
   }
   */
 
-  private def cascadingCut(y: DoubleHeapMember): Unit = {
-    val z: DoubleHeapMember = y.getParent(this)
+  private def cascadingCut(y: HeapMember): Unit = {
+    val z: HeapMember = y.getParent(this)
     if (z != null) {
       if (!y.lostChild(this)) {
         y.setLostChild(lostChild = true, this)
@@ -154,10 +152,11 @@ class FibonacciHeap //todo implement heap
 
   private def consolidate():Unit = {
 
-    val fibNodes:ArraySeq[DoubleHeapMember] = new ArraySeq[DoubleHeapMember](size)
+    import scala.collection.mutable.ArraySeq
+    val fibNodes:ArraySeq[HeapMember] = new ArraySeq[HeapMember](size)
 
     var rootCount:Int = 0
-    var x:DoubleHeapMember = top
+    var x:HeapMember = top
     if(x!=null) {
       do {
         rootCount = rootCount + 1
@@ -168,11 +167,11 @@ class FibonacciHeap //todo implement heap
       while(rootCount>0) {
         var d:Int = x.getChildCount(this)
 
-        val next:DoubleHeapMember = x.getRight(this)
+        val next:HeapMember = x.getRight(this)
         while(fibNodes(d) != null) {
-          var y:DoubleHeapMember = fibNodes(d)
+          var y:HeapMember = fibNodes(d)
           if(x.getKey>y.getKey) {
-            val temp:DoubleHeapMember = y
+            val temp:HeapMember = y
             y = x
             x = temp
           }
@@ -207,7 +206,7 @@ class FibonacciHeap //todo implement heap
   /**
   Removes x from the child list of y.
     */
-  private def cut(x:DoubleHeapMember,y:DoubleHeapMember):Unit = {
+  private def cut(x:HeapMember,y:HeapMember):Unit = {
     y.removeChild(x,this)
     top.cat(x,this)
   }
@@ -215,7 +214,7 @@ class FibonacciHeap //todo implement heap
   /**
   Make y a child of x.
     */
-  private def link(y:DoubleHeapMember,x:DoubleHeapMember):Unit = {
+  private def link(y:HeapMember,x:HeapMember):Unit = {
     //remove y from the list of the heap
     y.remove(this)
     
@@ -235,9 +234,9 @@ class FibonacciHeap //todo implement heap
     }
   }
 
-  private def decreaseKey(key:Double,fibNode:DoubleHeapMember):Unit = {
+  private def decreaseKey(key:Double,fibNode:HeapMember):Unit = {
     fibNode.setKey(key,this)
-    val y:DoubleHeapMember = fibNode.getParent(this)
+    val y:HeapMember = fibNode.getParent(this)
     if((y!=null)&&(fibNode.getKey<y.getKey)){
       cut(fibNode,y)
       cascadingCut(y)
@@ -247,9 +246,9 @@ class FibonacciHeap //todo implement heap
     }
   }
 
-  class ChildIterator(startNode:DoubleHeapMember,heap:FibonacciHeap) {
+  private class ChildIterator(startNode:HeapMember,heap:FibonacciHeap) {
   
-    private var currentNode:DoubleHeapMember = null
+    private var currentNode:HeapMember = null
     private var currentChildIterator:ChildIterator = null
     
     def hasNext:Boolean = {
@@ -259,7 +258,7 @@ class FibonacciHeap //todo implement heap
       startNode != currentNode
     }
     
-    def next():DoubleHeapMember = {
+    def next():HeapMember = {
       if((currentChildIterator!=null)&&(currentChildIterator.hasNext)) {
         currentChildIterator.next()
       }
@@ -288,14 +287,13 @@ class FibonacciHeap //todo implement heap
     new ChildIterator(top,this)
   }
 
-  //todo rename HeapMember later
-  class DoubleHeapMember(val value:Any) {
+  class HeapMember(val value:Any) {
 
     private var key: Double = .0
-    private var parent: DoubleHeapMember = null
-    private var child: DoubleHeapMember = null
-    private var left: DoubleHeapMember = this
-    private var right: DoubleHeapMember = this
+    private var parent: HeapMember = null
+    private var child: HeapMember = null
+    private var left: HeapMember = this
+    private var right: HeapMember = this
     private var childCount: Int = 0
     private var lostChild: Boolean = false
     private var inHeap: Boolean = false
@@ -362,19 +360,19 @@ class FibonacciHeap //todo implement heap
       remove()
     }
 
-    private def cat(node: DoubleHeapMember) {
+    private def cat(node: HeapMember) {
       node.setLeft(this)
       node.setRight(getRight)
       setRight(node)
       node.getRight.setLeft(node)
     }
 
-    def cat(node: DoubleHeapMember, heap: FibonacciHeap) {
+    def cat(node: HeapMember, heap: FibonacciHeap) {
       validateHeap(heap)
       cat(node)
     }
 
-    def addChild(childNode: DoubleHeapMember, heap: FibonacciHeap) {
+    def addChild(childNode: HeapMember, heap: FibonacciHeap) {
       validateHeap(heap)
       if (getChild == null) {
         setChild(childNode)
@@ -389,7 +387,7 @@ class FibonacciHeap //todo implement heap
       childNode.setLostChild(lostChild = false)
     }
 
-    def removeChild(childNode: DoubleHeapMember, heap: FibonacciHeap) {
+    def removeChild(childNode: HeapMember, heap: FibonacciHeap) {
       validateHeap(heap)
       childNode.remove()
       childCount -= 1
@@ -403,50 +401,50 @@ class FibonacciHeap //todo implement heap
       childNode.setLostChild(lostChild = true)
     }
 
-    def getParent(heap: FibonacciHeap): DoubleHeapMember = {
+    def getParent(heap: FibonacciHeap): HeapMember = {
       validateHeap(heap)
       parent
     }
 
-    private def setParent(parent: DoubleHeapMember) {
+    private def setParent(parent: HeapMember) {
       this.parent = parent
     }
 
-    private def getLeft: DoubleHeapMember = {
+    private def getLeft: HeapMember = {
       left
     }
 
-    private def setLeft(left: DoubleHeapMember) {
+    private def setLeft(left: HeapMember) {
       this.left = left
     }
 
-    def getLeft(heap: FibonacciHeap): DoubleHeapMember = {
+    def getLeft(heap: FibonacciHeap): HeapMember = {
       validateHeap(heap)
       left
     }
 
-    private def getRight: DoubleHeapMember = {
+    private def getRight: HeapMember = {
       right
     }
 
-    private def setRight(right: DoubleHeapMember) {
+    private def setRight(right: HeapMember) {
       this.right = right
     }
 
-    def getRight(heap: FibonacciHeap): DoubleHeapMember = {
+    def getRight(heap: FibonacciHeap): HeapMember = {
       validateHeap(heap)
       right
     }
 
-    private def getChild: DoubleHeapMember = {
+    private def getChild: HeapMember = {
       child
     }
 
-    private def setChild(child: DoubleHeapMember) {
+    private def setChild(child: HeapMember) {
       this.child = child
     }
 
-    def getChild(heap: FibonacciHeap): DoubleHeapMember = {
+    def getChild(heap: FibonacciHeap): HeapMember = {
       validateHeap(heap)
       child
     }
