@@ -25,7 +25,6 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     heap
   }
 
-
   "A newly created heap" should " be empty" in {
     emptyHeap.isEmpty should be(true)
   }
@@ -48,11 +47,92 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     heap.isEmpty should be(true)
   }
 
-  it should "not be empty after a heap with one item has that item removed" in {
+  it should "not be empty after a heap with two item has that item removed" in {
     val heap = twoMemberHeap
 
     heap.takeMin()
-
     heap.isEmpty should be(false)
   }
+
+  it should "not change what is at the top of the heap if a key in the heap changes to be higher" in {
+
+    val heap = emptyHeap
+    val a = new DoubleHeapMember("A")
+    val b = new DoubleHeapMember("B")
+
+    heap.insert(1,a)
+    heap.insert(2,b)
+
+    heap.changeKey(3,b)
+
+    heap.takeMin() should be(a)
+  }
+
+  it should "change what is at the top of the heap if a key in the heap changes to be lower than the min" in {
+
+    val heap = emptyHeap
+    val a = new DoubleHeapMember("A")
+    val b = new DoubleHeapMember("B")
+
+    heap.insert(1,a)
+    heap.insert(2,b)
+
+    heap.changeKey(0,b)
+
+    heap.takeMin() should be(b)
+  }
+
+  it should "change what is at the top of the heap if the current min in the heap changes to be lower than another key" in {
+
+    val heap = emptyHeap
+    val a = new DoubleHeapMember("A")
+    val b = new DoubleHeapMember("B")
+
+    heap.insert(1,a)
+    heap.insert(2,b)
+
+    heap.changeKey(3,a)
+
+    heap.takeMin() should be(b)
+  }
+
+  it should "be able to handle a lot of operations on a larger heap" in {
+    val heap = emptyHeap
+    val a = new DoubleHeapMember("A")
+    val b = new DoubleHeapMember("B")
+    val c = new DoubleHeapMember("C")
+    val d = new DoubleHeapMember("D")
+    val e = new DoubleHeapMember("E")
+    val f = new DoubleHeapMember("F")
+    val g = new DoubleHeapMember("G")
+    val h = new DoubleHeapMember("H")
+
+    heap.insert(8,a)
+    heap.insert(7,b)
+    heap.insert(6,c)
+    heap.insert(5,d)
+    heap.insert(4,e)
+    heap.insert(3,f)
+    heap.insert(2,g)
+    heap.insert(1,h)
+
+    heap.takeMin() should be(h)
+    heap.changeKey(0,g)
+    heap.changeKey(9,f)
+
+    heap.remove(b)
+
+    heap.getMin should be(g)
+
+    heap.changeKey(10,g)
+
+    heap.takeMin() should be(e)
+    heap.takeMin() should be(d)
+    heap.takeMin() should be(c)
+    heap.takeMin() should be(a)
+    heap.takeMin() should be(f)
+    heap.takeMin() should be(g)
+    heap.isEmpty should be (true)
+  }
+
 }

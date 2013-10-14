@@ -9,15 +9,118 @@ import scala.collection.mutable.ArraySeq
  * @since 10/14/13 10:17 AM
  */
 
+//todo make generic
+//todo custom comparator
 class FibDoubleHeap //todo implement heap
 {
+  def isEmpty:Boolean = {
+    size==0
+  }
+
+  //todo rewrite to insert an object of the right type that the comparator can handle, and hand back the HeapMember
+  def insert(key:Double,fibNode:DoubleHeapMember):Unit = {
+    checkKeyValue(key)
+    fibNode.setKey(key,this)
+
+    if(top != null) {
+      top.cat(fibNode,this)
+    }
+    if((top==null)||(fibNode.getKey<top.getKey)) {
+      top = fibNode
+    }
+    size = size +1
+  }
+
+  //todo add a getMinValue and a takeMinValue
+  def getMin:DoubleHeapMember = {
+    checkTop()
+    top
+  }
+
+  def getMinKey:Double = {
+    checkTop()
+    top.getKey
+  }
+
+  def takeMin():DoubleHeapMember = {
+    checkTop()
+    val z:DoubleHeapMember = top
+    while(z.getChild(this)!=null) {
+      val x:DoubleHeapMember = z.getChild(this)
+      z.removeChild(x,this)
+      z.cat(x,this)
+    }
+    z.remove(this)
+
+    if(z==z.getRight(this)) {
+      top = null
+    }
+    else {
+      top = z.getRight(this)
+      consolidate()
+    }
+
+    size = size -1
+    z.clean()
+    z
+  }
+
+  def changeKey(key:Double,fibNode:DoubleHeapMember):Unit = {
+    checkKeyValue(key)
+    if(key > fibNode.getKey) {
+      remove(fibNode)
+      insert(key,fibNode)
+    }
+    else {
+      decreaseKey(key,fibNode)
+    }
+  }
+
+  def remove(fibNode:DoubleHeapMember):Unit = {
+    decreaseKey(-Double.MaxValue,fibNode)
+    takeMin()
+  }
+
+  //    public boolean contains(DoubleHeapMember node);
+  /*
+  public void clear()
+  {
+      top=null;
+      size=0;
+  }
+  */
+
+  override def toString: String = {
+    val builder = new StringBuilder()
+
+    builder.append("FibDoubleHeap size: "+size+"\n")
+    builder.append("top: ")
+    if(top==null)
+    {
+      builder.append("null")
+    }
+    else
+    {
+      builder.append(top.toString())
+    }
+    builder.append("\n")
+
+    val it:ChildIterator = iterator()
+    while(it.hasNext)
+    {
+      builder.append(it.next().toString)
+      builder.append("\n")
+    }
+    builder.toString()
+  }
+
   private var top:DoubleHeapMember = null
   private var size:Int = 0
 
 /*
 public FibDoubleHeap(DoubleHeap heap)
 {
-    //todo
+    //todo union
     //        union(heap);
 }
 */
@@ -106,11 +209,6 @@ public FibDoubleHeap(DoubleHeap heap)
     x.addChild(y,this)
   }
 
-//DoubleHeap methods
-  def isEmpty:Boolean = {
-    size==0
-  }
-
   private def checkKeyValue(key:Double):Unit = {
     if(!(key > -Double.MaxValue)) {
       throw new IllegalArgumentException("key is "+key+" but must be greater than "+ -Double.MaxValue)
@@ -121,52 +219,6 @@ public FibDoubleHeap(DoubleHeap heap)
     if(top==null) {
       throw new IllegalStateException("The heap is empty.")
     }
-  }
-
-  def insert(key:Double,fibNode:DoubleHeapMember):Unit = {
-    checkKeyValue(key)
-    fibNode.setKey(key,this)
-    
-    if(top != null) {
-      top.cat(fibNode,this)
-    }
-    if((top==null)||(fibNode.getKey<top.getKey)) {
-      top = fibNode
-    }
-    size = size +1
-  }
-
-  def getMin:DoubleHeapMember = {
-    checkTop()
-    top
-  }
-
-  def getMinKey:Double = {
-    checkTop()
-    top.getKey
-  }
-
-  def takeMin():DoubleHeapMember = {
-    checkTop()
-    val z:DoubleHeapMember = top
-    while(z.getChild(this)!=null) {
-      val x:DoubleHeapMember = z.getChild(this)
-      z.removeChild(x,this)
-      z.cat(x,this)
-    }
-    z.remove(this)
-    
-    if(z==z.getRight(this)) {
-      top = null
-    }
-    else {
-      top = z.getRight(this)
-      consolidate()
-    }
-    
-    size = size -1
-    z.clean()
-    z
   }
 
 //todo    public void union(DoubleHeap heap);
@@ -183,30 +235,6 @@ public FibDoubleHeap(DoubleHeap heap)
     }
   }
 
-  def changeKey(key:Double,fibNode:DoubleHeapMember):Unit = {
-    checkKeyValue(key)
-    if(key > fibNode.getKey) {
-      remove(fibNode)
-      insert(key,fibNode)
-    }
-    else {
-      decreaseKey(key,fibNode)
-    }
-  }
-
-  def remove(fibNode:DoubleHeapMember):Unit = {
-    decreaseKey(-Double.MaxValue,fibNode)
-    takeMin()
-  }
-
-//    public boolean contains(DoubleHeapMember node);
-/*
-public void clear()
-{
-    top=null;
-    size=0;
-}
-*/
   class ChildIterator(startNode:DoubleHeapMember,heap:FibDoubleHeap) {
   
     private var currentNode:DoubleHeapMember = null
@@ -247,30 +275,6 @@ public void clear()
   private def iterator():ChildIterator = {
     new ChildIterator(top,this)
   }
-
-  override def toString: String = {
-    val builder = new StringBuilder()
-  
-    builder.append("FibDoubleHeap size: "+size+"\n")
-    builder.append("top: ")
-    if(top==null)
-    {
-      builder.append("null")
-    }
-    else
-    {
-      builder.append(top.toString())
-    }
-      builder.append("\n")
-    
-    val it:ChildIterator = iterator()
-    while(it.hasNext)
-    {
-      builder.append(it.next().toString)
-      builder.append("\n")
-    }
-    builder.toString()
-  }
 }
 
 /**
@@ -278,6 +282,7 @@ DoubleHeapMember implements DoubleHeap's HeapMember interface.
 
 @author @dwalend@
   */
+//todo move into fibonacci heap class
 class DoubleHeapMember(any:Any) {
 
   private var key: Double = .0
