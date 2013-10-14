@@ -9,9 +9,10 @@ import scala.collection.mutable.ArraySeq
  * @since 10/14/13 10:17 AM
  */
 
-//todo make generic
+//todo make generic key
+//todo make generic value
 //todo custom comparator with magic lowest value
-class FibDoubleHeap //todo implement heap
+class FibonacciHeap //todo implement heap
 {
   def isEmpty:Boolean = {
     size==0
@@ -25,18 +26,21 @@ class FibDoubleHeap //todo implement heap
     reinsert(key,fibNode)
   }
 
-  //todo add a getMinValue and a takeMinValue
-  def getMin:DoubleHeapMember = {
+  def topMember:DoubleHeapMember = {
     checkTop()
     top
   }
 
-  def getMinKey:Double = {
+  def topValue:Any = {
+    topMember.value
+  }
+  
+  def topKey:Double = {
     checkTop()
     top.getKey
   }
 
-  def takeMin():DoubleHeapMember = {
+  def takeTop():DoubleHeapMember = {
     checkTop()
     val z:DoubleHeapMember = top
     while(z.getChild(this)!=null) {
@@ -72,7 +76,7 @@ class FibDoubleHeap //todo implement heap
 
   def remove(fibNode:DoubleHeapMember):Unit = {
     decreaseKey(-Double.MaxValue,fibNode)
-    takeMin()
+    takeTop()
   }
 
   //    public boolean contains(DoubleHeapMember node);
@@ -243,7 +247,7 @@ class FibDoubleHeap //todo implement heap
     }
   }
 
-  class ChildIterator(startNode:DoubleHeapMember,heap:FibDoubleHeap) {
+  class ChildIterator(startNode:DoubleHeapMember,heap:FibonacciHeap) {
   
     private var currentNode:DoubleHeapMember = null
     private var currentChildIterator:ChildIterator = null
@@ -283,192 +287,192 @@ class FibDoubleHeap //todo implement heap
   private def iterator():ChildIterator = {
     new ChildIterator(top,this)
   }
+
+  //todo rename HeapMember later
+  class DoubleHeapMember(val value:Any) {
+
+    private var key: Double = .0
+    private var parent: DoubleHeapMember = null
+    private var child: DoubleHeapMember = null
+    private var left: DoubleHeapMember = this
+    private var right: DoubleHeapMember = this
+    private var childCount: Int = 0
+    private var lostChild: Boolean = false
+    private var inHeap: Boolean = false
+
+    def toDebugString: String = {
+      val builder: StringBuffer = new StringBuffer
+      builder.append("key: " + key + "value: "+value)
+      builder.append(" lostChild: " + lostChild)
+      builder.append(" left: " + left.getKey)
+      builder.append(" right: " + right.getKey)
+      if (parent != null) {
+        builder.append(" parent: " + parent.getKey)
+      }
+      if (child != null) {
+        builder.append(" child: " + child.getKey)
+      }
+      builder.append(" count: " + childCount)
+      builder.append(" inHeap:" + inHeap)
+      builder.toString
+    }
+
+    override def toString:String = {
+      "key: "+key+" value: "+value
+    }
+
+    def clean():Unit = {
+      setRight(this)
+      setLeft(this)
+      parent = null
+      child = null
+      childCount = 0
+      lostChild = false
+      key = 0
+      inHeap = false
+    }
+
+    def getKey: Double = {
+      key
+    }
+
+    private def validateHeap(heap: FibonacciHeap):Unit = {
+      if (heap == null) {
+        throw new NullPointerException("These methods should only be called by an DoubleHeap.")
+      }
+    }
+
+    def isInHeap: Boolean = {
+      inHeap
+    }
+
+    def setKey(key: Double, heap: FibonacciHeap):Unit = {
+      validateHeap(heap)
+      this.key = key
+      inHeap = true
+    }
+
+    private def remove():Unit = {
+      getLeft.setRight(getRight)
+      getRight.setLeft(getLeft)
+    }
+
+    def remove(heap: FibonacciHeap):Unit = {
+      validateHeap(heap)
+      remove()
+    }
+
+    private def cat(node: DoubleHeapMember) {
+      node.setLeft(this)
+      node.setRight(getRight)
+      setRight(node)
+      node.getRight.setLeft(node)
+    }
+
+    def cat(node: DoubleHeapMember, heap: FibonacciHeap) {
+      validateHeap(heap)
+      cat(node)
+    }
+
+    def addChild(childNode: DoubleHeapMember, heap: FibonacciHeap) {
+      validateHeap(heap)
+      if (getChild == null) {
+        setChild(childNode)
+        childNode.setRight(childNode)
+        childNode.setLeft(childNode)
+      }
+      else {
+        getChild.cat(childNode)
+      }
+      childNode.setParent(this)
+      childCount += 1
+      childNode.setLostChild(lostChild = false)
+    }
+
+    def removeChild(childNode: DoubleHeapMember, heap: FibonacciHeap) {
+      validateHeap(heap)
+      childNode.remove()
+      childCount -= 1
+      if (getChild eq childNode) {
+        setChild(childNode.getRight)
+      }
+      if (getChildCount == 0) {
+        setChild(null)
+      }
+      childNode.setParent(null)
+      childNode.setLostChild(lostChild = true)
+    }
+
+    def getParent(heap: FibonacciHeap): DoubleHeapMember = {
+      validateHeap(heap)
+      parent
+    }
+
+    private def setParent(parent: DoubleHeapMember) {
+      this.parent = parent
+    }
+
+    private def getLeft: DoubleHeapMember = {
+      left
+    }
+
+    private def setLeft(left: DoubleHeapMember) {
+      this.left = left
+    }
+
+    def getLeft(heap: FibonacciHeap): DoubleHeapMember = {
+      validateHeap(heap)
+      left
+    }
+
+    private def getRight: DoubleHeapMember = {
+      right
+    }
+
+    private def setRight(right: DoubleHeapMember) {
+      this.right = right
+    }
+
+    def getRight(heap: FibonacciHeap): DoubleHeapMember = {
+      validateHeap(heap)
+      right
+    }
+
+    private def getChild: DoubleHeapMember = {
+      child
+    }
+
+    private def setChild(child: DoubleHeapMember) {
+      this.child = child
+    }
+
+    def getChild(heap: FibonacciHeap): DoubleHeapMember = {
+      validateHeap(heap)
+      child
+    }
+
+    private def getChildCount: Int = {
+      childCount
+    }
+
+    def getChildCount(heap: FibonacciHeap): Int = {
+      validateHeap(heap)
+      childCount
+    }
+
+    def lostChild(heap: FibonacciHeap): Boolean = {
+      validateHeap(heap)
+      lostChild
+    }
+
+    private def setLostChild(lostChild: Boolean) {
+      this.lostChild = lostChild
+    }
+
+    def setLostChild(lostChild: Boolean, heap: FibonacciHeap) {
+      validateHeap(heap)
+      setLostChild(lostChild)
+    }
+  }
 }
 
-//todo move into fibonacci heap class
-//todo rename HeapMember later
-class DoubleHeapMember(val value:Any) {
-
-  private var key: Double = .0
-  private var parent: DoubleHeapMember = null
-  private var child: DoubleHeapMember = null
-  private var left: DoubleHeapMember = this
-  private var right: DoubleHeapMember = this
-  private var childCount: Int = 0
-  private var lostChild: Boolean = false
-  private var inHeap: Boolean = false
-
-  def toDebugString: String = {
-    val builder: StringBuffer = new StringBuffer
-    builder.append("key: " + key + "value: "+value)
-    builder.append(" lostChild: " + lostChild)
-    builder.append(" left: " + left.getKey)
-    builder.append(" right: " + right.getKey)
-    if (parent != null) {
-      builder.append(" parent: " + parent.getKey)
-    }
-    if (child != null) {
-      builder.append(" child: " + child.getKey)
-    }
-    builder.append(" count: " + childCount)
-    builder.append(" inHeap:" + inHeap)
-    builder.toString
-  }
-
-  override def toString:String = {
-    "key: "+key+" value: "+value
-  }
-
-  def clean():Unit = {
-    setRight(this)
-    setLeft(this)
-    parent = null
-    child = null
-    childCount = 0
-    lostChild = false
-    key = 0
-    inHeap = false
-  }
-
-  def getKey: Double = {
-    key
-  }
-
-  private def validateHeap(heap: FibDoubleHeap):Unit = {
-    if (heap == null) {
-      throw new NullPointerException("These methods should only be called by an DoubleHeap.")
-    }
-  }
-
-  def isInHeap: Boolean = {
-    inHeap
-  }
-
-  def setKey(key: Double, heap: FibDoubleHeap):Unit = {
-    validateHeap(heap)
-    this.key = key
-    inHeap = true
-  }
-
-  private def remove():Unit = {
-    getLeft.setRight(getRight)
-    getRight.setLeft(getLeft)
-  }
-
-  def remove(heap: FibDoubleHeap):Unit = {
-    validateHeap(heap)
-    remove()
-  }
-
-  private def cat(node: DoubleHeapMember) {
-    node.setLeft(this)
-    node.setRight(getRight)
-    setRight(node)
-    node.getRight.setLeft(node)
-  }
-
-  def cat(node: DoubleHeapMember, heap: FibDoubleHeap) {
-    validateHeap(heap)
-    cat(node)
-  }
-
-  def addChild(childNode: DoubleHeapMember, heap: FibDoubleHeap) {
-    validateHeap(heap)
-    if (getChild == null) {
-      setChild(childNode)
-      childNode.setRight(childNode)
-      childNode.setLeft(childNode)
-    }
-    else {
-      getChild.cat(childNode)
-    }
-    childNode.setParent(this)
-    childCount += 1
-    childNode.setLostChild(lostChild = false)
-  }
-
-  def removeChild(childNode: DoubleHeapMember, heap: FibDoubleHeap) {
-    validateHeap(heap)
-    childNode.remove()
-    childCount -= 1
-    if (getChild eq childNode) {
-      setChild(childNode.getRight)
-    }
-    if (getChildCount == 0) {
-      setChild(null)
-    }
-    childNode.setParent(null)
-    childNode.setLostChild(lostChild = true)
-  }
-
-  def getParent(heap: FibDoubleHeap): DoubleHeapMember = {
-    validateHeap(heap)
-    parent
-  }
-
-  private def setParent(parent: DoubleHeapMember) {
-    this.parent = parent
-  }
-
-  private def getLeft: DoubleHeapMember = {
-    left
-  }
-
-  private def setLeft(left: DoubleHeapMember) {
-    this.left = left
-  }
-
-  def getLeft(heap: FibDoubleHeap): DoubleHeapMember = {
-    validateHeap(heap)
-    left
-  }
-
-  private def getRight: DoubleHeapMember = {
-    right
-  }
-
-  private def setRight(right: DoubleHeapMember) {
-    this.right = right
-  }
-
-  def getRight(heap: FibDoubleHeap): DoubleHeapMember = {
-    validateHeap(heap)
-    right
-  }
-
-  private def getChild: DoubleHeapMember = {
-    child
-  }
-
-  private def setChild(child: DoubleHeapMember) {
-    this.child = child
-  }
-
-  def getChild(heap: FibDoubleHeap): DoubleHeapMember = {
-    validateHeap(heap)
-    child
-  }
-
-  private def getChildCount: Int = {
-    childCount
-  }
-
-  def getChildCount(heap: FibDoubleHeap): Int = {
-    validateHeap(heap)
-    childCount
-  }
-
-  def lostChild(heap: FibDoubleHeap): Boolean = {
-    validateHeap(heap)
-    lostChild
-  }
-
-  private def setLostChild(lostChild: Boolean) {
-    this.lostChild = lostChild
-  }
-
-  def setLostChild(lostChild: Boolean, heap: FibDoubleHeap) {
-    validateHeap(heap)
-    setLostChild(lostChild)
-  }
-}

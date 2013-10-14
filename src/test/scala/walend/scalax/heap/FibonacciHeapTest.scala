@@ -11,14 +11,14 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
-  def emptyHeap = new FibDoubleHeap
-  def oneMemberHeap:FibDoubleHeap = {
+  def emptyHeap = new FibonacciHeap
+  def oneMemberHeap:FibonacciHeap = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap
   }
 
-  def twoMemberHeap:FibDoubleHeap = {
+  def twoMemberHeap:FibonacciHeap = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap.insert(2,"B")
@@ -30,11 +30,11 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
   }
 
   it should "throw an IllegalStateException when asked for its min value" in {
-    a [IllegalStateException] should be thrownBy {emptyHeap.getMin}
+    a [IllegalStateException] should be thrownBy {emptyHeap.topMember}
   }
 
   it should "throw an IllegalStateException when asked for its min key value" in {
-    a [IllegalStateException] should be thrownBy {emptyHeap.getMinKey}
+    a [IllegalStateException] should be thrownBy {emptyHeap.topKey}
   }
 
   it should "not be empty after an item is added" in {
@@ -43,14 +43,14 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
   it should "be empty after a heap with one item has that item removed" in {
     val heap = oneMemberHeap
-    heap.takeMin()
+    heap.takeTop()
     heap.isEmpty should be(true)
   }
 
   it should "not be empty after a heap with two item has that item removed" in {
     val heap = twoMemberHeap
 
-    heap.takeMin()
+    heap.takeTop()
     heap.isEmpty should be(false)
   }
 
@@ -62,7 +62,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
     heap.changeKey(3,b)
 
-    heap.takeMin() should be(a)
+    heap.takeTop() should be(a)
   }
 
   it should "change what is at the top of the heap if a key in the heap changes to be lower than the min" in {
@@ -73,7 +73,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
     heap.changeKey(0,b)
 
-    heap.takeMin() should be(b)
+    heap.takeTop() should be(b)
   }
 
   it should "change what is at the top of the heap if the current min in the heap changes to be lower than another key" in {
@@ -84,13 +84,13 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
     heap.changeKey(3,a)
 
-    heap.takeMin() should be(b)
+    heap.takeTop() should be(b)
   }
 
   it should "be able to handle a lot of operations on a larger heap" in {
     val heap = emptyHeap
 
-    val a = heap.insert(8,"A")
+    val a:heap.DoubleHeapMember = heap.insert(8,"A")
     val b = heap.insert(7,"B")
     val c = heap.insert(6,"C")
     val d = heap.insert(5,"D")
@@ -99,25 +99,25 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val g = heap.insert(2,"G")
     val h = heap.insert(1,"H")
 
-    heap.takeMin().value should be("H")
+    heap.takeTop().value should be("H")
     heap.changeKey(0,g)
     heap.changeKey(9,f)
 
     heap.remove(b)
 
-    heap.getMin.value should be("G")
+    heap.topMember.value should be("G")
 
     heap.changeKey(10,g)
 
-    heap.takeMin().value should be("E")
-    heap.takeMin().value should be("D")
-    heap.takeMin().value should be("C")
-    heap.takeMin().value should be("A")
+    heap.takeTop().value should be("E")
+    heap.takeTop().value should be("D")
+    heap.takeTop().value should be("C")
+    heap.takeTop().value should be("A")
 
-    println(heap.getMin)
+    println(heap.topMember)
 
-    heap.takeMin().value should be("F")
-    heap.takeMin().value should be("G")
+    heap.takeTop().value should be("F")
+    heap.takeTop().value should be("G")
     heap.isEmpty should be (true)
   }
 }
