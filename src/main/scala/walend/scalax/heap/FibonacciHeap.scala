@@ -128,7 +128,7 @@ class FibonacciHeap[V] //todo implement heap
     if(top != null) {
       top.cat(fibNode)
     }
-    if((top==null)||(fibNode.key<top.key)) {
+    if((top==null)||(comparator.lt(fibNode.key,top.key))) {
       top = fibNode
     }
     size = size +1
@@ -177,7 +177,7 @@ class FibonacciHeap[V] //todo implement heap
         val next:HeapMember = x.right
         while(fibNodes(d) != null) {
           var y:HeapMember = fibNodes(d)
-          if(x.key>y.key) {
+          if(comparator.gt(x.key,y.key)) {
             val temp:HeapMember = y
             y = x
             x = temp
