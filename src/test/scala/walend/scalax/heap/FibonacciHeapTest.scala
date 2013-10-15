@@ -2,7 +2,7 @@ package walend.scalax.heap
 
 //import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.{Matchers, FlatSpec}
-import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
+import walend.scalax.heap.FibonacciHeap.MinDoubleHeapComparator
 
 /**
  * Tests of a Fibonacci Heap
@@ -12,7 +12,7 @@ import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
-  def emptyHeap = new FibonacciHeap[Double,String](DoubleHeapComparator)
+  def emptyHeap = new FibonacciHeap[Double,String](MinDoubleHeapComparator)
   def oneMemberHeap:FibonacciHeap[Double,String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
@@ -61,7 +61,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val a = heap.insert(1,"A")
     val b = heap.insert(2,"B")
 
-    heap.changeKey(3,b)
+    b.key_(3)
 
     heap.takeTop() should be(a)
   }
@@ -72,7 +72,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val a = heap.insert(1,"A")
     val b = heap.insert(2,"B")
 
-    heap.changeKey(0,b)
+    b.key_(0)
 
     heap.takeTop() should be(b)
   }
@@ -83,7 +83,7 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val a = heap.insert(1,"A")
     val b = heap.insert(2,"B")
 
-    heap.changeKey(3,a)
+    a.key_(3)
 
     heap.takeTop() should be(b)
   }
@@ -101,16 +101,16 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
     val h = heap.insert(1,"H")
 
     heap.takeTop().value should be("H")
-    heap.changeKey(0,g)
-    heap.changeKey(9,f)
+    g.key_(0)
+    f.key_(9)
 
-    heap.remove(b)
+    b.remove()
 
     c.remove()
 
     heap.topMember.value should be("G")
 
-    heap.changeKey(10,g)
+    g.key_(10)
 
     heap.takeTop().value should be("E")
     a.key_(-1)

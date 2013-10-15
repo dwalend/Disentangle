@@ -10,13 +10,10 @@ import walend.scalax.heap.FibonacciHeap.HeapComparator
  * @since 10/14/13 10:17 AM
  */
 
-//todo make generic key
 class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
 {
 
-  def isEmpty:Boolean = {
-    size==0
-  }
+  def isEmpty:Boolean = size==0
 
   def insert(key:K,value:V):HeapMember = {
     comparator.checkKey(key)
@@ -57,18 +54,15 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       top = z.right
       consolidate()
     }
-
     size = size -1
     z.clean()
     z
   }
 
-  def changeKey(key:K,fibNode:HeapMember):Unit = {
+  private def changeKey(key:K,fibNode:HeapMember):Unit = {
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
-      case Some(x) if x < 0 => {
-        raiseKey(key,fibNode)
-      }
+      case Some(x) if x < 0 => raiseKey(key,fibNode)
       case Some(x) if x == 0 => // the key hasn't changed
       case Some(x) if x > 0 => {
         remove(fibNode)
@@ -78,38 +72,30 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     }
   }
 
-  def remove(fibNode:HeapMember):Unit = {
+  private def remove(fibNode:HeapMember):Unit = {
     raiseKey(comparator.AlwaysTop,fibNode)
     takeTop()
   }
 
-  //    public boolean contains(DoubleHeapMember node);
-  /*
-  public void clear()
-  {
-      top=null;
-      size=0;
-  }
-  */
+  //todo union
+  //todo contains(HeapMember)
+  //todo containsValue(Value)
+  //todo containsKey(Key)
+  //todo unapply to a Seq of HeapMembers
+  //todo values
+  //todo keys
 
   override def toString: String = {
     val builder = new StringBuilder()
 
-    builder.append("FibDoubleHeap size: "+size+"\n")
+    builder.append(this.getClass.getSimpleName+" size: "+size+"\n")
     builder.append("top: ")
-    if(top==null)
-    {
-      builder.append("null")
-    }
-    else
-    {
-      builder.append(top.toString())
-    }
+    if(top==null) builder.append("null")
+    else builder.append(top.toString())
     builder.append("\n")
 
     val it:ChildIterator = iterator()
-    while(it.hasNext)
-    {
+    while(it.hasNext) {
       builder.append(it.next().toString)
       builder.append("\n")
     }
@@ -135,14 +121,6 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     fibNode
   }
 
-  /*
-  public FibDoubleHeap(DoubleHeap heap)
-  {
-      //todo union
-      //        union(heap);
-  }
-  */
-
   private def cascadingCut(y: HeapMember): Unit = {
     val z: HeapMember = y.parent
     if (z != null) {
@@ -167,8 +145,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       do {
         rootCount = rootCount + 1
         x = x.right
-      }//do
-      while(x!=top)
+      } while(x!=top)
   
       while(rootCount>0) {
         var d:Int = x.childCount
@@ -377,7 +354,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
 
     private[FibonacciHeap] def releaseChild(childNode: HeapMember) {
       childNode.release()
-      childCount -= 1
+      childCount = childCount - 1
       if (child == childNode) {
         child = childNode.right
       }
@@ -405,7 +382,7 @@ object FibonacciHeap {
     def AlwaysTop:K
   }
 
-  object DoubleHeapComparator extends HeapComparator[Double] {
+  object MinDoubleHeapComparator extends HeapComparator[Double] {
 
     def lteq(x: Double, y: Double): Boolean = {
       x <= y
