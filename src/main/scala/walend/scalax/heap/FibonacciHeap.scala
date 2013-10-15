@@ -1,6 +1,6 @@
 package walend.scalax.heap
 
-//todo shouldn't need to import these. They should already be in the namespace
+//todo why do I need to import this? It's already in the namespace.
 import walend.scalax.heap.FibonacciHeap.HeapComparator
 
 /**
@@ -10,20 +10,20 @@ import walend.scalax.heap.FibonacciHeap.HeapComparator
  * @since 10/14/13 10:17 AM
  */
 
-class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
+class FibonacciHeap[K,V](comparator:HeapComparator[K]) extends Heap[K,V]
 {
 
   def isEmpty:Boolean = size==0
 
-  def insert(key:K,value:V):HeapMember = {
+  def insert(key:K,value:V):FibonacciHeapMember = {
     comparator.checkKey(key)
 
-    val fibNode:HeapMember = new HeapMember(value)
+    val fibNode:FibonacciHeapMember = new FibonacciHeapMember(value)
 
     reinsert(key,fibNode)
   }
 
-  def topMember:HeapMember = {
+  def topMember:FibonacciHeapMember = {
     checkTop()
     top
   }
@@ -37,11 +37,11 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     top.key
   }
 
-  def takeTop():HeapMember = {
+  def takeTop():FibonacciHeapMember = {
     checkTop()
-    val z:HeapMember = top
+    val z:FibonacciHeapMember = top
     while(z.child!=null) {
-      val x:HeapMember = z.child
+      val x:FibonacciHeapMember = z.child
       z.releaseChild(x)
       z.cat(x)
     }
@@ -59,7 +59,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     z
   }
 
-  private def changeKey(key:K,fibNode:HeapMember):Unit = {
+  private def changeKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
       case Some(x) if x < 0 => raiseKey(key,fibNode)
@@ -72,7 +72,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     }
   }
 
-  private def remove(fibNode:HeapMember):Unit = {
+  private def remove(fibNode:FibonacciHeapMember):Unit = {
     raiseKey(comparator.AlwaysTop,fibNode)
     takeTop()
   }
@@ -84,6 +84,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
   //todo unapply to a Seq of HeapMembers
   //todo values
   //todo keys
+  //todo members
 
   override def toString: String = {
     val builder = new StringBuilder()
@@ -102,10 +103,10 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     builder.toString()
   }
 
-  private var top:HeapMember = null
+  private var top:FibonacciHeapMember = null
   private var size:Int = 0
 
-  private def reinsert(key:K,fibNode:HeapMember):HeapMember = {
+  private def reinsert(key:K,fibNode:FibonacciHeapMember):FibonacciHeapMember = {
     comparator.checkKey(key)
 
     fibNode.setKeyAndInHeap(key)
@@ -121,8 +122,8 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     fibNode
   }
 
-  private def cascadingCut(y: HeapMember): Unit = {
-    val z: HeapMember = y.parent
+  private def cascadingCut(y: FibonacciHeapMember): Unit = {
+    val z: FibonacciHeapMember = y.parent
     if (z != null) {
       if (!y.lostChild) {
         y.lostChild = true
@@ -137,10 +138,10 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
   private def consolidate():Unit = {
 
     import scala.collection.mutable.ArraySeq
-    val fibNodes:ArraySeq[HeapMember] = new ArraySeq[HeapMember](size)
+    val fibNodes:ArraySeq[FibonacciHeapMember] = new ArraySeq[FibonacciHeapMember](size)
 
     var rootCount:Int = 0
-    var x:HeapMember = top
+    var x:FibonacciHeapMember = top
     if(x!=null) {
       do {
         rootCount = rootCount + 1
@@ -150,11 +151,11 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       while(rootCount>0) {
         var d:Int = x.childCount
 
-        val next:HeapMember = x.right
+        val next:FibonacciHeapMember = x.right
         while(fibNodes(d) != null) {
-          var y:HeapMember = fibNodes(d)
+          var y:FibonacciHeapMember = fibNodes(d)
           if(comparator.gt(x.key,y.key)) {
-            val temp:HeapMember = y
+            val temp:FibonacciHeapMember = y
             y = x
             x = temp
           }
@@ -189,7 +190,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
   /**
   Removes x from the child list of y.
     */
-  private def cut(x:HeapMember,y:HeapMember):Unit = {
+  private def cut(x:FibonacciHeapMember,y:FibonacciHeapMember):Unit = {
     y.releaseChild(x)
     top.cat(x)
   }
@@ -197,7 +198,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
   /**
   Make y a child of x.
     */
-  private def link(y:HeapMember,x:HeapMember):Unit = {
+  private def link(y:FibonacciHeapMember,x:FibonacciHeapMember):Unit = {
     //remove y from the list of the heap
     y.release()
     
@@ -211,9 +212,9 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     }
   }
 
-  private def raiseKey(key:K,fibNode:HeapMember):Unit = {
+  private def raiseKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
-    val y:HeapMember = fibNode.parent
+    val y:FibonacciHeapMember = fibNode.parent
     if((y!=null) && comparator.lt(fibNode.key,y.key)) {
           cut(fibNode,y)
           cascadingCut(y)
@@ -221,9 +222,9 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     if(comparator.lt(fibNode.key,top.key)) top = fibNode
   }
 
-  private class ChildIterator(startNode:HeapMember) {
+  private class ChildIterator(startNode:FibonacciHeapMember) {
   
-    private var currentNode:HeapMember = null
+    private var currentNode:FibonacciHeapMember = null
     private var currentChildIterator:ChildIterator = null
     
     def hasNext:Boolean = {
@@ -233,7 +234,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       startNode != currentNode
     }
     
-    def next():HeapMember = {
+    def next():FibonacciHeapMember = {
       if((currentChildIterator!=null)&&(currentChildIterator.hasNext)) {
         currentChildIterator.next()
       }
@@ -262,13 +263,13 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
     new ChildIterator(top)
   }
 
-  class HeapMember(val value:V) {
+  class FibonacciHeapMember(val value:V) extends HeapMember {
 
     private var _key:K = comparator.AlwaysTop
-    private[FibonacciHeap] var parent: HeapMember = null //todo only need accessor outside of member
-    private[FibonacciHeap] var child: HeapMember = null //todo only need accessor outside of member
-    private var left: HeapMember = this
-    private[FibonacciHeap] var right: HeapMember = this //todo only need accessor outside of member
+    private[FibonacciHeap] var parent: FibonacciHeapMember = null //todo only need accessor outside of member
+    private[FibonacciHeap] var child: FibonacciHeapMember = null //todo only need accessor outside of member
+    private var left: FibonacciHeapMember = this
+    private[FibonacciHeap] var right: FibonacciHeapMember = this //todo only need accessor outside of member
     private[FibonacciHeap] var childCount: Int = 0
     private[FibonacciHeap] var lostChild: Boolean = false
     private var inHeap: Boolean = false
@@ -331,14 +332,14 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       right.left = left
     }
 
-    private[FibonacciHeap] def cat(node: HeapMember) {
+    private[FibonacciHeap] def cat(node: FibonacciHeapMember) {
       node.left = this
       node.right = right
       right = node
       node.right.left = node
     }
 
-    private[FibonacciHeap] def addChild(childNode: HeapMember) {
+    private[FibonacciHeap] def addChild(childNode: FibonacciHeapMember) {
       if (child == null) {
         child = childNode
         childNode.right = childNode
@@ -352,7 +353,7 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
       childNode.lostChild = false
     }
 
-    private[FibonacciHeap] def releaseChild(childNode: HeapMember) {
+    private[FibonacciHeap] def releaseChild(childNode: FibonacciHeapMember) {
       childNode.release()
       childCount = childCount - 1
       if (child == childNode) {
