@@ -68,7 +68,7 @@ class FibonacciHeap[V] //todo implement heap
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
       case Some(x) if x < 0 => {
-        decreaseKey(key,fibNode)
+        raiseKey(key,fibNode)
       }
       case Some(x) if x == 0 => // the key hasn't changed
       case Some(x) if x > 0 => {
@@ -80,7 +80,7 @@ class FibonacciHeap[V] //todo implement heap
   }
 
   def remove(fibNode:HeapMember):Unit = {
-    decreaseKey(comparator.AlwaysTop,fibNode)
+    raiseKey(comparator.AlwaysTop,fibNode)
     takeTop()
   }
 
@@ -198,8 +198,9 @@ class FibonacciHeap[V] //todo implement heap
           if(top!=null) {
             fibNodes(i).release()
             top.cat(fibNodes(i))
-            if(fibNodes(i).key < top.key){
-              top = fibNodes(i)
+            comparator.tryCompare(fibNodes(i).key,top.key) match {
+              case Some(x) if x<0 => top = fibNodes(i)
+              case _ => //it is not the new top
             }
           }
           else {
@@ -235,15 +236,21 @@ class FibonacciHeap[V] //todo implement heap
     }
   }
 
-  private def decreaseKey(key:Double,fibNode:HeapMember):Unit = {
+  private def raiseKey(key:Double,fibNode:HeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
     val y:HeapMember = fibNode.parent
-    if((y!=null)&&(fibNode.key<y.key)){
-      cut(fibNode,y)
-      cascadingCut(y)
+    if(y!=null) {
+      comparator.tryCompare(fibNode.key,y.key) match {
+        case Some(x) if x < 0 => {
+          cut(fibNode,y)
+          cascadingCut(y)
+        }
+        case _ => //do nothing
+      }
     }
-    if(fibNode.key<top.key){
-      top = fibNode
+    comparator.tryCompare(fibNode.key,top.key) match {
+      case Some(x) if x < 0 => top = fibNode
+      case _ => //do nothing
     }
   }
 
