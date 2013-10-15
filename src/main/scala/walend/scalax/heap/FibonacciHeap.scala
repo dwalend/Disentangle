@@ -1,5 +1,7 @@
 package walend.scalax.heap
 
+import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
+
 /**
  * A generic Fibonacci heap
  *
@@ -11,12 +13,14 @@ package walend.scalax.heap
 //todo make generic key
 class FibonacciHeap[V] //todo implement heap
 {
+  val comparator = DoubleHeapComparator
+
   def isEmpty:Boolean = {
     size==0
   }
 
   def insert(key:Double,value:V):HeapMember = {
-    checkKeyValue(key)
+    comparator.checkKey(key)
 
     val fibNode:HeapMember = new HeapMember(value)
 
@@ -61,19 +65,22 @@ class FibonacciHeap[V] //todo implement heap
   }
 
   def changeKey(key:Double,fibNode:HeapMember):Unit = {
-    checkKeyValue(key)
-    if(key > fibNode.key) {
-      remove(fibNode)
-      reinsert(key,fibNode)
+    comparator.checkKey(key)
+    comparator.tryCompare(key,fibNode.key) match {
+      case Some(x) if x < 0 => {
+        decreaseKey(key,fibNode)
+      }
+      case Some(x) if x == 0 => // the key hasn't changed
+      case Some(x) if x > 0 => {
+        remove(fibNode)
+        reinsert(key,fibNode)
+      }
+      case None => throw new IllegalArgumentException("Can not compare "+fibNode.key+" and "+key)
     }
-    else if (key < fibNode.key) {
-      decreaseKey(key,fibNode)
-    }
-    //else the key hasn't changed
   }
 
   def remove(fibNode:HeapMember):Unit = {
-    decreaseKey(-Double.MaxValue,fibNode)
+    decreaseKey(comparator.AlwaysTop,fibNode)
     takeTop()
   }
 
@@ -114,7 +121,7 @@ class FibonacciHeap[V] //todo implement heap
   private var size:Int = 0
 
   private def reinsert(key:Double,fibNode:HeapMember):HeapMember = {
-    checkKeyValue(key)
+    comparator.checkKey(key)
 
     fibNode.setKeyAndInHeap(key)
 
@@ -220,12 +227,6 @@ class FibonacciHeap[V] //todo implement heap
     
     //make y a child of x
     x.addChild(y)
-  }
-
-  private def checkKeyValue(key:Double):Unit = {
-    if(!(key > -Double.MaxValue)) {
-      throw new IllegalArgumentException("key is "+key+" but must be greater than "+ -Double.MaxValue)
-    }
   }
 
   private def checkTop():Unit = {
@@ -394,6 +395,51 @@ class FibonacciHeap[V] //todo implement heap
 
 object FibonacciHeap {
 
-//todo ordering needs go here
+  trait HeapComparator[K] extends PartialOrdering[K] {
+
+    /**
+     * @param key
+     * @throws IllegalArgumentException if the key is unusable
+     */
+    def checkKey(key:K)
+
+    /**
+     * A key that will always be at the top of the heap if present at all. Used to efficiently remove items from the heap.
+     */
+    def AlwaysTop:K
+  }
+
+  object DoubleHeapComparator extends HeapComparator[Double] {
+
+    def lteq(x: Double, y: Double): Boolean = {
+      x <= y
+    }
+
+    /**
+     * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
+
+     */
+    def tryCompare(x: Double, y: Double): Option[Int] = {
+      if(x<y) Some(-1)
+      else if(x==y) Some(0)
+      else if(x>y) Some(1)
+      else None
+    }
+
+    /**
+     * @param key
+     * @throws IllegalArgumentException if the key is unusable
+     */
+    def checkKey(key: Double): Unit = {
+      if(!(key > AlwaysTop)) {
+        throw new IllegalArgumentException("key is "+key+" but must be greater than "+ AlwaysTop)
+      }
+    }
+
+    /**
+     * Minimum value for the DoubleHeap
+     */
+    def AlwaysTop:Double = Double.MinValue
+  }
 
 }
