@@ -198,9 +198,8 @@ class FibonacciHeap[V] //todo implement heap
           if(top!=null) {
             fibNodes(i).release()
             top.cat(fibNodes(i))
-            comparator.tryCompare(fibNodes(i).key,top.key) match {
-              case Some(x) if x<0 => top = fibNodes(i)
-              case _ => //it is not the new top
+            if(comparator.lt(fibNodes(i).key,top.key)) {
+              top = fibNodes(i)
             }
           }
           else {
