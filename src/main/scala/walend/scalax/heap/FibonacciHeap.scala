@@ -238,19 +238,11 @@ class FibonacciHeap[V] //todo implement heap
   private def raiseKey(key:Double,fibNode:HeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
     val y:HeapMember = fibNode.parent
-    if(y!=null) {
-      comparator.tryCompare(fibNode.key,y.key) match {
-        case Some(x) if x < 0 => {
+    if((y!=null) && comparator.lt(fibNode.key,y.key)) {
           cut(fibNode,y)
           cascadingCut(y)
-        }
-        case _ => //do nothing
-      }
     }
-    comparator.tryCompare(fibNode.key,top.key) match {
-      case Some(x) if x < 0 => top = fibNode
-      case _ => //do nothing
-    }
+    if(comparator.lt(fibNode.key,top.key)) top = fibNode
   }
 
   private class ChildIterator(startNode:HeapMember) {
