@@ -34,7 +34,7 @@ class FibonacciHeap[V] //todo implement heap
   
   def topKey:Double = {
     checkTop()
-    top.getKey
+    top.key
   }
 
   def takeTop():HeapMember = {
@@ -62,7 +62,7 @@ class FibonacciHeap[V] //todo implement heap
 
   def changeKey(key:Double,fibNode:HeapMember):Unit = {
     checkKeyValue(key)
-    if(key > fibNode.getKey) {
+    if(key > fibNode.key) {
       remove(fibNode)
       reinsert(key,fibNode)
     }
@@ -115,12 +115,12 @@ class FibonacciHeap[V] //todo implement heap
   private def reinsert(key:Double,fibNode:HeapMember):HeapMember = {
     checkKeyValue(key)
 
-    fibNode.setKey(key)
+    fibNode.setKeyAndInHeap(key)
 
     if(top != null) {
       top.cat(fibNode)
     }
-    if((top==null)||(fibNode.getKey<top.getKey)) {
+    if((top==null)||(fibNode.key<top.key)) {
       top = fibNode
     }
     size = size +1
@@ -169,7 +169,7 @@ class FibonacciHeap[V] //todo implement heap
         val next:HeapMember = x.right
         while(fibNodes(d) != null) {
           var y:HeapMember = fibNodes(d)
-          if(x.getKey>y.getKey) {
+          if(x.key>y.key) {
             val temp:HeapMember = y
             y = x
             x = temp
@@ -190,7 +190,7 @@ class FibonacciHeap[V] //todo implement heap
           if(top!=null) {
             fibNodes(i).release()
             top.cat(fibNodes(i))
-            if(fibNodes(i).getKey < top.getKey){
+            if(fibNodes(i).key < top.key){
               top = fibNodes(i)
             }
           }
@@ -234,13 +234,13 @@ class FibonacciHeap[V] //todo implement heap
   }
 
   private def decreaseKey(key:Double,fibNode:HeapMember):Unit = {
-    fibNode.setKey(key)
+    fibNode.setKeyAndInHeap(key)
     val y:HeapMember = fibNode.parent
-    if((y!=null)&&(fibNode.getKey<y.getKey)){
+    if((y!=null)&&(fibNode.key<y.key)){
       cut(fibNode,y)
       cascadingCut(y)
     }
-    if(fibNode.getKey<top.getKey){
+    if(fibNode.key<top.key){
       top = fibNode
     }
   }
@@ -287,10 +287,9 @@ class FibonacciHeap[V] //todo implement heap
   }
 
   //todo move changeKey and remove into here
-  //todo more scala-eque access to variables
   class HeapMember(val value:V) {
 
-    private var key: Double = .0
+    private var _key: Double = .0
     private[FibonacciHeap] var parent: HeapMember = null //todo only need accessor outside of member
     private[FibonacciHeap] var child: HeapMember = null //todo only need accessor outside of member
     private var left: HeapMember = this
@@ -301,15 +300,15 @@ class FibonacciHeap[V] //todo implement heap
 
     private def toDebugString: String = {
       val builder: StringBuffer = new StringBuffer
-      builder.append("key: " + key + "value: "+value)
+      builder.append("key: " + _key + "value: "+value)
       builder.append(" lostChild: " + lostChild)
-      builder.append(" left: " + left.getKey)
-      builder.append(" right: " + right.getKey)
+      builder.append(" left: " + left.key)
+      builder.append(" right: " + right.key)
       if (parent != null) {
-        builder.append(" parent: " + parent.getKey)
+        builder.append(" parent: " + parent.key)
       }
       if (child != null) {
-        builder.append(" child: " + child.getKey)
+        builder.append(" child: " + child.key)
       }
       builder.append(" childCount: " + childCount)
       builder.append(" inHeap:" + inHeap)
@@ -317,7 +316,7 @@ class FibonacciHeap[V] //todo implement heap
     }
 
     override def toString:String = {
-      "key: "+key+" value: "+value
+      "key: "+_key+" value: "+value
     }
 
     private[FibonacciHeap] def clean():Unit = {
@@ -327,21 +326,21 @@ class FibonacciHeap[V] //todo implement heap
       child = null
       childCount = 0
       lostChild = false
-      key = 0
+      _key = 0
       inHeap = false
     }
 
     //todo standard accessors
-    def getKey: Double = {
-      key
+    def key: Double = {
+      _key
     }
 
     def isInHeap: Boolean = {
       inHeap
     }
 
-    private[FibonacciHeap] def setKey(key: Double):Unit = {
-      this.key = key
+    private[FibonacciHeap] def setKeyAndInHeap(key: Double):Unit = {
+      this._key = key
       inHeap = true
     }
 
