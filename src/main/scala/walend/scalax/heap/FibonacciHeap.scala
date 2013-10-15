@@ -287,7 +287,6 @@ class FibonacciHeap[V] //todo implement heap
     new ChildIterator(top)
   }
 
-  //todo move changeKey and remove into here
   class HeapMember(val value:V) {
 
     private var _key: Double = .0

@@ -105,16 +105,16 @@ class FibonacciHeapTest extends FlatSpec with Matchers {
 
     heap.remove(b)
 
+    c.remove()
+
     heap.topMember.value should be("G")
 
     heap.changeKey(10,g)
 
     heap.takeTop().value should be("E")
-    heap.takeTop().value should be("D")
-    heap.takeTop().value should be("C")
+    a.key_(-1)
     heap.takeTop().value should be("A")
-
-    println(heap.topMember)
+    heap.takeTop().value should be("D")
 
     heap.takeTop().value should be("F")
     heap.takeTop().value should be("G")
