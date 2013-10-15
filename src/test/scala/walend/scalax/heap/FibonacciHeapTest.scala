@@ -2,6 +2,7 @@ package walend.scalax.heap
 
 //import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.{Matchers, FlatSpec}
+import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
 
 /**
  * Tests of a Fibonacci Heap
@@ -11,14 +12,14 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
-  def emptyHeap = new FibonacciHeap[String]
-  def oneMemberHeap:FibonacciHeap[String] = {
+  def emptyHeap = new FibonacciHeap[Double,String](DoubleHeapComparator)
+  def oneMemberHeap:FibonacciHeap[Double,String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap
   }
 
-  def twoMemberHeap:FibonacciHeap[String] = {
+  def twoMemberHeap:FibonacciHeap[Double,String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
     heap.insert(2,"B")

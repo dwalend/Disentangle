@@ -1,6 +1,7 @@
 package walend.scalax.heap
 
-import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
+//todo shouldn't need to import these. They should already be in the namespace
+import walend.scalax.heap.FibonacciHeap.HeapComparator
 
 /**
  * A generic Fibonacci heap
@@ -9,17 +10,15 @@ import walend.scalax.heap.FibonacciHeap.DoubleHeapComparator
  * @since 10/14/13 10:17 AM
  */
 
-//todo custom Ordering with magic top value
 //todo make generic key
-class FibonacciHeap[V] //todo implement heap
+class FibonacciHeap[K,V](comparator:HeapComparator[K]) //todo implement heap
 {
-  val comparator = DoubleHeapComparator
 
   def isEmpty:Boolean = {
     size==0
   }
 
-  def insert(key:Double,value:V):HeapMember = {
+  def insert(key:K,value:V):HeapMember = {
     comparator.checkKey(key)
 
     val fibNode:HeapMember = new HeapMember(value)
@@ -36,7 +35,7 @@ class FibonacciHeap[V] //todo implement heap
     topMember.value
   }
   
-  def topKey:Double = {
+  def topKey:K = {
     checkTop()
     top.key
   }
@@ -64,7 +63,7 @@ class FibonacciHeap[V] //todo implement heap
     z
   }
 
-  def changeKey(key:Double,fibNode:HeapMember):Unit = {
+  def changeKey(key:K,fibNode:HeapMember):Unit = {
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
       case Some(x) if x < 0 => {
@@ -120,7 +119,7 @@ class FibonacciHeap[V] //todo implement heap
   private var top:HeapMember = null
   private var size:Int = 0
 
-  private def reinsert(key:Double,fibNode:HeapMember):HeapMember = {
+  private def reinsert(key:K,fibNode:HeapMember):HeapMember = {
     comparator.checkKey(key)
 
     fibNode.setKeyAndInHeap(key)
@@ -235,7 +234,7 @@ class FibonacciHeap[V] //todo implement heap
     }
   }
 
-  private def raiseKey(key:Double,fibNode:HeapMember):Unit = {
+  private def raiseKey(key:K,fibNode:HeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
     val y:HeapMember = fibNode.parent
     if((y!=null) && comparator.lt(fibNode.key,y.key)) {
@@ -288,7 +287,7 @@ class FibonacciHeap[V] //todo implement heap
 
   class HeapMember(val value:V) {
 
-    private var _key: Double = .0
+    private var _key:K = comparator.AlwaysTop
     private[FibonacciHeap] var parent: HeapMember = null //todo only need accessor outside of member
     private[FibonacciHeap] var child: HeapMember = null //todo only need accessor outside of member
     private var left: HeapMember = this
@@ -325,15 +324,15 @@ class FibonacciHeap[V] //todo implement heap
       child = null
       childCount = 0
       lostChild = false
-      _key = 0
+      _key = comparator.AlwaysTop
       inHeap = false
     }
 
-    def key: Double = {
+    def key:K = {
       _key
     }
 
-    def key_(newKey:Double):Unit = {
+    def key_(newKey:K):Unit = {
       FibonacciHeap.this.changeKey(newKey,this)
     }
 
@@ -345,7 +344,7 @@ class FibonacciHeap[V] //todo implement heap
       FibonacciHeap.this.remove(this)
     }
 
-    private[FibonacciHeap] def setKeyAndInHeap(key: Double):Unit = {
+    private[FibonacciHeap] def setKeyAndInHeap(key: K):Unit = {
       this._key = key
       inHeap = true
     }
@@ -396,7 +395,6 @@ object FibonacciHeap {
   trait HeapComparator[K] extends PartialOrdering[K] {
 
     /**
-     * @param key
      * @throws IllegalArgumentException if the key is unusable
      */
     def checkKey(key:K)
@@ -425,7 +423,6 @@ object FibonacciHeap {
     }
 
     /**
-     * @param key
      * @throws IllegalArgumentException if the key is unusable
      */
     def checkKey(key: Double): Unit = {
