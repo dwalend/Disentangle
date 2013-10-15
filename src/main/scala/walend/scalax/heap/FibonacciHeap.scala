@@ -66,9 +66,10 @@ class FibonacciHeap[V] //todo implement heap
       remove(fibNode)
       reinsert(key,fibNode)
     }
-    else {
+    else if (key < fibNode.key) {
       decreaseKey(key,fibNode)
     }
+    //else the key hasn't changed
   }
 
   def remove(fibNode:HeapMember):Unit = {
@@ -330,13 +331,20 @@ class FibonacciHeap[V] //todo implement heap
       inHeap = false
     }
 
-    //todo standard accessors
     def key: Double = {
       _key
     }
 
+    def key_(newKey:Double):Unit = {
+      FibonacciHeap.this.changeKey(newKey,this)
+    }
+
     def isInHeap: Boolean = {
       inHeap
+    }
+
+    def remove():Unit = {
+      FibonacciHeap.this.remove(this)
     }
 
     private[FibonacciHeap] def setKeyAndInHeap(key: Double):Unit = {
