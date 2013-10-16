@@ -1,6 +1,8 @@
 package walend.scalax.heap
 
 /**
+ * A structure that makes an extreme value of some objects available.
+ * 
  * @author dwalend
  * @since 10/15/13 6:14 PM
  */
@@ -26,7 +28,9 @@ trait Heap[K,V] {
   }
 }
 
-trait HeapComparator[K] extends PartialOrdering[K] {
+object Heap {}
+
+trait HeapOrdering[K] extends PartialOrdering[K] {
 
   /**
    * @throws IllegalArgumentException if the key is unusable
@@ -42,7 +46,7 @@ trait HeapComparator[K] extends PartialOrdering[K] {
 /**
  * A heap ordering that puts the least Double on top.
  */
-object MinDoubleHeapComparator extends HeapComparator[Double] {
+object MinDoubleHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
     x <= y

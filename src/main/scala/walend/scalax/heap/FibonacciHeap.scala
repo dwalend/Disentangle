@@ -7,7 +7,7 @@ package walend.scalax.heap
  * @since 10/14/13 10:17 AM
  */
 
-class FibonacciHeap[K,V](comparator:HeapComparator[K]) extends Heap[K,V]
+class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V]
 {
 
   def isEmpty:Boolean = size==0

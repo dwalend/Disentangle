@@ -10,7 +10,7 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 
-  def emptyHeap = new FibonacciHeap[Double,String](MinDoubleHeapComparator)
+  def emptyHeap = new FibonacciHeap[Double,String](MinDoubleHeapOrdering)
   def oneMemberHeap:FibonacciHeap[Double,String] = {
     val heap = emptyHeap
     heap.insert(1,"A")
