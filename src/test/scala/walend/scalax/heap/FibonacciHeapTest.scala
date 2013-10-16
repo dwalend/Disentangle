@@ -1,8 +1,6 @@
 package walend.scalax.heap
 
-//import org.scalatest.{Matchers, FlatSpec}
 import org.scalatest.{Matchers, FlatSpec}
-import walend.scalax.heap.FibonacciHeap.MinDoubleHeapComparator
 
 /**
  * Tests of a Fibonacci Heap

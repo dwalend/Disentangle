@@ -1,8 +1,5 @@
 package walend.scalax.heap
 
-//todo why do I need to import this? It's already in the namespace.
-import walend.scalax.heap.FibonacciHeap.HeapComparator
-
 /**
  * A generic Fibonacci heap
  *
@@ -369,50 +366,5 @@ class FibonacciHeap[K,V](comparator:HeapComparator[K]) extends Heap[K,V]
 }
 
 object FibonacciHeap {
-
-  trait HeapComparator[K] extends PartialOrdering[K] {
-
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
-    def checkKey(key:K)
-
-    /**
-     * A key that will always be at the top of the heap if present at all. Used to efficiently remove items from the heap.
-     */
-    def AlwaysTop:K
-  }
-
-  object MinDoubleHeapComparator extends HeapComparator[Double] {
-
-    def lteq(x: Double, y: Double): Boolean = {
-      x <= y
-    }
-
-    /**
-     * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
-
-     */
-    def tryCompare(x: Double, y: Double): Option[Int] = {
-      if(x<y) Some(-1)
-      else if(x==y) Some(0)
-      else if(x>y) Some(1)
-      else None
-    }
-
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
-    def checkKey(key: Double): Unit = {
-      if(!(key > AlwaysTop)) {
-        throw new IllegalArgumentException("key is "+key+" but must be greater than "+ AlwaysTop)
-      }
-    }
-
-    /**
-     * Minimum value for the DoubleHeap
-     */
-    def AlwaysTop:Double = Double.MinValue
-  }
 
 }
