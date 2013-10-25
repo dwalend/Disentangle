@@ -8,19 +8,15 @@ Pulblicize
 Overall
 * Add more to the package doc.
 * Add tests and move SomeGraph to tests
+* Add markdown to the project description
 
 Structures
 
 * MultiPath representation (Probably a subgraph via having)
 * Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
-* Fibonacci heap
 
 Algorithms
 
-* Binomial heap
-* Minimum spanning tree
-* Dijkstra's algorithm
-* Fibonacci heap
 * MST with Fibonacci heap
 * Dijkstra with a Fibonacci heap
 * Basic betweenness and closeness
@@ -28,7 +24,6 @@ Algorithms
 * Lazy Label Graph. (Single-Source graph)
 * A* algorithm
 * Parallel queued minimization
-* Minimum spanning trees
 
 Semirings
 
