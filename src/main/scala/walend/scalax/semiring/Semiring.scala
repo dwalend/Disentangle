@@ -27,8 +27,9 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Implement this method to create the core of a summary operator
    */
+  //todo rework to return a label, then rework an optimized variant to return None for no change. Maybe. Or just switch to a version that returns a label.
   def summary(fromThroughToLabel:Label,
-              currentLabel:Label):Option[Label]
+              currentLabel:Label):Label
 
   /**
    * Implement this method to create the core of an extend operator
@@ -38,7 +39,8 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your summary operator.
    */
-  def fullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
+  /*   not used just now
+  def oldFullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
                  (from:labelGraph.NodeT,
                   through:labelGraph.NodeT,
                   to:labelGraph.NodeT,
@@ -50,11 +52,27 @@ abstract class Semiring[Label: ClassTag] {
         case Some(edgeIn) => edgeIn.label
       }
       summary(fromThroughToLabel,currentLabel) match {
-        case Some(labelUpdate) => Some((from.value ~+> to.value)(labelUpdate))
-        case None => None
+        case O => None
+        case labelUpdate:Label => Some((from.value ~+> to.value)(labelUpdate))
       }
     }
     else None
+  }
+    */
+  /**
+   * Override this method if you need to work with nodes and edges directly as part of your summary operator.
+   */
+  def fullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
+                       (from:labelGraph.NodeT,
+                        through:labelGraph.NodeT,
+                        to:labelGraph.NodeT,
+                        fromThroughToLabel:Label):Label = {
+
+    val currentLabel:Label = from ~>? to match {
+      case None => O
+      case Some(edgeIn) => edgeIn.label
+    }
+    summary(fromThroughToLabel,currentLabel)
   }
 
   /**
@@ -79,10 +97,11 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Override this method to add side effects when you replace an edge.
    */
+  /* not used now
   def replaceEdge[N](labelGraph:MutableGraph[N,LDiEdge])
-                 (from:labelGraph.NodeT,
-                  to:labelGraph.NodeT,
-                  replacementEdge:LDiEdge[N]):Unit = {
+                    (from:labelGraph.NodeT,
+                     to:labelGraph.NodeT,
+                     replacementEdge:LDiEdge[N]):Unit = {
 
     from ~>? to match {
       case Some(oldEdge) => {
@@ -90,6 +109,26 @@ abstract class Semiring[Label: ClassTag] {
       }
       case None => ;
     }
+    labelGraph.addAndGet(replacementEdge)
+  }
+*/
+  /**
+   * Override this method to add side effects when you replace a label.
+   */
+  def replaceLabel[N](labelGraph:MutableGraph[N,LDiEdge])
+                    (from:labelGraph.NodeT,
+                     to:labelGraph.NodeT,
+                     replacementLabel:Label):Unit = {
+
+    from ~>? to match {
+      case Some(oldEdge) => {
+        labelGraph.remove(oldEdge.toEdgeIn)
+      }
+      case None => ;
+    }
+
+    val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
+
     labelGraph.addAndGet(replacementEdge)
   }
 
@@ -105,14 +144,10 @@ abstract class Semiring[Label: ClassTag] {
     val throughTo:Option[labelGraph.EdgeT] = through ~>? to
     val fromThroughToLabel:Label = fullExtend(labelGraph)(fromThrough,throughTo)
 
-    val fromToReplace:Option[LDiEdge[N]] = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
-    fromToReplace match {
-      //start here. replace the edge inside the summary operator
-      case Some(replacementEdge) => {
-        replaceEdge(labelGraph)(from,to,replacementEdge)
-      }
-      case None => ;
-    }
+    val summaryLabel:Label = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
+
+    replaceLabel(labelGraph)(from,to,summaryLabel)
+    
   }
 }
 

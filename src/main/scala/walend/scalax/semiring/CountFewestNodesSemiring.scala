@@ -16,11 +16,11 @@ object CountFewestNodesSemiring extends Semiring[Int] {
    * Implement this method to create the core of a summary operator
    */
   def summary(fromThroughToLabel:Int,
-              currentLabel:Int):Option[Int] = {
+              currentLabel:Int):Int = {
     if(fromThroughToLabel < currentLabel) {
-      Some(fromThroughToLabel)
+      fromThroughToLabel
     }
-    else None
+    else currentLabel
   }
 
   /**

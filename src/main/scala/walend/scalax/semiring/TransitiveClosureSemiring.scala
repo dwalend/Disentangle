@@ -14,11 +14,8 @@ object TransitiveClosureSemiring extends Semiring[Boolean] {
   def O = false
 
   def summary(fromThroughToLabel:Boolean,
-              currentLabel:Boolean):Option[Boolean] = {
-    if(fromThroughToLabel & !currentLabel) {
-      Some(true)
-    }
-    else None
+              currentLabel:Boolean):Boolean = {
+    fromThroughToLabel | currentLabel
   }
 
   def extend(fromThroughLabel:Boolean,throughToLabel:Boolean):Boolean = {

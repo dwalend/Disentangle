@@ -18,15 +18,16 @@ class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
    * Implement this method to create the core of a summary operator
    */
   def summary(fromThroughToLabel:Option[List[N]],
-              currentLabel:Option[List[N]]):Option[Option[List[N]]] = {
+              currentLabel:Option[List[N]]):Option[List[N]] = {
 
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToNodes),Some(currentNodes)) => {
-        if(fromThroughToNodes.size < currentNodes.size) Some(fromThroughToLabel)
-        else None
+        if(fromThroughToNodes.size < currentNodes.size) fromThroughToLabel
+        else currentLabel
       }
-      case (Some(fromThroughToNodes),None) => Some(fromThroughToLabel)
-      case _ => None
+      case (Some(fromThroughToNodes),None) => fromThroughToLabel
+      case (None,Some(currentNodes)) => currentLabel
+      case _ => O
     }
   }
 

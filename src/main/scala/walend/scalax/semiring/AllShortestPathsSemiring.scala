@@ -21,18 +21,18 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
  * Implement this method to create the core of a summary operator
  */
   def summary(fromThroughToLabel:Option[NextStep[N]],
-              currentLabel:Option[NextStep[N]]):Option[Option[NextStep[N]]] = {
+              currentLabel:Option[NextStep[N]]):Option[NextStep[N]] = {
 
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
-        if(fromThroughToSteps.steps < currentSteps.steps) Some(fromThroughToLabel)
+        if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
         else if (fromThroughToSteps.steps == currentSteps.steps) {
-          Some(Some(new NextStep[N](currentSteps.steps,currentSteps.choices ++ fromThroughToSteps.choices)))
+          Some(new NextStep[N](currentSteps.steps,currentSteps.choices ++ fromThroughToSteps.choices))
         }
-        else None
+        else { currentLabel }
       }
-      case (Some(fromThroughToNodes),None) => Some(fromThroughToLabel)
-      //the currentLabel is already in the graph
+      case (Some(fromThroughToNodes),None) => fromThroughToLabel
+      case (None,Some(current)) => currentLabel
       case _ => None
     }
   }
