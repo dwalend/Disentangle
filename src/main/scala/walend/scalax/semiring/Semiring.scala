@@ -119,16 +119,18 @@ abstract class Semiring[Label: ClassTag] {
                      to:labelGraph.NodeT,
                      replacementLabel:Label):Unit = {
 
-    from ~>? to match {
-      case Some(oldEdge) => {
-        labelGraph.remove(oldEdge.toEdgeIn)
+    if(replacementLabel != O) { //Don't bother replacing the annihilator
+      from ~>? to match {
+        case Some(oldEdge) => {
+          labelGraph.remove(oldEdge.toEdgeIn)
+        }
+        case None => ;
       }
-      case None => ;
+
+      val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
+
+      labelGraph.addAndGet(replacementEdge)
     }
-
-    val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
-
-    labelGraph.addAndGet(replacementEdge)
   }
 
   /**
@@ -145,9 +147,7 @@ abstract class Semiring[Label: ClassTag] {
 
     val summaryLabel:Label = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
 
-    if(summaryLabel != O) {
-      replaceLabel(labelGraph)(from,to,summaryLabel)
-    }
+    replaceLabel(labelGraph)(from,to,summaryLabel)
   }
 }
 

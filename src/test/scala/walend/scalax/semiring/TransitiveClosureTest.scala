@@ -73,8 +73,38 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   }
 
-  //relax
+  "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
+    import SomeGraph._
+
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
+
+    import scalax.collection.edge.Implicits._
+
+    val expectedEdges = Set(
+      (A~+>B)(true),
+      (A~+>A)(true),
+      (B~+>C)(true),
+      (B~+>B)(true),
+      (C~+>C)(true),
+      (C~+>D)(true),
+      (D~+>D)(true),
+      (D~+>E)(true),
+      (E~+>B)(true),
+      (E~+>F)(true),
+      (E~+>H)(true),
+      (E~+>E)(true),
+      (F~+>F)(true),
+      (G~+>G)(true),
+      (H~+>C)(true),
+      (H~+>H)(true)
+    )
+
+    TransitiveClosureSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,TransitiveClosureSemiring.O)
+
+    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+
+  }
 
 
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
