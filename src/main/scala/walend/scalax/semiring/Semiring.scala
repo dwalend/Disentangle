@@ -28,8 +28,7 @@ abstract class Semiring[Label: ClassTag] {
    * Implement this method to create the core of a summary operator
    */
   //todo rework to return a label, then rework an optimized variant to return None for no change. Maybe. Or just switch to a version that returns a label.
-  def summary(fromThroughToLabel:Label,
-              currentLabel:Label):Label
+  def summary(fromThroughToLabel:Label,currentLabel:Label):Label
 
   /**
    * Implement this method to create the core of an extend operator
@@ -146,8 +145,9 @@ abstract class Semiring[Label: ClassTag] {
 
     val summaryLabel:Label = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
 
-    replaceLabel(labelGraph)(from,to,summaryLabel)
-    
+    if(summaryLabel != O) {
+      replaceLabel(labelGraph)(from,to,summaryLabel)
+    }
   }
 }
 

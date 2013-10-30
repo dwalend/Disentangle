@@ -14,8 +14,11 @@ val graph = SomeGraph.graph
 
 
 
-FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
+val transitiveClosure = FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
 
+for(edge <- transitiveClosure.edges) {
+  println("("+edge._1+"~+>"+edge._2+")(true),")
+}
 
 
 

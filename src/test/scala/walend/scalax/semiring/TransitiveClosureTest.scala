@@ -10,6 +10,73 @@ import org.scalatest.{Matchers, FlatSpec}
  */
 class TransitiveClosureTest extends FlatSpec with Matchers {
 
+  "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
+    import SomeGraph._
+
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
+
+    import scalax.collection.edge.Implicits._
+
+    val expectedEdges = Set(
+      (A~+>B)(true),
+      (A~+>A)(true),
+      (B~+>C)(true),
+      (B~+>B)(true),
+      (C~+>C)(true),
+      (C~+>D)(true),
+      (D~+>D)(true),
+      (D~+>E)(true),
+      (E~+>B)(true),
+      (E~+>F)(true),
+      (E~+>H)(true),
+      (E~+>E)(true),
+      (F~+>F)(true),
+      (G~+>G)(true),
+      (H~+>C)(true),
+      (H~+>H)(true)
+    )
+
+    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+  }
+
+  "Replacing a label in the initial graph" should "only change that one label" in {
+
+    import SomeGraph._
+
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
+
+    import scalax.collection.edge.Implicits._
+
+    val expectedEdges = Set(
+      (A~+>B)(true),
+      (A~+>A)(true),
+      (A~+>C)(true),
+      (B~+>C)(true),
+      (B~+>B)(true),
+      (C~+>C)(true),
+      (C~+>D)(true),
+      (D~+>D)(true),
+      (D~+>E)(true),
+      (E~+>B)(true),
+      (E~+>F)(true),
+      (E~+>H)(true),
+      (E~+>E)(true),
+      (F~+>F)(true),
+      (G~+>G)(true),
+      (H~+>C)(true),
+      (H~+>H)(true)
+    )
+
+    TransitiveClosureSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,true)
+
+    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+
+  }
+
+  //relax
+
+
+
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
     val graph = SomeGraph.graph
 
@@ -26,5 +93,62 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
         case None => fail("No self-edge for "+node)
       }
     }
+  }
+
+  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+
+    val graph = SomeGraph.graph
+
+    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
+
+    import SomeGraph._
+
+    import scalax.collection.edge.Implicits._
+    import scalax.collection.Graph
+    import scalax.collection.edge.LDiEdge
+
+    val expectedEdges = Set(
+      (A~+>B)(true),
+      (A~+>F)(true),
+      (A~+>C)(true),
+      (A~+>D)(true),
+      (A~+>H)(true),
+      (A~+>E)(true),
+      (A~+>A)(true),
+      (B~+>B)(true),
+      (B~+>F)(true),
+      (B~+>C)(true),
+      (B~+>D)(true),
+      (B~+>H)(true),
+      (B~+>E)(true),
+      (C~+>B)(true),
+      (C~+>F)(true),
+      (C~+>C)(true),
+      (C~+>D)(true),
+      (C~+>H)(true),
+      (C~+>E)(true),
+      (D~+>B)(true),
+      (D~+>F)(true),
+      (D~+>C)(true),
+      (D~+>D)(true),
+      (D~+>H)(true),
+      (D~+>E)(true),
+      (E~+>B)(true),
+      (E~+>F)(true),
+      (E~+>C)(true),
+      (E~+>D)(true),
+      (E~+>H)(true),
+      (E~+>E)(true),
+      (F~+>F)(true),
+      (G~+>G)(true),
+      (H~+>B)(true),
+      (H~+>F)(true),
+      (H~+>C)(true),
+      (H~+>D)(true),
+      (H~+>H)(true),
+      (H~+>E)(true)
+    )
+
+    labelGraph.edges.toEdgeInSet should be (expectedEdges)
   }
 }
