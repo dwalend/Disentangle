@@ -1,5 +1,7 @@
 package walend.scalax.semiring
 
+import walend.scalax.heap.HeapOrdering
+
 /**
  * Labels are true if the sink can be reached from the source, false if not.
  *
@@ -37,3 +39,45 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
   }
 }
 
+sealed case class TransitiveClosureHeapKey(override val label:Boolean, val state:Int) extends HeapKey[Boolean]
+
+object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean] {
+  val TrueKey = TransitiveClosureHeapKey(true,1)
+  val FalseKey = TransitiveClosureHeapKey(false,0)
+  val TopKey = TransitiveClosureHeapKey(true,2)
+
+  def keyForLabel(label:Boolean):TransitiveClosureHeapKey = {
+    if(label) TrueKey
+    else FalseKey
+  }
+}
+
+/**
+ * A heap ordering that puts true above false.
+ */
+object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey] {
+
+  def lteq(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Boolean = {
+    x.state <= y.state
+  }
+
+  /**
+   * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
+
+   */
+  def tryCompare(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Option[Int] = {
+    Some(y.state - x.state)
+  }
+
+  /**
+   * @throws IllegalArgumentException if the key is unusable
+   */
+  def checkKey(key: TransitiveClosureHeapKey): Unit = {
+    //sealed class. Nothing to check.
+  }
+
+  /**
+   * Minimum value for the DoubleHeap
+   */
+  def AlwaysTop:TransitiveClosureHeapKey = TransitiveClosureHeapKey.TopKey
+}

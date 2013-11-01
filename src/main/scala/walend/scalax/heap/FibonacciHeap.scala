@@ -58,7 +58,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
   private def changeKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
-      case Some(x) if x < 0 => raiseKey(key,fibNode)
+      case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
       case Some(x) if x == 0 => // the key hasn't changed
       case Some(x) if x > 0 => {
         remove(fibNode)
@@ -68,8 +68,18 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     }
   }
 
+  private def raiseKey(key:K,fibNode:FibonacciHeapMember):Unit = {
+    comparator.checkKey(key)
+    comparator.tryCompare(key,fibNode.key) match {
+      case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
+      case Some(x) if x == 0 => // the key hasn't changed
+      case Some(x) if x > 0 => // do nothing because the existing key is higher
+      case None => throw new IllegalArgumentException("Can not compare "+fibNode.key+" and "+key)
+    }
+  }
+
   private def remove(fibNode:FibonacciHeapMember):Unit = {
-    raiseKey(comparator.AlwaysTop,fibNode)
+    raiseKeyInternal(comparator.AlwaysTop,fibNode)
     takeTop()
   }
 
@@ -208,7 +218,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     }
   }
 
-  private def raiseKey(key:K,fibNode:FibonacciHeapMember):Unit = {
+  private def raiseKeyInternal(key:K,fibNode:FibonacciHeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
     val y:FibonacciHeapMember = fibNode.parent
     if((y!=null) && comparator.lt(fibNode.key,y.key)) {
@@ -310,6 +320,14 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
       FibonacciHeap.this.changeKey(newKey,this)
     }
 
+    /**
+     * If candidateKey will move the HeapMember higher than the heap, change the key. Otherwise, no change.
+     * @param candidateKey proposed new key
+     */
+    def raiseKey(candidateKey: K): Unit = {
+      FibonacciHeap.this.raiseKey(candidateKey,this)
+    }
+
     def isInHeap: Boolean = {
       inHeap
     }
@@ -361,6 +379,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
       childNode.parent = null
       childNode.lostChild = true
     }
+
   }
 }
 

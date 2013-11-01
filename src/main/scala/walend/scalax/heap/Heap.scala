@@ -23,6 +23,12 @@ trait Heap[K,V] {
   trait HeapMember {
     def key:K
     def key_(newKey:K):Unit
+
+    /**
+     * If candidateKey will move the HeapMember higher than the heap, change the key. Otherwise, no change.
+     * @param candidateKey proposed new key
+     */
+    def raiseKey(candidateKey:K):Unit
     def isInHeap: Boolean
     def remove():Unit
   }

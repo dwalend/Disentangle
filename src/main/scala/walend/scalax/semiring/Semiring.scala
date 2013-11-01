@@ -176,3 +176,13 @@ trait LabelGraphBuilder[Label] {
     MutableGraph.from(nodes,initEdges)
   }
 }
+
+trait HeapKey[Label] {
+  def label:Label
+}
+
+trait HeapKeyFactory[Label] {
+  def keyForLabel(label:Label):HeapKey[Label]
+}
+
+//And you'll need a HeapOrdering[HeapKey[Label]] for your semiring. Sometimes the semiring's domain will make this a pass-through. Sometimes not.
