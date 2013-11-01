@@ -114,6 +114,7 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Override this method to add side effects when you replace a label.
    */
+  //todo this really belongs in MutableGraph. Maybe "pimp my API" pattern
   def replaceLabel[N](labelGraph:MutableGraph[N,LDiEdge])
                     (from:labelGraph.NodeT,
                      to:labelGraph.NodeT,
@@ -139,7 +140,7 @@ abstract class Semiring[Label: ClassTag] {
   def relax[N](labelGraph:MutableGraph[N,LDiEdge])
            (from:labelGraph.NodeT,
             through:labelGraph.NodeT,
-            to:labelGraph.NodeT):Unit = {
+            to:labelGraph.NodeT):Label = {
 
     val fromThrough:Option[labelGraph.EdgeT] = from ~>? through
     val throughTo:Option[labelGraph.EdgeT] = through ~>? to
@@ -148,6 +149,7 @@ abstract class Semiring[Label: ClassTag] {
     val summaryLabel:Label = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
 
     replaceLabel(labelGraph)(from,to,summaryLabel)
+    summaryLabel
   }
 }
 
@@ -181,8 +183,13 @@ trait HeapKey[Label] {
   def label:Label
 }
 
+//todo use a type alias instead
+//type KeyForLabel(label:Label) => HeapKey[Label]
 trait HeapKeyFactory[Label] {
   def keyForLabel(label:Label):HeapKey[Label]
 }
 
 //And you'll need a HeapOrdering[HeapKey[Label]] for your semiring. Sometimes the semiring's domain will make this a pass-through. Sometimes not.
+//todo gather all this up in a class of types.
+// todo find out if types can be specified in a trait, and filled in by an implementation
+//todo try out "require" inside of Heap's check

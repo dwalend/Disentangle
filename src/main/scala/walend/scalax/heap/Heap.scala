@@ -20,6 +20,8 @@ trait Heap[K,V] {
 
   def takeTop():HeapMember
 
+  def takeTopValue():V
+
   trait HeapMember {
     def key:K
     def key_(newKey:K):Unit

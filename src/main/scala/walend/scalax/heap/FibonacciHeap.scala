@@ -55,6 +55,8 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     z
   }
 
+  def takeTopValue():V = takeTop().value
+
   private def changeKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
     comparator.tryCompare(key,fibNode.key) match {
