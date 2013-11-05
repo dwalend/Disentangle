@@ -39,7 +39,7 @@ object Dijkstra {
         if(heapKey.isInHeap) {
           //Relax to get a new label
           val label = semiring.relax(labelGraph)(innerSourceNode,topNode,successor)
-          //Try to decrease the key
+          //Try to change the key
           heapKey.raiseKey(heapKeyFactory.keyForLabel(label))
         }
       }
