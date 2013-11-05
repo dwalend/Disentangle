@@ -38,7 +38,8 @@ trait Heap[K,V] {
 
 object Heap {}
 
-trait HeapOrdering[K,+Top] extends PartialOrdering[K] {
+//todo explain how this is used so that it's possible to implement it. (I think the heap moves the greatest value to the top.)
+trait HeapOrdering[K] extends PartialOrdering[K] {
 
   /**
    * @throws IllegalArgumentException if the key is unusable
@@ -48,13 +49,13 @@ trait HeapOrdering[K,+Top] extends PartialOrdering[K] {
   /**
    * A key that will always be at the top of the heap if present at all. Used to efficiently remove items from the heap.
    */
-  def AlwaysTop:Top
+  def AlwaysTop:K
 }
 
 /**
  * A heap ordering that puts the least Double on top.
  */
-object MinDoubleHeapOrdering extends HeapOrdering[Double,Double] {
+object MinDoubleHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
     x <= y

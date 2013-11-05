@@ -62,7 +62,7 @@ object TransitiveClosureHeapKeyFactory extends HeapKeyFactory[Boolean,Transitive
 /**
  * A heap ordering that puts true above false.
  */
-object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey,TransitiveClosureHeapKey] {
+object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey] {
 
   def lteq(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Boolean = {
     y.state <= x.state
