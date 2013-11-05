@@ -16,12 +16,12 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label](labelGraph:MutableGraph[N,LDiEdge])
+  def dijkstra [N:Manifest,Label,Key <: HeapKey[Label]](labelGraph:MutableGraph[N,LDiEdge])
                                  (innerSourceNode:labelGraph.NodeT)
-                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label],heapOrdering:HeapOrdering[HeapKey[Label]]):Graph[N,LDiEdge] = {
+                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key,Key]):Graph[N,LDiEdge] = {
 
     //Set up the map of Nodes to HeapKeys
-    val heap:Heap[HeapKey[Label],labelGraph.NodeT] = new FibonacciHeap(heapOrdering)
+    val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(heapOrdering)
     import scala.collection.breakOut
     val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(heapKeyFactory.keyForLabel(semiring.O),node)))(breakOut)
 
@@ -48,8 +48,8 @@ object Dijkstra {
     labelGraph
   }
 
-  def singleSourceShortestPaths[N:Manifest,Label](sourceNode:N,originalGraph:Graph[N,LDiEdge])
-                                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label],heapOrdering:HeapOrdering[HeapKey[Label]])
+  def singleSourceShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](sourceNode:N,originalGraph:Graph[N,LDiEdge])
+                                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key,Key])
                                                  (labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
@@ -61,8 +61,8 @@ object Dijkstra {
   /**
    * This method runs Dijkstra's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,Label](originalGraph:Graph[N,LDiEdge])
-                                             (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label],heapOrdering:HeapOrdering[HeapKey[Label]])
+  def allPairsShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](originalGraph:Graph[N,LDiEdge])
+                                             (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key,Key])
                                              (labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)

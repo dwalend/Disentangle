@@ -39,9 +39,9 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
   }
 }
 
-sealed case class TransitiveClosureHeapKey(override val label:Boolean, val state:Int) extends HeapKey[Boolean]
+final case class TransitiveClosureHeapKey(override val label:Boolean, val state:Int) extends HeapKey[Boolean]
 
-object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean] {
+object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean,TransitiveClosureHeapKey] {
   val TrueKey = TransitiveClosureHeapKey(true,1)
   val FalseKey = TransitiveClosureHeapKey(false,0)
   val TopKey = TransitiveClosureHeapKey(true,2)
@@ -52,10 +52,17 @@ object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean] {
   }
 }
 
+object TransitiveClosureHeapKeyFactory extends HeapKeyFactory[Boolean,TransitiveClosureHeapKey] {
+  def keyForLabel(label: Boolean):TransitiveClosureHeapKey = {
+    if(label) TransitiveClosureHeapKey.TrueKey
+    else TransitiveClosureHeapKey.FalseKey
+  }
+}
+
 /**
  * A heap ordering that puts true above false.
  */
-object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey] {
+object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey,TransitiveClosureHeapKey] {
 
   def lteq(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Boolean = {
     x.state <= y.state

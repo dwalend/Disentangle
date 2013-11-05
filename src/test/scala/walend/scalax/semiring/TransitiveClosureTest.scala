@@ -2,6 +2,14 @@ package walend.scalax.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 
+import SomeGraph._
+
+import scalax.collection.edge.Implicits._
+import scalax.collection.Graph
+import scalax.collection.edge.LDiEdge
+
+import TransitiveClosureSemiring.ImplicitLabel._
+
 /**
  * Tests Transitive Closure semiring
  *
@@ -11,11 +19,8 @@ import org.scalatest.{Matchers, FlatSpec}
 class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
-    import SomeGraph._
 
     val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
-
-    import scalax.collection.edge.Implicits._
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -41,11 +46,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Replacing a label in the initial graph" should "only change that one label" in {
 
-    import SomeGraph._
-
     val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
-
-    import scalax.collection.edge.Implicits._
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -75,11 +76,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
-    import SomeGraph._
-
     val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(graph)(TransitiveClosureSemiring)
-
-    import scalax.collection.edge.Implicits._
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -131,11 +128,56 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
 
-    import SomeGraph._
+    val expectedEdges = Set(
+      (A~+>B)(true),
+      (A~+>F)(true),
+      (A~+>C)(true),
+      (A~+>D)(true),
+      (A~+>H)(true),
+      (A~+>E)(true),
+      (A~+>A)(true),
+      (B~+>B)(true),
+      (B~+>F)(true),
+      (B~+>C)(true),
+      (B~+>D)(true),
+      (B~+>H)(true),
+      (B~+>E)(true),
+      (C~+>B)(true),
+      (C~+>F)(true),
+      (C~+>C)(true),
+      (C~+>D)(true),
+      (C~+>H)(true),
+      (C~+>E)(true),
+      (D~+>B)(true),
+      (D~+>F)(true),
+      (D~+>C)(true),
+      (D~+>D)(true),
+      (D~+>H)(true),
+      (D~+>E)(true),
+      (E~+>B)(true),
+      (E~+>F)(true),
+      (E~+>C)(true),
+      (E~+>D)(true),
+      (E~+>H)(true),
+      (E~+>E)(true),
+      (F~+>F)(true),
+      (G~+>G)(true),
+      (H~+>B)(true),
+      (H~+>F)(true),
+      (H~+>C)(true),
+      (H~+>D)(true),
+      (H~+>H)(true),
+      (H~+>E)(true)
+    )
 
-    import scalax.collection.edge.Implicits._
-    import scalax.collection.Graph
-    import scalax.collection.edge.LDiEdge
+    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+  }
+
+  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+
+    val graph = SomeGraph.graph
+
+    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(TransitiveClosureSemiring,TransitiveClosureHeapKeyFactory,TransitiveClosureHeapOrdering)(TransitiveClosureLabelGraphBuilder)
 
     val expectedEdges = Set(
       (A~+>B)(true),

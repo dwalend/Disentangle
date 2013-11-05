@@ -185,8 +185,8 @@ trait HeapKey[Label] {
 
 //todo use a type alias instead
 //type KeyForLabel(label:Label) => HeapKey[Label]
-trait HeapKeyFactory[Label] {
-  def keyForLabel(label:Label):HeapKey[Label]
+trait HeapKeyFactory[Label,Key <: HeapKey[Label]] {
+  def keyForLabel(label:Label):Key
 }
 
 //And you'll need a HeapOrdering[HeapKey[Label]] for your semiring. Sometimes the semiring's domain will make this a pass-through. Sometimes not.
