@@ -28,7 +28,7 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Implement this method to create the core of a summary operator
    */
-  //todo rework to return a label, then rework an optimized variant to return None for no change. Maybe. Or just switch to a version that returns a label.
+  //todo rework an optimized variant to return None for no change. Maybe.
   def summary(fromThroughToLabel:Label,currentLabel:Label):Label
 
   /**
@@ -166,7 +166,7 @@ trait LabelGraphBuilder[Label] {
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[N]
 
-  //todo when from starts using ClassTag or TypeTag, do the same. Graph.from uses a Manifest.
+  //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest.
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
                                          (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
     import scala.collection.Set
@@ -184,19 +184,14 @@ trait HeapKey[Label] {
   def label:Label
 }
 
-//todo use a type alias instead
-//type KeyForLabel(label:Label) => HeapKey[Label]
-trait HeapKeyFactory[Label,Key <: HeapKey[Label]] {
-  def keyForLabel(label:Label):Key
-}
-
 //todo try out "require" inside of Heap's check
 
 trait GraphMinimizerSupport[Label,Key <: HeapKey[Label]] {
 
   def semiring:Semiring[Label]
 
-  def heapKeyFactory:HeapKeyFactory[Label,Key]
-
   def heapOrdering:HeapOrdering[Key]
+
+  def heapKeyForLabel:Label => Key
+
 }

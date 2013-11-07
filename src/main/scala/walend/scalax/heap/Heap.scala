@@ -1,7 +1,7 @@
 package walend.scalax.heap
 
 /**
- * A structure that makes an extreme value of some objects available.
+ * A structure that makes an extreme key of some key,value pair available
  * 
  * @author dwalend
  * @since 10/15/13 6:14 PM
@@ -38,7 +38,11 @@ trait Heap[K,V] {
 
 object Heap {}
 
-//todo explain how this is used so that it's possible to implement it. (I think the heap moves the greatest value to the top.)
+/**
+ * The heap moves the greatest value to the top, according to some HeapOrdering.
+ *
+ * @tparam K the key type in this heap map.
+ */
 trait HeapOrdering[K] extends PartialOrdering[K] {
 
   /**
@@ -54,11 +58,13 @@ trait HeapOrdering[K] extends PartialOrdering[K] {
 
 /**
  * A heap ordering that puts the least Double on top.
+ *
+ * If you imitate this code, observe that lteq and tryCompare find the inverse of what you'd have for MaxDoubleHeapOrdering.
  */
 object MinDoubleHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
-    x <= y
+    y <= x
   }
 
   /**
@@ -66,9 +72,9 @@ object MinDoubleHeapOrdering extends HeapOrdering[Double] {
 
    */
   def tryCompare(x: Double, y: Double): Option[Int] = {
-    if(x<y) Some(-1)
+    if(x>y) Some(-1)
     else if(x==y) Some(0)
-    else if(x>y) Some(1)
+    else if(x<y) Some(1)
     else None
   }
 

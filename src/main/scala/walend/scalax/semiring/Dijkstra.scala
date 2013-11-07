@@ -3,7 +3,7 @@ package walend.scalax.semiring
 import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
-import walend.scalax.heap.{HeapOrdering, FibonacciHeap, Heap}
+import walend.scalax.heap.{FibonacciHeap, Heap}
 
 /**
  * An implementation of the Dijkstra's algorithm for general graph minimization.
@@ -23,10 +23,10 @@ object Dijkstra {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
-    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(support.heapKeyFactory.keyForLabel(support.semiring.O),node)))(breakOut)
+    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(support.heapKeyForLabel(support.semiring.O),node)))(breakOut)
 
     //Raise innerSourceNode's to I
-    nodesToHeapMembers.getOrElse(innerSourceNode,throw new IllegalStateException("No HeapMember for innerSourceNode "+innerSourceNode)).raiseKey(support.heapKeyFactory.keyForLabel(support.semiring.I))
+    nodesToHeapMembers.getOrElse(innerSourceNode,throw new IllegalStateException("No HeapMember for innerSourceNode "+innerSourceNode)).raiseKey(support.heapKeyForLabel(support.semiring.I))
 
     //While the heap is not empty
     while(!heap.isEmpty) {
@@ -40,7 +40,7 @@ object Dijkstra {
           //Relax to get a new label
           val label = support.semiring.relax(labelGraph)(innerSourceNode,topNode,successor)
           //Try to change the key
-          heapKey.raiseKey(support.heapKeyFactory.keyForLabel(label))
+          heapKey.raiseKey(support.heapKeyForLabel(label))
         }
       }
     }

@@ -59,7 +59,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
 
   private def changeKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
-    comparator.tryCompare(key,fibNode.key) match {
+    comparator.tryCompare(fibNode.key,key) match {
       case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
       case Some(x) if x == 0 => // the key hasn't changed
       case Some(x) if x > 0 => {
@@ -72,7 +72,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
 
   private def raiseKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
-    comparator.tryCompare(key,fibNode.key) match {
+    comparator.tryCompare(fibNode.key,key) match {
       case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
       case Some(x) if x == 0 => // the key hasn't changed
       case Some(x) if x > 0 => // do nothing because the existing key is higher
@@ -122,7 +122,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     if(top != null) {
       top.cat(fibNode)
     }
-    if((top==null)||(comparator.lt(fibNode.key,top.key))) {
+    if((top==null)||(comparator.lt(top.key,fibNode.key))) {
       top = fibNode
     }
     size = size +1
@@ -162,7 +162,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
         val next:FibonacciHeapMember = x.right
         while(fibNodes(d) != null) {
           var y:FibonacciHeapMember = fibNodes(d)
-          if(comparator.gt(x.key,y.key)) {
+          if(comparator.gt(y.key,x.key)) {
             val temp:FibonacciHeapMember = y
             y = x
             x = temp
@@ -183,7 +183,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
           if(top!=null) {
             fibNodes(i).release()
             top.cat(fibNodes(i))
-            if(comparator.lt(fibNodes(i).key,top.key)) {
+            if(comparator.lt(top.key,fibNodes(i).key)) {
               top = fibNodes(i)
             }
           }
@@ -223,11 +223,11 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
   private def raiseKeyInternal(key:K,fibNode:FibonacciHeapMember):Unit = {
     fibNode.setKeyAndInHeap(key)
     val y:FibonacciHeapMember = fibNode.parent
-    if((y!=null) && comparator.lt(fibNode.key,y.key)) {
+    if((y!=null) && comparator.lt(y.key,fibNode.key)) {
           cut(fibNode,y)
           cascadingCut(y)
     }
-    if(comparator.lt(fibNode.key,top.key)) top = fibNode
+    if(comparator.lt(top.key,fibNode.key)) top = fibNode
   }
 
   private class ChildIterator(startNode:FibonacciHeapMember) {

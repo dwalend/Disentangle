@@ -35,13 +35,13 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+> edge._2)(true)
+    (edge._1 ~+> edge._2)(TransitiveClosureSemiring.I)
   }
 }
 
-final case class TransitiveClosureHeapKey(override val label:Boolean, val state:Int) extends HeapKey[Boolean]
+final case class TransitiveClosureHeapKey(override val label:Boolean, state:Int) extends HeapKey[Boolean]
 
-object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean,TransitiveClosureHeapKey] {
+object TransitiveClosureHeapKey {
   val TrueKey = TransitiveClosureHeapKey(true,1)
   val FalseKey = TransitiveClosureHeapKey(false,0)
   val TopKey = TransitiveClosureHeapKey(true,2)
@@ -52,20 +52,13 @@ object TransitiveClosureHeapKey extends HeapKeyFactory[Boolean,TransitiveClosure
   }
 }
 
-object TransitiveClosureHeapKeyFactory extends HeapKeyFactory[Boolean,TransitiveClosureHeapKey] {
-  def keyForLabel(label: Boolean):TransitiveClosureHeapKey = {
-    if(label) TransitiveClosureHeapKey.TrueKey
-    else TransitiveClosureHeapKey.FalseKey
-  }
-}
-
 /**
  * A heap ordering that puts true above false.
  */
 object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapKey] {
 
   def lteq(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Boolean = {
-    y.state <= x.state
+    x.state <= y.state
   }
 
   /**
@@ -73,7 +66,7 @@ object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapK
 
    */
   def tryCompare(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Option[Int] = {
-    Some(y.state - x.state)
+    Some(x.state - y.state)
   }
 
   /**
@@ -92,7 +85,7 @@ object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapK
 object TransitiveClosure extends GraphMinimizerSupport[Boolean,TransitiveClosureHeapKey] {
   def semiring = TransitiveClosureSemiring
 
-  def heapKeyFactory = TransitiveClosureHeapKeyFactory
+  def heapKeyForLabel = TransitiveClosureHeapKey.keyForLabel
 
   def heapOrdering = TransitiveClosureHeapOrdering
 }
