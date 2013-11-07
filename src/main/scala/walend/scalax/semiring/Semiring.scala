@@ -7,6 +7,7 @@ import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 
 import scalax.collection.edge.Implicits._
+import walend.scalax.heap.HeapOrdering
 
 /**
  *
@@ -189,7 +190,13 @@ trait HeapKeyFactory[Label,Key <: HeapKey[Label]] {
   def keyForLabel(label:Label):Key
 }
 
-//And you'll need a HeapOrdering[HeapKey[Label]] for your semiring. Sometimes the semiring's domain will make this a pass-through. Sometimes not.
-//todo gather all this up in a class of types.
-// todo find out if types can be specified in a trait, and filled in by an implementation
 //todo try out "require" inside of Heap's check
+
+trait GraphMinimizerSupport[Label,Key <: HeapKey[Label]] {
+
+  def semiring:Semiring[Label]
+
+  def heapKeyFactory:HeapKeyFactory[Label,Key]
+
+  def heapOrdering:HeapOrdering[Key]
+}

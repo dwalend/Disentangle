@@ -88,3 +88,11 @@ object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapK
    */
   def AlwaysTop:TransitiveClosureHeapKey = TransitiveClosureHeapKey.TopKey
 }
+
+object TransitiveClosure extends GraphMinimizerSupport[Boolean,TransitiveClosureHeapKey] {
+  def semiring = TransitiveClosureSemiring
+
+  def heapKeyFactory = TransitiveClosureHeapKeyFactory
+
+  def heapOrdering = TransitiveClosureHeapOrdering
+}

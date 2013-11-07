@@ -18,15 +18,15 @@ object Dijkstra {
    */
   def dijkstra [N:Manifest,Label,Key <: HeapKey[Label]](labelGraph:MutableGraph[N,LDiEdge])
                                  (innerSourceNode:labelGraph.NodeT)
-                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key]):Graph[N,LDiEdge] = {
+                                 (support:GraphMinimizerSupport[Label,Key]):Graph[N,LDiEdge] = {
 
     //Set up the map of Nodes to HeapKeys
-    val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(heapOrdering)
+    val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
-    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(heapKeyFactory.keyForLabel(semiring.O),node)))(breakOut)
+    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(support.heapKeyFactory.keyForLabel(support.semiring.O),node)))(breakOut)
 
     //Raise innerSourceNode's to I
-    nodesToHeapMembers.getOrElse(innerSourceNode,throw new IllegalStateException("No HeapMember for innerSourceNode "+innerSourceNode)).raiseKey(heapKeyFactory.keyForLabel(semiring.I))
+    nodesToHeapMembers.getOrElse(innerSourceNode,throw new IllegalStateException("No HeapMember for innerSourceNode "+innerSourceNode)).raiseKey(support.heapKeyFactory.keyForLabel(support.semiring.I))
 
     //While the heap is not empty
     while(!heap.isEmpty) {
@@ -38,9 +38,9 @@ object Dijkstra {
         val heapKey = nodesToHeapMembers.getOrElse(successor,throw new IllegalStateException("No HeapMember for "+successor))
         if(heapKey.isInHeap) {
           //Relax to get a new label
-          val label = semiring.relax(labelGraph)(innerSourceNode,topNode,successor)
+          val label = support.semiring.relax(labelGraph)(innerSourceNode,topNode,successor)
           //Try to change the key
-          heapKey.raiseKey(heapKeyFactory.keyForLabel(label))
+          heapKey.raiseKey(support.heapKeyFactory.keyForLabel(label))
         }
       }
     }
@@ -49,12 +49,11 @@ object Dijkstra {
   }
 
   def singleSourceShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](sourceNode:N,originalGraph:Graph[N,LDiEdge])
-                                                 (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key])
-                                                 (labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
+                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
-    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
+    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
-    dijkstra(labelGraph)(innerSourceNode)(semiring,heapKeyFactory,heapOrdering)
+    dijkstra(labelGraph)(innerSourceNode)(support)
   }
 
 
@@ -62,12 +61,11 @@ object Dijkstra {
    * This method runs Dijkstra's algorithm for all nodes.
    */
   def allPairsShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](originalGraph:Graph[N,LDiEdge])
-                                             (semiring:Semiring[Label],heapKeyFactory:HeapKeyFactory[Label,Key],heapOrdering:HeapOrdering[Key])
-                                             (labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
+                                             (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
-    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
+    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {
-      dijkstra(labelGraph)(node)(semiring,heapKeyFactory,heapOrdering)
+      dijkstra(labelGraph)(node)(support)
     }
     labelGraph
   }

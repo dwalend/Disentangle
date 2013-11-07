@@ -177,7 +177,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
     val graph = SomeGraph.graph
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(TransitiveClosureSemiring,TransitiveClosureHeapKeyFactory,TransitiveClosureHeapOrdering)(TransitiveClosureLabelGraphBuilder)
+    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(TransitiveClosure,TransitiveClosureLabelGraphBuilder)
 
     val expectedEdges = Set(
       (A~+>B)(true),
