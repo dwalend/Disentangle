@@ -180,13 +180,9 @@ trait LabelGraphBuilder[Label] {
   }
 }
 
-trait HeapKey[Label] {
-  def label:Label
-}
-
 //todo try out "require" inside of Heap's check
 
-trait GraphMinimizerSupport[Label,Key <: HeapKey[Label]] {
+trait GraphMinimizerSupport[Label,Key] {
 
   def semiring:Semiring[Label]
 

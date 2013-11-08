@@ -47,46 +47,41 @@ object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Int] {
   }
 }
 
-//todo there should be a way to efficiently use the "pimp my interface" pattern to let the whole thing work off of Ints
-case class IntHeapKey(k:Int)  extends HeapKey[Int] {
-  def label = k
-}
-
 /**
- * A heap ordering that puts true above false.
+ * A heap ordering that puts lower numbers on the top of the heap
  */
-object CountFewestNodesHeapOrdering extends HeapOrdering[IntHeapKey] {
+object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
 
-  def lteq(x: IntHeapKey, y: IntHeapKey): Boolean = {
-    x.label >= y.label
+  def lteq(x: Int, y: Int): Boolean = {
+    x >= y
   }
 
   /**
    * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
 
    */
-  def tryCompare(x: IntHeapKey, y: IntHeapKey): Option[Int] = {
-    Some(y.label-x.label)
+  def tryCompare(x: Int, y: Int): Option[Int] = {
+    Some(y-x)
   }
 
   /**
    * @throws IllegalArgumentException if the key is unusable
    */
-  def checkKey(key: IntHeapKey): Unit = {
-    if(key.label < 0) throw new IllegalArgumentException("Key must be zero or greater, not "+key)
+  def checkKey(key: Int): Unit = {
+    if(key < 0) throw new IllegalArgumentException("Key must be zero or greater, not "+key)
   }
 
   /**
    * Minimum value for the DoubleHeap
    */
-  def AlwaysTop:IntHeapKey = IntHeapKey(-1)
+  def AlwaysTop:Int = -1
 }
 
-object CountFewestNodes extends GraphMinimizerSupport[Int,IntHeapKey] {
+object CountFewestNodes extends GraphMinimizerSupport[Int,Int] {
   def semiring = CountFewestNodesSemiring
 
   def heapOrdering = CountFewestNodesHeapOrdering
 
-  def heapKeyForLabel = {label:Int => IntHeapKey(label)}
+  def heapKeyForLabel = {label:Int => label}
 
 }

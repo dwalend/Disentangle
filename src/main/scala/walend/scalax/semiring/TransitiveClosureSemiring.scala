@@ -39,7 +39,7 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
   }
 }
 
-final case class TransitiveClosureHeapKey(override val label:Boolean, state:Int) extends HeapKey[Boolean]
+final case class TransitiveClosureHeapKey(label:Boolean, state:Int)
 
 object TransitiveClosureHeapKey {
   val TrueKey = TransitiveClosureHeapKey(true,1)

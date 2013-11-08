@@ -16,7 +16,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label,Key <: HeapKey[Label]](labelGraph:MutableGraph[N,LDiEdge])
+  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,LDiEdge])
                                  (innerSourceNode:labelGraph.NodeT)
                                  (support:GraphMinimizerSupport[Label,Key]):Graph[N,LDiEdge] = {
 
@@ -48,7 +48,7 @@ object Dijkstra {
     labelGraph
   }
 
-  def singleSourceShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](sourceNode:N,originalGraph:Graph[N,LDiEdge])
+  def singleSourceShortestPaths[N:Manifest,Label,Key](sourceNode:N,originalGraph:Graph[N,LDiEdge])
                                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
@@ -60,7 +60,7 @@ object Dijkstra {
   /**
    * This method runs Dijkstra's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,Label,Key <: HeapKey[Label]](originalGraph:Graph[N,LDiEdge])
+  def allPairsShortestPaths[N:Manifest,Label,Key](originalGraph:Graph[N,LDiEdge])
                                              (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
