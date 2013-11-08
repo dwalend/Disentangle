@@ -53,7 +53,7 @@ abstract class Semiring[Label: ClassTag] {
       }
       summary(fromThroughToLabel,currentLabel) match {
         case O => None
-        case labelUpdate:Label => Some((from.value ~+> to.value)(labelUpdate))
+        case labelUpdate:Label => Some((from.value ~+#> to.value)(labelUpdate))
       }
     }
     else None
