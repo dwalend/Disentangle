@@ -68,7 +68,7 @@ object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
    * @throws IllegalArgumentException if the key is unusable
    */
   def checkKey(key: Int): Unit = {
-    if(key < 0) throw new IllegalArgumentException("Key must be zero or greater, not "+key)
+    require(key >= 0,"Key must be zero or greater, not "+key)
   }
 
   /**

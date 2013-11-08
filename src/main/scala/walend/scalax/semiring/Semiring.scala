@@ -115,7 +115,7 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Override this method to add side effects when you replace a label.
    */
-  //todo this really belongs in MutableGraph. Maybe "pimp my API" pattern
+  //todo this really belongs in MutableGraph. Maybe "pimp my API" pattern. Definitely need it for a concurrent mutable graph.
   def replaceLabel[N](labelGraph:MutableGraph[N,LDiEdge])
                     (from:labelGraph.NodeT,
                      to:labelGraph.NodeT,
@@ -179,8 +179,6 @@ trait LabelGraphBuilder[Label] {
     MutableGraph.from(nodes,initEdges)
   }
 }
-
-//todo try out "require" inside of Heap's check
 
 trait GraphMinimizerSupport[Label,Key] {
 

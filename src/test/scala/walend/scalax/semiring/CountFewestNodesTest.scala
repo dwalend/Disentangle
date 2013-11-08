@@ -22,7 +22,6 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodesSemiring)
 
-    //todo it looks like edge equality doesn't include checking labels !?
     val expectedEdges = Set(
       (A~+#>B)(1),
       (A~+#>A)(0),
@@ -79,7 +78,6 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodesSemiring)
 
-    //todo the labels don't seem to matter in the equals...
     val expectedEdges = Set(
       (A~+#>B)(1),
       (A~+#>A)(0),

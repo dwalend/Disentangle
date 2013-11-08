@@ -56,7 +56,6 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder[Option[NextStep[
   import scalax.collection.Graph
   import scalax.collection.edge.LDiEdge
 
-  //todo why must I define M different from N?
   def initialEdgeFromGraphEdge[M](originalGraph:Graph[M,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[M] = {
     val edge:LDiEdge[M] = edgeT.toEdgeIn

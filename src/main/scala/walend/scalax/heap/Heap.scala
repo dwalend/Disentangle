@@ -79,18 +79,18 @@ object MinDoubleHeapOrdering extends HeapOrdering[Double] {
   }
 
   /**
+   * Use require to check the key.
+   *
    * @throws IllegalArgumentException if the key is unusable
    */
   def checkKey(key: Double): Unit = {
-    if(!(key > AlwaysTop)) {
-      throw new IllegalArgumentException("key is "+key+" but must be greater than "+ AlwaysTop)
-    }
+    require(key > AlwaysTop,"key is "+key+" but must be greater than "+ AlwaysTop)
   }
 
   /**
    * Minimum value for the DoubleHeap
    */
-  def AlwaysTop:Double = Double.MinValue
+  def AlwaysTop:Double = Double.NegativeInfinity
 
 }
 
