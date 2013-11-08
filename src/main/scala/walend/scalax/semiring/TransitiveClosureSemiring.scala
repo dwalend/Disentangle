@@ -35,7 +35,7 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[Boolean] {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+> edge._2)(TransitiveClosureSemiring.I)
+    (edge._1 ~+#> edge._2)(TransitiveClosureSemiring.I)
   }
 }
 

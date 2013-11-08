@@ -43,7 +43,7 @@ object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Int] {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+> edge._2)(1)
+    (edge._1 ~+#> edge._2)(1)
   }
 }
 
