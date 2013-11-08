@@ -25,14 +25,14 @@ object SomeGraph {
 
   val nodes = List(A,B,C,D,E,F,G,H)
 
-  val ab = (A~+>B)("ab")
-  val bc = (B~+>C)("bc")
-  val cd = (C~+>D)("cd")
-  val de = (D~+>E)("de")
-  val ef = (E~+>F)("ef")
-  val eb = (E~+>B)("eb")
-  val eh = (E~+>H)("eh")
-  val hc = (H~+>C)("hc")
+  val ab = (A~+>B)(1)
+  val bc = (B~+>C)(2)
+  val cd = (C~+>D)(3)
+  val de = (D~+>E)(4)
+  val ef = (E~+>F)(5)
+  val eb = (E~+>B)(6)
+  val eh = (E~+>H)(7)
+  val hc = (H~+>C)(8)
 
   val edges = List(ab,bc,cd,de,ef,eb,eh,hc)
 

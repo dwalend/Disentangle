@@ -1,5 +1,7 @@
 package walend.scalax.semiring
 
+import walend.scalax.heap.HeapOrdering
+
 /**
  * Finds the length of a path that traverses the fewest edges.
  *
@@ -31,7 +33,7 @@ object CountFewestNodesSemiring extends Semiring[Int] {
   }
 }
 
-object CountFewestNodesBetweenGraphBuilder extends LabelGraphBuilder[Int] {
+object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Int] {
 
   import scalax.collection.Graph
   import scalax.collection.edge.LDiEdge
@@ -45,3 +47,46 @@ object CountFewestNodesBetweenGraphBuilder extends LabelGraphBuilder[Int] {
   }
 }
 
+//todo there should be a way to efficiently use the "pimp my interface" pattern to let the whole thing work off of Ints
+case class IntHeapKey(k:Int)  extends HeapKey[Int] {
+  def label = k
+}
+
+/**
+ * A heap ordering that puts true above false.
+ */
+object CountFewestNodesHeapOrdering extends HeapOrdering[IntHeapKey] {
+
+  def lteq(x: IntHeapKey, y: IntHeapKey): Boolean = {
+    x.label >= y.label
+  }
+
+  /**
+   * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
+
+   */
+  def tryCompare(x: IntHeapKey, y: IntHeapKey): Option[Int] = {
+    Some(y.label-x.label)
+  }
+
+  /**
+   * @throws IllegalArgumentException if the key is unusable
+   */
+  def checkKey(key: IntHeapKey): Unit = {
+    if(key.label < 0) throw new IllegalArgumentException("Key must be zero or greater, not "+key)
+  }
+
+  /**
+   * Minimum value for the DoubleHeap
+   */
+  def AlwaysTop:IntHeapKey = IntHeapKey(-1)
+}
+
+object CountFewestNodes extends GraphMinimizerSupport[Int,IntHeapKey] {
+  def semiring = CountFewestNodesSemiring
+
+  def heapOrdering = CountFewestNodesHeapOrdering
+
+  def heapKeyForLabel = {label:Int => IntHeapKey(label)}
+
+}
