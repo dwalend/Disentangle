@@ -166,7 +166,7 @@ trait LabelGraphBuilder[Label] {
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[N]
 
-  //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest.
+  //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest, and move that type parameter to the trait declaration.
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
                                          (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
     import scala.collection.Set
