@@ -1,7 +1,7 @@
 package walend.scalax.semiring
 
 /**
- * Finds all paths that traverse the fewest nodes.
+ * Finds all paths that traverse the fewest nodes. Note that Dijkstra's algorithm won't give good answers via this semiring because it finds zero or one shortest paths.
  *
  * @author dwalend
  * @since v1
@@ -63,4 +63,15 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder[Option[NextStep[
     import scalax.collection.edge.Implicits._
     (edge._1 ~+#> edge._2)(Some(new NextStep(1,Set[M](edge._2))))
   }
+}
+
+class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Int] {
+  def semiring = new AllShortestPathsSemiring[N]
+
+  def heapOrdering = CountFewestNodesHeapOrdering
+
+  def heapKeyForLabel = {label:Option[NextStep[N]] => label match {
+    case Some(nextStep) => nextStep.steps
+    case None => Int.MaxValue
+  }}
 }
