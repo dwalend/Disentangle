@@ -64,40 +64,10 @@ class OneShortestPathGraphBuilder[N] extends LabelGraphBuilder[Option[List[N]]] 
   }
 }
 
-/**
- * A heap ordering that puts lower numbers on the top of the heap
- */
-object OneShortestPathGraphHeapOrdering extends HeapOrdering[Int] {
-
-  def lteq(x: Int, y: Int): Boolean = {
-    x >= y
-  }
-
-  /**
-   * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
-
-   */
-  def tryCompare(x: Int, y: Int): Option[Int] = {
-    Some(y-x)
-  }
-
-  /**
-   * @throws IllegalArgumentException if the key is unusable
-   */
-  def checkKey(key: Int): Unit = {
-    require(key >= 0,"Key must be zero or greater, not "+key)
-  }
-
-  /**
-   * Minimum value for an Int heap
-   */
-  def AlwaysTop:Int = -1
-}
-
 class OneShortestPath[N] extends GraphMinimizerSupport[Option[List[N]],Int] {
   def semiring = new OneShortestPathSemiring[N]
 
-  def heapOrdering = OneShortestPathGraphHeapOrdering
+  def heapOrdering = CountFewestNodesHeapOrdering
 
   def heapKeyForLabel = {label:Option[List[N]] => label match {
     case Some(list) => list.length
