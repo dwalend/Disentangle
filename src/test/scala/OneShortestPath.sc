@@ -6,7 +6,7 @@
  */
 
 import walend.scalax.semiring.SomeGraph._
-import walend.scalax.semiring.{Dijkstra, OneShortestPath, AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, CountFewestNodesGraphBuilder, CountFewestNodesSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
+import walend.scalax.semiring.{Dijkstra, OneShortestPath,OneShortestPathGraphBuilder}
 
 
 
