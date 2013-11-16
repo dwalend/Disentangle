@@ -7,7 +7,7 @@ package walend.scalax.semiring
  * @since v1
  */
 
-case class PreviousStep[N](steps:Int,predecessors:Set[N]) extends BrandesLabel[PreviousStep[N]] {}
+case class PreviousStep[N](steps:Int,predecessors:Set[N]) extends BrandesLabel[N] {}
 
 class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousStep[N]]] {
 
@@ -44,7 +44,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,fromThroughSteps.predecessors))
+        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,throughToSteps.predecessors))
       }
       case _ => None
     }
