@@ -14,7 +14,7 @@ import TransitiveClosureSemiring.ImplicitLabel._
  * Tests Transitive Closure semiring
  *
  * @author dwalend
- * @since 11/7/13 10:31 PM
+ * @since v1
  */
 class CountFewestNodesTest extends FlatSpec with Matchers {
 

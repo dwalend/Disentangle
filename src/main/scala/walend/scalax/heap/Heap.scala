@@ -4,7 +4,7 @@ package walend.scalax.heap
  * A structure that makes an extreme key of some key,value pair available
  * 
  * @author dwalend
- * @since 10/15/13 6:14 PM
+ * @since v1
  */
 trait Heap[K,V] {
 

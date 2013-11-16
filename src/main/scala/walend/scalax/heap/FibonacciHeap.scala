@@ -4,7 +4,7 @@ package walend.scalax.heap
  * A generic Fibonacci heap
  *
  * @author dwalend
- * @since 10/14/13 10:17 AM
+ * @since v1
  */
 
 class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {

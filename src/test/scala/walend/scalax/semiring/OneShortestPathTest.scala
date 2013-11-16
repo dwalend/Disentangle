@@ -14,7 +14,7 @@ import TransitiveClosureSemiring.ImplicitLabel._
  *
  *
  * @author dwalend
- * @since 11/11/13 10:45 PM
+ * @since v1
  */
 class OneShortestPathTest extends FlatSpec with Matchers {
 

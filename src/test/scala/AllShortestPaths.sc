@@ -2,7 +2,7 @@
  *
  *
  * @author dwalend
- * @since 11/13/13 11:41 PM
+ * @since v1
  */
 
 import walend.scalax.semiring.SomeGraph._

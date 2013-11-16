@@ -7,7 +7,7 @@ import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSem
  *
  *
  * @author dwalend
- * @since 8/16/13 4:25 PM
+ * @since v1
  */
 
 val graph = SomeGraph.graph

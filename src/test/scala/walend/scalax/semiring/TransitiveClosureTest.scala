@@ -14,7 +14,7 @@ import TransitiveClosureSemiring.ImplicitLabel._
  * Tests Transitive Closure semiring
  *
  * @author dwalend
- * @since 10/24/13 11:04 PM
+ * @since v1
  */
 class TransitiveClosureTest extends FlatSpec with Matchers {
 
