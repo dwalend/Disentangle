@@ -1,7 +1,7 @@
 package walend.scalax.semiring
 
 /**
- * Finds all paths that traverse the fewest nodes. Note that Dijkstra's algorithm won't give good answers via this semiring because it finds zero or one shortest paths.
+ * Finds all paths that traverse the fewest nodes.
  *
  * @author dwalend
  * @since v1
