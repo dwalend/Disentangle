@@ -3,8 +3,6 @@ package walend.scalax.semiring
 import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
-import walend.scalax.heap.FibonacciHeap
-import walend.scalax.heap.Heap
 import walend.scalax.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable
 import scalax.collection.edge.LBase.LEdgeImplicits
@@ -16,13 +14,15 @@ import scala.reflect.ClassTag
  * @author dwalend
  * @since v1
  */
+//todo you could find edge betweenness instead with a different algorithm
 object Brandes {
 
   /**
    * Brandes' algorithm.
    */
   //todo set type of label for LDiEdge and remove the instanceOf
-  def brandes[N:Manifest,Label <: BrandesLabel[N]:ClassTag,Key](labelGraph:MutableGraph[N,LDiEdge])
+  //todo how to express that Label must be Option[BrandesLabel[N]
+  def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,LDiEdge])
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,LDiEdge],Map[labelGraph.NodeT,Double]) = {
 
@@ -56,54 +56,86 @@ object Brandes {
       }
     }
 
-    //todo this seems like it could use tail recursion
+    //todo this seems like it could use a list, an accumulator, and tail recursion
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness:MutableMap[labelGraph.NodeT,Double] = MutableMap()
     while(!stack.isEmpty) {
       val sink:labelGraph.NodeT = stack.pop()
+      //don't bother finding the partial for the sink
       if (sink != source) {
-        val label:Label = getLabelBetween[N,Label](labelGraph)(source,sink)
-        for(outerPredecessor <- label.predecessors) {
-          val predecessor = labelGraph get outerPredecessor
-          //add to it's partial weight (1 for this sink plus the partial weight accumulated for this sink)*(number of this predecessor's predecessors/number of predecessors)
-          val oldPartial:Double = nodesToPartialBetweenness.getOrElse(predecessor,0)
-          val predecessorLabel:Label = getLabelBetween[N,Label](labelGraph)(source,predecessor)
-          val pathsToPredecessor = predecessorLabel.predecessors.size.toDouble
-          val pathsToSink = label.predecessors.size.toDouble
-          val newPartial:Double = oldPartial + ((1 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
-          nodesToPartialBetweenness.put(predecessor,newPartial)
+        getLabelBetween[N,Label](labelGraph)(source,sink) match {
+          case None =>
+          case Some(brandesLabel) => {
+          for(outerPredecessor <- brandesLabel.predecessors) {
+            val predecessor = labelGraph get outerPredecessor
+            //add to it's partial weight (1 for this sink plus the partial weight accumulated for this sink)*(number of this predecessor's predecessors/number of predecessors)
+            val oldPartial:Double = nodesToPartialBetweenness.getOrElse(predecessor,0)
+            getLabelBetween[N,Label](labelGraph)(source,predecessor) match {
+              case None =>
+              case Some(brandesPredecessor) => {
+                val pathsToPredecessor = brandesPredecessor.predecessors.size.toDouble
+                val pathsToSink = brandesLabel.predecessors.size.toDouble
+                val newPartial:Double = oldPartial + ((1 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
+                nodesToPartialBetweenness.put(predecessor,newPartial)
+                }
+              }
+            }
+          }
         }
       }
     }
-
     (labelGraph,nodesToPartialBetweenness.toMap)
   }
 
-  private def getLabelBetween[N,Label:ClassTag](labelGraph:MutableGraph[N,LDiEdge])
-                                      (source:labelGraph.NodeT,sink:labelGraph.NodeT):Label = {
+  private def getLabelBetween[N,Label <:Option[BrandesLabel[N]]:ClassTag](labelGraph:MutableGraph[N,LDiEdge])
+                                      (source:labelGraph.NodeT,sink:labelGraph.NodeT):Option[BrandesLabel[N]] = {
 
     object ImplicitLabel extends LEdgeImplicits[Label]
     import ImplicitLabel._
 
     source ~>? sink match {
       case Some(edge) => edge.label
-      case None => throw new IllegalStateException("No label edge between "+source+" and "+sink)
+      case None => None
     }
   }
 
 
   /**
-   * This method runs Dijkstra's algorithm for all nodes.
+   * This method runs Brande's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,Label <: BrandesLabel[N]:ClassTag,Key](originalGraph:Graph[N,LDiEdge])
+  def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](originalGraph:Graph[N,LDiEdge])
                                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {
-      brandes(labelGraph)(node)(support)
+      brandesForSource(labelGraph)(node)(support)
     }
     labelGraph
   }
+
+  /**
+   * This method runs Brande's algorithm for all nodes.
+   */
+  def shortestPathsAndBetweenness[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](originalGraph:Graph[N,LDiEdge])
+                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):(Graph[N,LDiEdge],Map[N,Double]) = {
+
+    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
+    val partialBetweennesses = for(node <- labelGraph.nodes) yield {
+      brandesForSource(labelGraph)(node)(support)._2
+    }               //this is a Set[Map[labelGraph.NodeT,Double]]
+    //todo pick up here and roll up betweennesses
+
+    def betweennessForNode(node:labelGraph.NodeT):Double = {
+      partialBetweennesses.map(_.getOrElse(node,0.0)).sum
+    }
+
+    val nodesToBetweennesses = labelGraph.nodes.map(node => (node.value,betweennessForNode(node))).toMap
+
+    (labelGraph,nodesToBetweennesses)
+  }
+
+
+
 }
 
 
