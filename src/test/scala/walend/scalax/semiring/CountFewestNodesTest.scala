@@ -20,7 +20,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodesSemiring)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
       (A~+#>B)(1),
@@ -46,7 +46,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing a label in the initial graph" should "only change that one label" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodesSemiring)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
       (A~+#>B)(1),
@@ -76,7 +76,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodesSemiring)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
       (A~+#>B)(1),
@@ -105,7 +105,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
 
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesSemiring)(CountFewestNodesGraphBuilder)
 
@@ -122,7 +122,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesSemiring)(CountFewestNodesGraphBuilder)
 
@@ -173,7 +173,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(CountFewestNodes,CountFewestNodesGraphBuilder)
 

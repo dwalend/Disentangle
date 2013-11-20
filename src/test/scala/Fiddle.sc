@@ -10,7 +10,7 @@ import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSem
  * @since v1
  */
 
-val graph = SomeGraph.graph
+val graph = SomeGraph.testGraph
 
 
 

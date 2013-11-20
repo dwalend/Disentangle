@@ -13,13 +13,13 @@ import walend.scalax.semiring.{FloydWarshall, Dijkstra, AllShortestPaths, AllSho
 val allShortestPaths = new AllShortestPaths[String]
 
 
-val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsGraphBuilder[String])
+val labelGraph = Dijkstra.allPairsShortestPaths(testGraph)(allShortestPaths,new AllShortestPathsGraphBuilder[String])
 
 for(edge <- labelGraph.edges) {
   println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")
 }
 
-val floydGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPaths.semiring)(new AllShortestPathsGraphBuilder[String])
+val floydGraph = FloydWarshall.allPairsShortestPaths(testGraph)(allShortestPaths.semiring)(new AllShortestPathsGraphBuilder[String])
 
 for(edge <- floydGraph.edges) {
   println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")

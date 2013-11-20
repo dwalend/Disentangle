@@ -23,7 +23,7 @@ object SomeGraph {
   val G = "G"
   val H = "H"
 
-  val nodes = List(A,B,C,D,E,F,G,H)
+  val testNodes = List(A,B,C,D,E,F,G,H)
 
   val ab = (A~+>B)(1)
   val bc = (B~+>C)(2)
@@ -34,8 +34,8 @@ object SomeGraph {
   val eh = (E~+>H)(7)
   val hc = (H~+>C)(8)
 
-  val edges = List(ab,bc,cd,de,ef,eb,eh,hc)
+  val testEdges = List(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val graph:Graph[String,LDiEdge] = Graph.from(nodes,edges)
+  val testGraph:Graph[String,LDiEdge] = Graph.from(testNodes,testEdges)
 
 }

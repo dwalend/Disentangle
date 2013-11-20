@@ -61,7 +61,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = new OneShortestPathGraphBuilder[String].initialLabelGraph(graph)(new OneShortestPathSemiring[String])
+    val labelGraph = new OneShortestPathGraphBuilder[String].initialLabelGraph(testGraph)(new OneShortestPathSemiring[String])
 
     val expectedEdges = Set(
       (B~+#>B)(Some(List())),
@@ -86,7 +86,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
   }
 
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val oneShortestPath = new OneShortestPath[String]
 
@@ -105,7 +105,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val oneShortestPath = new OneShortestPath[String]
 
@@ -158,7 +158,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val oneShortestPath = new OneShortestPath[String]
 

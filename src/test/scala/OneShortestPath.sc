@@ -13,7 +13,7 @@ import walend.scalax.semiring.{Dijkstra, OneShortestPath,OneShortestPathGraphBui
 val oneShortestPath = new OneShortestPath[String]
 
 
-val labelGraph = Dijkstra.allPairsShortestPaths(graph)(oneShortestPath,new OneShortestPathGraphBuilder[String])
+val labelGraph = Dijkstra.allPairsShortestPaths(testGraph)(oneShortestPath,new OneShortestPathGraphBuilder[String])
 
 
 

@@ -59,10 +59,8 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     (A~+#>E)(Some(NextStep(4,Set(B)))),
     (A~+#>A)(Some(NextStep(0,Set()))))
 
-
-
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val allShortestPaths = new AllShortestPaths[String]
 
@@ -81,7 +79,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val allShortestPaths = new AllShortestPaths[String]
 
@@ -94,7 +92,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val graph = SomeGraph.graph
+    val graph = SomeGraph.testGraph
 
     val allShortestPaths = new AllShortestPaths[String]
 

@@ -26,6 +26,8 @@ object Brandes {
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,LDiEdge],Map[labelGraph.NodeT,Double]) = {
 
+    println("source: "+source)
+
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
@@ -61,29 +63,41 @@ object Brandes {
     val nodesToPartialBetweenness:MutableMap[labelGraph.NodeT,Double] = MutableMap()
     while(!stack.isEmpty) {
       val sink:labelGraph.NodeT = stack.pop()
+      println("sink: "+sink)
       //don't bother finding the partial for the sink
       if (sink != source) {
         getLabelBetween[N,Label](labelGraph)(source,sink) match {
           case None =>
           case Some(brandesLabel) => {
-          for(outerPredecessor <- brandesLabel.predecessors) {
-            val predecessor = labelGraph get outerPredecessor
-            //add to it's partial weight (1 for this sink plus the partial weight accumulated for this sink)*(number of this predecessor's predecessors/number of predecessors)
-            val oldPartial:Double = nodesToPartialBetweenness.getOrElse(predecessor,0)
-            getLabelBetween[N,Label](labelGraph)(source,predecessor) match {
-              case None =>
-              case Some(brandesPredecessor) => {
-                val pathsToPredecessor = brandesPredecessor.predecessors.size.toDouble
-                val pathsToSink = brandesLabel.predecessors.size.toDouble
-                val newPartial:Double = oldPartial + ((1 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
-                nodesToPartialBetweenness.put(predecessor,newPartial)
+
+            println("brandesLabel: "+brandesLabel)
+
+            for(outerPredecessor <- brandesLabel.predecessors) {
+
+              println("outerPredecessor "+outerPredecessor)
+
+              val predecessor = labelGraph get outerPredecessor
+              //add to its partial weight (1 for this sink plus the partial weight accumulated for this sink)*(number of this predecessor's predecessors/number of predecessors)
+              val oldPartial:Double = nodesToPartialBetweenness.getOrElse(predecessor,0)
+              println("oldPartial is "+oldPartial)
+              getLabelBetween[N,Label](labelGraph)(source,predecessor) match {
+                case None =>
+                case Some(brandesPredecessor) => {
+                  //todo pick up here. Look at the numbers going in
+                  val pathsToPredecessor = brandesPredecessor.predecessors.size.toDouble
+                  val pathsToSink = brandesLabel.predecessors.size.toDouble
+                  val newPartial:Double = oldPartial + ((1.0 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
+                  println("newPartial is "+newPartial)
+                  nodesToPartialBetweenness.put(predecessor,newPartial)
+                  }
                 }
               }
-            }
-          }
+            } //case Some
         }
       }
     }
+    println(source+" nodesToPartialBetweenness is "+nodesToPartialBetweenness)
+
     (labelGraph,nodesToPartialBetweenness.toMap)
   }
 
@@ -126,16 +140,16 @@ object Brandes {
     //todo pick up here and roll up betweennesses
 
     def betweennessForNode(node:labelGraph.NodeT):Double = {
-      partialBetweennesses.map(_.getOrElse(node,0.0)).sum
+      //Can't just use a map and sum here because the results of the map will be a Set, which will only contain one of each value.
+      partialBetweennesses.foldLeft(0.0)((r,aMap) => r+aMap.getOrElse(node,0.0))
     }
+
+    println("partialBetweennesses are "+partialBetweennesses)
 
     val nodesToBetweennesses = labelGraph.nodes.map(node => (node.value,betweennessForNode(node))).toMap
 
     (labelGraph,nodesToBetweennesses)
   }
-
-
-
 }
 
 
