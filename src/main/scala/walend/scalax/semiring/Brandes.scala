@@ -59,6 +59,7 @@ object Brandes {
     }
 
     //todo this seems like it could use a list, an accumulator, and tail recursion
+    //todo rename brandeslabel and brandespredecessor to sinklabel and predecessorlabel
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness:MutableMap[labelGraph.NodeT,Double] = MutableMap()
     while(!stack.isEmpty) {
@@ -84,8 +85,8 @@ object Brandes {
                 case None =>
                 case Some(brandesPredecessor) => {
                   //todo pick up here. Look at the numbers going in
-                  val pathsToPredecessor = brandesPredecessor.predecessors.size.toDouble
-                  val pathsToSink = brandesLabel.predecessors.size.toDouble
+                  val pathsToPredecessor = brandesPredecessor.numShortestPaths
+                  val pathsToSink = brandesLabel.numShortestPaths
                   val newPartial:Double = oldPartial + ((1.0 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
                   println("newPartial is "+newPartial)
                   nodesToPartialBetweenness.put(predecessor,newPartial)
@@ -160,5 +161,6 @@ object Brandes {
  */
 trait BrandesLabel[N] {
   def predecessors:Set[N]
+  def numShortestPaths:Int
 //  def successors:Set[N]   //todo do you really need successors?
 }

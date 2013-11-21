@@ -17,7 +17,7 @@ import scalax.collection.edge.LDiEdge
 import TransitiveClosureSemiring.ImplicitLabel._
 
 class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
-
+/*
   val expectedEdges = Set(
     (B~+#>B)(Some(PreviousStep(0,Set()))),
     (B~+#>C)(Some(PreviousStep(1,Set(B)))),
@@ -58,7 +58,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     (A~+#>E)(Some(PreviousStep(4,Set(D)))),
     (A~+#>H)(Some(PreviousStep(5,Set(E)))),
     (A~+#>F)(Some(PreviousStep(5,Set(E)))))
-
+                                  */
   //res1: Map[String,Double] = Map(E -> 9.0, F -> 0.0, A -> 0.0, G -> 0.0, B -> 7.0, C -> 6.0, H -> 2.0, D -> 7.0)
   /*
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
@@ -103,6 +103,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     labelGraph.edges.toEdgeInSet should be (expectedEdges)
   }
                  */
+  /*
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 
 //    val graph = SomeGraph.testGraph
@@ -119,6 +120,6 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
-
+     */
 
 }

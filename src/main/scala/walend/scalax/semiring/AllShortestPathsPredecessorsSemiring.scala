@@ -7,14 +7,14 @@ package walend.scalax.semiring
  * @since v1
  */
 
-case class PreviousStep[N](steps:Int,predecessors:Set[N]) extends BrandesLabel[N] {}
+case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) extends BrandesLabel[N] {}
 
 class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousStep[N]]] {
 
   //length of the path is length of the list
 
   //identity and annihilator
-  def I = Some(PreviousStep[N](0,Set[N]()))
+  def I = Some(PreviousStep[N](0,Set[N](),0))
   def O = None
 
   /**
@@ -27,7 +27,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
         if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
         else if (fromThroughToSteps.steps == currentSteps.steps) {
-          Some(new PreviousStep[N](currentSteps.steps,currentSteps.predecessors ++ fromThroughToSteps.predecessors))
+          Some(new PreviousStep[N](currentSteps.steps,currentSteps.predecessors ++ fromThroughToSteps.predecessors,currentSteps.numShortestPaths+fromThroughToSteps.numShortestPaths))
         }
         else { currentLabel }
       }
@@ -44,7 +44,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,throughToSteps.predecessors))
+        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,throughToSteps.predecessors,fromThroughSteps.numShortestPaths*throughToSteps.numShortestPaths))
       }
       case _ => None
     }
@@ -61,7 +61,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Opti
     val edge:LDiEdge[M] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+#> edge._2)(Some(new PreviousStep(1,Set[M](edge._1))))
+    (edge._1 ~+#> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1)))
   }
 }
 
