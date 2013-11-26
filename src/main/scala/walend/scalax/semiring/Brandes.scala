@@ -43,6 +43,7 @@ object Brandes {
     while(!heap.isEmpty) {
       //take the top node
       val topNode = heap.takeTopValue()
+      println("sink: "+topNode)
       //add the top node to the stack
       stack.push(topNode)
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
@@ -57,6 +58,8 @@ object Brandes {
         }
       }
     }
+
+    println("Find partial betweenness for "+source)
 
     //todo this seems like it could use a list, an accumulator, and tail recursion
     //todo rename brandeslabel and brandespredecessor to sinklabel and predecessorlabel
@@ -155,7 +158,7 @@ object Brandes {
 
 
 /**
- * Use this trait for labels where you intend to use Brandes' algorithm
+ * Use this trait for labels where you intend to use Brandes' algorithm. Note that to support Brandes' algorithm the comparator has to be tricked out to avoid double-counting some paths. @See AllShortestPathsPredecessorsSemiring for an example.
  *
  * @tparam N the outer type of nodes in your graph
  */
@@ -163,4 +166,29 @@ trait BrandesLabel[N] {
   def predecessors:Set[N]
   def numShortestPaths:Int
 //  def successors:Set[N]   //todo do you really need successors?
+  def creator:AnyRef
+
+  def matchingCreator(otherCreator:AnyRef):Boolean = {
+
+    println ("creator is "+creator+" otherCreator is "+otherCreator)
+
+    if(otherCreator == creator) true
+    else if (otherCreator == BrandesLabel.default) true
+    else if (otherCreator == BrandesLabel.originalGraph) true
+    else if (creator == BrandesLabel.default) true
+    else if (creator == BrandesLabel.originalGraph) true
+    else false
+  }
+}
+
+object BrandesLabel {
+
+  /**
+   * Value to use for creator when creating the initial label graph to avoid erasing old results.
+   */
+  val originalGraph:AnyRef = "original"
+  /**
+   * Value to use for creator in algorithms where you don't care about dealing with old results.
+   */
+  val default:AnyRef = "default"
 }

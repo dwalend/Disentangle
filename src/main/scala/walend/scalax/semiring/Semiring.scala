@@ -39,29 +39,6 @@ abstract class Semiring[Label: ClassTag] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your summary operator.
    */
-  /*   not used just now
-  def oldFullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
-                 (from:labelGraph.NodeT,
-                  through:labelGraph.NodeT,
-                  to:labelGraph.NodeT,
-                  fromThroughToLabel:Label):Option[LDiEdge[N]] = {
-
-    if(fromThroughToLabel != O) {
-      val currentLabel:Label = from ~>? to match {
-        case None => O
-        case Some(edgeIn) => edgeIn.label
-      }
-      summary(fromThroughToLabel,currentLabel) match {
-        case O => None
-        case labelUpdate:Label => Some((from.value ~+#> to.value)(labelUpdate))
-      }
-    }
-    else None
-  }
-    */
-  /**
-   * Override this method if you need to work with nodes and edges directly as part of your summary operator.
-   */
   def fullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
                        (from:labelGraph.NodeT,
                         through:labelGraph.NodeT,
@@ -94,24 +71,6 @@ abstract class Semiring[Label: ClassTag] {
     }
   }
 
-  /**
-   * Override this method to add side effects when you replace an edge.
-   */
-  /* not used now
-  def replaceEdge[N](labelGraph:MutableGraph[N,LDiEdge])
-                    (from:labelGraph.NodeT,
-                     to:labelGraph.NodeT,
-                     replacementEdge:LDiEdge[N]):Unit = {
-
-    from ~>? to match {
-      case Some(oldEdge) => {
-        labelGraph.remove(oldEdge.toEdgeIn)
-      }
-      case None => ;
-    }
-    labelGraph.addAndGet(replacementEdge)
-  }
-*/
   /**
    * Override this method to add side effects when you replace a label.
    */

@@ -91,18 +91,40 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
     labelGraph.edges.toEdgeInSet should be (expectedEdges)
   }
+*/
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  "Dijkstra's algorithm" should "produce the correct label graph for a simple graph" in {
 
-    val graph = SomeGraph.testGraph
+    //    val graph = SomeGraph.testGraph
+
+    val nodes = Set(A,B,C,D)
+    val edges = Set(ab,bc,cd)
+    val graph = Graph.from(nodes,edges)
+
+//    val expectedBetweenness = Map(A -> 0.0, B -> 2.0, C -> 2.0, D -> 0.0)
 
     val allShortestPaths = new AllShortestPathsPredecessors[String]
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+//    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+    for(edge <- labelGraph.edges) {
+      println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")
+    }
   }
-                 */
+
+  /*
+    "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+
+      val graph = SomeGraph.testGraph
+
+      val allShortestPaths = new AllShortestPathsPredecessors[String]
+
+      val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
+
+      labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    }
+                   */
   /*
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 

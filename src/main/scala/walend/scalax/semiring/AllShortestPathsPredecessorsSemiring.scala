@@ -1,5 +1,9 @@
 package walend.scalax.semiring
 
+import scalax.collection.mutable.Graph
+import scalax.collection.edge.LDiEdge
+import scalax.collection.edge.LBase.LEdgeImplicits
+
 /**
  * Finds all paths that traverse the fewest nodes. Note that Dijkstra's algorithm won't give good answers via this semiring because it finds zero or one shortest paths.
  *
@@ -7,14 +11,15 @@ package walend.scalax.semiring
  * @since v1
  */
 
-case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) extends BrandesLabel[N] {}
+case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N] {}
 
 class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousStep[N]]] {
 
-  //length of the path is length of the list
+  object AnotherImplicitLabel extends LEdgeImplicits[Option[PreviousStep[N]]]
+  import AnotherImplicitLabel._
 
   //identity and annihilator
-  def I = Some(PreviousStep[N](0,Set[N](),0))
+  def I = Some(PreviousStep[N](0,Set[N](),0,BrandesLabel.originalGraph))
   def O = None
 
   /**
@@ -27,7 +32,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
         if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
         else if (fromThroughToSteps.steps == currentSteps.steps) {
-          Some(new PreviousStep[N](currentSteps.steps,currentSteps.predecessors ++ fromThroughToSteps.predecessors,currentSteps.numShortestPaths+fromThroughToSteps.numShortestPaths))
+          Some(new PreviousStep[N](currentSteps.steps,currentSteps.predecessors ++ fromThroughToSteps.predecessors,currentSteps.numShortestPaths+fromThroughToSteps.numShortestPaths,fromThroughToSteps.creator))
         }
         else { currentLabel }
       }
@@ -44,11 +49,116 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,throughToSteps.predecessors,fromThroughSteps.numShortestPaths*throughToSteps.numShortestPaths))
+        Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,
+                                  throughToSteps.predecessors,
+                                  fromThroughSteps.numShortestPaths*throughToSteps.numShortestPaths,
+                                  BrandesLabel.default))
       }
       case _ => None
     }
   }
+
+  def taggingExtend(fromThroughLabel:Option[PreviousStep[N]],
+                    throughToLabel:Option[PreviousStep[N]],
+                    creator:AnyRef):Option[PreviousStep[N]] = {
+
+    (fromThroughLabel,throughToLabel) match {
+      case (Some(fromThroughSteps),Some(throughToSteps)) => {
+
+        println(fromThroughSteps+".matchingCreator("+creator+") is "+fromThroughSteps.matchingCreator(creator))
+        println(throughToSteps+".matchingCreator("+creator+") is "+throughToSteps.matchingCreator(creator))
+
+        if(fromThroughSteps.matchingCreator(creator) && throughToSteps.matchingCreator(creator)) {
+          val numberSteps = fromThroughSteps.steps+throughToSteps.steps
+          //if extendSteps has the same number of steps as throughToLabel, then you've moved from the origin across a first edge. Keep throughToLabel's creator
+          val useCreator = if(numberSteps <= 1) throughToSteps.creator
+                           else creator
+          Some(new PreviousStep[N](numberSteps,
+            throughToSteps.predecessors,
+            fromThroughSteps.numShortestPaths*throughToSteps.numShortestPaths,
+            useCreator))
+        }
+        else None
+      }
+      case _ => None
+    }
+  }
+
+  def taggingSummary(fromThroughToLabel:Option[PreviousStep[N]],
+                      currentLabel:Option[PreviousStep[N]],
+                      creator:AnyRef):Option[PreviousStep[N]] = {
+
+    (fromThroughToLabel,currentLabel) match {
+      case (Some(fromThroughToSteps),Some(currentSteps)) => {
+        if(fromThroughToSteps.matchingCreator(creator) && currentSteps.matchingCreator(creator)) {
+          if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
+          else if (fromThroughToSteps.steps == currentSteps.steps) {
+
+            val useCreator = if(currentSteps.steps <= 1) currentSteps.creator
+                              else creator
+            Some(new PreviousStep[N](currentSteps.steps,currentSteps.predecessors ++ fromThroughToSteps.predecessors,currentSteps.numShortestPaths+fromThroughToSteps.numShortestPaths,useCreator))
+          }
+          else { currentLabel }
+        }
+        else {
+          if(currentSteps.matchingCreator(creator)) currentLabel
+          else None
+        }
+      }
+      case (Some(fromThroughToNodes),None) => {
+        if(fromThroughToNodes.matchingCreator(creator)) fromThroughToLabel
+        else None
+      }
+      case (None,Some(current)) => {
+        if(current.matchingCreator(creator)) currentLabel
+        else None
+      }
+      case _ => None
+    }
+  }
+
+  import scalax.collection.mutable.{Graph => MutableGraph}
+  /**
+   * Override this method if you need to work with nodes and edges directly as part of your summary operator.
+   */
+  override def fullSummary[M](labelGraph:MutableGraph[M,LDiEdge])
+                            (from:labelGraph.NodeT,
+                             through:labelGraph.NodeT,
+                             to:labelGraph.NodeT,
+                             fromThroughToLabel:Option[PreviousStep[N]]):Option[PreviousStep[N]] = {
+
+    val currentLabel:Option[PreviousStep[N]] = from ~>? to match {
+      case None => O
+      case Some(edgeIn) => edgeIn.label
+    }
+    val result = taggingSummary(fromThroughToLabel,currentLabel,from)
+    println("fullSummary of "+from+"->"+through+"->"+to+" is "+result)
+    result
+  }
+
+  /**
+   * Override this method if you need to work with nodes and edges directly as part of your extend operator.
+   */
+  override def fullExtend[M](labelGraph:MutableGraph[M,LDiEdge])
+                 (fromThrough:Option[labelGraph.EdgeT],
+                  throughTo:Option[labelGraph.EdgeT]):Option[PreviousStep[N]] = {
+
+    val result = (fromThrough,throughTo) match {
+      case (Some(fromThroughEdgeT),Some(throughToEdgeT)) => {
+        //todo don't cast
+        val fromThroughLabel:Option[PreviousStep[N]] = fromThrough.get.label.asInstanceOf[Option[PreviousStep[N]]]
+        val throughToLabel:Option[PreviousStep[N]] = throughTo.get.label.asInstanceOf[Option[PreviousStep[N]]]
+
+        val fromToLabel:Option[PreviousStep[N]] = taggingExtend(fromThroughLabel,throughToLabel,fromThrough.get._1)
+        fromToLabel
+      }
+      case _ => O
+    }
+    println("fullExtend "+fromThrough+" "+throughTo+" is "+result)
+    result
+  }
+
+
 }
 
 class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Option[PreviousStep[N]]] {
@@ -61,7 +171,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Opti
     val edge:LDiEdge[M] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+#> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1)))
+    (edge._1 ~+#> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))
   }
 }
 
