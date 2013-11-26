@@ -85,8 +85,8 @@ object Brandes {
                 case None =>
                 case Some(brandesPredecessor) => {
                   //todo pick up here. Look at the numbers going in
-                  val pathsToPredecessor = brandesPredecessor.numShortestPaths
-                  val pathsToSink = brandesLabel.numShortestPaths
+                  val pathsToPredecessor = brandesPredecessor.numShortestPaths.toDouble
+                  val pathsToSink = brandesLabel.numShortestPaths.toDouble
                   val newPartial:Double = oldPartial + ((1.0 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
                   println("newPartial is "+newPartial)
                   nodesToPartialBetweenness.put(predecessor,newPartial)
