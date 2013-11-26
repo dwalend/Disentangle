@@ -26,8 +26,6 @@ object Brandes {
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,LDiEdge],Map[labelGraph.NodeT,Double]) = {
 
-    println("source: "+source)
-
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
@@ -43,7 +41,6 @@ object Brandes {
     while(!heap.isEmpty) {
       //take the top node
       val topNode = heap.takeTopValue()
-      println("sink: "+topNode)
       //add the top node to the stack
       stack.push(topNode)
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
@@ -148,7 +145,8 @@ object Brandes {
       partialBetweennesses.foldLeft(0.0)((r,aMap) => r+aMap.getOrElse(node,0.0))
     }
 
-    println("partialBetweennesses are "+partialBetweennesses)
+    println("partialBetweennesses are ")
+    for(partial <- partialBetweennesses) println(partial)
 
     val nodesToBetweennesses = labelGraph.nodes.map(node => (node.value,betweennessForNode(node))).toMap
 
@@ -169,8 +167,6 @@ trait BrandesLabel[N] {
   def creator:AnyRef
 
   def matchingCreator(otherCreator:AnyRef):Boolean = {
-
-    println ("creator is "+creator+" otherCreator is "+otherCreator)
 
     if(otherCreator == creator) true
     else if (otherCreator == BrandesLabel.default) true

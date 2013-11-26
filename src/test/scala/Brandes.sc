@@ -28,12 +28,11 @@ for(edge <- floydGraph.edges) {
 
 val brandesGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(testGraph)(allShortestPathsPredecessors,new AllShortestPathsPredecessorsGraphBuilder[String])
 
+brandesGraphAndBetweenness._2
+
 for(edge <- brandesGraphAndBetweenness._1.edges) {
   println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")
 }
-
-brandesGraphAndBetweenness._2
-
 
 
 

@@ -19,7 +19,6 @@ object Dijkstra {
   def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,LDiEdge])
                                  (innerSourceNode:labelGraph.NodeT)
                                  (support:GraphMinimizerSupport[Label,Key]):Graph[N,LDiEdge] = {
-    println("source: "+innerSourceNode)
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
@@ -32,7 +31,6 @@ object Dijkstra {
     while(!heap.isEmpty) {
       //take the top node
       val topNode = heap.takeTopValue()
-      println("sink: "+topNode)
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
       for(successor <- topNode.diSuccessors) {
         //if the node has not yet been visited (because it's key is still in the heap)

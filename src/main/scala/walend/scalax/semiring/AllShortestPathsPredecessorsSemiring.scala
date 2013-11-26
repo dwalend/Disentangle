@@ -65,9 +65,6 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
 
-        println(fromThroughSteps+".matchingCreator("+creator+") is "+fromThroughSteps.matchingCreator(creator))
-        println(throughToSteps+".matchingCreator("+creator+") is "+throughToSteps.matchingCreator(creator))
-
         if(fromThroughSteps.matchingCreator(creator) && throughToSteps.matchingCreator(creator)) {
           val numberSteps = fromThroughSteps.steps+throughToSteps.steps
           //if extendSteps has the same number of steps as throughToLabel, then you've moved from the origin across a first edge. Keep throughToLabel's creator
@@ -90,6 +87,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
 
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
+        //todo probably enough to have this check in taggingExtend
         if(fromThroughToSteps.matchingCreator(creator) && currentSteps.matchingCreator(creator)) {
           if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
           else if (fromThroughToSteps.steps == currentSteps.steps) {
@@ -132,7 +130,6 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
       case Some(edgeIn) => edgeIn.label
     }
     val result = taggingSummary(fromThroughToLabel,currentLabel,from)
-    println("fullSummary of "+from+"->"+through+"->"+to+" is "+result)
     result
   }
 
@@ -154,7 +151,6 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
       }
       case _ => O
     }
-    println("fullExtend "+fromThrough+" "+throughTo+" is "+result)
     result
   }
 
