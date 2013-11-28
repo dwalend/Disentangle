@@ -125,7 +125,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
       labelGraph.edges.toEdgeInSet should be (expectedEdges)
     }
                    */
-  /*
+
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 
 //    val graph = SomeGraph.testGraph
@@ -142,6 +142,8 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
-     */
+
 
 }
+
+case class PrevStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) {}
