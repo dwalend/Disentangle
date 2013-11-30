@@ -29,7 +29,7 @@ for(edge <- brandesGraphAndBetweenness._1.edges) {
   edge.toEdgeIn.label.asInstanceOf[Option[PreviousStep[String]]] match {
     case Some(pStep) => {
       val previousStep:PreviousStep[String] = pStep
-      val prevStep:PrevStep[String] = PrevStep(previousStep.steps,previousStep.predecessors,previousStep.numShortestPaths)
+      val prevStep:Option[PrevStep[String]] = Some(PrevStep(previousStep.steps,previousStep.predecessors,previousStep.numShortestPaths))
       println("("+edge._1+"~+#>"+edge._2+")"+"("+prevStep+"),")
     }
     case None => println("("+edge._1+"~+#>"+edge._2+")"+"("+None+"),")
