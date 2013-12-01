@@ -9,21 +9,25 @@ import walend.scalax.semiring.{PrevStep, PreviousStep, Brandes, AllShortestPaths
 
 val allShortestPathsPredecessors = new AllShortestPathsPredecessors[String]
 
+/*
 val labelGraph = Dijkstra.allPairsShortestPaths(testGraph)(allShortestPathsPredecessors,new AllShortestPathsPredecessorsGraphBuilder[String])
 for(edge <- labelGraph.edges) {
   println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")
 }
-
+*/
 
 val floydGraph = FloydWarshall.allPairsShortestPaths(testGraph)(allShortestPathsPredecessors.semiring)(new AllShortestPathsPredecessorsGraphBuilder[String])
+
+
 for(edge <- floydGraph.edges) {
   println("("+edge._1+"~+#>"+edge._2+")"+"("+edge.label+"),")
 }
 
+
 val brandesGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(testGraph)(allShortestPathsPredecessors,new AllShortestPathsPredecessorsGraphBuilder[String])
 
 brandesGraphAndBetweenness._2
-
+/*
 for(edge <- brandesGraphAndBetweenness._1.edges) {
 
   edge.toEdgeIn.label.asInstanceOf[Option[PreviousStep[String]]] match {
@@ -35,5 +39,6 @@ for(edge <- brandesGraphAndBetweenness._1.edges) {
     case None => println("("+edge._1+"~+#>"+edge._2+")"+"("+None+"),")
   }
 }
+*/
 brandesGraphAndBetweenness._2
 

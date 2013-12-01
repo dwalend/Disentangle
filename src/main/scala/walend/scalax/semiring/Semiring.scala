@@ -109,6 +109,7 @@ abstract class Semiring[Label: ClassTag] {
     val summaryLabel:Label = fullSummary(labelGraph)(from,through,to,fromThroughToLabel)
 
     replaceLabel(labelGraph)(from,to,summaryLabel)
+
     summaryLabel
   }
 }

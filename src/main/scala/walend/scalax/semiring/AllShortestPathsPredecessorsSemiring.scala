@@ -1,19 +1,18 @@
 package walend.scalax.semiring
 
-import scalax.collection.mutable.Graph
 import scalax.collection.edge.LDiEdge
 import scalax.collection.edge.LBase.LEdgeImplicits
 
 /**
- * Finds all paths that traverse the fewest nodes. Note that Dijkstra's algorithm won't give good answers via this semiring because it finds zero or one shortest paths.
+ * Finds all paths that traverse the fewest nodes, all previous steps to reach the destination node, and the total number of shortest paths
  *
  * @author dwalend
  * @since v1
+ *
+ * @param willConsiderAllNodePairs should be true for the Floyd-Warshall algorithm, false for Dijkstra's and Brandes' algorithms.
+ * @tparam N type of nodes in the graph.
  */
-
-case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N] {}
-
-class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousStep[N]]] {
+class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean = false) extends Semiring[Option[PreviousStep[N]]] {
 
   object AnotherImplicitLabel extends LEdgeImplicits[Option[PreviousStep[N]]]
   import AnotherImplicitLabel._
@@ -65,7 +64,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
 
-        if(fromThroughSteps.matchingCreator(creator) && throughToSteps.matchingCreator(creator)) {
+        if(willConsiderAllNodePairs || (fromThroughSteps.matchingCreator(creator) && throughToSteps.matchingCreator(creator))) {
           val numberSteps = fromThroughSteps.steps+throughToSteps.steps
           //if extendSteps has the same number of steps as throughToLabel, then you've moved from the origin across a first edge. Keep throughToLabel's creator
           val useCreator = if(numberSteps <= 1) throughToSteps.creator
@@ -88,7 +87,7 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
         //todo probably enough to have this check in taggingExtend
-        if(fromThroughToSteps.matchingCreator(creator) && currentSteps.matchingCreator(creator)) {
+        if(willConsiderAllNodePairs || (fromThroughToSteps.matchingCreator(creator) && currentSteps.matchingCreator(creator))) {
           if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
           else if (fromThroughToSteps.steps == currentSteps.steps) {
 
@@ -99,16 +98,16 @@ class AllShortestPathsPredecessorsSemiring[N] extends Semiring[Option[PreviousSt
           else { currentLabel }
         }
         else {
-          if(currentSteps.matchingCreator(creator)) currentLabel
+          if(willConsiderAllNodePairs || (currentSteps.matchingCreator(creator))) currentLabel
           else None
         }
       }
       case (Some(fromThroughToNodes),None) => {
-        if(fromThroughToNodes.matchingCreator(creator)) fromThroughToLabel
+        if(willConsiderAllNodePairs || (fromThroughToNodes.matchingCreator(creator))) fromThroughToLabel
         else None
       }
       case (None,Some(current)) => {
-        if(current.matchingCreator(creator)) currentLabel
+        if(willConsiderAllNodePairs || (current.matchingCreator(creator))) currentLabel
         else None
       }
       case _ => None
@@ -182,3 +181,6 @@ class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[Previ
     case None => Int.MaxValue
   }
 }
+
+case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N] {}
+
