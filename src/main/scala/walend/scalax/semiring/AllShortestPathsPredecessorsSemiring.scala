@@ -170,7 +170,6 @@ class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Opti
   }
 }
 
-//todo is there a good way to say in scala that this should not be used with Dijkstra's algorithm
 class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[PreviousStep[N]],Int] {
   def semiring = new AllShortestPathsPredecessorsSemiring[N]
 

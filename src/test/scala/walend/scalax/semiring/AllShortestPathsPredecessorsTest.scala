@@ -62,49 +62,25 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
     val graph = SomeGraph.testGraph
-
     val allShortestPathsSemiring = new AllShortestPathsPredecessorsSemiring[String](true)
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPathsSemiring)(new AllShortestPathsPredecessorsGraphBuilder[String])
 
     val foundEdges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
-
     (foundEdges -- expectedEdges) should be (Set.empty)
-
     foundEdges should be (expectedEdges)
-  }
-
-  "Dijkstra's algorithm" should "produce the correct label graph for a simple graph" in {
-
-    //    val graph = SomeGraph.testGraph
-
-    val nodes = Set(A,B,C,D)
-    val edges = Set(ab,bc,cd)
-    val graph = Graph.from(nodes,edges)
-
-//    val expectedBetweenness = Map(A -> 0.0, B -> 2.0, C -> 2.0, D -> 0.0)
-
-    val allShortestPaths = new AllShortestPathsPredecessors[String]
-
-    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
-
-//    labelGraphAndBetweenness._2 should be (expectedBetweenness)
-//todo actually test this instead of just printing out the results, or dump the test.
   }
 
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
     val graph = SomeGraph.testGraph
-
     val allShortestPaths = new AllShortestPathsPredecessors[String]
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
 
     val edges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
-
     (edges -- expectedEdges) should be (Set.empty)
-
     edges should be (expectedEdges)
   }
 
@@ -112,28 +88,20 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 
     val graph = SomeGraph.testGraph
-
     val allShortestPaths = new AllShortestPathsPredecessors[String]
 
     val labelGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
-
     val labelGraph = labelGraphAndBetweenness._1
 
     val foundEdges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
-
     (foundEdges -- expectedEdges) should be (Set.empty)
-
     foundEdges should be (expectedEdges)
 
     val expectedBetweenness:Map[String,Double] = Map(E -> 13.0, F -> 0.0, A -> 0.0, G -> 0.0, B -> 6.5
       , C -> 13.0, H -> 1.5, D -> 13.0)
-
     val foundBetweenness = labelGraphAndBetweenness._2
-
     foundBetweenness should be (expectedBetweenness)
   }
-
-
 }
 
 case class PrevStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) {}

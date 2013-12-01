@@ -14,14 +14,11 @@ import scala.reflect.ClassTag
  * @author dwalend
  * @since v1
  */
-//todo you could find edge betweenness instead with a different algorithm
 object Brandes {
 
   /**
    * Brandes' algorithm.
    */
-  //todo set type of label for LDiEdge and remove the instanceOf
-  //todo how to express that Label must be Option[BrandesLabel[N]
   def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,LDiEdge])
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,LDiEdge],Map[labelGraph.NodeT,Double]) = {
@@ -56,39 +53,28 @@ object Brandes {
       }
     }
 
-    println("Find partial betweenness for "+source)
-
     //todo this seems like it could use a list, an accumulator, and tail recursion
-    //todo rename brandeslabel and brandespredecessor to sinklabel and predecessorlabel
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness:MutableMap[labelGraph.NodeT,Double] = MutableMap()
     while(!stack.isEmpty) {
       val sink:labelGraph.NodeT = stack.pop()
-      println("sink: "+sink)
       //don't bother finding the partial for the sink
       if (sink != source) {
         getLabelBetween[N,Label](labelGraph)(source,sink) match {
           case None =>
-          case Some(brandesLabel) => {
+          case Some(sinkLabel) => {
 
-            println("brandesLabel: "+brandesLabel)
-
-            for(outerPredecessor <- brandesLabel.predecessors) {
-
-              println("outerPredecessor "+outerPredecessor)
+            for(outerPredecessor <- sinkLabel.predecessors) {
 
               val predecessor = labelGraph get outerPredecessor
               //add to its partial weight (1 for this sink plus the partial weight accumulated for this sink)*(number of this predecessor's predecessors/number of predecessors)
               val oldPartial:Double = nodesToPartialBetweenness.getOrElse(predecessor,0)
-              println("oldPartial is "+oldPartial)
               getLabelBetween[N,Label](labelGraph)(source,predecessor) match {
                 case None =>
-                case Some(brandesPredecessor) => {
-                  //todo pick up here. Look at the numbers going in
-                  val pathsToPredecessor = brandesPredecessor.numShortestPaths.toDouble
-                  val pathsToSink = brandesLabel.numShortestPaths.toDouble
+                case Some(predecessorLabel) => {
+                  val pathsToPredecessor = predecessorLabel.numShortestPaths.toDouble
+                  val pathsToSink = sinkLabel.numShortestPaths.toDouble
                   val newPartial:Double = oldPartial + ((1.0 + nodesToPartialBetweenness.getOrElse(sink,0.0)) * (pathsToPredecessor/pathsToSink))
-                  println("newPartial is "+newPartial)
                   nodesToPartialBetweenness.put(predecessor,newPartial)
                   }
                 }
@@ -97,8 +83,6 @@ object Brandes {
         }
       }
     }
-    println(source+" nodesToPartialBetweenness is "+nodesToPartialBetweenness)
-
     (labelGraph,nodesToPartialBetweenness.toMap)
   }
 
@@ -138,15 +122,11 @@ object Brandes {
     val partialBetweennesses = for(node <- labelGraph.nodes) yield {
       brandesForSource(labelGraph)(node)(support)._2
     }               //this is a Set[Map[labelGraph.NodeT,Double]]
-    //todo pick up here and roll up betweennesses
 
     def betweennessForNode(node:labelGraph.NodeT):Double = {
       //Can't just use a map and sum here because the results of the map will be a Set, which will only contain one of each value.
       partialBetweennesses.foldLeft(0.0)((r,aMap) => r+aMap.getOrElse(node,0.0))
     }
-
-    println("partialBetweennesses are ")
-    for(partial <- partialBetweennesses) println(partial)
 
     val nodesToBetweennesses = labelGraph.nodes.map(node => (node.value,betweennessForNode(node))).toMap
 
@@ -163,7 +143,6 @@ object Brandes {
 trait BrandesLabel[N] {
   def predecessors:Set[N]
   def numShortestPaths:Int
-//  def successors:Set[N]   //todo do you really need successors?
   def creator:AnyRef
 
   def matchingCreator(otherCreator:AnyRef):Boolean = {
