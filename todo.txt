@@ -7,7 +7,6 @@ Pulblicize
 
 Overall
 * Add more to the package doc.
-* Add tests and move SomeGraph to tests
 * Add markdown to the project description
 
 Structures
@@ -18,9 +17,6 @@ Structures
 Algorithms
 
 * MST with Fibonacci heap
-* Dijkstra with a Fibonacci heap
-* Basic betweenness and closeness
-* Efficient betweenness and closeness
 * Lazy Label Graph. (Single-Source graph)
 * A* algorithm
 * Parallel queued minimization
