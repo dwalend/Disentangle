@@ -40,7 +40,7 @@ object Brandes {
       val topNode = heap.takeTopValue()
       //add the top node to the stack
       stack.push(topNode)
-      //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
+      //For any node that is reachable from this node not yet visited (because its key is still in the heap)
       for(successor <- topNode.diSuccessors) {
         //if the node has not yet been visited (because it's key is still in the heap)
         val heapKey = nodesToHeapMembers.getOrElse(successor,throw new IllegalStateException("No HeapMember for "+successor))
