@@ -166,7 +166,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Opti
     val edge:LDiEdge[M] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+#> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))
+    (edge._1 ~+> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))
   }
 }
 

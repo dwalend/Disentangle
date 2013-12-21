@@ -88,7 +88,7 @@ abstract class Semiring[Label: ClassTag] {
         case None => ;
       }
 
-      val replacementEdge:LDiEdge[N] = (from.value ~+#> to.value)(replacementLabel)
+      val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
 
       labelGraph.addAndGet(replacementEdge)
     }
@@ -120,7 +120,7 @@ trait LabelGraphBuilder[Label] {
                                   (nodeT:originalGraph.NodeT)
                                   (semiring:Semiring[Label]):LDiEdge[N] = {
     val node:N = nodeT.value
-    (node ~+#> node)(semiring.I)
+    (node ~+> node)(semiring.I)
   }
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])

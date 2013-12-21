@@ -60,7 +60,7 @@ class OneShortestPathGraphBuilder[N] extends LabelGraphBuilder[Option[List[N]]] 
     val edge:LDiEdge[N] = edgeT.toEdgeIn
 
     import scalax.collection.edge.Implicits._
-    (edge._1 ~+#> edge._2)(Some(List(edge._2)))
+    (edge._1 ~+> edge._2)(Some(List(edge._2)))
   }
 }
 

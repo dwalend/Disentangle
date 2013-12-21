@@ -19,45 +19,45 @@ import TransitiveClosureSemiring.ImplicitLabel._
 class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
   val expectedEdges = Set(
-    (B~+#>B)(Some(PrevStep(0,Set(),0))),
-    (B~+#>C)(Some(PrevStep(1,Set(B),1))),
-    (B~+#>D)(Some(PrevStep(2,Set(C),1))),
-    (B~+#>E)(Some(PrevStep(3,Set(D),1))),
-    (B~+#>F)(Some(PrevStep(4,Set(E),1))),
-    (B~+#>H)(Some(PrevStep(4,Set(E),1))),
-    (F~+#>F)(Some(PrevStep(0,Set(),0))),
-    (C~+#>C)(Some(PrevStep(0,Set(),0))),
-    (C~+#>D)(Some(PrevStep(1,Set(C),1))),
-    (C~+#>E)(Some(PrevStep(2,Set(D),1))),
-    (C~+#>F)(Some(PrevStep(3,Set(E),1))),
-    (C~+#>B)(Some(PrevStep(3,Set(E),1))),
-    (C~+#>H)(Some(PrevStep(3,Set(E),1))),
-    (G~+#>G)(Some(PrevStep(0,Set(),0))),
-    (D~+#>D)(Some(PrevStep(0,Set(),0))),
-    (D~+#>E)(Some(PrevStep(1,Set(D),1))),
-    (D~+#>F)(Some(PrevStep(2,Set(E),1))),
-    (D~+#>B)(Some(PrevStep(2,Set(E),1))),
-    (D~+#>H)(Some(PrevStep(2,Set(E),1))),
-    (D~+#>C)(Some(PrevStep(3,Set(H, B),2))),
-    (H~+#>H)(Some(PrevStep(0,Set(),0))),
-    (H~+#>C)(Some(PrevStep(1,Set(H),1))),
-    (H~+#>D)(Some(PrevStep(2,Set(C),1))),
-    (H~+#>E)(Some(PrevStep(3,Set(D),1))),
-    (H~+#>F)(Some(PrevStep(4,Set(E),1))),
-    (H~+#>B)(Some(PrevStep(4,Set(E),1))),
-    (E~+#>E)(Some(PrevStep(0,Set(),0))),
-    (E~+#>F)(Some(PrevStep(1,Set(E),1))),
-    (E~+#>B)(Some(PrevStep(1,Set(E),1))),
-    (E~+#>H)(Some(PrevStep(1,Set(E),1))),
-    (E~+#>C)(Some(PrevStep(2,Set(B, H),2))),
-    (E~+#>D)(Some(PrevStep(3,Set(C),2))),
-    (A~+#>A)(Some(PrevStep(0,Set(),0))),
-    (A~+#>B)(Some(PrevStep(1,Set(A),1))),
-    (A~+#>C)(Some(PrevStep(2,Set(B),1))),
-    (A~+#>D)(Some(PrevStep(3,Set(C),1))),
-    (A~+#>E)(Some(PrevStep(4,Set(D),1))),
-    (A~+#>F)(Some(PrevStep(5,Set(E),1))),
-    (A~+#>H)(Some(PrevStep(5,Set(E),1))))
+    (B~+>B)(Some(PrevStep(0,Set(),0))),
+    (B~+>C)(Some(PrevStep(1,Set(B),1))),
+    (B~+>D)(Some(PrevStep(2,Set(C),1))),
+    (B~+>E)(Some(PrevStep(3,Set(D),1))),
+    (B~+>F)(Some(PrevStep(4,Set(E),1))),
+    (B~+>H)(Some(PrevStep(4,Set(E),1))),
+    (F~+>F)(Some(PrevStep(0,Set(),0))),
+    (C~+>C)(Some(PrevStep(0,Set(),0))),
+    (C~+>D)(Some(PrevStep(1,Set(C),1))),
+    (C~+>E)(Some(PrevStep(2,Set(D),1))),
+    (C~+>F)(Some(PrevStep(3,Set(E),1))),
+    (C~+>B)(Some(PrevStep(3,Set(E),1))),
+    (C~+>H)(Some(PrevStep(3,Set(E),1))),
+    (G~+>G)(Some(PrevStep(0,Set(),0))),
+    (D~+>D)(Some(PrevStep(0,Set(),0))),
+    (D~+>E)(Some(PrevStep(1,Set(D),1))),
+    (D~+>F)(Some(PrevStep(2,Set(E),1))),
+    (D~+>B)(Some(PrevStep(2,Set(E),1))),
+    (D~+>H)(Some(PrevStep(2,Set(E),1))),
+    (D~+>C)(Some(PrevStep(3,Set(H, B),2))),
+    (H~+>H)(Some(PrevStep(0,Set(),0))),
+    (H~+>C)(Some(PrevStep(1,Set(H),1))),
+    (H~+>D)(Some(PrevStep(2,Set(C),1))),
+    (H~+>E)(Some(PrevStep(3,Set(D),1))),
+    (H~+>F)(Some(PrevStep(4,Set(E),1))),
+    (H~+>B)(Some(PrevStep(4,Set(E),1))),
+    (E~+>E)(Some(PrevStep(0,Set(),0))),
+    (E~+>F)(Some(PrevStep(1,Set(E),1))),
+    (E~+>B)(Some(PrevStep(1,Set(E),1))),
+    (E~+>H)(Some(PrevStep(1,Set(E),1))),
+    (E~+>C)(Some(PrevStep(2,Set(B, H),2))),
+    (E~+>D)(Some(PrevStep(3,Set(C),2))),
+    (A~+>A)(Some(PrevStep(0,Set(),0))),
+    (A~+>B)(Some(PrevStep(1,Set(A),1))),
+    (A~+>C)(Some(PrevStep(2,Set(B),1))),
+    (A~+>D)(Some(PrevStep(3,Set(C),1))),
+    (A~+>E)(Some(PrevStep(4,Set(D),1))),
+    (A~+>F)(Some(PrevStep(5,Set(E),1))),
+    (A~+>H)(Some(PrevStep(5,Set(E),1))))
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
@@ -112,7 +112,7 @@ object PrevStep {
 
     val prevStep = edgeToPrevStep(graph)(edge)
     prevStep match {
-      case Some(x) => Some((edge._1.value ~+#> edge._2.value)(prevStep))
+      case Some(x) => Some((edge._1.value ~+> edge._2.value)(prevStep))
       case None => None
     }
   }
