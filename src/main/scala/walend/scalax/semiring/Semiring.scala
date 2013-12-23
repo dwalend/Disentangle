@@ -80,17 +80,10 @@ abstract class Semiring[Label: ClassTag] {
                      to:labelGraph.NodeT,
                      replacementLabel:Label):Unit = {
 
-    if(replacementLabel != O) { //Don't bother replacing the annihilator
-      from ~>? to match {
-        case Some(oldEdge) => {
-          labelGraph.remove(oldEdge.toEdgeIn)
-        }
-        case None => ;
-      }
-
+    if(replacementLabel != O) { //Don't bother replacing with the annihilator
       val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
 
-      labelGraph.addAndGet(replacementEdge)
+      labelGraph.upsert(replacementEdge)
     }
   }
 
