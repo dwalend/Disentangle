@@ -11,8 +11,6 @@ case class NextStep[N](steps:Int,choices:Set[N]) {}
 
 class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
 
-  //length of the path is length of the list
-
   //identity and annihilator
   def I = Some(NextStep[N](0,Set[N]()))
   def O = None
