@@ -15,6 +15,7 @@ import scalax.collection.Graph
 import scalax.collection.edge.LDiEdge
 
 import TransitiveClosureSemiring.ImplicitLabel._
+import walend.scalax.gengraph.GraphFactory
 
 class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
@@ -71,6 +72,29 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     foundEdges should be (expectedEdges)
   }
 
+  def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+    val allShortestPaths = new AllShortestPathsPredecessors[Int]
+
+    val startTime = System.currentTimeMillis()
+    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPaths.semiring)(new AllShortestPathsPredecessorsGraphBuilder[Int])
+    val time = System.currentTimeMillis() - startTime
+
+    val expected:Long = ((Math.pow(nodeCount.toDouble/calibrate._1,3) ) * calibrate._2).toLong
+    println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
+    (nodeCount,time,expected)
+  }
+
+  "The Floyd-Warshall algorithm" should "scale up at  O(|V|^3)" in {
+
+    //warm up
+    timeFloyd(32,(1,1,1))
+
+    val calibrate = timeFloyd(32,(1,1,1))
+
+    val result = (5.0.to(6.0,0.5)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
@@ -84,6 +108,36 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     edges should be (expectedEdges)
   }
 
+  def timeDijkstra(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+//todo switch back to the right semiring    val allShortestPaths = new AllShortestPathsPredecessors[Int]
+    val allShortestPaths = new AllShortestPaths[Int]
+
+    val startTime = System.currentTimeMillis()
+    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsGraphBuilder[Int])
+    val time = System.currentTimeMillis() - startTime
+
+    val calibrateBigO = Math.pow(calibrate._1,2) * Math.log(calibrate._1)
+    val constant = calibrate._2 / calibrateBigO
+
+    val bigO =  Math.pow(nodeCount,2) * Math.log(nodeCount)
+
+    val expected:Long = (constant * bigO).toLong
+    println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
+    (nodeCount,time,expected)
+  }
+
+  "The Dijkstra algorithm" should "scale up at  O(|V|^2 ln|V|)" in {
+
+    //warm up
+    timeDijkstra(32,(1,1,1))
+
+    val calibrate = timeDijkstra(32,(1,1,1))
+
+//    val result = (5.0.to(8.0,0.5)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
+    val result = (5.0.to(7.0,0.5)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
 
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 
@@ -102,8 +156,38 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val foundBetweenness = labelGraphAndBetweenness._2
     foundBetweenness should be (expectedBetweenness)
   }
-}
 
+  def timeBrandes(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+    val allShortestPaths = new AllShortestPathsPredecessors[Int]
+
+    val startTime = System.currentTimeMillis()
+    val labelGraph = Brandes.shortestPathsAndBetweenness(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[Int])
+    val time = System.currentTimeMillis() - startTime
+
+    val calibrateBigO = Math.pow(calibrate._1,2) * Math.log(calibrate._1)
+    val constant = calibrate._2 / calibrateBigO
+
+    val bigO =  Math.pow(nodeCount,2) * Math.log(nodeCount)
+
+    val expected:Long = (constant * bigO).toLong
+
+    println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
+    (nodeCount,time,expected)
+  }
+
+  "The Brandes algorithm" should "scale up at  O(|V|^2 ln|V|)" in {
+
+    //warm up
+    timeBrandes(32,(1,1,1))
+
+    val calibrate = timeBrandes(32,(1,1,1))
+
+    val result = (5.0.to(6.0,0.5)).map(x => timeBrandes(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
+
+}
 case class PrevStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) {}
 
 object PrevStep {
