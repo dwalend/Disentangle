@@ -9,6 +9,9 @@ import scalax.collection.Graph
 import scalax.collection.edge.LDiEdge
 
 import TransitiveClosureSemiring.ImplicitLabel._
+import walend.scalax.gengraph.GraphFactory
+import walend.scalax.semiring.CountFewestNodesGraphBuilder
+import scala.util.Random
 
 /**
  * Tests Transitive Closure semiring
@@ -221,4 +224,76 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     labelGraph.edges.toEdgeInSet should be (expectedEdges)
   }
+
+  def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+    val allShortestPaths = new AllShortestPathsPredecessors[Int]
+
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodes.semiring)
+
+    val startTime = System.currentTimeMillis()
+    FloydWarshall.floydWarshall(labelGraph)(CountFewestNodes.semiring)
+    val time = System.currentTimeMillis() - startTime
+
+    val expected:Long = ((Math.pow(nodeCount.toDouble/calibrate._1,3) ) * calibrate._2).toLong
+    println("nodeCount:"+nodeCount+" relax calls:"+Math.pow(nodeCount.toDouble,3)+" actual:"+time+" expected:"+expected)
+    (nodeCount,time,expected)
+  }
+     /*
+  "The Floyd-Warshall algorithm" should "scale up at  O(|V|^3)" in {
+
+    //warm up
+    timeFloyd(32,(1,1,1))
+
+    val calibrate = timeFloyd(32,(1,1,1))
+
+    val result = (5.0.to(6.0,0.5)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
+     */
+  def timeFindEdge(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodes.semiring)
+
+    val nodeList1 = Random.shuffle(labelGraph.nodes.toList)
+    val nodeList2 = Random.shuffle(labelGraph.nodes.toList)
+
+    val pairs = nodeList1.zip(nodeList2)
+
+    val startTime = System.nanoTime()
+
+    for(pair <- pairs) {
+      val replacementEdge:LDiEdge[Int] = (pair._1.value ~+> pair._2.value)(42)
+
+      labelGraph.upsert(replacementEdge)
+
+      pair._1 ~>? pair._2 match {
+        case None => {
+          val replacementEdge:LDiEdge[Int] = (pair._1.value ~+> pair._2.value)(42)
+
+          labelGraph.upsert(replacementEdge)
+        }
+        case _ => //leave it alone
+      }
+    }
+
+    val time = System.nanoTime - startTime
+
+    val expected:Long = ((nodeCount.toDouble/calibrate._1) * calibrate._2).toLong
+    println("nodeCount:"+nodeCount+" actual:"+time/1000+" expected:"+expected/1000)
+    (nodeCount,time,expected)
+  }
+
+
+
+  "The ~>? operator" should "take constant time and scale up linearly with the number of calls to " in {
+
+    //warm up
+    timeFindEdge(512,(1,1,1))
+    val calibrate = timeFindEdge(32,(1,1,1))
+
+    val result = (5.0.to(10.0,0.5)).map(x => timeFindEdge(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
+
 }

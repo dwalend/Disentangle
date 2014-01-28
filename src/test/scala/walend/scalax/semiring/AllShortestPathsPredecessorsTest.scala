@@ -84,7 +84,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
     (nodeCount,time,expected)
   }
-
+/*
   "The Floyd-Warshall algorithm" should "scale up at  O(|V|^3)" in {
 
     //warm up
@@ -95,7 +95,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val result = (5.0.to(6.0,0.5)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-
+*/
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
     val graph = SomeGraph.testGraph
@@ -126,7 +126,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
     (nodeCount,time,expected)
   }
-
+/*
   "The Dijkstra algorithm" should "scale up at  O(|V|^2 ln|V|)" in {
 
     //warm up
@@ -138,7 +138,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val result = (5.0.to(7.0,0.5)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-
+*/
   "Brandes' algorithm" should "produce the correct betweenness for SomeGraph" in {
 
     val graph = SomeGraph.testGraph
@@ -176,6 +176,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     (nodeCount,time,expected)
   }
 
+  /*
   "The Brandes algorithm" should "scale up at  O(|V|^2 ln|V|)" in {
 
     //warm up
@@ -186,7 +187,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val result = (5.0.to(6.0,0.5)).map(x => timeBrandes(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-
+*/
 }
 case class PrevStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) {}
 
