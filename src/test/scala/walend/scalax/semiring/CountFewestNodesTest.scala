@@ -252,7 +252,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   }
      */
   def timeFindEdge(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
-    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+    val graph = GraphFactory.createFullyConnectedGraph(nodeCount)
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodes.semiring)
 
     val nodeList1 = Random.shuffle(labelGraph.nodes.toList)
@@ -263,10 +263,14 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val startTime = System.nanoTime()
 
     for(pair <- pairs) {
+
+      pair._1 ~>? pair._2
+      /*
       val replacementEdge:LDiEdge[Int] = (pair._1.value ~+> pair._2.value)(42)
 
       labelGraph.upsert(replacementEdge)
-
+ */
+      /*
       pair._1 ~>? pair._2 match {
         case None => {
           val replacementEdge:LDiEdge[Int] = (pair._1.value ~+> pair._2.value)(42)
@@ -275,6 +279,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
         }
         case _ => //leave it alone
       }
+      */
     }
 
     val time = System.nanoTime - startTime

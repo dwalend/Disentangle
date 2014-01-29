@@ -19,6 +19,7 @@ object GraphFactory {
   /**
    * Create a randomly connected graph, where each node has a limited number of connections to other nodes
    */
+//todo ask for a common superclass of DiEdge and LDiEdge
 //  def createRandomNormalGraph(nodeCount:Int,maxOutEdgesPerNode:Int):Graph[Int,DiEdge] = {
   def createRandomNormalGraph(nodeCount:Int,maxOutEdgesPerNode:Int):Graph[Int,LDiEdge] = {
 
@@ -39,6 +40,14 @@ object GraphFactory {
 
 //    val edges:Set[DiEdge[Int]] = (for (list <- seqOfListOfEdges; x <- list) yield x).to[Set]
     val edges:Set[LDiEdge[Int]] = (for (list <- seqOfListOfEdges; x <- list) yield x).to[Set]
+
+    Graph.from(nodes,edges)
+  }
+
+  def createFullyConnectedGraph(nodeCount:Int):Graph[Int,LDiEdge] = {
+    val nodes:Set[Int] = (0 until nodeCount).to[Set]
+
+    val edges = for(fromNode <- nodes;toNode <- nodes) yield (fromNode ~+> toNode)("")
 
     Graph.from(nodes,edges)
   }
