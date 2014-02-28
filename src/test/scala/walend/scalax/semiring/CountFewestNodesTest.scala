@@ -10,7 +10,6 @@ import scalax.collection.edge.LDiEdge
 
 import TransitiveClosureSemiring.ImplicitLabel._
 import walend.scalax.gengraph.GraphFactory
-import walend.scalax.semiring.CountFewestNodesGraphBuilder
 import scala.util.Random
 
 /**
@@ -227,7 +226,6 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-    val allShortestPaths = new AllShortestPathsPredecessors[Int]
 
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodes.semiring)
 
@@ -239,18 +237,53 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     println("nodeCount:"+nodeCount+" relax calls:"+Math.pow(nodeCount.toDouble,3)+" actual:"+time+" expected:"+expected)
     (nodeCount,time,expected)
   }
-     /*
+  /*
   "The Floyd-Warshall algorithm" should "scale up at  O(|V|^3)" in {
 
     //warm up
     timeFloyd(32,(1,1,1))
+    timeFloyd(32,(1,1,1))
+    timeFloyd(32,(1,1,1))
+    timeFloyd(32,(1,1,1))
 
     val calibrate = timeFloyd(32,(1,1,1))
 
-    val result = (5.0.to(6.0,0.5)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
+    val result = (5.0.to(8.0,0.25)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-     */
+  */
+  def timeDijkstra(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
+    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
+
+    val startTime = System.currentTimeMillis()
+    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(CountFewestNodes,CountFewestNodesGraphBuilder)
+    val time = System.currentTimeMillis() - startTime
+
+    val calibrateBigO = Math.pow(calibrate._1,2) * Math.log(calibrate._1)
+    val constant = calibrate._2 / calibrateBigO
+
+    val bigO =  Math.pow(nodeCount,2) * Math.log(nodeCount)
+
+    val expected:Long = (constant * bigO).toLong
+    println("nodeCount:"+nodeCount+" actual:"+time+" expected:"+expected)
+    (nodeCount,time,expected)
+  }
+/*
+  "The Dijkstra algorithm" should "scale up at  O(|V|^2 ln|V|)" in {
+
+    //warm up
+    timeDijkstra(32,(1,1,1))
+    timeDijkstra(32,(1,1,1))
+    timeDijkstra(32,(1,1,1))
+    timeDijkstra(32,(1,1,1))
+
+    val calibrate = timeDijkstra(32,(1,1,1))
+
+//    val result = (5.0.to(8.0,0.5)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
+    val result = (5.0.to(8.0,0.25)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
+    println(result)
+  }
+*/
   def timeFindEdge(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createFullyConnectedGraph(nodeCount)
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)(CountFewestNodes.semiring)
@@ -290,7 +323,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   }
 
 
-
+  /*
   "The ~>? operator" should "take constant time and scale up linearly with the number of calls to " in {
 
     //warm up
@@ -300,5 +333,5 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val result = (5.0.to(10.0,0.5)).map(x => timeFindEdge(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-
+ */
 }
