@@ -237,7 +237,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     println("nodeCount:"+nodeCount+" relax calls:"+Math.pow(nodeCount.toDouble,3)+" actual:"+time+" expected:"+expected)
     (nodeCount,time,expected)
   }
-  /*
+/*
   "The Floyd-Warshall algorithm" should "scale up at  O(|V|^3)" in {
 
     //warm up
@@ -248,10 +248,10 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val calibrate = timeFloyd(32,(1,1,1))
 
-    val result = (5.0.to(8.0,0.25)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
+    val result = (5.0.to(9.0,0.25)).map(x => timeFloyd(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
-  */
+*/
   def timeDijkstra(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
@@ -280,7 +280,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val calibrate = timeDijkstra(32,(1,1,1))
 
 //    val result = (5.0.to(8.0,0.5)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
-    val result = (5.0.to(8.0,0.25)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
+    val result = (5.0.to(9.0,0.25)).map(x => timeDijkstra(Math.pow(2,x).toInt,calibrate))
     println(result)
   }
 */
