@@ -8,7 +8,7 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-object CountFewestNodesSemiring extends Semiring[Int] {
+object CountFewestNodesSemiring extends Semiring[Integer] {
 
   //identity and annihilator
   def I = 0
@@ -17,8 +17,8 @@ object CountFewestNodesSemiring extends Semiring[Int] {
   /**
    * Implement this method to create the core of a summary operator
    */
-  def summary(fromThroughToLabel:Int,
-              currentLabel:Int):Int = {
+  def summary(fromThroughToLabel:Integer,
+              currentLabel:Integer):Integer = {
     if(fromThroughToLabel < currentLabel) {
       fromThroughToLabel
     }
@@ -28,22 +28,21 @@ object CountFewestNodesSemiring extends Semiring[Int] {
   /**
    * Implement this method to create the core of an extend operator
    */
-  def extend(fromThroughLabel:Int,throughToLabel:Int):Int = {
+  def extend(fromThroughLabel:Integer,throughToLabel:Integer):Integer = {
     fromThroughLabel + throughToLabel
   }
 }
 
-object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Int] {
+object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Integer] {
 
   import scalax.collection.Graph
-  import scalax.collection.edge.LDiEdge
+  import LDiEdge._
 
   def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
     val edge:LDiEdge[N] = edgeT.toEdgeIn
 
-    import scalax.collection.edge.Implicits._
-    (edge._1 ~+> edge._2)(1)
+    (edge._1 ~+> edge._2)(new Integer(1))
   }
 }
 
@@ -77,11 +76,11 @@ object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
   def AlwaysTop:Int = -1
 }
 
-object CountFewestNodes extends GraphMinimizerSupport[Int,Int] {
+object CountFewestNodes extends GraphMinimizerSupport[Integer,Int] {
   def semiring = CountFewestNodesSemiring
 
   def heapOrdering = CountFewestNodesHeapOrdering
 
-  def heapKeyForLabel = {label:Int => label}
+  def heapKeyForLabel = {label:Integer => label}
 
 }
