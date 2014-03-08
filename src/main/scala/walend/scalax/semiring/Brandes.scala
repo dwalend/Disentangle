@@ -1,11 +1,9 @@
 package walend.scalax.semiring
 
-import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 import walend.scalax.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable
-import scalax.collection.edge.LBase.LEdgeImplicits
 import scala.reflect.ClassTag
 
 /**
@@ -89,12 +87,11 @@ object Brandes {
   private def getLabelBetween[N,Label <:Option[BrandesLabel[N]]:ClassTag](labelGraph:MutableGraph[N,LDiEdge])
                                       (source:labelGraph.NodeT,sink:labelGraph.NodeT):Option[BrandesLabel[N]] = {
 
-    object ImplicitLabel extends LEdgeImplicits[Label]
-    import ImplicitLabel._
-
     source ~>? sink match {
-      case Some(edge) => edge.label
       case None => None
+      case Some(innerEdge) => innerEdge.label match {
+        case label: Some[PreviousStep[N]] => label
+      }
     }
   }
 

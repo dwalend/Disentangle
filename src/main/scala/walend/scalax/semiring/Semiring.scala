@@ -1,12 +1,9 @@
 package walend.scalax.semiring
 
-import scala.reflect.ClassTag
-import scalax.collection.edge.LBase.LEdgeImplicits
-import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 
-import scalax.collection.edge.Implicits._
+import LDiEdge._
 import walend.scalax.heap.HeapOrdering
 
 /**
@@ -15,16 +12,13 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-abstract class Semiring[Label: ClassTag] {
-
-  object ImplicitLabel extends LEdgeImplicits[Label]
-  import ImplicitLabel._
+abstract class Semiring[Label<:AnyRef] {
 
   //identity
   def I:Label
   //annihilator
   def O:Label
-
+  
   /**
    * Implement this method to create the core of a summary operator
    */
@@ -45,11 +39,13 @@ abstract class Semiring[Label: ClassTag] {
                         to:labelGraph.NodeT,
                         fromThroughToLabel:Label):Label = {
 
-    val currentLabel:Label = from ~>? to match {
+    val currentLabel: Label = from ~>? to match {
       case None => O
-      case Some(edgeIn) => edgeIn.label
+      case Some(innerEdge) => innerEdge.label match {
+        case l: Label => l
+      }
     }
-    summary(fromThroughToLabel,currentLabel)
+    summary(fromThroughToLabel, currentLabel)
   }
 
   /**
@@ -60,10 +56,13 @@ abstract class Semiring[Label: ClassTag] {
                  throughTo:Option[labelGraph.EdgeT]):Label = {
 
     (fromThrough,throughTo) match {
-      case (Some(fromThroughEdgeT),Some(throughToEdgeT)) => {
-        val fromThroughLabel:Label = fromThrough.get.label
-        val throughToLabel:Label = throughTo.get.label
-
+      case (Some(fromThroughEdgeT), Some(throughToEdgeT)) => {
+        val fromThroughLabel: Label = fromThroughEdgeT.label match {
+          case l: Label => l
+        }
+        val throughToLabel: Label = throughToEdgeT.label match {
+          case l: Label => l
+        }
         val fromToLabel:Label = extend(fromThroughLabel,throughToLabel)
         fromToLabel
       }
@@ -80,11 +79,10 @@ abstract class Semiring[Label: ClassTag] {
                      to:labelGraph.NodeT,
                      replacementLabel:Label):Unit = {
 
-    if(replacementLabel != O) { //Don't bother replacing with the annihilator
-      val replacementEdge:LDiEdge[N] = (from.value ~+> to.value)(replacementLabel)
-
-      labelGraph.upsert(replacementEdge)
-    }
+    if(replacementLabel != O) //Don't bother replacing with the annihilator
+      (from ~>? to).fold[Unit](
+          ifEmpty = labelGraph += (from.value ~+> to.value)(replacementLabel))(
+          _.label = replacementLabel)
   }
 
   /**
@@ -107,7 +105,7 @@ abstract class Semiring[Label: ClassTag] {
   }
 }
 
-trait LabelGraphBuilder[Label] {
+trait LabelGraphBuilder[Label<:AnyRef] {
 
   def identityEdgeFromGraphNode[N](originalGraph:Graph[N,LDiEdge])
                                   (nodeT:originalGraph.NodeT)
@@ -121,7 +119,7 @@ trait LabelGraphBuilder[Label] {
 
   //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest, and move that type parameter to the trait declaration.
   def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
-                                         (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
+                                   (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toNodeInSet
@@ -133,7 +131,7 @@ trait LabelGraphBuilder[Label] {
   }
 }
 
-trait GraphMinimizerSupport[Label,Key] {
+trait GraphMinimizerSupport[Label<:AnyRef,Key] {
 
   def semiring:Semiring[Label]
 
