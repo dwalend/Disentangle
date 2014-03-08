@@ -41,8 +41,8 @@ abstract class Semiring[Label<:AnyRef] {
 
     val currentLabel: Label = from ~>? to match {
       case None => O
-      case Some(innerEdge) => innerEdge.edge match {
-        case _ :~> _ + (label: Label) => label
+      case Some(innerEdge) => innerEdge.label match {
+        case l: Label => l
       }
     }
     summary(fromThroughToLabel, currentLabel)
@@ -57,13 +57,12 @@ abstract class Semiring[Label<:AnyRef] {
 
     (fromThrough,throughTo) match {
       case (Some(fromThroughEdgeT), Some(throughToEdgeT)) => {
-        val fromThroughLabel: Label = fromThroughEdgeT.edge match {
-          case _ :~> _ + (label: Label) => label
+        val fromThroughLabel: Label = fromThroughEdgeT.label match {
+          case l: Label => l
         }
-        val throughToLabel: Label = throughToEdgeT.edge.edge match {
-          case _ :~> _ + (label: Label) => label
+        val throughToLabel: Label = throughToEdgeT.label match {
+          case l: Label => l
         }
-
         val fromToLabel:Label = extend(fromThroughLabel,throughToLabel)
         fromToLabel
       }

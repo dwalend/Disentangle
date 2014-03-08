@@ -89,8 +89,8 @@ object Brandes {
 
     source ~>? sink match {
       case None => None
-      case Some(innerEdge) => innerEdge.edge match {
-        case _ :~> _ + (label: Some[PreviousStep[N]]) => label
+      case Some(innerEdge) => innerEdge.label match {
+        case label: Some[PreviousStep[N]] => label
       }
     }
   }
