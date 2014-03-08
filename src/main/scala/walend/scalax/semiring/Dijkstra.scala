@@ -1,6 +1,5 @@
 package walend.scalax.semiring
 
-import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 import walend.scalax.heap.{FibonacciHeap, Heap}
@@ -16,9 +15,9 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,LDiEdge])
-                                 (innerSourceNode:labelGraph.NodeT)
-                                 (support:GraphMinimizerSupport[Label,Key]):Graph[N,LDiEdge] = {
+  def dijkstra [N:Manifest,Label<:AnyRef,Key](labelGraph:MutableGraph[N,LDiEdge])
+                                             (innerSourceNode:labelGraph.NodeT)
+                                             (support:GraphMinimizerSupport[Label,Key]):Graph[N,LDiEdge] = {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
@@ -47,8 +46,9 @@ object Dijkstra {
     labelGraph
   }
 
-  def singleSourceShortestPaths[N:Manifest,Label,Key](sourceNode:N,originalGraph:Graph[N,LDiEdge])
-                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
+  def singleSourceShortestPaths[N:Manifest,Label<:AnyRef,Key]
+      (sourceNode:N,originalGraph:Graph[N,LDiEdge])
+      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
@@ -59,8 +59,9 @@ object Dijkstra {
   /**
    * This method runs Dijkstra's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,Label,Key](originalGraph:Graph[N,LDiEdge])
-                                             (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
+  def allPairsShortestPaths[N:Manifest,Label<:AnyRef,Key]
+      (originalGraph:Graph[N,LDiEdge])
+      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
 
     val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {

@@ -4,11 +4,8 @@ import org.scalatest.{Matchers, FlatSpec}
 
 import SomeGraph._
 
-import scalax.collection.edge.Implicits._
 import scalax.collection.Graph
-import scalax.collection.edge.LDiEdge
-
-import TransitiveClosureSemiring.ImplicitLabel._
+import LDiEdge._
 
 /**
  *

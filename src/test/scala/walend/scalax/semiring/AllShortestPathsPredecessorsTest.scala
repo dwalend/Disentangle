@@ -10,11 +10,9 @@ import org.scalatest.{Matchers, FlatSpec}
 
 import SomeGraph._
 
-import scalax.collection.edge.Implicits._
 import scalax.collection.Graph
-import scalax.collection.edge.LDiEdge
+import LDiEdge._
 
-import TransitiveClosureSemiring.ImplicitLabel._
 import walend.scalax.gengraph.GraphFactory
 
 class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {

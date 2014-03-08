@@ -2,11 +2,8 @@ package walend.scalax.gengraph
 
 import scalax.collection.immutable.Graph
 import scala.util.Random
-import scalax.collection.GraphEdge.DiEdge
 import scalax.collection.GraphPredef._
-
-import scalax.collection.edge.LDiEdge
-import scalax.collection.edge.Implicits._
+import LDiEdge._
 
 /**
  * Create various types of graphs.

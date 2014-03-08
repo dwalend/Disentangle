@@ -52,13 +52,12 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
 class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder[Option[NextStep[N]]] {
 
   import scalax.collection.Graph
-  import scalax.collection.edge.LDiEdge
+  import LDiEdge._
 
   def initialEdgeFromGraphEdge[M](originalGraph:Graph[M,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[M] = {
     val edge:LDiEdge[M] = edgeT.toEdgeIn
 
-    import scalax.collection.edge.Implicits._
     (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[M](edge._2))))
   }
 }

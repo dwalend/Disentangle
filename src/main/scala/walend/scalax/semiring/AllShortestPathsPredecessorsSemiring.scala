@@ -1,8 +1,5 @@
 package walend.scalax.semiring
 
-import scalax.collection.edge.LDiEdge
-import scalax.collection.edge.LBase.LEdgeImplicits
-
 /**
  * Finds all paths that traverse the fewest nodes, all previous steps to reach the destination node, and the total number of shortest paths
  *
@@ -13,9 +10,6 @@ import scalax.collection.edge.LBase.LEdgeImplicits
  * @tparam N type of nodes in the graph.
  */
 class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean = false) extends Semiring[Option[PreviousStep[N]]] {
-
-  object AnotherImplicitLabel extends LEdgeImplicits[Option[PreviousStep[N]]]
-  import AnotherImplicitLabel._
 
   //identity and annihilator
   def I = Some(PreviousStep[N](0,Set[N](),0,BrandesLabel.originalGraph))
@@ -126,7 +120,9 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
     val currentLabel:Option[PreviousStep[N]] = from ~>? to match {
       case None => O
-      case Some(edgeIn) => edgeIn.label
+      case Some(innerEdge) => innerEdge.label match {
+        case label: Some[PreviousStep[N]] => label
+      }
     }
     val result = taggingSummary(fromThroughToLabel,currentLabel,from)
     result
@@ -159,13 +155,12 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Option[PreviousStep[N]]] {
 
   import scalax.collection.Graph
-  import scalax.collection.edge.LDiEdge
+  import LDiEdge._
 
   def initialEdgeFromGraphEdge[M](originalGraph:Graph[M,LDiEdge])
                                  (edgeT:originalGraph.EdgeT):LDiEdge[M] = {
     val edge:LDiEdge[M] = edgeT.toEdgeIn
 
-    import scalax.collection.edge.Implicits._
     (edge._1 ~+> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))
   }
 }

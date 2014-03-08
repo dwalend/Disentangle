@@ -1,6 +1,5 @@
 package walend.scalax.semiring
 
-import scalax.collection.edge.LDiEdge
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 import walend.scalax.heap.{HeapOrdering, FibonacciHeap, Heap}
