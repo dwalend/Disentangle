@@ -3,6 +3,7 @@ package walend.scalax.gengraph
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge.{DiEdge, EdgeCopy, NodeProduct}
 
 /** Labeled directed edge with mutable label of a given type AnyRef. */
+//todo move to semiring
 class LDiEdge[N](nodes: Product)(private var _label: AnyRef)
     extends DiEdge[N](nodes)
     with    EdgeCopy[LDiEdge]
