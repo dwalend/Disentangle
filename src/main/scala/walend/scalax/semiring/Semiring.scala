@@ -18,7 +18,7 @@ abstract class Semiring[Label<:AnyRef] {
   def I:Label
   //annihilator
   def O:Label
-  
+
   /**
    * Implement this method to create the core of a summary operator
    */
@@ -82,7 +82,7 @@ abstract class Semiring[Label<:AnyRef] {
     if(replacementLabel != O) //Don't bother replacing with the annihilator
       (from ~>? to).fold[Unit](
           ifEmpty = labelGraph += (from.value ~+> to.value)(replacementLabel))(
-          _.label = replacementLabel)
+          edge => edge.label = replacementLabel)
   }
 
   /**
