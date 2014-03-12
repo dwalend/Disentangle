@@ -3,7 +3,7 @@ package walend.scalax.semiring
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 
-import LDiEdge._
+import MLDiEdge._
 import walend.scalax.heap.HeapOrdering
 
 /**
@@ -33,7 +33,7 @@ abstract class Semiring[Label<:AnyRef] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your summary operator.
    */
-  def fullSummary[N](labelGraph:MutableGraph[N,LDiEdge])
+  def fullSummary[N](labelGraph:MutableGraph[N,MLDiEdge])
                        (from:labelGraph.NodeT,
                         through:labelGraph.NodeT,
                         to:labelGraph.NodeT,
@@ -51,7 +51,7 @@ abstract class Semiring[Label<:AnyRef] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your extend operator.
    */
-  def fullExtend[N](labelGraph:MutableGraph[N,LDiEdge])
+  def fullExtend[N](labelGraph:MutableGraph[N,MLDiEdge])
                 (fromThrough:Option[labelGraph.EdgeT],
                  throughTo:Option[labelGraph.EdgeT]):Label = {
 
@@ -74,7 +74,7 @@ abstract class Semiring[Label<:AnyRef] {
    * Override this method to add side effects when you replace a label.
    */
   //todo this really belongs in MutableGraph. Maybe "pimp my API" pattern. Definitely need it for a concurrent mutable graph.
-  def replaceLabel[N](labelGraph:MutableGraph[N,LDiEdge])
+  def replaceLabel[N](labelGraph:MutableGraph[N,MLDiEdge])
                     (from:labelGraph.NodeT,
                      to:labelGraph.NodeT,
                      replacementLabel:Label):Unit = {
@@ -88,7 +88,7 @@ abstract class Semiring[Label<:AnyRef] {
   /**
    * Override this method to add side effects to the relax operator
    */
-  def relax[N](labelGraph:MutableGraph[N,LDiEdge])
+  def relax[N](labelGraph:MutableGraph[N,MLDiEdge])
            (from:labelGraph.NodeT,
             through:labelGraph.NodeT,
             to:labelGraph.NodeT):Label = {
@@ -107,26 +107,26 @@ abstract class Semiring[Label<:AnyRef] {
 
 trait LabelGraphBuilder[Label<:AnyRef] {
 
-  def identityEdgeFromGraphNode[N](originalGraph:Graph[N,LDiEdge])
+  def identityEdgeFromGraphNode[N](originalGraph:Graph[N,MLDiEdge])
                                   (nodeT:originalGraph.NodeT)
-                                  (semiring:Semiring[Label]):LDiEdge[N] = {
+                                  (semiring:Semiring[Label]):MLDiEdge[N] = {
     val node:N = nodeT.value
     (node ~+> node)(semiring.I)
   }
 
-  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                                 (edgeT:originalGraph.EdgeT):LDiEdge[N]
+  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,MLDiEdge])
+                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N]
 
   //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest, and move that type parameter to the trait declaration.
-  def initialLabelGraph[N:Manifest](originalGraph:Graph[N,LDiEdge])
-                                   (semiring:Semiring[Label]):MutableGraph[N,LDiEdge] = {
+  def initialLabelGraph[N:Manifest](originalGraph:Graph[N,MLDiEdge])
+                                   (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toNodeInSet
 
-    val identityLabelEdges:Set[LDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
-    val interestingLabelEdges:Set[LDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
-    val initEdges:Set[LDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
+    val identityLabelEdges:Set[MLDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
+    val interestingLabelEdges:Set[MLDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
+    val initEdges:Set[MLDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
     MutableGraph.from(nodes,initEdges)
   }
 }

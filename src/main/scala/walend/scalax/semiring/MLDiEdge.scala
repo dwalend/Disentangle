@@ -3,31 +3,31 @@ package walend.scalax.semiring
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge.{DiEdge, EdgeCopy, NodeProduct}
 import walend.scalax.semiring
 
-/** Labeled directed edge with mutable label of a given type AnyRef. */
-class LDiEdge[N](nodes: Product)(private var _label: AnyRef)
+/** Directed edge with mutable label of a given type AnyRef. */
+class MLDiEdge[N](nodes: Product)(private var _label: AnyRef)
     extends DiEdge[N](nodes)
-    with    EdgeCopy[LDiEdge]
-    with    EdgeIn[N,LDiEdge] {
+    with    EdgeCopy[MLDiEdge]
+    with    EdgeIn[N,MLDiEdge] {
 
   override def label: AnyRef = _label
   def label_=(newLabel: AnyRef) = _label = newLabel
-  override def copy[NN](newNodes: Product) = new semiring.LDiEdge[NN](newNodes)(_label)
+  override def copy[NN](newNodes: Product) = new semiring.MLDiEdge[NN](newNodes)(_label)
 }
 
-object LDiEdge {
+object MLDiEdge {
   
   def apply[N](from: N, to: N, label: AnyRef) =
-    new semiring.LDiEdge[N](NodeProduct(from, to))(label)
+    new semiring.MLDiEdge[N](NodeProduct(from, to))(label)
     
-  def unapply[N](e: LDiEdge[N]) = Some(e)
+  def unapply[N](e: MLDiEdge[N]) = Some(e)
   
   final implicit class Assoc[N](val n1: N) extends AnyVal {
-    def ~+>(n2: N)(label: AnyRef) = new semiring.LDiEdge[N]((n1, n2))(label)
+    def ~+>(n2: N)(label: AnyRef) = new semiring.MLDiEdge[N]((n1, n2))(label)
   }
 }
 
 object :~> {
-  def unapply[N](e: LDiEdge[N]): Option[(N, (N,AnyRef))] =
+  def unapply[N](e: MLDiEdge[N]): Option[(N, (N,AnyRef))] =
     if (e eq null) None else Some(e._1, (e._2, e.label))
 }
 object + {
@@ -35,8 +35,8 @@ object + {
     if (nl eq null) None else Some(nl._1, nl._2)
 }
 
-private object TestCustomLDiEdge {
-  import LDiEdge._
+private object TestMLDiEdge {
+  import MLDiEdge._
   val outer = (1~+>2)(None)
   outer.label = None
 

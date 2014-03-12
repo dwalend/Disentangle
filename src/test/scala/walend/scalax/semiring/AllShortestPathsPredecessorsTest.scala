@@ -11,7 +11,7 @@ import org.scalatest.{Matchers, FlatSpec}
 import SomeGraph._
 
 import scalax.collection.Graph
-import LDiEdge._
+import MLDiEdge._
 
 import walend.scalax.gengraph.GraphFactory
 
@@ -65,7 +65,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPathsSemiring)(new AllShortestPathsPredecessorsGraphBuilder[String])
 
-    val foundEdges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
+    val foundEdges:Set[MLDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
     (foundEdges -- expectedEdges) should be (Set.empty)
     foundEdges should be (expectedEdges)
   }
@@ -101,7 +101,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
 
-    val edges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
+    val edges:Set[MLDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
     (edges -- expectedEdges) should be (Set.empty)
     edges should be (expectedEdges)
   }
@@ -145,7 +145,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val labelGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(graph)(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String])
     val labelGraph = labelGraphAndBetweenness._1
 
-    val foundEdges:Set[LDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
+    val foundEdges:Set[MLDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
     (foundEdges -- expectedEdges) should be (Set.empty)
     foundEdges should be (expectedEdges)
 
@@ -191,7 +191,7 @@ case class PrevStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int) {}
 
 object PrevStep {
 
-  def previousStepEdgeToPrevStepEdge(graph:Graph[String,LDiEdge])(edge:graph.EdgeT):Option[LDiEdge[String]] = {
+  def previousStepEdgeToPrevStepEdge(graph:Graph[String,MLDiEdge])(edge:graph.EdgeT):Option[MLDiEdge[String]] = {
 
     val prevStep = edgeToPrevStep(graph)(edge)
     prevStep match {
@@ -200,7 +200,7 @@ object PrevStep {
     }
   }
 
-  def edgeToPrevStep(graph:Graph[String,LDiEdge])(edge:graph.EdgeT):Option[PrevStep[String]] = {
+  def edgeToPrevStep(graph:Graph[String,MLDiEdge])(edge:graph.EdgeT):Option[PrevStep[String]] = {
 
     edge.toEdgeIn.label.asInstanceOf[Option[PreviousStep[String]]] match {
       case Some(pStep) => {

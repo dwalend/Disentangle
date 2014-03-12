@@ -2,7 +2,7 @@ package walend.scalax.semiring
 
 import java.lang.{Boolean => JBoolean}
 import walend.scalax.heap.HeapOrdering
-import LDiEdge._
+import MLDiEdge._
 
 /**
  * Labels are true if the sink can be reached from the source, false if not.
@@ -31,9 +31,9 @@ object TransitiveClosureSemiring extends Semiring[JBoolean] {
 object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[JBoolean] {
   import scalax.collection.Graph
 
-  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
-    val edge:LDiEdge[N] = edgeT.toEdgeIn
+  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,MLDiEdge])
+                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
+    val edge:MLDiEdge[N] = edgeT.toEdgeIn
 
     (edge._1 ~+> edge._2)(TransitiveClosureSemiring.I)
   }

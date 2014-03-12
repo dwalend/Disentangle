@@ -11,15 +11,15 @@ import scalax.collection.mutable.{Graph => MutableGraph}
  */
 object FloydWarshall {
 
-  def floydWarshall[N,Label<:AnyRef](labelGraph:MutableGraph[N,LDiEdge])(semiring:Semiring[Label]):Unit = {
+  def floydWarshall[N,Label<:AnyRef](labelGraph:MutableGraph[N,MLDiEdge])(semiring:Semiring[Label]):Unit = {
     val nodeTs = labelGraph.nodes
     for (k <- nodeTs; i <- nodeTs; j <- nodeTs) {
       semiring.relax(labelGraph)(i,k,j)
     }
   }
 
-  def allPairsShortestPaths[N:Manifest,Label<:AnyRef](originalGraph:Graph[N,LDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,LDiEdge] = {
-    val labelGraph:MutableGraph[N,LDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
+  def allPairsShortestPaths[N:Manifest,Label<:AnyRef](originalGraph:Graph[N,MLDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,MLDiEdge] = {
+    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph
   }

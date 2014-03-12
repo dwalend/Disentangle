@@ -8,7 +8,7 @@ package walend.scalax.semiring
  */
 object SomeGraph {
   import scalax.collection.Graph
-  import LDiEdge._
+  import MLDiEdge._
 
   //boring example graph
 
@@ -34,6 +34,6 @@ object SomeGraph {
 
   val testEdges = List(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:Graph[String,LDiEdge] = Graph.from(testNodes,testEdges)
+  val testGraph:Graph[String,MLDiEdge] = Graph.from(testNodes,testEdges)
 
 }

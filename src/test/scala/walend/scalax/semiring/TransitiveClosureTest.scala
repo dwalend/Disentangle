@@ -6,7 +6,7 @@ import java.lang.{Boolean => JBoolean}
 import SomeGraph._
 
 import scalax.collection.Graph
-import LDiEdge._
+import MLDiEdge._
 
 /**
  * Tests Transitive Closure semiring

@@ -5,7 +5,7 @@ import org.scalatest.{Matchers, FlatSpec}
 import SomeGraph._
 
 import scalax.collection.Graph
-import LDiEdge._
+import MLDiEdge._
 
 import walend.scalax.gengraph.GraphFactory
 import scala.util.Random

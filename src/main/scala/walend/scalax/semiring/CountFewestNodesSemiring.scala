@@ -36,11 +36,11 @@ object CountFewestNodesSemiring extends Semiring[Integer] {
 object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Integer] {
 
   import scalax.collection.Graph
-  import LDiEdge._
+  import MLDiEdge._
 
-  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,LDiEdge])
-                                 (edgeT:originalGraph.EdgeT):LDiEdge[N] = {
-    val edge:LDiEdge[N] = edgeT.toEdgeIn
+  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,MLDiEdge])
+                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
+    val edge:MLDiEdge[N] = edgeT.toEdgeIn
 
     (edge._1 ~+> edge._2)(new Integer(1))
   }
