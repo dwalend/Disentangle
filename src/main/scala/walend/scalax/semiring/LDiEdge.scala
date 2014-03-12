@@ -1,9 +1,9 @@
-package walend.scalax.gengraph
+package walend.scalax.semiring
 
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge.{DiEdge, EdgeCopy, NodeProduct}
+import walend.scalax.semiring
 
 /** Labeled directed edge with mutable label of a given type AnyRef. */
-//todo move to semiring
 class LDiEdge[N](nodes: Product)(private var _label: AnyRef)
     extends DiEdge[N](nodes)
     with    EdgeCopy[LDiEdge]
@@ -11,18 +11,18 @@ class LDiEdge[N](nodes: Product)(private var _label: AnyRef)
 
   override def label: AnyRef = _label
   def label_=(newLabel: AnyRef) = _label = newLabel
-  override def copy[NN](newNodes: Product) = new LDiEdge[NN](newNodes)(_label)
+  override def copy[NN](newNodes: Product) = new semiring.LDiEdge[NN](newNodes)(_label)
 }
 
 object LDiEdge {
   
   def apply[N](from: N, to: N, label: AnyRef) =
-    new LDiEdge[N](NodeProduct(from, to))(label)
+    new semiring.LDiEdge[N](NodeProduct(from, to))(label)
     
   def unapply[N](e: LDiEdge[N]) = Some(e)
   
   final implicit class Assoc[N](val n1: N) extends AnyVal {
-    def ~+>(n2: N)(label: AnyRef) = new LDiEdge[N]((n1, n2))(label)
+    def ~+>(n2: N)(label: AnyRef) = new semiring.LDiEdge[N]((n1, n2))(label)
   }
 }
 

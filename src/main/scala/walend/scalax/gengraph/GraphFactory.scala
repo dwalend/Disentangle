@@ -3,7 +3,9 @@ package walend.scalax.gengraph
 import scalax.collection.immutable.Graph
 import scala.util.Random
 import scalax.collection.GraphPredef._
+import walend.scalax.semiring.LDiEdge
 import LDiEdge._
+import walend.scalax.semiring.LDiEdge
 
 /**
  * Create various types of graphs.

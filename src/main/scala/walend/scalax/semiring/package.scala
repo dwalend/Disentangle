@@ -1,5 +1,7 @@
 package walend.scalax
 
+import walend.scalax.semiring.LDiEdge
+
 /**
  * A toolkit for graph minimization algorithms.
  *
@@ -8,10 +10,4 @@ package walend.scalax
  */
 package object semiring {
 
-  /* making gengraph.LDiEdge package-wide visible by delegation 
-   */
-  type LDiEdge[N] = gengraph.LDiEdge[N]
-  val  LDiEdge = gengraph.LDiEdge
-  val :~> = gengraph.:~>
-  val + = gengraph.+
 }
