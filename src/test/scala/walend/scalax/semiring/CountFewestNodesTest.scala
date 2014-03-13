@@ -250,6 +250,8 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     timeFloyd(32,(1,1,1))
     timeFloyd(32,(1,1,1))
     timeFloyd(32,(1,1,1))
+    timeFloyd(32,(1,1,1))
+    timeFloyd(32,(1,1,1))
 
     val calibrate = timeFloyd(32,(1,1,1))
 
