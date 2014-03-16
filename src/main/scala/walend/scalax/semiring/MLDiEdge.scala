@@ -2,12 +2,14 @@ package walend.scalax.semiring
 
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge.{DiEdge, EdgeCopy, NodeProduct}
 import walend.scalax.semiring
+import scala.collection.GenIterable
+import scala.collection.generic.CanBuildFrom
 
 /** Directed edge with mutable label of a given type AnyRef. */
 class MLDiEdge[N](nodes: Product)(private var _label: AnyRef)
     extends DiEdge[N](nodes)
     with    EdgeCopy[MLDiEdge]
-    with    EdgeIn[N,MLDiEdge] {
+    with    OuterEdge[N,MLDiEdge] {
 
   override def label: AnyRef = _label
   def label_=(newLabel: AnyRef) = _label = newLabel
