@@ -12,7 +12,7 @@ import scalax.collection.GraphPredef.EdgeLikeIn
  */
 object FloydWarshall {
 
-  def floydWarshall[N,Label<:AnyRef](labelGraph:MutableGraph[N,MLDiEdge])(semiring:Semiring[Label]):Unit = {
+  def floydWarshall[N,Label](labelGraph:MutableGraph[N,MLDiEdge])(semiring:Semiring[Label]):Unit = {
     val nodeTs = labelGraph.nodes
     for (k <- nodeTs; i <- nodeTs; j <- nodeTs) {
       semiring.relax(labelGraph)(i,k,j)
@@ -21,7 +21,7 @@ object FloydWarshall {
 
   def allPairsShortestPaths[N:Manifest,
                             E[X] <: EdgeLikeIn[X],
-                            Label<:AnyRef]
+                            Label]
                             (originalGraph:Graph[N,E])
                             (semiring:Semiring[Label])
                             (labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {

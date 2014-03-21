@@ -16,7 +16,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label<:AnyRef,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                              (innerSourceNode:labelGraph.NodeT)
                                              (support:GraphMinimizerSupport[Label,Key]):Graph[N,MLDiEdge] = {
     //Set up the map of Nodes to HeapKeys
@@ -47,7 +47,7 @@ object Dijkstra {
     labelGraph
   }
 
-  def singleSourceShortestPaths[N:Manifest,Label<:AnyRef,Key]
+  def singleSourceShortestPaths[N:Manifest,Label,Key]
       (sourceNode:N,originalGraph:Graph[N,MLDiEdge])
       (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
 
@@ -62,7 +62,7 @@ object Dijkstra {
    */
   def allPairsShortestPaths[N:Manifest,
                             E[X] <: EdgeLikeIn[X],
-                            Label<:AnyRef,
+                            Label,
                             Key]
                             (originalGraph:Graph[N,E])
                             (support:GraphMinimizerSupport[Label,Key],   //todo separate bubbles?
