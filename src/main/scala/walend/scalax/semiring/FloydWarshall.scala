@@ -2,6 +2,7 @@ package walend.scalax.semiring
 
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
+import scalax.collection.GraphPredef.EdgeLikeIn
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
@@ -18,7 +19,12 @@ object FloydWarshall {
     }
   }
 
-  def allPairsShortestPaths[N:Manifest,Label<:AnyRef](originalGraph:Graph[N,MLDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+  def allPairsShortestPaths[N:Manifest,
+                            E[X] <: EdgeLikeIn[X],
+                            Label<:AnyRef]
+                            (originalGraph:Graph[N,E])
+                            (semiring:Semiring[Label])
+                            (labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph

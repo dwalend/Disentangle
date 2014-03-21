@@ -5,6 +5,9 @@ import scalax.collection.mutable.{Graph => MutableGraph}
 import walend.scalax.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable
 import scala.reflect.ClassTag
+import scalax.collection.GraphPredef._
+import scala.Some
+import walend.scalax.semiring.PreviousStep
 
 /**
  * Brandes' algorithm for betweenness.
@@ -112,8 +115,13 @@ object Brandes {
   /**
    * This method runs Brande's algorithm for all nodes.
    */
-  def shortestPathsAndBetweenness[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](originalGraph:Graph[N,MLDiEdge])
-                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):(Graph[N,MLDiEdge],Map[N,Double]) = {
+  def shortestPathsAndBetweenness[N:Manifest,
+                                  E[X] <: EdgeLikeIn[X],
+                                  Label <: Option[BrandesLabel[N]]:ClassTag,
+                                  Key]
+                                  (originalGraph:Graph[N,E])
+                                  (support:GraphMinimizerSupport[Label,Key],    //todo separate bubbles?
+                                   labelGraphBuilder:LabelGraphBuilder):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     val partialBetweennesses = for(node <- labelGraph.nodes) yield {

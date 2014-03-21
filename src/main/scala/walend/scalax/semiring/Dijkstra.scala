@@ -3,6 +3,7 @@ package walend.scalax.semiring
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 import walend.scalax.heap.{FibonacciHeap, Heap}
+import scalax.collection.GraphPredef.EdgeLikeIn
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization.
@@ -59,9 +60,13 @@ object Dijkstra {
   /**
    * This method runs Dijkstra's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,Label<:AnyRef,Key]
-      (originalGraph:Graph[N,MLDiEdge])
-      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+  def allPairsShortestPaths[N:Manifest,
+                            E[X] <: EdgeLikeIn[X],
+                            Label<:AnyRef,
+                            Key]
+                            (originalGraph:Graph[N,E])
+                            (support:GraphMinimizerSupport[Label,Key],   //todo separate bubbles?
+                            labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {
