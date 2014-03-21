@@ -53,10 +53,11 @@ class OneShortestPathGraphBuilder[N] extends LabelGraphBuilder[Option[List[N]]] 
 
   import scalax.collection.Graph
   import MLDiEdge._
+  import scalax.collection.GraphPredef.EdgeLikeIn
 
-  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,MLDiEdge])
-                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
-    val edge:MLDiEdge[N] = edgeT.toEdgeIn
+  def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
+    val edge:E[M] = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(Some(List(edge._2)))
   }

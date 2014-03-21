@@ -30,10 +30,11 @@ object TransitiveClosureSemiring extends Semiring[JBoolean] {
 
 object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[JBoolean] {
   import scalax.collection.Graph
+  import scalax.collection.GraphPredef.EdgeLikeIn
 
-  def initialEdgeFromGraphEdge[N](originalGraph:Graph[N,MLDiEdge])
+  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                  (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
-    val edge:MLDiEdge[N] = edgeT.toEdgeIn
+    val edge = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(TransitiveClosureSemiring.I)
   }
