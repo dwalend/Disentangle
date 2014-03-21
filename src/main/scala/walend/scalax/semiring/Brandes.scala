@@ -7,7 +7,6 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 import scalax.collection.GraphPredef._
 import scala.Some
-import walend.scalax.semiring.PreviousStep
 
 /**
  * Brandes' algorithm for betweenness.
@@ -92,9 +91,7 @@ object Brandes {
 
     source ~>? sink match {
       case None => None
-      case Some(innerEdge) => innerEdge.label match {
-        case label: Some[PreviousStep[N]] => label
-      }
+      case Some(innerEdge) => innerEdge.label.asInstanceOf[Some[PreviousStep[N]]]
     }
   }
 

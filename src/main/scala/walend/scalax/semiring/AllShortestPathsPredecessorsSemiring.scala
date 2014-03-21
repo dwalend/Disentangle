@@ -120,9 +120,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
     val currentLabel:Option[PreviousStep[N]] = from ~>? to match {
       case None => O
-      case Some(innerEdge) => innerEdge.label match {
-        case label: Some[PreviousStep[N]] => label
-      }
+      case Some(innerEdge) => innerEdge.label.asInstanceOf[Some[PreviousStep[N]]]
     }
     val result = taggingSummary(fromThroughToLabel,currentLabel,from)
     result
