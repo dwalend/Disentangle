@@ -28,7 +28,7 @@ object TransitiveClosureSemiring extends Semiring[JBoolean] {
 
 }
 
-object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[JBoolean] {
+object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder {
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
 

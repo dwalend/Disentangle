@@ -152,7 +152,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
 }
 
-class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder[Option[PreviousStep[N]]] {
+class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn

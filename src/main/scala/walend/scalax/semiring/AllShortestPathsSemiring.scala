@@ -49,7 +49,7 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
   }
 }
 
-class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder[Option[NextStep[N]]] {
+class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
 
   import scalax.collection.Graph
   import MLDiEdge._

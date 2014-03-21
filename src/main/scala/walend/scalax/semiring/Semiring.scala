@@ -105,10 +105,10 @@ abstract class Semiring[Label<:AnyRef] {
   }
 }
 
-trait LabelGraphBuilder[Label<:AnyRef] {
+trait LabelGraphBuilder {
   import scalax.collection.GraphPredef.EdgeLikeIn
 
-  def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+  def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X],Label<:AnyRef](originalGraph:Graph[N,E])
                                   (nodeT:originalGraph.NodeT)
                                   (semiring:Semiring[Label]):MLDiEdge[N] = {
     val node:N = nodeT.value
@@ -119,7 +119,7 @@ trait LabelGraphBuilder[Label<:AnyRef] {
                                                        (edgeT:originalGraph.EdgeT):MLDiEdge[N]
 
   //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest, and move that type parameter to the trait declaration.
-  def initialLabelGraph[N:Manifest,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+  def initialLabelGraph[N:Manifest,E[X] <: EdgeLikeIn[X],Label<:AnyRef](originalGraph:Graph[N,E])
                                    (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 

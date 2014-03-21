@@ -18,7 +18,7 @@ object FloydWarshall {
     }
   }
 
-  def allPairsShortestPaths[N:Manifest,Label<:AnyRef](originalGraph:Graph[N,MLDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,MLDiEdge] = {
+  def allPairsShortestPaths[N:Manifest,Label<:AnyRef](originalGraph:Graph[N,MLDiEdge])(semiring:Semiring[Label])(labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph

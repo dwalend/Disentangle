@@ -48,7 +48,7 @@ object Dijkstra {
 
   def singleSourceShortestPaths[N:Manifest,Label<:AnyRef,Key]
       (sourceNode:N,originalGraph:Graph[N,MLDiEdge])
-      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,MLDiEdge] = {
+      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
@@ -61,7 +61,7 @@ object Dijkstra {
    */
   def allPairsShortestPaths[N:Manifest,Label<:AnyRef,Key]
       (originalGraph:Graph[N,MLDiEdge])
-      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label]):Graph[N,MLDiEdge] = {
+      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {

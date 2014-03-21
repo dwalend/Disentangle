@@ -33,7 +33,7 @@ object CountFewestNodesSemiring extends Semiring[Integer] {
   }
 }
 
-object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Integer] {
+object CountFewestNodesGraphBuilder extends LabelGraphBuilder {
 
   import scalax.collection.Graph
   import MLDiEdge._
