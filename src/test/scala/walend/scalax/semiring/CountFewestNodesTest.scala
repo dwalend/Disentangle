@@ -4,7 +4,6 @@ import org.scalatest.{Matchers, FlatSpec}
 
 import SomeGraph._
 
-import scalax.collection.Graph
 import MLDiEdge._
 
 import walend.scalax.gengraph.GraphFactory
@@ -18,37 +17,30 @@ import scala.util.Random
  */
 class CountFewestNodesTest extends FlatSpec with Matchers {
   
-  val _0: java.lang.Integer = 0
-  val _1: java.lang.Integer = 1
-  val _2: java.lang.Integer = 2
-  val _3: java.lang.Integer = 3
-  val _4: java.lang.Integer = 4
-  val _5: java.lang.Integer = 5
-
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
-      (A~+>B)(_1),
-      (A~+>A)(_0),
-      (B~+>C)(_1),
-      (B~+>B)(_0),
-      (C~+>C)(_0),
-      (C~+>D)(_1),
-      (D~+>D)(_0),
-      (D~+>E)(_1),
-      (E~+>B)(_1),
-      (E~+>F)(_1),
-      (E~+>H)(_1),
-      (E~+>E)(_0),
-      (F~+>F)(_0),
-      (G~+>G)(_0),
-      (H~+>C)(_1),
-      (H~+>H)(_0)
+      (A~+>B)(1),
+      (A~+>A)(0),
+      (B~+>C)(1),
+      (B~+>B)(0),
+      (C~+>C)(0),
+      (C~+>D)(1),
+      (D~+>D)(0),
+      (D~+>E)(1),
+      (E~+>B)(1),
+      (E~+>F)(1),
+      (E~+>H)(1),
+      (E~+>E)(0),
+      (F~+>F)(0),
+      (G~+>G)(0),
+      (H~+>C)(1),
+      (H~+>H)(0)
     )
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
   "Replacing a label in the initial graph" should "only change that one label" in {
@@ -56,28 +48,28 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
-      (A~+>B)(_1),
-      (A~+>A)(_0),
-      (B~+>C)(_1),
-      (B~+>B)(_0),
-      (C~+>C)(_0),
-      (C~+>D)(_1),
-      (D~+>D)(_0),
-      (D~+>E)(_1),
-      (E~+>B)(_1),
-      (E~+>F)(_1),
-      (E~+>H)(_1),
-      (E~+>E)(_0),
-      (F~+>F)(_0),
-      (G~+>G)(_0),
-      (H~+>C)(_1),
-      (H~+>H)(_0),
-      (A~+>C)(_3)
+      (A~+>B)(1),
+      (A~+>A)(0),
+      (B~+>C)(1),
+      (B~+>B)(0),
+      (C~+>C)(0),
+      (C~+>D)(1),
+      (D~+>D)(0),
+      (D~+>E)(1),
+      (E~+>B)(1),
+      (E~+>F)(1),
+      (E~+>H)(1),
+      (E~+>E)(0),
+      (F~+>F)(0),
+      (G~+>G)(0),
+      (H~+>C)(1),
+      (H~+>H)(0),
+      (A~+>C)(3)
     )
 
     CountFewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,3)
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
 
   }
 
@@ -86,27 +78,27 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)(CountFewestNodesSemiring)
 
     val expectedEdges = Set(
-      (A~+>B)(_1),
-      (A~+>A)(_0),
-      (B~+>C)(_1),
-      (B~+>B)(_0),
-      (C~+>C)(_0),
-      (C~+>D)(_1),
-      (D~+>D)(_0),
-      (D~+>E)(_1),
-      (E~+>B)(_1),
-      (E~+>F)(_1),
-      (E~+>H)(_1),
-      (E~+>E)(_0),
-      (F~+>F)(_0),
-      (G~+>G)(_0),
-      (H~+>C)(_1),
-      (H~+>H)(_0)
+      (A~+>B)(1),
+      (A~+>A)(0),
+      (B~+>C)(1),
+      (B~+>B)(0),
+      (C~+>C)(0),
+      (C~+>D)(1),
+      (D~+>D)(0),
+      (D~+>E)(1),
+      (E~+>B)(1),
+      (E~+>F)(1),
+      (E~+>H)(1),
+      (E~+>E)(0),
+      (F~+>F)(0),
+      (G~+>G)(0),
+      (H~+>C)(1),
+      (H~+>H)(0)
     )
 
     CountFewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,CountFewestNodesSemiring.O)
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
 
   }
 
@@ -127,55 +119,56 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     }
   }
 
+  val expectedEdges = Set(
+    (E~+>E)(0),
+    (G~+>G)(0),
+    (A~+>F)(5),
+    (B~+>C)(1),
+    (D~+>B)(2),
+    (B~+>D)(2),
+    (B~+>B)(0),
+    (D~+>F)(2),
+    (H~+>B)(4),
+    (B~+>H)(4),
+    (E~+>D)(3),
+    (C~+>F)(3),
+    (A~+>D)(3),
+    (C~+>B)(3),
+    (C~+>C)(0),
+    (A~+>E)(4),
+    (H~+>E)(3),
+    (E~+>F)(1),
+    (H~+>C)(1),
+    (E~+>B)(1),
+    (C~+>D)(1),
+    (H~+>H)(0),
+    (A~+>B)(1),
+    (F~+>F)(0),
+    (A~+>A)(0),
+    (H~+>F)(4),
+    (A~+>H)(5),
+    (E~+>H)(1),
+    (E~+>C)(2),
+    (C~+>E)(2),
+    (D~+>C)(3),
+    (B~+>E)(3),
+    (A~+>C)(2),
+    (B~+>F)(4),
+    (C~+>H)(3),
+    (D~+>D)(0),
+    (D~+>E)(1),
+    (H~+>D)(2),
+    (D~+>H)(2)
+  )
+
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
     val graph = SomeGraph.testGraph
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesSemiring)(CountFewestNodesGraphBuilder)
 
-    val expectedEdges = Set(
-      (E~+>E)(_0),
-      (G~+>G)(_0),
-      (A~+>F)(_5),
-      (B~+>C)(_1),
-      (D~+>B)(_2),
-      (B~+>D)(_2),
-      (B~+>B)(_0),
-      (D~+>F)(_2),
-      (H~+>B)(_4),
-      (B~+>H)(_4),
-      (E~+>D)(_3),
-      (C~+>F)(_3),
-      (A~+>D)(_3),
-      (C~+>B)(_3),
-      (C~+>C)(_0),
-      (A~+>E)(_4),
-      (H~+>E)(_3),
-      (E~+>F)(_1),
-      (H~+>C)(_1),
-      (E~+>B)(_1),
-      (C~+>D)(_1),
-      (H~+>H)(_0),
-      (A~+>B)(_1),
-      (F~+>F)(_0),
-      (A~+>A)(_0),
-      (H~+>F)(_4),
-      (A~+>H)(_5),
-      (E~+>H)(_1),
-      (E~+>C)(_2),
-      (C~+>E)(_2),
-      (D~+>C)(_3),
-      (B~+>E)(_3),
-      (A~+>C)(_2),
-      (B~+>F)(_4),
-      (C~+>H)(_3),
-      (D~+>D)(_0),
-      (D~+>E)(_1),
-      (H~+>D)(_2),
-      (D~+>H)(_2)
-    )
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -184,49 +177,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(CountFewestNodes,CountFewestNodesGraphBuilder)
 
-    val expectedEdges = Set(
-      (E~+>E)(_0),
-      (G~+>G)(_0),
-      (A~+>F)(_5),
-      (B~+>C)(_1),
-      (D~+>B)(_2),
-      (B~+>D)(_2),
-      (B~+>B)(_0),
-      (D~+>F)(_2),
-      (H~+>B)(_4),
-      (B~+>H)(_4),
-      (E~+>D)(_3),
-      (C~+>F)(_3),
-      (A~+>D)(_3),
-      (C~+>B)(_3),
-      (C~+>C)(_0),
-      (A~+>E)(_4),
-      (H~+>E)(_3),
-      (E~+>F)(_1),
-      (H~+>C)(_1),
-      (E~+>B)(_1),
-      (C~+>D)(_1),
-      (H~+>H)(_0),
-      (A~+>B)(_1),
-      (F~+>F)(_0),
-      (A~+>A)(_0),
-      (H~+>F)(_4),
-      (A~+>H)(_5),
-      (E~+>H)(_1),
-      (E~+>C)(_2),
-      (C~+>E)(_2),
-      (D~+>C)(_3),
-      (B~+>E)(_3),
-      (A~+>C)(_2),
-      (B~+>F)(_4),
-      (C~+>H)(_3),
-      (D~+>D)(_0),
-      (D~+>E)(_1),
-      (H~+>D)(_2),
-      (D~+>H)(_2)
-    )
-
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
   def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {

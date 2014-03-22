@@ -108,8 +108,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
 
   def timeDijkstra(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-//todo switch back to the right semiring    val allShortestPaths = new AllShortestPathsPredecessors[Int]
-    val allShortestPaths = new AllShortestPaths[Int]
+    val allShortestPaths = new AllShortestPathsPredecessors[Int]
 
     val startTime = System.currentTimeMillis()
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsGraphBuilder[Int])
