@@ -82,9 +82,9 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPaths.semiring)(new AllShortestPathsGraphBuilder[String])
 
-    (labelGraph.edges.toEdgeInSet.to[Set] -- expectedEdges) should be (Set.empty)
+    (labelGraph.edges.toOuter.to[Set] -- expectedEdges) should be (Set.empty)
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -95,7 +95,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsGraphBuilder[String])
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
 }

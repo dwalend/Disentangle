@@ -79,7 +79,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
       (A~+>A)(Some(List()))
     )
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
@@ -150,7 +150,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
       (A~+>A)(Some(List()))
     )
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges2)
+    labelGraph.edges.toOuter should be (expectedEdges2)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -161,7 +161,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
     val labelGraph = Dijkstra.allPairsShortestPaths(graph)(oneShortestPath,new OneShortestPathGraphBuilder[String])
 
-    labelGraph.edges.toEdgeInSet should be (expectedEdges)
+    labelGraph.edges.toOuter should be (expectedEdges)
   }
 
 }

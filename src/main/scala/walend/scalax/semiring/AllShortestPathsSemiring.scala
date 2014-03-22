@@ -54,6 +54,7 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
   import scalax.collection.Graph
   import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
+  import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
                                                      (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {

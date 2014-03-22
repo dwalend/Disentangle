@@ -57,6 +57,7 @@ object Dijkstra {
   }
 
 
+  import scala.language.higherKinds
   /**
    * This method runs Dijkstra's algorithm for all nodes.
    */

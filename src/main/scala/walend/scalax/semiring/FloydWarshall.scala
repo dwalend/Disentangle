@@ -19,6 +19,7 @@ object FloydWarshall {
     }
   }
 
+  import scala.language.higherKinds
   def allPairsShortestPaths[N:Manifest,
                             E[X] <: EdgeLikeIn[X],
                             Label]

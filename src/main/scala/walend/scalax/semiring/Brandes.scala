@@ -112,6 +112,8 @@ object Brandes {
   /**
    * This method runs Brande's algorithm for all nodes.
    */
+  import scala.language.higherKinds
+
   def shortestPathsAndBetweenness[N:Manifest,
                                   E[X] <: EdgeLikeIn[X],
                                   Label <: Option[BrandesLabel[N]]:ClassTag,

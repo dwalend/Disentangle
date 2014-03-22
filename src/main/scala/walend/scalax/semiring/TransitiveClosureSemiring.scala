@@ -31,6 +31,7 @@ object TransitiveClosureSemiring extends Semiring[JBoolean] {
 object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder {
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
+  import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                  (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {

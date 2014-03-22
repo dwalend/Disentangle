@@ -40,9 +40,7 @@ abstract class Semiring[Label] {
 
     val currentLabel: Label = from ~>? to match {
       case None => O
-      case Some(innerEdge) => innerEdge.label match {
-        case label: Label => label
-      }
+      case Some(innerEdge) => innerEdge.label.asInstanceOf[Label]
     }
     summary(fromThroughToLabel, currentLabel)
   }
@@ -56,12 +54,8 @@ abstract class Semiring[Label] {
 
     (fromThrough,throughTo) match {
       case (Some(fromThroughEdgeT), Some(throughToEdgeT)) => {
-        val fromThroughLabel: Label = fromThroughEdgeT.label match {
-          case label: Label => label
-        }
-        val throughToLabel: Label = throughToEdgeT.label match {
-          case label: Label => label
-        }
+        val fromThroughLabel: Label = fromThroughEdgeT.label.asInstanceOf[Label]
+        val throughToLabel: Label = throughToEdgeT.label.asInstanceOf[Label]
         val fromToLabel:Label = extend(fromThroughLabel,throughToLabel)
         fromToLabel
       }
@@ -106,6 +100,7 @@ abstract class Semiring[Label] {
 trait LabelGraphBuilder {
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.reflect.runtime.universe.TypeTag
+  import scala.language.higherKinds
 
   def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
                                   (nodeT:originalGraph.NodeT)
@@ -121,7 +116,7 @@ trait LabelGraphBuilder {
                                    (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 
-    val nodes:Set[N] = originalGraph.nodes.toNodeInSet
+    val nodes:Set[N] = originalGraph.nodes.toOuter
 
     val identityLabelEdges:Set[MLDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
     val interestingLabelEdges:Set[MLDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))

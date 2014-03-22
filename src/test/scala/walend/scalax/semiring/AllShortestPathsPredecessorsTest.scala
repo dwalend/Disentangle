@@ -201,7 +201,7 @@ object PrevStep {
 
   def edgeToPrevStep(graph:Graph[String,MLDiEdge])(edge:graph.EdgeT):Option[PrevStep[String]] = {
 
-    edge.toEdgeIn.label.asInstanceOf[Option[PreviousStep[String]]] match {
+    edge.toOuter.label.asInstanceOf[Option[PreviousStep[String]]] match {
       case Some(pStep) => {
         val previousStep:PreviousStep[String] = pStep
         Some(PrevStep(previousStep.steps,previousStep.predecessors,previousStep.numShortestPaths))
