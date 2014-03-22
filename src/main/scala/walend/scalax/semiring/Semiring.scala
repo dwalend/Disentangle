@@ -22,7 +22,6 @@ abstract class Semiring[Label] {
   /**
    * Implement this method to create the core of a summary operator
    */
-  //todo rework an optimized variant to return None for no change. Maybe.
   def summary(fromThroughToLabel:Label,currentLabel:Label):Label
 
   /**
@@ -73,7 +72,6 @@ abstract class Semiring[Label] {
   /**
    * Override this method to add side effects when you replace a label.
    */
-  //todo this really belongs in MutableGraph. Maybe "pimp my API" pattern. Definitely need it for a concurrent mutable graph.
   def replaceLabel[N](labelGraph:MutableGraph[N,MLDiEdge])
                     (from:labelGraph.NodeT,
                      to:labelGraph.NodeT,
@@ -107,6 +105,7 @@ abstract class Semiring[Label] {
 
 trait LabelGraphBuilder {
   import scalax.collection.GraphPredef.EdgeLikeIn
+  import scala.reflect.runtime.universe.TypeTag
 
   def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
                                   (nodeT:originalGraph.NodeT)
@@ -118,8 +117,7 @@ trait LabelGraphBuilder {
   def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                                        (edgeT:originalGraph.EdgeT):MLDiEdge[N]
 
-  //todo when Graph.from starts using ClassTag or TypeTag, do the same. Graph.from in 0.7 uses a Manifest, and move that type parameter to the trait declaration.
-  def initialLabelGraph[N:Manifest,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
+  def initialLabelGraph[N: TypeTag,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
                                    (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 

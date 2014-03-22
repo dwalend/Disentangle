@@ -135,7 +135,6 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
     val result = (fromThrough,throughTo) match {
       case (Some(fromThroughEdgeT),Some(throughToEdgeT)) => {
-        //todo don't cast
         val fromThroughLabel:Option[PreviousStep[N]] = fromThrough.get.label.asInstanceOf[Option[PreviousStep[N]]]
         val throughToLabel:Option[PreviousStep[N]] = throughTo.get.label.asInstanceOf[Option[PreviousStep[N]]]
 

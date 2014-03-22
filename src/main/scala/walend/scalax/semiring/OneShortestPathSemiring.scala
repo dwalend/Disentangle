@@ -8,7 +8,6 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-//todo would it make more sense to have Int,Option[N] as the label?
 class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
 
   //length of the path is length of the list

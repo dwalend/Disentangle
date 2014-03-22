@@ -16,7 +16,6 @@ object GraphFactory {
   /**
    * Create a randomly connected graph, where each node has a limited number of connections to other nodes
    */
-//todo ask for a common superclass of DiEdge and LDiEdge
   def createRandomNormalGraph(nodeCount:Int,maxOutEdgesPerNode:Int):Graph[Int,DiEdge] = {
 
     require(maxOutEdgesPerNode < nodeCount)

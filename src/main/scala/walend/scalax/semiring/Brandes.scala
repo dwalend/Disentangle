@@ -117,7 +117,7 @@ object Brandes {
                                   Label <: Option[BrandesLabel[N]]:ClassTag,
                                   Key]
                                   (originalGraph:Graph[N,E])
-                                  (support:GraphMinimizerSupport[Label,Key],    //todo separate bubbles?
+                                  (support:GraphMinimizerSupport[Label,Key],
                                    labelGraphBuilder:LabelGraphBuilder):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
