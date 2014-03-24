@@ -6,25 +6,25 @@ package walend.scalax.semiring
  * @author dwalend
  * @since v1
  */
+          /*
+case class NextStep[N](length:Double,choices:Set[N]) {}
 
-import AllShortestPathsSemiring.NextStep
-
-class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
+class AllLeastPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
 
   //identity and annihilator
-  def I = Some(NextStep[N](0,Set[N]()))
+  def I = Some(NextStep[N](0.0,Set[N]()))
   def O = None
 
   /**
- * Implement this method to create the core of a summary operator
- */
+   * Implement this method to create the core of a summary operator
+   */
   def summary(fromThroughToLabel:Option[NextStep[N]],
               currentLabel:Option[NextStep[N]]):Option[NextStep[N]] = {
 
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
-        if(fromThroughToSteps.steps < currentSteps.steps) { fromThroughToLabel }
-        else if (fromThroughToSteps.steps == currentSteps.steps) {
+        if(fromThroughToSteps.length < currentSteps.length) { fromThroughToLabel }
+        else if (fromThroughToSteps.length == currentSteps.length) {
           Some(new NextStep[N](currentSteps.steps,currentSteps.choices ++ fromThroughToSteps.choices))
         }
         else { currentLabel }
@@ -36,8 +36,8 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
   }
 
   /**
- * Implement this method to create the core of an extend operator
- */
+   * Implement this method to create the core of an extend operator
+   */
   def extend(fromThroughLabel:Option[NextStep[N]],throughToLabel:Option[NextStep[N]]):Option[NextStep[N]] = {
 
     (fromThroughLabel,throughToLabel) match {
@@ -49,11 +49,7 @@ class AllShortestPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
   }
 }
 
-object AllShortestPathsSemiring{
-  case class NextStep[N](steps:Int,choices:Set[N]) {}
-}
-
-class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
+class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
 
   import scalax.collection.Graph
   import MLDiEdge._
@@ -61,15 +57,15 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
   import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
-                                                     (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
-  val edge:E[M] = edgeT.toOuter
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
+    val edge:E[M] = edgeT.toOuter
 
-  (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[M](edge._2))))
+    (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[M](edge._2))))
   }
 }
 
-class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Int] {
-  def semiring = new AllShortestPathsSemiring[N]
+class AllLeastPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Int] {
+  def semiring = new AllLeastPathsSemiring[N]
 
   def heapOrdering = CountFewestNodesHeapOrdering
 
@@ -78,3 +74,4 @@ class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Int]
     case None => Int.MaxValue
   }}
 }
+    */

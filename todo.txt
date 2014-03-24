@@ -3,6 +3,7 @@ Pulblicize
 * Format for README.md
 * Post on github
 * Post on mvnrepo
+* Post on scala-graph list
 * Blog a bit
 
 Overall
@@ -17,9 +18,9 @@ Structures
 Algorithms
 
 * MST with Fibonacci heap
-* Lazy Label Graph. (Single-Source graph)
+* Lazy Label Graph. (Single-Source graph with Dijkstra's algorithm)
 * A* algorithm
-* Parallel queued minimization
+* Parallel queued graph minimization (will need a concurrent mutable edge graph)
 
 Semirings
 
