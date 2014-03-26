@@ -61,7 +61,7 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
   import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
-                                                     (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
+                                                     (edgeT:originalGraph.EdgeT):Option[MLDiEdge[M,NextStep[M]]] = {
   val edge:E[M] = edgeT.toOuter
 
   (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[M](edge._2))))

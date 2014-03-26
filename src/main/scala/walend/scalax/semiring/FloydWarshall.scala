@@ -12,7 +12,7 @@ import scalax.collection.GraphPredef.EdgeLikeIn
  */
 object FloydWarshall {
 
-  def floydWarshall[N,Label](labelGraph:MutableGraph[N,MLDiEdge])(semiring:Semiring[Label]):Unit = {
+  def floydWarshall[N,Label](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])(semiring:Semiring[Label]):Unit = {
     val nodeTs = labelGraph.nodes
     for (k <- nodeTs; i <- nodeTs; j <- nodeTs) {
       semiring.relax(labelGraph)(i,k,j)
@@ -25,8 +25,8 @@ object FloydWarshall {
                             Label]
                             (originalGraph:Graph[N,E])
                             (semiring:Semiring[Label])
-                            (labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
+                            (labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge[N,Label]] = {
+    val labelGraph:MutableGraph[N,MLDiEdge[N,Label]] = labelGraphBuilder.initialLabelGraph(originalGraph)(semiring)
     floydWarshall(labelGraph)(semiring)
     labelGraph
   }

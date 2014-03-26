@@ -34,7 +34,7 @@ object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder {
   import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
-                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
+                                 (edgeT:originalGraph.EdgeT):MLDiEdge[N,Boolean] = {
     val edge = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(TransitiveClosureSemiring.I)

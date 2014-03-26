@@ -16,9 +16,9 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])
                                              (innerSourceNode:labelGraph.NodeT)
-                                             (support:GraphMinimizerSupport[Label,Key]):Graph[N,MLDiEdge] = {
+                                             (support:GraphMinimizerSupport[Label,Key]):Graph[N,MLDiEdge[N,Label]] = {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
@@ -48,10 +48,10 @@ object Dijkstra {
   }
 
   def singleSourceShortestPaths[N:Manifest,Label,Key]
-      (sourceNode:N,originalGraph:Graph[N,MLDiEdge])
-      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+      (sourceNode:N,originalGraph:Graph[N,MLDiEdge[N,Label]])
+      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge[N,Label]] = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
+    val labelGraph:MutableGraph[N,MLDiEdge[N,Label]] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
     dijkstra(labelGraph)(innerSourceNode)(support)
   }
@@ -67,9 +67,9 @@ object Dijkstra {
                             Key]
                             (originalGraph:Graph[N,E])
                             (support:GraphMinimizerSupport[Label,Key],
-                            labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+                            labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge[N,Label]] = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
+    val labelGraph:MutableGraph[N,MLDiEdge[N,Label]] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
     for(node <- labelGraph.nodes) {
       dijkstra(labelGraph)(node)(support)
     }

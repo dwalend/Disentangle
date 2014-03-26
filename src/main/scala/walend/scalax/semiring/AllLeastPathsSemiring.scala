@@ -66,7 +66,7 @@ class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
   import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M,Option[NextStep[M]]] = {
     val edge:E[M] = edgeT.toOuter
     require(edge.label.isInstanceOf[Double],"Edge labels must exist and be Doubles")
     val weight = edge.label.asInstanceOf[Double]

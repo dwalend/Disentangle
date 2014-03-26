@@ -112,7 +112,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
   /**
    * Override this method if you need to work with nodes and edges directly as part of your summary operator.
    */
-  override def fullSummary[M](labelGraph:MutableGraph[M,MLDiEdge])
+  override def fullSummary[M](labelGraph:MutableGraph[M,MLDiEdge[M,Option[PreviousStep[N]]]])
                             (from:labelGraph.NodeT,
                              through:labelGraph.NodeT,
                              to:labelGraph.NodeT,
@@ -129,7 +129,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
   /**
    * Override this method if you need to work with nodes and edges directly as part of your extend operator.
    */
-  override def fullExtend[M](labelGraph:MutableGraph[M,MLDiEdge])
+  override def fullExtend[M](labelGraph:MutableGraph[M,MLDiEdge[M,Option[PreviousStep[M]]]])
                  (fromThrough:Option[labelGraph.EdgeT],
                   throughTo:Option[labelGraph.EdgeT]):Option[PreviousStep[N]] = {
 
@@ -157,7 +157,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder {
   import scala.language.higherKinds
 
   def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M,Option[PreviousStep[M]]] = {
     val edge:E[M] = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))

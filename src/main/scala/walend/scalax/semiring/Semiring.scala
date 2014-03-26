@@ -32,7 +32,7 @@ abstract class Semiring[Label] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your summary operator.
    */
-  def fullSummary[N](labelGraph:MutableGraph[N,MLDiEdge])
+  def fullSummary[N](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])
                        (from:labelGraph.NodeT,
                         through:labelGraph.NodeT,
                         to:labelGraph.NodeT,
@@ -48,7 +48,7 @@ abstract class Semiring[Label] {
   /**
    * Override this method if you need to work with nodes and edges directly as part of your extend operator.
    */
-  def fullExtend[N](labelGraph:MutableGraph[N,MLDiEdge])
+  def fullExtend[N](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])
                 (fromThrough:Option[labelGraph.EdgeT],
                  throughTo:Option[labelGraph.EdgeT]):Label = {
 
@@ -66,7 +66,7 @@ abstract class Semiring[Label] {
   /**
    * Override this method to add side effects when you replace a label.
    */
-  def replaceLabel[N](labelGraph:MutableGraph[N,MLDiEdge])
+  def replaceLabel[N](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])
                     (from:labelGraph.NodeT,
                      to:labelGraph.NodeT,
                      replacementLabel:Label):Unit = {
@@ -80,7 +80,7 @@ abstract class Semiring[Label] {
   /**
    * Override this method to add side effects to the relax operator
    */
-  def relax[N](labelGraph:MutableGraph[N,MLDiEdge])
+  def relax[N](labelGraph:MutableGraph[N,MLDiEdge[N,Label]])
            (from:labelGraph.NodeT,
             through:labelGraph.NodeT,
             to:labelGraph.NodeT):Label = {
@@ -104,23 +104,23 @@ trait LabelGraphBuilder {
 
   def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
                                   (nodeT:originalGraph.NodeT)
-                                  (semiring:Semiring[Label]):MLDiEdge[N] = {
+                                  (semiring:Semiring[Label]):MLDiEdge[N,Label] = {
     val node:N = nodeT.value
     (node ~+> node)(semiring.I)
   }
 
-  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[N]
+  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[N,Label]
 
   def initialLabelGraph[N: TypeTag,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
-                                   (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
+                                   (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge[N,Label]] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toOuter
 
-    val identityLabelEdges:Set[MLDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
-    val interestingLabelEdges:Set[MLDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
-    val initEdges:Set[MLDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
+    val identityLabelEdges:Set[MLDiEdge[N,Label]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
+    val interestingLabelEdges:Set[MLDiEdge[N,Label]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
+    val initEdges:Set[MLDiEdge[N,Label]] = identityLabelEdges ++ interestingLabelEdges
     MutableGraph.from(nodes,initEdges)
   }
 }
