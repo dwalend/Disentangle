@@ -1,16 +1,16 @@
 package walend.scalax.semiring
 
 /**
- * Finds all paths that traverse between two nodes with the least Double-valued weight.
+ * Finds all most-probable paths that traverse between two nodes based on double-weight edges (with weights between zero and one).
  *
  * @author dwalend
  * @since v1
  */
 
-import AllLeastPathsSemiring.NextStep
+import MostProbablePathsSemiring.NextStep
 import walend.scalax.heap.HeapOrdering
 
-class AllLeastPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
+class MostProbablePathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
 
   //identity and annihilator
   def I = Some(NextStep[N](weight = 0.0,Set[N]()))
@@ -25,7 +25,7 @@ class AllLeastPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
         //todo care about epsilon ?
-        if(fromThroughToSteps.weight < currentSteps.weight) { fromThroughToLabel }
+        if(fromThroughToSteps.weight > currentSteps.weight) { fromThroughToLabel }
         else if (fromThroughToSteps.weight == currentSteps.weight) {
           Some(new NextStep[N](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
         }
@@ -44,21 +44,21 @@ class AllLeastPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new NextStep[N](fromThroughSteps.weight + throughToSteps.weight,fromThroughSteps.choices))
+        Some(new NextStep[N](fromThroughSteps.weight * throughToSteps.weight,fromThroughSteps.choices))
       }
       case _ => None
     }
   }
 }
 
-object AllLeastPathsSemiring{
+object MostProbablePathsSemiring{
   case class NextStep[N](weight:Double,choices:Set[N]) {}
 }
 
 /**
  * Works if the graph labels are Doubles >= 0 and < Double.MAX_VALUE.
-*/
-class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
+ */
+class MostProbablePathsGraphBuilder[N] extends LabelGraphBuilder {
 
   import scalax.collection.Graph
   import MLDiEdge._
@@ -70,17 +70,17 @@ class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
     val edge:E[M] = edgeT.toOuter
     require(edge.label.isInstanceOf[Double],"Edge labels must exist and be Doubles")
     val weight = edge.label.asInstanceOf[Double]
-    require(weight >= 0,"Edge labels must be greater than 0")
-    require(weight < Double.MaxValue,"Edge labels must be less than Double.MaxValue")
+    require(weight >= 0,"Edge labels must be at least 0")
+    require(weight <= 1,"Edge labels must be at most 1")
 
     (edge._1 ~+> edge._2)(Some(new NextStep(weight,Set[M](edge._2))))
   }
 }
 
 /**
-* A heap ordering that puts lower doubles on the top of the heap
-*/
-object AllLeastPathsHeapOrdering extends HeapOrdering[Double] {
+ * A heap ordering that puts lower doubles on the top of the heap
+ */
+object MostProbablePathsHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
     x >= y
@@ -107,13 +107,13 @@ object AllLeastPathsHeapOrdering extends HeapOrdering[Double] {
   /**
    * Minimum value for the DoubleHeap
    */
-  def AlwaysTop:Double = -1
+  def AlwaysTop:Double = 2.0
 }
 
-class AllLeastPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Double] {
-  def semiring = new AllLeastPathsSemiring[N]
+class MostProbablePaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Double] {
+  def semiring = new MostProbablePathsSemiring[N]
 
-  def heapOrdering = AllLeastPathsHeapOrdering
+  def heapOrdering = MostProbablePathsHeapOrdering
 
   def heapKeyForLabel = {label:Option[NextStep[N]] => label match {
     case Some(nextStep) => nextStep.weight
