@@ -78,20 +78,19 @@ class MostProbablePathsGraphBuilder[N] extends LabelGraphBuilder {
 }
 
 /**
- * A heap ordering that puts lower doubles on the top of the heap
+ * A heap ordering that puts higher doubles on the top of the heap
  */
 object MostProbablePathsHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
-    x >= y
+    x <= y
   }
 
   /**
    * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
-
    */
   def tryCompare(x: Double, y: Double): Option[Int] = {
-    val diff = y-x
+    val diff = x-y
     if(diff>0) Some(1)
     else if (diff<0) Some(-1)
     else Some(0)
@@ -102,6 +101,7 @@ object MostProbablePathsHeapOrdering extends HeapOrdering[Double] {
    */
   def checkKey(key: Double): Unit = {
     require(key >= 0,"Key must be zero or greater, not "+key)
+    require(key <= 1,"Key must be one or less, not "+key)
   }
 
   /**
