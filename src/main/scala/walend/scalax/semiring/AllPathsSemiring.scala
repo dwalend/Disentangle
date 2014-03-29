@@ -1,63 +1,65 @@
 package walend.scalax.semiring
 
+
 /**
- * Finds all paths that traverse between two nodes with the least Double-valued weight.
+ * Finds all minimal paths that use the core semiring.
  *
  * @author dwalend
  * @since v1
  */
-/*
-import AllLeastPathsSemiring.NextStep
+
 import walend.scalax.heap.HeapOrdering
 
-class AllLeastPathsSemiring[N] extends Semiring[Option[NextStep[N]]] {
+case class NextStep[N,CL](weight:CL,choices:Set[N]) {}
+
+class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[NextStep[N,CL]]] {
+
+  type Label = Option[NextStep[N,CL]]
 
   //identity and annihilator
-  def I = Some(NextStep[N](weight = 0.0,Set[N]()))
-  def O = None
+  val I = Some(NextStep[N,CL](coreSemiring.I,Set[N]()))
+  val O = None
 
   /**
    * Implement this method to create the core of a summary operator
    */
-  def summary(fromThroughToLabel:Option[NextStep[N]],
-              currentLabel:Option[NextStep[N]]):Option[NextStep[N]] = {
+  def summary(fromThroughToLabel:Label,
+              currentLabel:Label):Label = {
 
     (fromThroughToLabel,currentLabel) match {
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
-        //todo care about epsilon ?
-        if(fromThroughToSteps.weight < currentSteps.weight) { fromThroughToLabel }
-        else if (fromThroughToSteps.weight == currentSteps.weight) {
-          Some(new NextStep[N](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
+        val summ = coreSemiring.summary(fromThroughToSteps.weight,currentSteps.weight)
+        if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
+          Some(new NextStep[N,CL](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
         }
-        else { currentLabel }
+        else if (summ==fromThroughToSteps.weight) fromThroughToLabel
+        else if (summ==currentSteps.weight) currentLabel
+        else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.weight+" or proposed "+fromThroughToSteps.weight+" weigt.")
       }
-      case (Some(fromThroughToNodes),None) => fromThroughToLabel
-      case (None,Some(current)) => currentLabel
-      case _ => None
+      case (Some(fromThroughToNodes),O) => fromThroughToLabel
+      case (O,Some(current)) => currentLabel
+      case _ => O
     }
   }
 
   /**
    * Implement this method to create the core of an extend operator
    */
-  def extend(fromThroughLabel:Option[NextStep[N]],throughToLabel:Option[NextStep[N]]):Option[NextStep[N]] = {
+  def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new NextStep[N](fromThroughSteps.weight + throughToSteps.weight,fromThroughSteps.choices))
+        Some(new NextStep[N,CL](coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
       }
-      case _ => None
+      case _ => O
     }
   }
 }
 
-object AllLeastPathsSemiring{
-  case class NextStep[N](weight:Double,choices:Set[N]) {}
-}
-
 /**
  * Works if the graph labels are Doubles >= 0 and < Double.MAX_VALUE.
-*/
+ */
+/*
 class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
 
   import scalax.collection.Graph
@@ -78,8 +80,8 @@ class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
 }
 
 /**
-* A heap ordering that puts lower doubles on the top of the heap
-*/
+ * A heap ordering that puts lower doubles on the top of the heap
+ */
 object AllLeastPathsHeapOrdering extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
@@ -120,4 +122,4 @@ class AllLeastPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Double]
     case None => Double.MaxValue
   }}
 }
-    */
+*/

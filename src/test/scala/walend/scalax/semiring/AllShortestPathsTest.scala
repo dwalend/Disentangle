@@ -15,8 +15,6 @@ import MLDiEdge._
  */
 class AllShortestPathsTest extends FlatSpec with Matchers {
 
-  import AllShortestPathsSemiring.NextStep
-
   val expectedEdges = Set(
     (B~+>B)(Some(NextStep(0,Set()))),
     (B~+>F)(Some(NextStep(4,Set(C)))),

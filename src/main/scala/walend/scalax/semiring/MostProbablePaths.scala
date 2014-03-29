@@ -6,7 +6,7 @@ package walend.scalax.semiring
  * @author dwalend
  * @since v1
  */
-
+            /*
 import MostProbablePathsSemiring.NextStep
 import walend.scalax.heap.HeapOrdering
 
@@ -120,3 +120,4 @@ class MostProbablePaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Dou
     case None => Double.MaxValue
   }}
 }
+   */
