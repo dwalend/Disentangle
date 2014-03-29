@@ -1,0 +1,107 @@
+MST -- To adapt this to snowflakes
+    Adding a node so that no slots in a level remain may increase the key's value instead of shrinking its value.
+
+Rename the fans "coronas"
+
+
+Node layout
+
+Order nodes by relative transitivity
+    create an undirected network with all nodes that are connected to the graph
+    pick the node with the most edges as a new crystal seed
+    while there are nodes to add
+        select the node with the highest transitivity ratio (greater than 1/2) //pull in highly connected pieces first
+            break ties by taking the node with the fewest edges first  //pull in simpler pieces first
+        else
+            select the node with the most edges as a new crystal seed  //pull in a node that will pull in some other nodes
+            break ties by taking the node with the highest transitivity ratio (no matter what) //pull in a highly connected node first
+
+    last, put in the unconnected nodes at the end of the list
+    Record number of edges to earlier nodes, total number of edges as you go, if it was explicitly selected as a seed.
+
+Identify seeds vs fan parts
+
+Nodes with zero edges are isolates. Place them last, in the isolate pen.
+Nodes with zero edges from earlier nodes are seeds
+    Do a second pass to attempt to consolidate (TODO fiture this out)
+Nodes with > 36 edges are seeds (because they will need to use all 12 ways out) (Maybe try without this at first)
+Nodes with (edges to earlier nodes < edges to later nodes) are seeds
+    I'd like this to be "nodes with more edges to other seeds than their own" , which I think I get from the ordering.
+
+Build fans
+
+Fans are expandable hexagonal grids with the seed at the center.
+
+For each seed crystal
+    For each fan node assigned to that crystal, in order of relative transitivity to the nodes in that crystal (which should be close to the order they are in already)
+        Assign the node to a hex thusly:
+            Look ahead one node (to allow for three-way symmetry)
+            First choose two hexes (one for each node) with the most neighbors that link to that node, and fewest neighbors that don't. Use a 1/r^2 law to score neighbors further from the center.
+            Place the one node
+            Break ties by placing nodes near the seed
+            Break ties by preferring to place nodes to the East and South (Don't worry. They rotate and flip in a few steps.)
+
+Calculate the radius of each seed's fan
+    TODO but probably just centering and counting
+
+Place the crystals in an undirected graph, with edge weights by how many total connections there will be between crystals
+
+
+Place crystals in a directed graph (a forest) as follows:
+//todo define "primarily to one crystal" -- more than 3/4s ?
+    The graph has the following types of nodes:
+        Root -- The first crystal added is a root. Any node with no connections into the existing structure is a Root. (So the first node, isolated crystals, and isolates are roots)
+        Anchor -- subsequent crystals with connections to only one crystal in the new graph
+        Shaft -- Doesn't represent a crystal, but is a place to hang a Hub and multiple Cams. When an anchor is added, also add two Shafts.
+        Hubs -- Each Shaft has two hubs. They are for the first two crystals that have connections primarily to the Anchor and its parent.
+        Cams -- Each Shaft can have any number of Cams. These are the ultimate leaf of the recursive structure. Cams are sorted by number of connections to the hub.
+
+
+    While unplaced crystals remain
+        Add the crystal with the most edges to other crystals in the forest
+            Break ties by adding the crystal with the most connections to other crystals total (So start with the one with the most connections to other crystals
+        If no connections exist between this crystal and the structure, add the crystal as a new Root
+        Otherwise, choose the Root of the substructure with the most connections to this crystal.
+            Find the crystal with the most common connections.
+            If connections exist primarily to one crystal in the structure, add the crystal as an Anchor and create a new Axel.
+            Find the Shaft who's origin, Anchor, Hub and Cam has the most significant connections with this crystal.
+                If there is an open Hub, this crystal becomes the Hub.
+                Else, this crystal is a Cam
+                    Order the Cams by affinity to the Hub
+                    * It might make sense to make the largest radius crystal the Hub instead. Then Hub-ness is really just seeding the sort of the cams.
+
+Add edges to the forest to "rotate" the Anchors around origins and Shafts around Anchors to make a single planar digraph.
+    TODO Probably two steps -- For each root, place anchors. For each Shaft, choose one of two options within the anchors
+
+
+Place crystals in a larger hex grid
+    Place isolates in the isolate pen
+        Pick a standard location (upper right ?) for the isolates. Treat them like a cluster. Add them last.
+
+
+
+Rotate and flip fans by spring algorithms
+    TODO
+
+Compact
+    TODO
+
+
+Lay out edges
+    Splines that follow hexes or hex-side-hex center in straight lines as far as possible (12 choices of direction)
+        Few turns
+        Turns will be ~30 degree turns
+
+    Right hand rule to flow around nodes
+    Lanes -- First traveler is outermost
+    Leave nodes - spline to next (innermost) lane waypoint
+    Enter nodes - spline from last (outermost used) lane waypont
+    Represent self-edges with loopbacks inside the cell
+
+    Nodes have equally-spaced exit/entry ports in a circle around the shape.
+        Pick closest in order of closeness.
+        Start/end perpendicular to the surface
+
+Define regions as parts of clusters
+    Via crystals
+        Via the crystal forests
