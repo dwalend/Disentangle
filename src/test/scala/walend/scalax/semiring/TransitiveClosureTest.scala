@@ -16,7 +16,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(testGraph)(TransitiveClosureSemiring)
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(TransitiveClosureSemiring)(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -42,7 +42,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Replacing a label in the initial graph" should "only change that one label" in {
 
-    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(testGraph)(TransitiveClosureSemiring)
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(TransitiveClosureSemiring)(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -72,7 +72,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
-    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(testGraph)(TransitiveClosureSemiring)
+    val labelGraph = TransitiveClosureLabelGraphBuilder.initialLabelGraph(TransitiveClosureSemiring)(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -103,7 +103,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
     val graph = SomeGraph.testGraph
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(TransitiveClosureSemiring,TransitiveClosureLabelGraphBuilder)(graph)
 
     for(node <- labelGraph.nodes) {
       node ~>? node match {
@@ -120,7 +120,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
     val graph = SomeGraph.testGraph
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(TransitiveClosureSemiring)(TransitiveClosureLabelGraphBuilder)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(TransitiveClosureSemiring,TransitiveClosureLabelGraphBuilder)(graph)
 
     val expectedEdges = Set(
       (A~+>B)(true),
@@ -171,7 +171,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
     val graph = SomeGraph.testGraph
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(TransitiveClosure,TransitiveClosureLabelGraphBuilder)
+    val labelGraph = Dijkstra.allPairsShortestPaths(TransitiveClosure,TransitiveClosureLabelGraphBuilder)(graph)
 
     val expectedEdges = Set(
       (A~+>B)(true),

@@ -61,7 +61,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val allShortestPaths = new AllShortestPaths[String]
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPaths.semiring)(new AllShortestPathsGraphBuilder[String])
+    val labelGraph = FloydWarshall.allPairsShortestPaths(allShortestPaths.semiring,new AllShortestPathsGraphBuilder[String])(graph)
 
     for(node <- labelGraph.nodes) {
       node ~>? node match {
@@ -80,7 +80,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val allShortestPaths = new AllShortestPaths[String]
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(graph)(allShortestPaths.semiring)(new AllShortestPathsGraphBuilder[String])
+    val labelGraph = FloydWarshall.allPairsShortestPaths(allShortestPaths.semiring,new AllShortestPathsGraphBuilder[String])(graph)
 
     (labelGraph.edges.toOuter.to[Set] -- expectedEdges) should be (Set.empty)
 
@@ -93,7 +93,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val allShortestPaths = new AllShortestPaths[String]
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(graph)(allShortestPaths,new AllShortestPathsGraphBuilder[String])
+    val labelGraph = Dijkstra.allPairsShortestPaths(allShortestPaths,new AllShortestPathsGraphBuilder[String])(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
   }

@@ -48,10 +48,10 @@ object Dijkstra {
   }
 
   def singleSourceShortestPaths[N:Manifest,Label,Key]
-      (sourceNode:N,originalGraph:Graph[N,MLDiEdge])
-      (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+                              (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder)
+                              (sourceNode:N,originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
+    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(support.semiring)(originalGraph)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
     dijkstra(labelGraph)(innerSourceNode)(support)
   }
@@ -65,11 +65,10 @@ object Dijkstra {
                             E[X] <: EdgeLikeIn[X],
                             Label,
                             Key]
-                            (originalGraph:Graph[N,E])
-                            (support:GraphMinimizerSupport[Label,Key],
-                            labelGraphBuilder:LabelGraphBuilder):Graph[N,MLDiEdge] = {
+                            (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder)
+                            (originalGraph:Graph[N,E]):Graph[N,MLDiEdge] = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)(support.semiring)
+    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(support.semiring)(originalGraph)
     for(node <- labelGraph.nodes) {
       dijkstra(labelGraph)(node)(support)
     }

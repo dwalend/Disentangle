@@ -109,11 +109,19 @@ trait LabelGraphBuilder {
     (node ~+> node)(semiring.I)
   }
 
+  /*
+  def initialLabelFromGraphEdge[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
+                                                        (edgeT:originalGraph.EdgeT):MLDiEdge[N]
+  */
   def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[N]
+                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[N]/* = {
+    val edge:E[N] = edgeT.toOuter
 
-  def initialLabelGraph[N: TypeTag,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
-                                   (semiring:Semiring[Label]):MutableGraph[N,MLDiEdge] = {
+    (edge._1 ~+> edge._2)(initialLabelFromGraphEdge(originalGraph)(edgeT))
+  }
+   */
+  def initialLabelGraph[N: TypeTag,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
+                                                               (originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toOuter
