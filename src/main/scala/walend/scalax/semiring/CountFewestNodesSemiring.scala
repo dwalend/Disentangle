@@ -76,6 +76,11 @@ object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
    * Minimum value for the DoubleHeap
    */
   def AlwaysTop:Int = -1
+
+  /**
+   * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+   */
+  def AlwaysBottom: Int = Int.MaxValue
 }
 
 object CountFewestNodes extends GraphMinimizerSupport[Int,Int] {

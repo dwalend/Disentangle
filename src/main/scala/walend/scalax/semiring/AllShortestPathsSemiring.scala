@@ -24,6 +24,7 @@ class AllShortestPathsGraphBuilder[N] extends LabelGraphBuilder {
 
   (edge._1 ~+> edge._2)(Some(new NextStep(1,Set[M](edge._2))))
   }
+
 }
 
 class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {

@@ -82,6 +82,11 @@ object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapK
    * Minimum value for the DoubleHeap
    */
   def AlwaysTop:TransitiveClosureHeapKey = TransitiveClosureHeapKey.TopKey
+
+  /**
+   * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+   */
+  def AlwaysBottom: TransitiveClosureHeapKey = TransitiveClosureHeapKey.FalseKey
 }
 
 object TransitiveClosure extends GraphMinimizerSupport[JBoolean,TransitiveClosureHeapKey] {

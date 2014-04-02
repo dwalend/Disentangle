@@ -82,7 +82,7 @@ class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
 /**
  * A heap ordering that puts lower doubles on the top of the heap
  */
-object AllLeastPathsHeapOrdering extends HeapOrdering[Double] {
+class AllPathsHeapOrdering[Key](coreOrdering:HeapOrdering[Key]) extends HeapOrdering[Double] {
 
   def lteq(x: Double, y: Double): Boolean = {
     x >= y
@@ -111,15 +111,14 @@ object AllLeastPathsHeapOrdering extends HeapOrdering[Double] {
    */
   def AlwaysTop:Double = -1
 }
-
-class AllLeastPaths[N] extends GraphMinimizerSupport[Option[NextStep[N]],Double] {
-  def semiring = new AllLeastPathsSemiring[N]
-
-  def heapOrdering = AllLeastPathsHeapOrdering
-
-  def heapKeyForLabel = {label:Option[NextStep[N]] => label match {
-    case Some(nextStep) => nextStep.weight
-    case None => Double.MaxValue
-  }}
-}
 */
+class AllPaths[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
+  def semiring = new AllPathsSemiring(core.semiring)
+
+  def heapOrdering = core.heapOrdering
+
+  def heapKeyForLabel = {
+    case Some(nextStep) => nextStep.weight.asInstanceOf[Key]
+    case None => core.heapOrdering.AlwaysBottom
+  }
+}

@@ -54,6 +54,11 @@ trait HeapOrdering[K] extends PartialOrdering[K] {
    * A key that will always be at the top of the heap if present at all. Used to efficiently remove items from the heap.
    */
   def AlwaysTop:K
+
+  /**
+   * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+   */
+  def AlwaysBottom:K
 }
 
 /**
@@ -92,5 +97,9 @@ object MinDoubleHeapOrdering extends HeapOrdering[Double] {
    */
   def AlwaysTop:Double = Double.NegativeInfinity
 
+  /**
+   * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+   */
+  def AlwaysBottom: Double = Double.PositiveInfinity
 }
 
