@@ -19,7 +19,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(CountFewestNodesSemiring)(testGraph)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -45,7 +45,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing a label in the initial graph" should "only change that one label" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(CountFewestNodesSemiring)(testGraph)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -75,7 +75,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(CountFewestNodesSemiring)(testGraph)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -183,7 +183,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(CountFewestNodes.semiring)(graph)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)
 
     val startTime = System.currentTimeMillis()
     FloydWarshall.floydWarshall(CountFewestNodes.semiring)(labelGraph)
@@ -244,7 +244,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 */
   def timeFindEdge(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createFullyConnectedGraph(nodeCount)
-    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(CountFewestNodes.semiring)(graph)
+    val labelGraph = CountFewestNodesGraphBuilder.initialLabelGraph(graph)
 
     val nodeList1 = Random.shuffle(labelGraph.nodes.toList)
     val nodeList2 = Random.shuffle(labelGraph.nodes.toList)
