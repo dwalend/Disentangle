@@ -33,20 +33,16 @@ object CountFewestNodesSemiring extends Semiring[Int] {
   }
 }
 
-object CountFewestNodesGraphBuilder extends LabelGraphBuilder {
+object CountFewestNodesGraphBuilder extends LabelGraphBuilder[Int] {
 
   import scalax.collection.Graph
-  import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialEdgeFromGraphEdge[N,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
-                                                              (originalGraph:Graph[N,E])
-                                                              (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
-    val edge:E[N] = edgeT.toOuter
+  def semiring = CountFewestNodesSemiring
 
-    (edge._1 ~+> edge._2)(1)
-  }
+  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
+                                                          (edgeT: originalGraph.type#EdgeT): Int = 1
 }
 
 /**

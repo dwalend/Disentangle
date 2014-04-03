@@ -100,10 +100,10 @@ object Brandes {
    * This method runs Brande's algorithm for all nodes.
    */
   def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key]
-                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder)
+                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
                                                  (originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(support.semiring)(originalGraph)
+    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
     for(node <- labelGraph.nodes) {
       brandesForSource(labelGraph)(node)(support)
     }
@@ -119,10 +119,10 @@ object Brandes {
                                   Label <: Option[BrandesLabel[N]]:ClassTag,
                                   E[X] <: EdgeLikeIn[X],
                                   Key]
-                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder)
+                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
                                   (originalGraph:Graph[N,E]):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(support.semiring)(originalGraph)
+    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
     val partialBetweennesses = for(node <- labelGraph.nodes) yield {
       brandesForSource(labelGraph)(node)(support)._2
     }               //this is a Set[Map[labelGraph.NodeT,Double]]

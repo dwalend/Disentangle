@@ -149,20 +149,20 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
 }
 
-class AllShortestPathsPredecessorsGraphBuilder[N] extends LabelGraphBuilder {
+class AllShortestPathsPredecessorsGraphBuilder[N](override val semiring:AllShortestPathsPredecessorsSemiring[N])
+  extends LabelGraphBuilder[Option[PreviousStep[N]]] {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import MLDiEdge._
   import scala.language.higherKinds
 
-  def initialEdgeFromGraphEdge[M,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
-                                                              (originalGraph:Graph[M,E])
-                                                              (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
-    val edge:E[M] = edgeT.toOuter
-
-    (edge._1 ~+> edge._2)(Some(new PreviousStep(1,Set[M](edge._1),1,BrandesLabel.originalGraph)))
+  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
+                                                         (edgeT: originalGraph.type#EdgeT): Option[PreviousStep[N]] = {
+    val edge:E[N] = edgeT.toOuter
+    Some(new PreviousStep(1,Set[N](edge._1),1,BrandesLabel.originalGraph))
   }
+
 }
 
 class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[PreviousStep[N]],Int] {

@@ -48,19 +48,17 @@ class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
   }
 }
 
-class OneShortestPathGraphBuilder[N] extends LabelGraphBuilder {
+class OneShortestPathGraphBuilder[N](override val semiring:OneShortestPathSemiring[N]) extends LabelGraphBuilder[Option[List[N]]] {
 
   import scalax.collection.Graph
   import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialEdgeFromGraphEdge[M,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
-                                                             (originalGraph:Graph[M,E])
-                                                              (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
-    val edge:E[M] = edgeT.toOuter
+  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[List[N]] = {
+    val edge:E[N] = edgeT.toOuter
 
-    (edge._1 ~+> edge._2)(Some(List(edge._2)))
+    Some(List(edge._2))
   }
 }
 

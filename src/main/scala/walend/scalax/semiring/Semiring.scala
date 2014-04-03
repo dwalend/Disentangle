@@ -97,38 +97,37 @@ abstract class Semiring[Label] {
   }
 }
 
-trait LabelGraphBuilder {
+trait LabelGraphBuilder[Label] {
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.reflect.runtime.universe.TypeTag
   import scala.language.higherKinds
 
-  def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
-                                  (nodeT:originalGraph.NodeT)
-                                  (semiring:Semiring[Label]):MLDiEdge[N] = {
+  def semiring:Semiring[Label]
+
+  def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+                                  (nodeT:originalGraph.NodeT):MLDiEdge[N] = {
     val node:N = nodeT.value
     (node ~+> node)(semiring.I)
   }
 
-  /*
-  def initialLabelFromGraphEdge[N,E[X] <: EdgeLikeIn[X],Label](originalGraph:Graph[N,E])
-                                                        (edgeT:originalGraph.EdgeT):MLDiEdge[N]
-  */
-  def initialEdgeFromGraphEdge[N,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
-                                                              (originalGraph:Graph[N,E])
-                                                              (edgeT:originalGraph.EdgeT):MLDiEdge[N]/* = {
+
+  def initialLabelFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+                                                        (edgeT:originalGraph.EdgeT):Label
+
+  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+                                                        (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
     val edge:E[N] = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(initialLabelFromGraphEdge(originalGraph)(edgeT))
   }
-   */
-  def initialLabelGraph[N: TypeTag,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
-                                                               (originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge] = {
+
+  def initialLabelGraph[N: TypeTag,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toOuter
 
-    val identityLabelEdges:Set[MLDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_)(semiring))
-    val interestingLabelEdges:Set[MLDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(semiring)(originalGraph))
+    val identityLabelEdges:Set[MLDiEdge[N]] = originalGraph.nodes.seq.map(identityEdgeFromGraphNode(originalGraph)(_))
+    val interestingLabelEdges:Set[MLDiEdge[N]] = originalGraph.edges.seq.map(initialEdgeFromGraphEdge(originalGraph))
     val initEdges:Set[MLDiEdge[N]] = identityLabelEdges ++ interestingLabelEdges
     MutableGraph.from(nodes,initEdges)
   }
