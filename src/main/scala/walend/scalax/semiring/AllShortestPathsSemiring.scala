@@ -12,7 +12,7 @@ class AllShortestPathsSemiring[N] extends AllPathsSemiring[N,Int](CountFewestNod
 }
 
 import scala.reflect.runtime.universe.TypeTag
-class AllShortestPathsGraphBuilder[N:TypeTag](override val semiring:AllShortestPathsSemiring[N]) extends LabelGraphBuilder[N,Option[NextStep[N,Int]]] {
+class AllShortestPathsGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Option[NextStep[N,Int]]](new AllShortestPathsSemiring[N]) {
 
   import scalax.collection.Graph
   import MLDiEdge._

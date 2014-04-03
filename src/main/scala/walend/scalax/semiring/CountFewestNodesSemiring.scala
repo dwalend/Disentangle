@@ -35,13 +35,11 @@ object CountFewestNodesSemiring extends Semiring[Int] {
 
 import scala.reflect.runtime.universe.TypeTag
 
-class CountFewestNodesGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Int] {
+class CountFewestNodesGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Int](CountFewestNodesSemiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
-
-  def semiring = CountFewestNodesSemiring
 
   def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
                                                           (edgeT: originalGraph.type#EdgeT): Int = 1
