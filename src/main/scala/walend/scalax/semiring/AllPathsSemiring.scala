@@ -112,8 +112,9 @@ class AllPathsHeapOrdering[Key](coreOrdering:HeapOrdering[Key]) extends HeapOrde
   def AlwaysTop:Double = -1
 }
 */
-class AllPaths[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
-  def semiring = new AllPathsSemiring(core.semiring)
+abstract class AllPaths[N,Key](core:GraphMinimizerSupport[Key]) extends GraphMinimizerSupport[Key] {
+
+  type Label = Option[NextStep[core.Label,N]]
 
   def heapOrdering = core.heapOrdering
 

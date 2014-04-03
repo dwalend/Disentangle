@@ -132,7 +132,9 @@ abstract class LabelGraphBuilder[N :TypeTag,Label](semiring:Semiring[Label]) {
   }
 }
 
-trait GraphMinimizerSupport[Label,Key] {
+trait GraphMinimizerSupport[Key] {
+
+  type Label
 
   def semiring:Semiring[Label]
 

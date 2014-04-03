@@ -26,13 +26,14 @@ class AllShortestPathsGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Option
   }
 }
 
-class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {
-  def semiring = new AllShortestPathsSemiring[N]
+class AllShortestPaths[N] extends AllPaths[N,Int] {
 
+  def semiring = new AllPathsSemiring[N,Int](CountFewestNodesSemiring)
+ /*
   def heapOrdering = CountFewestNodesHeapOrdering
 
   def heapKeyForLabel = {label:Option[NextStep[N,Int]] => label match {
     case Some(nextStep) => nextStep.weight
     case None => Int.MaxValue
-  }}
+  }} */
 }

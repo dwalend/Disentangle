@@ -80,7 +80,10 @@ object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
   def AlwaysBottom: Int = Int.MaxValue
 }
 
-object CountFewestNodes extends GraphMinimizerSupport[Int,Int] {
+object CountFewestNodes extends GraphMinimizerSupport[Int] {
+
+  type Label = Int
+
   def semiring = CountFewestNodesSemiring
 
   def heapOrdering = CountFewestNodesHeapOrdering
