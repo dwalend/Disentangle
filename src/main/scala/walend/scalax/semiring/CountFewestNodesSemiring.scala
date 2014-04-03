@@ -40,8 +40,9 @@ object CountFewestNodesGraphBuilder extends LabelGraphBuilder {
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
+  def initialEdgeFromGraphEdge[N,Label,E[X] <: EdgeLikeIn[X]](semiring:Semiring[Label])
+                                                              (originalGraph:Graph[N,E])
+                                                              (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
     val edge:E[N] = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(1)
