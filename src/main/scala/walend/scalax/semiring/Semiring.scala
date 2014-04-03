@@ -96,32 +96,32 @@ abstract class Semiring[Label] {
     summaryLabel
   }
 }
-
-trait LabelGraphBuilder[Label] {
+import scala.reflect.runtime.universe.TypeTag
+//todo rename and create an interface with just initialLabelGraph and maybe initialLabelFromGraphEdge, and without the TypeTag
+abstract class LabelGraphBuilder[N :TypeTag,Label] {
   import scalax.collection.GraphPredef.EdgeLikeIn
-  import scala.reflect.runtime.universe.TypeTag
   import scala.language.higherKinds
 
   def semiring:Semiring[Label]
 
-  def identityEdgeFromGraphNode[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+  def identityEdgeFromGraphNode[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                   (nodeT:originalGraph.NodeT):MLDiEdge[N] = {
     val node:N = nodeT.value
     (node ~+> node)(semiring.I)
   }
 
 
-  def initialLabelFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                                         (edgeT:originalGraph.EdgeT):Label
 
-  def initialEdgeFromGraphEdge[N,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
+  def initialEdgeFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                                         (edgeT:originalGraph.EdgeT):MLDiEdge[N] = {
     val edge:E[N] = edgeT.toOuter
 
     (edge._1 ~+> edge._2)(initialLabelFromGraphEdge(originalGraph)(edgeT))
   }
 
-  def initialLabelGraph[N: TypeTag,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge] = {
+  def initialLabelGraph[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge] = {
     import scala.collection.Set
 
     val nodes:Set[N] = originalGraph.nodes.toOuter

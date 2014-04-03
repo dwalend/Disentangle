@@ -48,7 +48,7 @@ object Dijkstra {
   }
 
   def singleSourceShortestPaths[N:Manifest,Label,Key]
-                              (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
+                              (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
                               (sourceNode:N,originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
@@ -65,7 +65,7 @@ object Dijkstra {
                             E[X] <: EdgeLikeIn[X],
                             Label,
                             Key]
-                            (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
+                            (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
                             (originalGraph:Graph[N,E]):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)

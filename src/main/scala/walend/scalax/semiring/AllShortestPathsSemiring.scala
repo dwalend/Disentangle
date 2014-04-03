@@ -11,15 +11,16 @@ class AllShortestPathsSemiring[N] extends AllPathsSemiring[N,Int](CountFewestNod
 
 }
 
-class AllShortestPathsGraphBuilder[N](override val semiring:AllShortestPathsSemiring[N]) extends LabelGraphBuilder[Option[NextStep[N,Int]]] {
+import scala.reflect.runtime.universe.TypeTag
+class AllShortestPathsGraphBuilder[N:TypeTag](override val semiring:AllShortestPathsSemiring[N]) extends LabelGraphBuilder[N,Option[NextStep[N,Int]]] {
 
   import scalax.collection.Graph
   import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[M <: N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[M, E])(edgeT: originalGraph.type#EdgeT): Option[NextStep[N,Int]] = {
-    val edge:E[M] = edgeT.toOuter
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[NextStep[N,Int]] = {
+    val edge:E[N] = edgeT.toOuter
 
     Some(new NextStep(1,Set[N](edge._2)))
   }
