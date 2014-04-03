@@ -15,7 +15,6 @@ import scala.reflect.runtime.universe.TypeTag
 class AllShortestPathsGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Option[NextStep[N,Int]]](new AllShortestPathsSemiring[N]) {
 
   import scalax.collection.Graph
-  import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
