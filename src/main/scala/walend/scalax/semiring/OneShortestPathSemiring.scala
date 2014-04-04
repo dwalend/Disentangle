@@ -48,21 +48,21 @@ class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
   }
 }
 
-class OneShortestPathGraphBuilder[N](override val semiring:OneShortestPathSemiring[N]) extends LabelGraphBuilder[Option[List[N]]] {
+import scala.reflect.runtime.universe.TypeTag
+class OneShortestPathGraphBuilder[N:TypeTag](semiring:OneShortestPathSemiring[N]) extends LabelGraphBuilder[N,Option[List[N]]](semiring) {
 
   import scalax.collection.Graph
-  import MLDiEdge._
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[List[N]] = {
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[List[N]] = {
     val edge:E[N] = edgeT.toOuter
 
     Some(List(edge._2))
   }
 }
 
-class OneShortestPath[N] extends GraphMinimizerSupport[Option[List[N]],Int] {
+class OneShortestPath[N:TypeTag] extends GraphMinimizerSupport[Option[List[N]],Int] {
   def semiring = new OneShortestPathSemiring[N]
 
   def heapOrdering = CountFewestNodesHeapOrdering

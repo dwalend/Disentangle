@@ -58,7 +58,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = new OneShortestPathGraphBuilder[String].initialLabelGraph(new OneShortestPathSemiring[String])(testGraph)
+    val labelGraph = new OneShortestPathGraphBuilder[String](new OneShortestPathSemiring[String]).initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (B~+>B)(Some(List())),
@@ -87,7 +87,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
     val oneShortestPath = new OneShortestPath[String]
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(oneShortestPath.semiring,new OneShortestPathGraphBuilder[String])(graph)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(oneShortestPath.semiring,new OneShortestPathGraphBuilder[String](oneShortestPath.semiring))(graph)
 
     for(node <- labelGraph.nodes) {
       node ~>? node match {
@@ -106,7 +106,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
     val oneShortestPath = new OneShortestPath[String]
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(oneShortestPath.semiring,new OneShortestPathGraphBuilder[String])(graph)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(oneShortestPath.semiring,new OneShortestPathGraphBuilder[String](oneShortestPath.semiring))(graph)
 
     val expectedEdges2 = Set(
       (B~+>B)(Some(List())),
@@ -159,7 +159,7 @@ class OneShortestPathTest extends FlatSpec with Matchers {
 
     val oneShortestPath = new OneShortestPath[String]
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(oneShortestPath,new OneShortestPathGraphBuilder[String])(graph)
+    val labelGraph = Dijkstra.allPairsShortestPaths(oneShortestPath,new OneShortestPathGraphBuilder[String](oneShortestPath.semiring))(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
   }
