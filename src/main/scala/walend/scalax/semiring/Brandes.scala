@@ -99,8 +99,9 @@ object Brandes {
   /**
    * This method runs Brande's algorithm for all nodes.
    */
+  //todo Can this be a TypeTag? is Manifest needed
   def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key]
-                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
+                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
                                                  (originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
@@ -115,11 +116,12 @@ object Brandes {
    */
   import scala.language.higherKinds
 
+  //todo still need Manifest? Can it be a TypeTag?
   def shortestPathsAndBetweenness[N:Manifest,
                                   Label <: Option[BrandesLabel[N]]:ClassTag,
                                   E[X] <: EdgeLikeIn[X],
                                   Key]
-                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[Label])
+                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
                                   (originalGraph:Graph[N,E]):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)

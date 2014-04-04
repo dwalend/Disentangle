@@ -9,6 +9,8 @@ package walend.scalax.semiring
  * @param willConsiderAllNodePairs should be true for the Floyd-Warshall algorithm, false for Dijkstra's and Brandes' algorithms.
  * @tparam N type of nodes in the graph.
  */
+
+//todo generalize the same way AllPathsSemiring
 class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean = false) extends Semiring[Option[PreviousStep[N]]] {
 
   //identity and annihilator
@@ -145,24 +147,22 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
     }
     result
   }
-
-
 }
 
-class AllShortestPathsPredecessorsGraphBuilder[N](override val semiring:AllShortestPathsPredecessorsSemiring[N])
-  extends LabelGraphBuilder[Option[PreviousStep[N]]] {
+import scala.reflect.runtime.universe.TypeTag
+class AllShortestPathsPredecessorsGraphBuilder[N:TypeTag](semiring:AllShortestPathsPredecessorsSemiring[N])
+  extends LabelGraphBuilder[N,Option[PreviousStep[N]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import MLDiEdge._
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
                                                          (edgeT: originalGraph.type#EdgeT): Option[PreviousStep[N]] = {
     val edge:E[N] = edgeT.toOuter
     Some(new PreviousStep(1,Set[N](edge._1),1,BrandesLabel.originalGraph))
   }
-
 }
 
 class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[PreviousStep[N]],Int] {

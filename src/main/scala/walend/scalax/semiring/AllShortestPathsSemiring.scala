@@ -7,6 +7,7 @@ package walend.scalax.semiring
  * @since v1
  */
 
+//todo shouldn't need this anymore
 class AllShortestPathsSemiring[N] extends AllPathsSemiring[N,Int](CountFewestNodesSemiring) {
 
 }
