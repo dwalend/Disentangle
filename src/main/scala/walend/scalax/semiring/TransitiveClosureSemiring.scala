@@ -1,6 +1,6 @@
 package walend.scalax.semiring
 
-//todo why is this JBoolean?
+//todo swithc back to Boolean?
 import java.lang.{Boolean => JBoolean}
 import walend.scalax.heap.HeapOrdering
 import MLDiEdge._
@@ -29,14 +29,13 @@ object TransitiveClosureSemiring extends Semiring[JBoolean] {
 
 }
 
-object TransitiveClosureLabelGraphBuilder extends LabelGraphBuilder[JBoolean] {
+import scala.reflect.runtime.universe.TypeTag
+class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,JBoolean](TransitiveClosureSemiring) {
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def semiring = TransitiveClosureSemiring
-
-  def initialLabelFromGraphEdge[N, E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): JBoolean = TransitiveClosureSemiring.I
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): JBoolean = TransitiveClosureSemiring.I
 }
 
 final case class TransitiveClosureHeapKey(label:Boolean, state:Int)
