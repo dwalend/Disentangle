@@ -1,7 +1,5 @@
 package walend.scalax.semiring
 
-//todo swithc back to Boolean?
-import java.lang.{Boolean => JBoolean}
 import walend.scalax.heap.HeapOrdering
 import MLDiEdge._
 
@@ -11,31 +9,31 @@ import MLDiEdge._
  * @author dwalend
  * @since v1
  */
-object TransitiveClosureSemiring extends Semiring[JBoolean] {
+object TransitiveClosureSemiring extends Semiring[Boolean] {
 
 
   //identity and annihilator
-  def I: JBoolean = true
-  def O: JBoolean = false
+  def I: Boolean = true
+  def O: Boolean = false
 
-  def summary(fromThroughToLabel:JBoolean,
-              currentLabel:JBoolean):JBoolean = {
+  def summary(fromThroughToLabel:Boolean,
+              currentLabel:Boolean):Boolean = {
     fromThroughToLabel | currentLabel
   }
 
-  def extend(fromThroughLabel:JBoolean,throughToLabel:JBoolean):JBoolean = {
+  def extend(fromThroughLabel:Boolean,throughToLabel:Boolean):Boolean = {
     fromThroughLabel & throughToLabel
   }
 
 }
 
 import scala.reflect.runtime.universe.TypeTag
-class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,JBoolean](TransitiveClosureSemiring) {
+class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Boolean](TransitiveClosureSemiring) {
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): JBoolean = TransitiveClosureSemiring.I
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Boolean = TransitiveClosureSemiring.I
 }
 
 final case class TransitiveClosureHeapKey(label:Boolean, state:Int)
@@ -45,7 +43,7 @@ object TransitiveClosureHeapKey {
   val FalseKey = TransitiveClosureHeapKey(false,0)
   val TopKey = TransitiveClosureHeapKey(true,2)
 
-  def keyForLabel(label:JBoolean):TransitiveClosureHeapKey = {
+  def keyForLabel(label:Boolean):TransitiveClosureHeapKey = {
     if(label) TrueKey
     else FalseKey
   }
@@ -86,7 +84,7 @@ object TransitiveClosureHeapOrdering extends HeapOrdering[TransitiveClosureHeapK
   def AlwaysBottom: TransitiveClosureHeapKey = TransitiveClosureHeapKey.FalseKey
 }
 
-object TransitiveClosure extends GraphMinimizerSupport[JBoolean,TransitiveClosureHeapKey] {
+object TransitiveClosure extends GraphMinimizerSupport[Boolean,TransitiveClosureHeapKey] {
   def semiring = TransitiveClosureSemiring
 
   def heapKeyForLabel = TransitiveClosureHeapKey.keyForLabel
