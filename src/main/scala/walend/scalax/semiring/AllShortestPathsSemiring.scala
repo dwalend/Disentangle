@@ -7,13 +7,19 @@ package walend.scalax.semiring
  * @since v1
  */
 
-//todo shouldn't need this anymore
-class AllShortestPathsSemiring[N] extends AllPathsSemiring[N,Int](CountFewestNodesSemiring) {
+class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {
+  def semiring = new AllPathsSemiring[N,Int](CountFewestNodesSemiring)
 
+  def heapOrdering = CountFewestNodesHeapOrdering
+
+  def heapKeyForLabel = {label:Option[NextStep[N,Int]] => label match {
+    case Some(nextStep) => nextStep.weight
+    case None => Int.MaxValue
+  }}
 }
 
 import scala.reflect.runtime.universe.TypeTag
-class AllShortestPathsGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Option[NextStep[N,Int]]](new AllShortestPathsSemiring[N]) {
+class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends LabelGraphBuilder[N,Option[NextStep[N,Int]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
@@ -26,13 +32,3 @@ class AllShortestPathsGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Option
   }
 }
 
-class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {
-  def semiring = new AllShortestPathsSemiring[N]
-
-  def heapOrdering = CountFewestNodesHeapOrdering
-
-  def heapKeyForLabel = {label:Option[NextStep[N,Int]] => label match {
-    case Some(nextStep) => nextStep.weight
-    case None => Int.MaxValue
-  }}
-}
