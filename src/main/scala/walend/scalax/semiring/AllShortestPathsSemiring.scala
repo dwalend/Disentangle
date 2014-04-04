@@ -7,17 +7,7 @@ package walend.scalax.semiring
  * @since v1
  */
 
-//todo inherit from AllPaths
-class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {
-  def semiring = new AllPathsSemiring[N,Int](CountFewestNodesSemiring)
-
-  def heapOrdering = CountFewestNodesHeapOrdering
-
-  def heapKeyForLabel = {label:Option[NextStep[N,Int]] => label match {
-    case Some(nextStep) => nextStep.weight
-    case None => Int.MaxValue
-  }}
-}
+class AllShortestPaths[N] extends AllPaths[N,Int,Int](CountFewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
 class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends LabelGraphBuilder[N,Option[NextStep[N,Int]]](semiring) {

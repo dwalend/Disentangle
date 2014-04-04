@@ -53,8 +53,8 @@ class OnePathSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[S
   }
 }
 
-class OnePath[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
-  def semiring = new AllPathsSemiring(core.semiring)
+class OnePath[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[Step[N,CL]],Key] {
+  def semiring = new OnePathSemiring(core.semiring)
 
   def heapOrdering = core.heapOrdering
 

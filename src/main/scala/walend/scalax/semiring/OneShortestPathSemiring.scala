@@ -3,22 +3,12 @@ package walend.scalax.semiring
 import walend.scalax.heap.HeapOrdering
 
 /**
- * Finds a path that traverses the fewest nodes. An edge is a list of the nodes to traverse in the original graph.
+ * Finds a path that traverses the fewest nodes.
  *
  * @author dwalend
  * @since v1
  */
-//todo inherit from OnePath
-class OneShortestPath[N] extends GraphMinimizerSupport[Option[Step[N,Int]],Int] {
-  def semiring = new OnePathSemiring[N,Int](CountFewestNodesSemiring)
-
-  def heapOrdering = CountFewestNodesHeapOrdering
-
-  def heapKeyForLabel = {label:Option[Step[N,Int]] => label match {
-    case Some(step) => step.weight
-    case None => Int.MaxValue
-  }}
-}
+class OneShortestPath[N] extends OnePath[N,Int,Int](CountFewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
 class OneShortestPathGraphBuilder[N:TypeTag](semiring:OnePathSemiring[N,Int]) extends LabelGraphBuilder[N,Option[Step[N,Int]]](semiring) {
