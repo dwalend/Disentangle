@@ -7,6 +7,7 @@ package walend.scalax.semiring
  * @since v1
  */
 
+//todo inherit from AllPaths
 class AllShortestPaths[N] extends GraphMinimizerSupport[Option[NextStep[N,Int]],Int] {
   def semiring = new AllPathsSemiring[N,Int](CountFewestNodesSemiring)
 

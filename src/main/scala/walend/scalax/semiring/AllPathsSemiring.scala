@@ -8,8 +8,6 @@ package walend.scalax.semiring
  * @since v1
  */
 
-import walend.scalax.heap.HeapOrdering
-
 case class NextStep[N,CL](weight:CL,choices:Set[N]) {}
 
 class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[NextStep[N,CL]]] {
@@ -56,62 +54,6 @@ class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[
   }
 }
 
-/**
- * Works if the graph labels are Doubles >= 0 and < Double.MAX_VALUE.
- */
-/*
-class AllLeastPathsGraphBuilder[N] extends LabelGraphBuilder {
-
-  import scalax.collection.Graph
-  import MLDiEdge._
-  import scalax.collection.GraphPredef.EdgeLikeIn
-  import scala.language.higherKinds
-
-  def initialEdgeFromGraphEdge[M,E[X] <: EdgeLikeIn[X]](originalGraph:Graph[M,E])
-                                                       (edgeT:originalGraph.EdgeT):MLDiEdge[M] = {
-    val edge:E[M] = edgeT.toOuter
-    require(edge.label.isInstanceOf[Double],"Edge labels must exist and be Doubles")
-    val weight = edge.label.asInstanceOf[Double]
-    require(weight >= 0,"Edge labels must be greater than 0")
-    require(weight < Double.MaxValue,"Edge labels must be less than Double.MaxValue")
-
-    (edge._1 ~+> edge._2)(Some(new NextStep(weight,Set[M](edge._2))))
-  }
-}
-
-/**
- * A heap ordering that puts lower doubles on the top of the heap
- */
-class AllPathsHeapOrdering[Key](coreOrdering:HeapOrdering[Key]) extends HeapOrdering[Double] {
-
-  def lteq(x: Double, y: Double): Boolean = {
-    x >= y
-  }
-
-  /**
-   * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
-
-   */
-  def tryCompare(x: Double, y: Double): Option[Int] = {
-    val diff = y-x
-    if(diff>0) Some(1)
-    else if (diff<0) Some(-1)
-    else Some(0)
-  }
-
-  /**
-   * @throws IllegalArgumentException if the key is unusable
-   */
-  def checkKey(key: Double): Unit = {
-    require(key >= 0,"Key must be zero or greater, not "+key)
-  }
-
-  /**
-   * Minimum value for the DoubleHeap
-   */
-  def AlwaysTop:Double = -1
-}
-*/
 class AllPaths[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
   def semiring = new AllPathsSemiring(core.semiring)
 

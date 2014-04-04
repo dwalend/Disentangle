@@ -14,6 +14,8 @@ class MLDiEdge[N](nodes: Product)(private var _label: Any)
   override def label: Any = _label
   def label_=(newLabel: Any) = _label = newLabel
   override def copy[NN](newNodes: Product) = new semiring.MLDiEdge[NN](newNodes)(_label)
+
+  //todo labels don't show up in equals() !
 }
 
 object MLDiEdge {

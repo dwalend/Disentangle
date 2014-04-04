@@ -8,68 +8,28 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-class OneShortestPathSemiring[N] extends Semiring[Option[List[N]]] {
+//todo inherit from OnePath
+class OneShortestPath[N] extends GraphMinimizerSupport[Option[Step[N,Int]],Int] {
+  def semiring = new OnePathSemiring[N,Int](CountFewestNodesSemiring)
 
-  //length of the path is length of the list
+  def heapOrdering = CountFewestNodesHeapOrdering
 
-  //identity and annihilator
-  def I = Some(List[N]())
-  def O = None
-
-  /**
-   * Implement this method to create the core of a summary operator
-   */
-  def summary(fromThroughToLabel:Option[List[N]],
-              currentLabel:Option[List[N]]):Option[List[N]] = {
-
-    (fromThroughToLabel,currentLabel) match {
-      case (Some(fromThroughToNodes),Some(currentNodes)) => {
-        if(fromThroughToNodes.size < currentNodes.size) fromThroughToLabel
-        else currentLabel
-      }
-      case (Some(fromThroughToNodes),None) => fromThroughToLabel
-      case (None,Some(currentNodes)) => currentLabel
-      case _ => O
-    }
-  }
-
-  /**
-   * Implement this method to create the core of an extend operator
-   */
-  def extend(fromThroughLabel:Option[List[N]],throughToLabel:Option[List[N]]):Option[List[N]] = {
-
-    (fromThroughLabel,throughToLabel) match {
-      case (Some(fromThroughNodes),Some(throughToNodes)) => {
-        val fromToLabel:Option[List[N]] = Some(fromThroughNodes ++ throughToNodes)
-        fromToLabel
-      }
-      case _ => None
-    }
-  }
+  def heapKeyForLabel = {label:Option[Step[N,Int]] => label match {
+    case Some(step) => step.weight
+    case None => Int.MaxValue
+  }}
 }
 
 import scala.reflect.runtime.universe.TypeTag
-class OneShortestPathGraphBuilder[N:TypeTag](semiring:OneShortestPathSemiring[N]) extends LabelGraphBuilder[N,Option[List[N]]](semiring) {
+class OneShortestPathGraphBuilder[N:TypeTag](semiring:OnePathSemiring[N,Int]) extends LabelGraphBuilder[N,Option[Step[N,Int]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[List[N]] = {
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[Step[N,Int]] = {
     val edge:E[N] = edgeT.toOuter
 
-    Some(List(edge._2))
+    Some(new Step(1,Some(edge._2)))
   }
-}
-
-class OneShortestPath[N:TypeTag] extends GraphMinimizerSupport[Option[List[N]],Int] {
-  def semiring = new OneShortestPathSemiring[N]
-
-  def heapOrdering = CountFewestNodesHeapOrdering
-
-  def heapKeyForLabel = {label:Option[List[N]] => label match {
-    case Some(list) => list.length
-    case None => Int.MaxValue
-  }}
-
 }
