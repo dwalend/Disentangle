@@ -2,8 +2,8 @@ package walend.scalax.semiring
 
 import scalax.collection.GraphPredef._, scalax.collection.GraphEdge.{DiEdge, EdgeCopy, NodeProduct}
 import walend.scalax.semiring
-import scala.collection.GenIterable
-import scala.collection.generic.CanBuildFrom
+//import scala.collection.GenIterable
+//import scala.collection.generic.CanBuildFrom
 
 /** Directed edge with mutable label of a given type Any. */
 class MLDiEdge[N](nodes: Product)(private var _label: Any)
@@ -15,7 +15,23 @@ class MLDiEdge[N](nodes: Product)(private var _label: Any)
   def label_=(newLabel: Any) = _label = newLabel
   override def copy[NN](newNodes: Product) = new semiring.MLDiEdge[NN](newNodes)(_label)
 
-  //todo labels don't show up in equals() !
+  override def equals(other:Any):Boolean = {
+    if(super.equals(other)) {
+      other match {
+        case edge: MLDiEdge[_] => label == edge.label
+        case _ => false
+      }
+    }
+    else false
+  }
+
+  override def hashCode():Int = {
+    31*super.hashCode + label.hashCode()
+  }
+
+  override def toString():String = {
+    super.toString() + "(" +label + ")"
+  }
 }
 
 object MLDiEdge {
