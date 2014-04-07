@@ -37,3 +37,33 @@ object SomeGraph {
   val testGraph:Graph[String,MLDiEdge] = Graph.from(testNodes,testEdges)
 
 }
+
+//todo use this in all tests to check edges. Edge equality doesn't include labels or keys in scala-graph
+object EdgeHelp {
+
+  def diffSets[E](given:Set[E],expected:Set[E]):(Set[E],Set[E]) = {
+    ((given -- expected),(expected -- given))
+  }
+
+  def edgeToTriplet[N](edge:MLDiEdge[N]):(N,Any,N) = {
+    (edge.from,edge.label,edge.to)
+  }
+
+  def checkEdgeSets[N](given:Set[MLDiEdge[N]],expected:Set[MLDiEdge[N]]):Boolean = {
+    val givenTriplets = given.map(edgeToTriplet)
+    val expectedTriplets = expected.map(edgeToTriplet)
+
+    val diffs = diffSets(givenTriplets,expectedTriplets)
+
+    if(diffs._1.isEmpty && diffs._2.isEmpty) true
+    else {
+      if(!diffs._1.isEmpty) {
+        println("The given set contains items not found in expected: "+diffs._1)
+      }
+      if(!diffs._2.isEmpty) {
+        println("The expected set contains items not found in given: "+diffs._2)
+      }
+      false
+    }
+  }
+}

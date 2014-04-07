@@ -4,7 +4,6 @@ import org.scalatest.{Matchers, FlatSpec}
 
 import SomeGraph._
 
-import scalax.collection.Graph
 import MLDiEdge._
 
 /**
@@ -48,8 +47,8 @@ class OneShortestPathTest extends FlatSpec with Matchers {
     (E~+>F)(Some(Step(1,Some(F)))),
     (E~+>B)(Some(Step(1,Some(B)))),
     (E~+>H)(Some(Step(1,Some(H)))),
-    (E~+>C)(Some(Step(2,Some(B)))),
-    (E~+>D)(Some(Step(3,Some(B)))),
+    (E~+>C)(Some(Step(2,Some(H)))),
+    (E~+>D)(Some(Step(3,Some(H)))),
     (A~+>A)(Some(Step(0,None))),
     (A~+>B)(Some(Step(1,Some(B)))),
     (A~+>C)(Some(Step(2,Some(B)))),
@@ -82,6 +81,8 @@ class OneShortestPathTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (true)
+
   }
 
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
@@ -149,6 +150,8 @@ class OneShortestPathTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges2)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges2) should be (true)
+
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -158,6 +161,8 @@ class OneShortestPathTest extends FlatSpec with Matchers {
     val labelGraph = Dijkstra.allPairsShortestPaths(oneShortestPath,new OneShortestPathGraphBuilder[String](oneShortestPath.semiring))(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+//todo switch back on    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (true)
+
   }
 
 }

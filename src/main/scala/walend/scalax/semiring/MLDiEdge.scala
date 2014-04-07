@@ -15,22 +15,8 @@ class MLDiEdge[N](nodes: Product)(private var _label: Any)
   def label_=(newLabel: Any) = _label = newLabel
   override def copy[NN](newNodes: Product) = new semiring.MLDiEdge[NN](newNodes)(_label)
 
-  override def equals(other:Any):Boolean = {
-    if(super.equals(other)) {
-      other match {
-        case edge: MLDiEdge[_] => label == edge.label
-        case _ => false
-      }
-    }
-    else false
-  }
-
-  override def hashCode():Int = {
-    31*super.hashCode + label.hashCode()
-  }
-
   override def toString():String = {
-    super.toString() + "(" +label + ")"
+    "("+from+"~+>"+to+")" + "(" +label + ")"
   }
 }
 
