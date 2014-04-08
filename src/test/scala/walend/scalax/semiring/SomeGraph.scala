@@ -49,21 +49,21 @@ object EdgeHelp {
     (edge.from,edge.label,edge.to)
   }
 
-  def checkEdgeSets[N](given:Set[MLDiEdge[N]],expected:Set[MLDiEdge[N]]):Boolean = {
+  def checkEdgeSets[N](given:Set[MLDiEdge[N]],expected:Set[MLDiEdge[N]]):Option[String] = {
     val givenTriplets = given.map(edgeToTriplet)
     val expectedTriplets = expected.map(edgeToTriplet)
 
     val diffs = diffSets(givenTriplets,expectedTriplets)
 
-    if(diffs._1.isEmpty && diffs._2.isEmpty) true
+    if(diffs._1.isEmpty && diffs._2.isEmpty) None
     else {
-      if(!diffs._1.isEmpty) {
-        println("The given set contains items not found in expected: "+diffs._1)
-      }
-      if(!diffs._2.isEmpty) {
-        println("The expected set contains items not found in given: "+diffs._2)
-      }
-      false
+      val result1 = if(!diffs._1.isEmpty) {
+        "The given set contains items not found in expected: "+diffs._1
+      } else ""
+      val result2 = if(!diffs._2.isEmpty) {
+        "The expected set contains items not found in given: "+diffs._2
+      } else ""
+      Some(result1+"\n"+result2)
     }
   }
 }
