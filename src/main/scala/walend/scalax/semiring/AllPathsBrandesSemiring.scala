@@ -5,20 +5,24 @@ package walend.scalax.semiring
  *
  * @author dwalend
  * @since v1
- *
- * @param willConsiderAllNodePairs should be true for the Floyd-Warshall algorithm, false for Dijkstra's and Brandes' algorithms.
- * @tparam N type of nodes in the graph.
- *
- * @author dwalend
- * @since v1
  */
-/*
+       /*
+case class PreviousStep[N,CL](weight:CL,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N]
+
+/**
+ *
+ *
+ * @param coreSemiring
+ * @param willConsiderAllNodePairs should be true for the Floyd-Warshall algorithm, false for Dijkstra's and Brandes' algorithms.
+ * @tparam N
+ * @tparam CL
+ */
 class AllPathsBrandesSemiring[N,CL](coreSemiring:Semiring[CL],willConsiderAllNodePairs:Boolean = false) extends Semiring[Option[PreviousStep[N,CL]]] {
 
   type Label = Option[PreviousStep[N,CL]]
 
   //identity and annihilator
-  def I = Some(PreviousStep[N](0,Set[N](),0,BrandesLabel.originalGraph))
+  def I = Some(PreviousStep[N,CL](coreSemiring.I,Set[N](),0,BrandesLabel.originalGraph))
   def O = None
 
   /**
@@ -67,9 +71,10 @@ class AllPathsBrandesSemiring[N,CL](coreSemiring:Semiring[CL],willConsiderAllNod
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
 
         if(willConsiderAllNodePairs || (fromThroughSteps.matchingCreator(creator) && throughToSteps.matchingCreator(creator))) {
-          val weight = coreSemiring.summary(fromThroughSteps.weight,throughToSteps.weight)
+          val weight = coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight)
           //if extendSteps has the same number of steps as throughToLabel, then you've moved from the origin across a first edge. Keep throughToLabel's creator
-          //todo what to do with this?
+          //todo what to do with this? Something with "Does from equal the origin of the path?" maybe
+//          val useCreator = if(weight <= 1) throughToSteps.creator
           val useCreator = if(weight <= 1) throughToSteps.creator
           else creator
           Some(new PreviousStep[N,CL](weight,
@@ -125,11 +130,11 @@ class AllPathsBrandesSemiring[N,CL](coreSemiring:Semiring[CL],willConsiderAllNod
                              (from:labelGraph.NodeT,
                               through:labelGraph.NodeT,
                               to:labelGraph.NodeT,
-                              fromThroughToLabel:Option[PreviousStep[N]]):Option[PreviousStep[N]] = {
+                              fromThroughToLabel:Option[PreviousStep[N,CL]]):Option[PreviousStep[N,CL]] = {
 
-    val currentLabel:Option[PreviousStep[N]] = from ~>? to match {
+    val currentLabel:Option[PreviousStep[N,CL]] = from ~>? to match {
       case None => O
-      case Some(innerEdge) => innerEdge.label.asInstanceOf[Some[PreviousStep[N]]]
+      case Some(innerEdge) => innerEdge.label.asInstanceOf[Some[PreviousStep[N,CL]]]
     }
     val result = taggingSummary(fromThroughToLabel,currentLabel,from)
     result
@@ -140,14 +145,14 @@ class AllPathsBrandesSemiring[N,CL](coreSemiring:Semiring[CL],willConsiderAllNod
    */
   override def fullExtend[M](labelGraph:MutableGraph[M,MLDiEdge])
                             (fromThrough:Option[labelGraph.EdgeT],
-                             throughTo:Option[labelGraph.EdgeT]):Option[PreviousStep[N]] = {
+                             throughTo:Option[labelGraph.EdgeT]):Option[PreviousStep[N,CL]] = {
 
     val result = (fromThrough,throughTo) match {
       case (Some(fromThroughEdgeT),Some(throughToEdgeT)) => {
-        val fromThroughLabel:Option[PreviousStep[N]] = fromThrough.get.label.asInstanceOf[Option[PreviousStep[N]]]
-        val throughToLabel:Option[PreviousStep[N]] = throughTo.get.label.asInstanceOf[Option[PreviousStep[N]]]
+        val fromThroughLabel:Option[PreviousStep[N,CL]] = fromThrough.get.label.asInstanceOf[Option[PreviousStep[N,CL]]]
+        val throughToLabel:Option[PreviousStep[N,CL]] = throughTo.get.label.asInstanceOf[Option[PreviousStep[N,CL]]]
 
-        val fromToLabel:Option[PreviousStep[N]] = taggingExtend(fromThroughLabel,throughToLabel,fromThrough.get._1)
+        val fromToLabel:Option[PreviousStep[N,CL]] = taggingExtend(fromThroughLabel,throughToLabel,fromThrough.get._1)
         fromToLabel
       }
       case _ => O
@@ -156,9 +161,7 @@ class AllPathsBrandesSemiring[N,CL](coreSemiring:Semiring[CL],willConsiderAllNod
   }
 
 }
-
-case class PreviousStep[N,CL](weight:CL,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N]
-
+/*
 class AllPathsBrandes[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
   def semiring = new AllPathsBrandesSemiring(core.semiring)
 
@@ -215,7 +218,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
 
 }
-
+/*
 import scala.reflect.runtime.universe.TypeTag
 class AllShortestPathsPredecessorsGraphBuilder[N:TypeTag](semiring:AllShortestPathsPredecessorsSemiring[N])
   extends LabelGraphBuilder[N,Option[PreviousStep[N]]](semiring) {
@@ -245,3 +248,4 @@ class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[Previ
 
  */
 
+  */*/

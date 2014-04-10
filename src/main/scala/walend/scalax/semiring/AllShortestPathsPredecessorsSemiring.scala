@@ -151,7 +151,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
 
 import scala.reflect.runtime.universe.TypeTag
 class AllShortestPathsPredecessorsGraphBuilder[N:TypeTag](semiring:AllShortestPathsPredecessorsSemiring[N])
-  extends LabelGraphBuilder[N,Option[PreviousStep[N]]](semiring) {
+  extends AbsractLabelGraphBuilder[N,Option[PreviousStep[N]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn

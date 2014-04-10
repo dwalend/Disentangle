@@ -11,7 +11,7 @@ import walend.scalax.heap.HeapOrdering
 class OneShortestPath[N] extends OnePath[N,Int,Int](CountFewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
-class OneShortestPathGraphBuilder[N:TypeTag](semiring:OnePathSemiring[N,Int]) extends LabelGraphBuilder[N,Option[Step[N,Int]]](semiring) {
+class OneShortestPathGraphBuilder[N:TypeTag](semiring:OnePathSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[Step[N,Int]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn

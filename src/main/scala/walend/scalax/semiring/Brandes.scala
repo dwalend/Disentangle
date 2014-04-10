@@ -19,6 +19,8 @@ object Brandes {
   /**
    * Brandes' algorithm.
    */
+
+  //todo does this get better with the original graph?
   def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Map[labelGraph.NodeT,Double]) = {
@@ -101,7 +103,7 @@ object Brandes {
    */
   //todo Can this be a TypeTag? is Manifest needed
   def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key]
-                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
+                                                 (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
                                                  (originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
@@ -121,7 +123,7 @@ object Brandes {
                                   Label <: Option[BrandesLabel[N]]:ClassTag,
                                   E[X] <: EdgeLikeIn[X],
                                   Key]
-                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
+                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
                                   (originalGraph:Graph[N,E]):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)

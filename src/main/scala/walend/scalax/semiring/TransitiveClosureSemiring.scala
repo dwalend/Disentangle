@@ -28,7 +28,7 @@ object TransitiveClosureSemiring extends Semiring[Boolean] {
 }
 
 import scala.reflect.runtime.universe.TypeTag
-class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends LabelGraphBuilder[N,Boolean](TransitiveClosureSemiring) {
+class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N,Boolean](TransitiveClosureSemiring) {
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds

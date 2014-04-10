@@ -96,10 +96,20 @@ abstract class Semiring[Label] {
     summaryLabel
   }
 }
-import scala.reflect.runtime.universe.TypeTag
-//todo rename and create an interface with just initialLabelGraph and maybe initialLabelFromGraphEdge, and without the TypeTag
+
+trait LabelGraphBuilder[N,Label] {
+  import scalax.collection.GraphPredef.EdgeLikeIn
+  import scala.language.higherKinds
+
+  def initialLabelGraph[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge]
+
+}
+
 //N has a TypeTag to provide enough information for MutableGraph's from() method
-abstract class LabelGraphBuilder[N :TypeTag,Label](semiring:Semiring[Label]) {
+import scala.reflect.runtime.universe.TypeTag
+abstract class AbsractLabelGraphBuilder[N :TypeTag,Label](semiring:Semiring[Label])
+  extends LabelGraphBuilder[N,Label] {
+
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
