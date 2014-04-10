@@ -7,7 +7,7 @@ package walend.scalax.semiring
  * @since v1
  */
 
-class AllShortestPaths[N] extends AllPaths[N,Int,Int](CountFewestNodes)
+class AllShortestPaths[N] extends AllPaths[N,Int,Int](FewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
 class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[NextStep[N,Int]]](semiring) {

@@ -1,4 +1,4 @@
-import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, CountFewestNodesGraphBuilder, CountFewestNodesSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
+import walend.scalax.semiring.{AllShortestPathsGraphBuilder, AllShortestPathsSemiring, OneShortestPathGraphBuilder, OneShortestPathSemiring, FewestNodesGraphBuilder, FewestNodesSemiring, TransitiveClosureLabelGraphBuilder, TransitiveClosureSemiring, FloydWarshall, SomeGraph}
 
 
 
@@ -26,7 +26,7 @@ for(edge <- transitiveClosure.edges) {
 
 
 
-FloydWarshall.allPairsShortestPaths(graph)(CountFewestNodesSemiring)(CountFewestNodesGraphBuilder)
+FloydWarshall.allPairsShortestPaths(graph)(FewestNodesSemiring)(CountFewestNodesGraphBuilder)
 
 
 

@@ -8,7 +8,7 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-object CountFewestNodesSemiring extends Semiring[Int] {
+object FewestNodesSemiring extends Semiring[Int] {
 
   //identity and annihilator
   def I = 0
@@ -35,7 +35,7 @@ object CountFewestNodesSemiring extends Semiring[Int] {
 
 import scala.reflect.runtime.universe.TypeTag
 
-class CountFewestNodesGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N,Int](CountFewestNodesSemiring) {
+class FewestNodesGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N,Int](FewestNodesSemiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
@@ -48,7 +48,7 @@ class CountFewestNodesGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N
 /**
  * A heap ordering that puts lower numbers on the top of the heap
  */
-object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
+object FewestNodesHeapOrdering extends HeapOrdering[Int] {
 
   def lteq(x: Int, y: Int): Boolean = {
     x >= y
@@ -80,10 +80,10 @@ object CountFewestNodesHeapOrdering extends HeapOrdering[Int] {
   def AlwaysBottom: Int = Int.MaxValue
 }
 
-object CountFewestNodes extends GraphMinimizerSupport[Int,Int] {
-  def semiring = CountFewestNodesSemiring
+object FewestNodes extends GraphMinimizerSupport[Int,Int] {
+  def semiring = FewestNodesSemiring
 
-  def heapOrdering = CountFewestNodesHeapOrdering
+  def heapOrdering = FewestNodesHeapOrdering
 
   def heapKeyForLabel = {label:Int => label}
 

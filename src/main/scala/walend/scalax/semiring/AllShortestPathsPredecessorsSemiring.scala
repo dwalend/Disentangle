@@ -168,7 +168,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N:TypeTag](semiring:AllShortestPa
 class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[PreviousStep[N]],Int] {
   def semiring = new AllShortestPathsPredecessorsSemiring[N]
 
-  def heapOrdering = CountFewestNodesHeapOrdering
+  def heapOrdering = FewestNodesHeapOrdering
 
   def heapKeyForLabel = {
     case Some(previousStep) => previousStep.steps

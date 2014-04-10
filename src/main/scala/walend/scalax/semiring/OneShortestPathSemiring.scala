@@ -8,7 +8,7 @@ import walend.scalax.heap.HeapOrdering
  * @author dwalend
  * @since v1
  */
-class OneShortestPath[N] extends OnePath[N,Int,Int](CountFewestNodes)
+class OneShortestPath[N] extends OnePath[N,Int,Int](FewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
 class OneShortestPathGraphBuilder[N:TypeTag](semiring:OnePathSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[Step[N,Int]]](semiring) {

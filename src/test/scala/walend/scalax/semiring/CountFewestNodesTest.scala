@@ -19,7 +19,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = new CountFewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
+    val labelGraph = new FewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -45,7 +45,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing a label in the initial graph" should "only change that one label" in {
 
-    val labelGraph = new CountFewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
+    val labelGraph = new FewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -67,7 +67,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
       (A~+>C)(3)
     )
 
-    CountFewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,3)
+    FewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,3)
 
     labelGraph.edges.toOuter should be (expectedEdges)
 
@@ -75,7 +75,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
   "Replacing an annihilator in the initial graph with the annihilator" should "not change anything" in {
 
-    val labelGraph = new CountFewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
+    val labelGraph = new FewestNodesGraphBuilder[String].initialLabelGraph(testGraph)
 
     val expectedEdges = Set(
       (A~+>B)(1),
@@ -96,7 +96,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
       (H~+>H)(0)
     )
 
-    CountFewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,CountFewestNodesSemiring.O)
+    FewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,FewestNodesSemiring.O)
 
     labelGraph.edges.toOuter should be (expectedEdges)
 
@@ -106,12 +106,12 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   "The Floyd-Warshall algorithm" should "produce a label graph where each node is reachable from itself" in {
     val graph = SomeGraph.testGraph
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(CountFewestNodesSemiring,new CountFewestNodesGraphBuilder[String])(graph)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(FewestNodesSemiring,new FewestNodesGraphBuilder[String])(graph)
 
     for(node <- labelGraph.nodes) {
       node ~>? node match {
         case Some(edge:labelGraph.EdgeT) => {
-          assert(edge.label==CountFewestNodesSemiring.I,"The edge label for all self-edges should be "+CountFewestNodesSemiring.I+" but for "+node+" it is "+edge.label)
+          assert(edge.label==FewestNodesSemiring.I,"The edge label for all self-edges should be "+FewestNodesSemiring.I+" but for "+node+" it is "+edge.label)
         }
         case Some(x) => fail("Unexpected type "+x.getClass+" for label edge "+x+", the self-edge for "+node)
         case None => fail("No self-edge for "+node)
@@ -165,7 +165,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val graph = SomeGraph.testGraph
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(CountFewestNodesSemiring,new CountFewestNodesGraphBuilder[String])(graph)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(FewestNodesSemiring,new FewestNodesGraphBuilder[String])(graph)
 
 
     labelGraph.edges.toOuter should be (expectedEdges)
@@ -175,7 +175,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 
     val graph = SomeGraph.testGraph
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(CountFewestNodes,new CountFewestNodesGraphBuilder[String])(graph)
+    val labelGraph = Dijkstra.allPairsShortestPaths(FewestNodes,new FewestNodesGraphBuilder[String])(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
   }
@@ -183,10 +183,10 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
   def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
-    val labelGraph = new CountFewestNodesGraphBuilder[Int].initialLabelGraph(graph)
+    val labelGraph = new FewestNodesGraphBuilder[Int].initialLabelGraph(graph)
 
     val startTime = System.currentTimeMillis()
-    FloydWarshall.floydWarshall(CountFewestNodes.semiring)(labelGraph)
+    FloydWarshall.floydWarshall(FewestNodes.semiring)(labelGraph)
     val time = System.currentTimeMillis() - startTime
 
     val expected:Long = ((Math.pow(nodeCount.toDouble/calibrate._1,3) ) * calibrate._2).toLong
@@ -214,7 +214,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
     val startTime = System.currentTimeMillis()
-    val labelGraph = Dijkstra.allPairsShortestPaths(CountFewestNodes,new CountFewestNodesGraphBuilder[Int])(graph)
+    val labelGraph = Dijkstra.allPairsShortestPaths(FewestNodes,new FewestNodesGraphBuilder[Int])(graph)
     val time = System.currentTimeMillis() - startTime
 
     val calibrateBigO = Math.pow(calibrate._1,2) * Math.log(calibrate._1)
@@ -244,7 +244,7 @@ class CountFewestNodesTest extends FlatSpec with Matchers {
 */
   def timeFindEdge(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {
     val graph = GraphFactory.createFullyConnectedGraph(nodeCount)
-    val labelGraph = new CountFewestNodesGraphBuilder[Int].initialLabelGraph(graph)
+    val labelGraph = new FewestNodesGraphBuilder[Int].initialLabelGraph(graph)
 
     val nodeList1 = Random.shuffle(labelGraph.nodes.toList)
     val nodeList2 = Random.shuffle(labelGraph.nodes.toList)
