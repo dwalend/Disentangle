@@ -15,7 +15,7 @@ import scala.util.Random
  * @author dwalend
  * @since v1
  */
-class CountFewestNodesTest extends FlatSpec with Matchers {
+class FewestNodesTest extends FlatSpec with Matchers {
   
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
