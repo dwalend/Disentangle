@@ -24,8 +24,7 @@ Algorithms
 
 Semirings
 
-* Most probable Semiring
-* Combined Semirings.
+* More Semirings
 
 Figure out
 
