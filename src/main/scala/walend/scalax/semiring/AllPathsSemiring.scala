@@ -8,14 +8,14 @@ package walend.scalax.semiring
  * @since v1
  */
 
-case class NextStep[N,CL](weight:CL,choices:Set[N]) {}
+case class Steps[N,CL](weight:CL,choices:Set[N]) {}
 
-class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[NextStep[N,CL]]] {
+class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[Steps[N,CL]]] {
 
-  type Label = Option[NextStep[N,CL]]
+  type Label = Option[Steps[N,CL]]
 
   //identity and annihilator
-  val I = Some(NextStep[N,CL](coreSemiring.I,Set[N]()))
+  val I = Some(Steps[N,CL](coreSemiring.I,Set[N]()))
   val O = None
 
   /**
@@ -28,7 +28,7 @@ class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[
       case (Some(fromThroughToSteps),Some(currentSteps)) => {
         val summ = coreSemiring.summary(fromThroughToSteps.weight,currentSteps.weight)
         if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
-          Some(new NextStep[N,CL](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
+          Some(new Steps[N,CL](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
         }
         else if (summ==fromThroughToSteps.weight) fromThroughToLabel
         else if (summ==currentSteps.weight) currentLabel
@@ -47,14 +47,14 @@ class AllPathsSemiring[N,CL](coreSemiring:Semiring[CL]) extends Semiring[Option[
 
     (fromThroughLabel,throughToLabel) match {
       case (Some(fromThroughSteps),Some(throughToSteps)) => {
-        Some(new NextStep[N,CL](coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
+        Some(new Steps[N,CL](coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
       }
       case _ => O
     }
   }
 }
 
-class AllPaths[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[NextStep[N,CL]],Key] {
+class AllPaths[N,CL,Key](core:GraphMinimizerSupport[CL,Key]) extends GraphMinimizerSupport[Option[Steps[N,CL]],Key] {
   def semiring = new AllPathsSemiring(core.semiring)
 
   def heapOrdering = core.heapOrdering

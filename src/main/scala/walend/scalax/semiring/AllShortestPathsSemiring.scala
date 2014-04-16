@@ -10,16 +10,16 @@ package walend.scalax.semiring
 class AllShortestPaths[N] extends AllPaths[N,Int,Int](FewestNodes)
 
 import scala.reflect.runtime.universe.TypeTag
-class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[NextStep[N,Int]]](semiring) {
+class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[Steps[N,Int]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
 
-  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[NextStep[N,Int]] = {
+  def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])(edgeT: originalGraph.type#EdgeT): Option[Steps[N,Int]] = {
     val edge:E[N] = edgeT.toOuter
 
-    Some(new NextStep(1,Set[N](edge._2)))
+    Some(new Steps(1,Set[N](edge._2)))
   }
 }
 

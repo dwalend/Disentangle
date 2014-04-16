@@ -3,13 +3,15 @@ ScalaGraphMinimizer
 
 ScalaGraphMinimizer is a Swiss army knife for least-subgraph (think shortest-path) algorithms built on
 [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what
-you want to minimize. The library is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for
-solving path problems in directed graphs,” 26.4 in my 1989 copy.
+you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for
+solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse.
 
 The current version is 0.0.1-SNAPSHOT. A release version is coming soon.
 
 I am currently seeking feedback on just what the API should look like. Please let me know what could be
 better and what works well.
+
+
 
 Getting ScalaGraphMinimizer
 
@@ -22,6 +24,8 @@ sbt test package
 cp target/scala-2.10/graph4scalasemirings_2.10-0.0.1-SNAPSHOT.jar /your/projects/lib
 
 todo -- get it on mvnrepo and add the appropriate libraryDependencies lines
+
+
 
 Using ScalaGraphMinimizer
 
@@ -53,18 +57,42 @@ For example, this code snippet finds zero or one shortest path to in pretty much
     //this finds first step to take on the shortest path from startNode to endNode
     val firstStep:Option[Step[N,Int]] = labelGraph.get(startNode) ~>? labelGraph.get(endNode)
 
-Using Existing Semirings
+
+Algorithms
+
+For the first release, ScalaGraphMinimizer supplies
+
+* The Floyd Warshall algorithm
+* Dijkstra's algorithm with a Fibonacci Heap
+* A limited version of Brandes' algorithm (fewest nodes only)
+* TODO a full version of Brandes' algorithm
+
+Peter Empen optimized scala-graph's internal representation in scala-graph to ensure these algorithms scaled at their theoretical limits up to 1024 nodes.
+
+* FibonacciHeap is a generic heap that supports an efficient changeKey operation.
+
+
+Semirings
+
+ScalaGraphMinimizer supplies some basic semirings and associated support classes
+
+* FewestNodes which helps create paths that include the fewest nodes between start and end nodes
+* LeastWeights which helps create paths that have the least (positive Double) weight sum between start and end nodes
+* MostProbable which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
+* TransitiveClosure which helps create all paths that connect start and end nodes
+
+Semirings can be composed. ScalaGraphMinimizer supplies some semirings that use another semiring, and harvest additional details from the running algorithms.
+
+* OnePath which finds one minimal path between start and end nodes by supplying the next node as an Option[Step]
+* AllPaths which finds all minimal paths between start and end nodes by supplying a set of possible next nodes within an Option[Steps]
+* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps]
+
+
+Creating a Custom LabelGraphBuilder
 
 
 
-Available Algorithms
-
-
-Creating a custom LabelGraphBuilder
-
-
-
-Creating A New Semiring
+Creating A Custom Semiring
 
 
 Roadmap for Future Work
