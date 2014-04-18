@@ -1,10 +1,7 @@
 ScalaGraphMinimizer
 ===================
 
-ScalaGraphMinimizer is a Swiss army knife for least-subgraph (think shortest-path) algorithms built on
-[scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what
-you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for
-solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse.
+ScalaGraphMinimizer is a kit for least-subgraph (think shortest-path) algorithms built on [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse.
 
 The current version is 0.0.1-SNAPSHOT. A release version is coming soon.
 
@@ -35,7 +32,6 @@ You'll need to
 * create or chose a LabelGraphBuilder to convert your graph into a mutable Graph with MLDiEdges and appropriate labels.
 * choose or create a GraphMinimizerSupport, with a Semiring, a HeapOrdering, and a function to translate from labels to heap keys.
 * choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm)
-todo links to other parts of this page and to javadoc
 * arrange your code to run the algorithm on your graph
 
 You'll get a Graph with your nodes and MLDiEdges with labels that contain the results of the minimization.
