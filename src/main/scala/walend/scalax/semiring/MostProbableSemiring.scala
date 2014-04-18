@@ -83,10 +83,9 @@ object MostProbable extends GraphMinimizerSupport[Double,Double] {
 }
 
 /**
- * Works if the graph labels are Doubles >= 0 and <= Double.MAX_VALUE.
+ * Works for graph labels that are Doubles >= 0 and <= Double.MAX_VALUE.
  */
 import scala.reflect.runtime.universe.TypeTag
-
 class MostProbableGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N,Double](MostProbableSemiring) {
 
   import scalax.collection.Graph

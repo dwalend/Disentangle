@@ -105,6 +105,10 @@ trait LabelGraphBuilder[N,Label] {
 
 }
 
+/**
+ * Creates a graph with a self-edge with label I for each node, and calls initialLabelFromGraphEdge() to create a label
+ * for each edge.
+ */
 //N has a TypeTag to provide enough information for MutableGraph's from() method
 import scala.reflect.runtime.universe.TypeTag
 abstract class AbsractLabelGraphBuilder[N :TypeTag,Label](semiring:Semiring[Label])

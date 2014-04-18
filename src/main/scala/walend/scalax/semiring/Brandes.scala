@@ -20,7 +20,7 @@ object Brandes {
    * Brandes' algorithm.
    */
 
-  //todo does this get better with the original graph?
+  //todo does this get better with access to the original label graph?
   def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Map[labelGraph.NodeT,Double]) = {
