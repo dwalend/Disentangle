@@ -5,8 +5,8 @@
  * @since v1
  */
 
-import walend.scalax.semiring.SomeGraph._
-import walend.scalax.semiring.{Dijkstra, OneShortestPath,OneShortestPathGraphBuilder}
+import net.walend.scalagraph.minimizer.semiring.SomeGraph._
+import net.walend.scalagraph.minimizer.semiring.{Dijkstra, OneShortestPath,OneShortestPathGraphBuilder}
 
 
 

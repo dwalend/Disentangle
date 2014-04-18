@@ -4,8 +4,8 @@
  */
 
 import scalax.collection.edge.LBase.LEdgeImplicits
-import walend.scalax.semiring.SomeGraph._
-import walend.scalax.semiring.{PrevStep, PreviousStep, Brandes, AllShortestPathsPredecessorsGraphBuilder, FloydWarshall, Dijkstra, AllShortestPathsPredecessors}
+import net.walend.scalagraph.minimizer.semiring.SomeGraph._
+import net.walend.scalagraph.minimizer.semiring.{PrevStep, PreviousStep, Brandes, AllShortestPathsPredecessorsGraphBuilder, FloydWarshall, Dijkstra, AllShortestPathsPredecessors}
 
 val allShortestPathsPredecessors = new AllShortestPathsPredecessors[String]
 

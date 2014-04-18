@@ -39,7 +39,7 @@ You'll get a Graph with your nodes and MLDiEdges with labels that contain the re
 For example, this code snippet finds zero or one shortest path to in pretty much any directed graph:
 
 
-    import walend.scalax.semiring.{OnePath,FewestNodes,OneShortestPathGraphBuilder,Dijkstra,MLDiEdge,Step}
+    import net.walend.scalagraph.minimizer.semiring.{OnePath,FewestNodes,OneShortestPathGraphBuilder,Dijkstra,MLDiEdge,Step}
 
     //you supply a graph
     val graph = ???

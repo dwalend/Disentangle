@@ -5,8 +5,8 @@
  * @since v1
  */
 
-import walend.scalax.semiring.SomeGraph._
-import walend.scalax.semiring.{FloydWarshall, Dijkstra, AllShortestPaths, AllShortestPathsGraphBuilder}
+import net.walend.scalagraph.minimizer.semiring.SomeGraph._
+import net.walend.scalagraph.minimizer.semiring.{FloydWarshall, Dijkstra, AllShortestPaths, AllShortestPathsGraphBuilder}
 
 
 
