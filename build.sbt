@@ -1,8 +1,11 @@
+import SonatypeKeys._
+
 name := "Graph4ScalaSemirings"
 
 organization := "net.walend"
 
-version := "0.0.1-SNAPSHOT"
+// Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
+version := "0.0.0-SNAPSHOT"
 
 scalaVersion := "2.10.4"
 
@@ -15,3 +18,43 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 fork in test := true
 
 javaOptions in test += "-Xmx3G"
+
+//old sbt cut-paste
+
+//publishMavenStyle := true
+
+//publishArtifact in Test := false
+
+//pomIncludeRepository := { x => false }
+
+// Import default settings. This changes `publishTo` settings to use the Sonatype repository and add several commands for publishing.
+sonatypeSettings
+
+// Your project orgnization (package name)
+organization := "net.walend"
+
+// Your profile name of the sonatype account. The default is the same with the organization
+profileName := "net.walend"
+
+// To sync with Maven central, you need to supply the following information:
+pomExtra := {
+  <url>https://github.com/dwalend/ScalaGraphMinimizer</url>
+    <licenses>
+      <license>
+        <name>MIT License</name>
+        <url>http://www.opensource.org/licenses/mit-license.php</url>
+      </license>
+    </licenses>
+    <scm>
+      <connection>scm:git:github.com:dwalend/ScalaGraphMinimizer.git</connection>
+      <url>github.com/dwalend/ScalaGraphMinimizer.git</url>
+    </scm>
+    <developers>
+      <developer>
+        <id>dwalend</id>
+        <name>David Walend</name>
+        <url>https://github.com/dwalend</url>
+      </developer>
+    </developers>
+}
+
