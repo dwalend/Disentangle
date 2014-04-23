@@ -98,7 +98,7 @@ You are very likely to need your own LabelGraphBuilder to create a label graph f
 
 AbstractLabelGraphBuilder has a semiring available. From the originalGraph, it creates a graph with a node for each original node, a self-edge with an identity (semiring.I) label, and calls initialLabelFromGraphEdge to create a lable for MLDiEdge for each original directed edge.
 
-Note that the decorator semirings have associated GraphBuilders that can help. (TODO write this code)
+In a future release I hope to provide GraphBuilders that can help with the decorator semirings. That's part of the puzzle to solve with the API in the first release.
 
 Here's an example LabelGraphBuilder that makes Double labels:
 
