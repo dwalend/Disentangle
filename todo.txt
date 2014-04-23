@@ -12,6 +12,7 @@ Overall
 
 Structures
 
+* GraphBuilders for decorator Semirings.
 * MultiPath representation (Probably a subgraph via having)
 * Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
 
