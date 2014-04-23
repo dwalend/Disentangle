@@ -31,7 +31,7 @@ javaOptions in test += "-Xmx3G"
 sonatypeSettings
 
 // Your project orgnization (package name)
-organization := "net.walend.scalagraph"
+organization := "net.walend"
 
 // Your profile name of the sonatype account. The default is the same with the organization
 profileName := "net.walend"

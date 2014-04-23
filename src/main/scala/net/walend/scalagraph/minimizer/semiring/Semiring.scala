@@ -97,6 +97,7 @@ abstract class Semiring[Label] {
   }
 }
 
+//todo maybe don't need Label
 trait LabelGraphBuilder[N,Label] {
   import scalax.collection.GraphPredef.EdgeLikeIn
   import scala.language.higherKinds
@@ -154,4 +155,5 @@ trait GraphMinimizerSupport[Label,Key] {
 
   def heapKeyForLabel:Label => Key
 
+  def labelGraphBuilder:AbsractLabelGraphBuilder[_,Label] = null //todo fill this in
 }

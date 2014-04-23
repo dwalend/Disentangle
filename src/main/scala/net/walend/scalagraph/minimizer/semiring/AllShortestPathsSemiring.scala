@@ -6,11 +6,13 @@ package net.walend.scalagraph.minimizer.semiring
  * @author dwalend
  * @since v1
  */
-
-class AllShortestPaths[N] extends AllPaths[N,Int,Int](FewestNodes)
-
 import scala.reflect.runtime.universe.TypeTag
-class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) extends AbsractLabelGraphBuilder[N,Option[Steps[N,Int]]](semiring) {
+
+class AllShortestPaths[N:TypeTag] extends AllPaths[N,Int,Int](FewestNodes)
+
+/*
+import scala.reflect.runtime.universe.TypeTag
+class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring) extends AbsractLabelGraphBuilder[N,Option[Steps[N,Int]]](semiring) {
 
   import scalax.collection.Graph
   import scalax.collection.GraphPredef.EdgeLikeIn
@@ -23,3 +25,4 @@ class AllShortestPathsGraphBuilder[N:TypeTag](semiring:AllPathsSemiring[N,Int]) 
   }
 }
 
+*/

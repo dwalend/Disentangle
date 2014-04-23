@@ -61,7 +61,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
 
     val allShortestPaths = new AllShortestPaths[String]
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(allShortestPaths.semiring,new AllShortestPathsGraphBuilder[String](allShortestPaths.semiring))(graph)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(allShortestPaths.semiring,new allShortestPaths.AllShortestPathsGraphBuilder[String](allShortestPaths.semiring))(graph)
 
     for(node <- labelGraph.nodes) {
       node ~>? node match {
