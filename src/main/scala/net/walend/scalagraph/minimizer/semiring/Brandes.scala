@@ -21,17 +21,14 @@ object Brandes {
    */
 
   //todo does this get better with access to the original label graph?
-  //todo use TypeTag
-  def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](orignalLabelGraph:MutableGraph[N,MLDiEdge])
-                                     (sourceNode:N)
-                                     (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Map[N,Double]) = {
-    val labelGraph:MutableGraph[N,MLDiEdge] = MutableGraph.from(orignalLabelGraph.nodes.toOuter,
-                                                                orignalLabelGraph.edges.toOuter)
-    val source:labelGraph.NodeT = labelGraph.get(sourceNode)
+  def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,MLDiEdge])
+                                     (source:labelGraph.NodeT)
+                                     (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Map[labelGraph.NodeT,Double]) = {
+
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.NodeT] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
-    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => node -> heap.insert(support.heapKeyForLabel(support.semiring.O),node))(breakOut)
+    val nodesToHeapMembers:Map[labelGraph.NodeT,heap.HeapMember] = labelGraph.nodes.map(node => (node -> heap.insert(support.heapKeyForLabel(support.semiring.O),node)))(breakOut)
 
     //Stack to use later
     val stack:mutable.Stack[labelGraph.NodeT] = mutable.Stack()
@@ -60,7 +57,7 @@ object Brandes {
 
     //todo this seems like it could use a list, an accumulator, and tail recursion
     import scala.collection.mutable.{Map => MutableMap}
-    val nodesToPartialBetweenness:MutableMap[N,Double] = MutableMap()
+    val nodesToPartialBetweenness:MutableMap[labelGraph.NodeT,Double] = MutableMap()
     while(!stack.isEmpty) {
       val sink:labelGraph.NodeT = stack.pop()
       //don't bother finding the partial for the sink
@@ -130,7 +127,7 @@ object Brandes {
                                   (originalGraph:Graph[N,E]):(Graph[N,MLDiEdge],Map[N,Double]) = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
-    val partialBetweennesses = for(node <- labelGraph.nodes.toOuter) yield {
+    val partialBetweennesses = for(node <- labelGraph.nodes) yield {
       brandesForSource(labelGraph)(node)(support)._2
     }               //this is a Set[Map[labelGraph.NodeT,Double]]
 
