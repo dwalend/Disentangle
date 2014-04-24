@@ -111,7 +111,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val graph = SomeGraph.testGraph
     val allShortestPaths = new AllShortestPathsPredecessors[String]
 
-    val labelGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String](allShortestPaths.semiring))(graph)
+    val labelGraphAndBetweenness = BrandesFewestNodes.shortestPathsAndBetweenness(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[String](allShortestPaths.semiring))(graph)
     val labelGraph = labelGraphAndBetweenness._1
 
     val foundEdges:Set[MLDiEdge[String]] = labelGraph.edges.map(PrevStep.previousStepEdgeToPrevStepEdge(labelGraph)).flatten.to[Set]
@@ -129,7 +129,7 @@ class AllShortestPathsPredecessorsTest extends FlatSpec with Matchers {
     val allShortestPaths = new AllShortestPathsPredecessors[Int]
 
     val startTime = System.currentTimeMillis()
-    val labelGraph = Brandes.shortestPathsAndBetweenness(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[Int](allShortestPaths.semiring))(graph)
+    val labelGraph = BrandesFewestNodes.shortestPathsAndBetweenness(allShortestPaths,new AllShortestPathsPredecessorsGraphBuilder[Int](allShortestPaths.semiring))(graph)
     val time = System.currentTimeMillis() - startTime
 
     val calibrateBigO = Math.pow(calibrate._1,2) * Math.log(calibrate._1)

@@ -5,7 +5,7 @@
 
 import scalax.collection.edge.LBase.LEdgeImplicits
 import net.walend.scalagraph.minimizer.semiring.SomeGraph._
-import net.walend.scalagraph.minimizer.semiring.{PrevStep, PreviousStep, Brandes, AllShortestPathsPredecessorsGraphBuilder, FloydWarshall, Dijkstra, AllShortestPathsPredecessors}
+import net.walend.scalagraph.minimizer.semiring.{PrevStep, PreviousStep, BrandesFewestNodes, AllShortestPathsPredecessorsGraphBuilder, FloydWarshall, Dijkstra, AllShortestPathsPredecessors}
 
 val allShortestPathsPredecessors = new AllShortestPathsPredecessors[String]
 
@@ -24,7 +24,7 @@ for(edge <- floydGraph.edges) {
 }
 
 
-val brandesGraphAndBetweenness = Brandes.shortestPathsAndBetweenness(testGraph)(allShortestPathsPredecessors,new AllShortestPathsPredecessorsGraphBuilder[String])
+val brandesGraphAndBetweenness = BrandesFewestNodes.shortestPathsAndBetweenness(testGraph)(allShortestPathsPredecessors,new AllShortestPathsPredecessorsGraphBuilder[String])
 
 brandesGraphAndBetweenness._2
 /*

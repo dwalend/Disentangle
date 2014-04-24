@@ -14,7 +14,7 @@ package net.walend.scalagraph.minimizer.semiring
 class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean = false) extends Semiring[Option[PreviousStep[N]]] {
 
   //identity and annihilator
-  def I = Some(PreviousStep[N](0,Set[N](),0,BrandesLabel.originalGraph))
+  def I = Some(PreviousStep[N](0,Set[N](),0,BrandesFewestNodesLabel.originalGraph))
   def O = None
 
   /**
@@ -47,7 +47,7 @@ class AllShortestPathsPredecessorsSemiring[N](willConsiderAllNodePairs:Boolean =
         Some(new PreviousStep[N](fromThroughSteps.steps+throughToSteps.steps,
                                   throughToSteps.predecessors,
                                   fromThroughSteps.numShortestPaths*throughToSteps.numShortestPaths,
-                                  BrandesLabel.default))
+                                  BrandesFewestNodesLabel.default))
       }
       case _ => None
     }
@@ -161,7 +161,7 @@ class AllShortestPathsPredecessorsGraphBuilder[N:TypeTag](semiring:AllShortestPa
   def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
                                                          (edgeT: originalGraph.type#EdgeT): Option[PreviousStep[N]] = {
     val edge:E[N] = edgeT.toOuter
-    Some(new PreviousStep(1,Set[N](edge._1),1,BrandesLabel.originalGraph))
+    Some(new PreviousStep(1,Set[N](edge._1),1,BrandesFewestNodesLabel.originalGraph))
   }
 }
 
@@ -176,5 +176,5 @@ class AllShortestPathsPredecessors[N] extends GraphMinimizerSupport[Option[Previ
   }
 }
 
-case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N] {}
+case class PreviousStep[N](steps:Int,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesFewestNodesLabel[N] {}
 

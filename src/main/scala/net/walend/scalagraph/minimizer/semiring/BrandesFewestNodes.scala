@@ -9,19 +9,19 @@ import scalax.collection.GraphPredef._
 import scala.Some
 
 /**
- * Brandes' algorithm for betweenness.
+ * Brandes' algorithm for betweenness for paths with the fewest nodes.
  *
  * @author dwalend
  * @since v1
  */
-object Brandes {
+object BrandesFewestNodes {
 
   /**
    * Brandes' algorithm.
    */
 
   //todo does this get better with access to the original label graph?
-  def brandesForSource[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def brandesForSource[N:Manifest,Label <: Option[BrandesFewestNodesLabel[N]]:ClassTag,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                      (source:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Map[labelGraph.NodeT,Double]) = {
 
@@ -88,8 +88,8 @@ object Brandes {
     (labelGraph,nodesToPartialBetweenness.toMap)
   }
 
-  private def getLabelBetween[N,Label <:Option[BrandesLabel[N]]:ClassTag](labelGraph:MutableGraph[N,MLDiEdge])
-                                      (source:labelGraph.NodeT,sink:labelGraph.NodeT):Option[BrandesLabel[N]] = {
+  private def getLabelBetween[N,Label <:Option[BrandesFewestNodesLabel[N]]:ClassTag](labelGraph:MutableGraph[N,MLDiEdge])
+                                      (source:labelGraph.NodeT,sink:labelGraph.NodeT):Option[BrandesFewestNodesLabel[N]] = {
 
     source ~>? sink match {
       case None => None
@@ -102,7 +102,7 @@ object Brandes {
    * This method runs Brande's algorithm for all nodes.
    */
   //todo Can this be a TypeTag? is Manifest needed
-  def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesLabel[N]]:ClassTag,Key]
+  def allPairsShortestPaths[N:Manifest,Label <: Option[BrandesFewestNodesLabel[N]]:ClassTag,Key]
                                                  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
                                                  (originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
@@ -120,7 +120,7 @@ object Brandes {
 
   //todo still need Manifest? Can it be a TypeTag?
   def shortestPathsAndBetweenness[N:Manifest,
-                                  Label <: Option[BrandesLabel[N]]:ClassTag,
+                                  Label <: Option[BrandesFewestNodesLabel[N]]:ClassTag,
                                   E[X] <: EdgeLikeIn[X],
                                   Key]
                                   (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
@@ -148,7 +148,7 @@ object Brandes {
  *
  * @tparam N the outer type of nodes in your graph
  */
-trait BrandesLabel[N] {
+trait BrandesFewestNodesLabel[N] {
   def predecessors:Set[N]
   def numShortestPaths:Int
   def creator:AnyRef
@@ -156,15 +156,15 @@ trait BrandesLabel[N] {
   def matchingCreator(otherCreator:AnyRef):Boolean = {
 
     if(otherCreator == creator) true
-    else if (otherCreator == BrandesLabel.default) true
-    else if (otherCreator == BrandesLabel.originalGraph) true
-    else if (creator == BrandesLabel.default) true
-    else if (creator == BrandesLabel.originalGraph) true
+    else if (otherCreator == BrandesFewestNodesLabel.default) true
+    else if (otherCreator == BrandesFewestNodesLabel.originalGraph) true
+    else if (creator == BrandesFewestNodesLabel.default) true
+    else if (creator == BrandesFewestNodesLabel.originalGraph) true
     else false
   }
 }
 
-object BrandesLabel {
+object BrandesFewestNodesLabel {
 
   /**
    * Value to use for creator when creating the initial label graph to avoid erasing old results.
