@@ -17,10 +17,12 @@ Structures
 
 Algorithms
 
+* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps] (currently can only use one Semiring)
 * MST with Fibonacci heap
 * Lazy Label Graph. (Single-Source graph with Dijkstra's algorithm)
 * A* algorithm
 * Parallel queued graph minimization (will need a concurrent mutable edge graph)
+
 
 Semirings
 

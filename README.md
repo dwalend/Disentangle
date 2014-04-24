@@ -62,7 +62,6 @@ For the first release, ScalaGraphMinimizer supplies
 * The Floyd Warshall algorithm
 * Dijkstra's algorithm with a Fibonacci Heap
 * A limited version of Brandes' algorithm (fewest nodes only)
-* TODO a full version of Brandes' algorithm
 
 Peter Empen optimized scala-graph's internal representation in scala-graph to ensure these algorithms scaled at their theoretical limits up to 1024 nodes.
 
@@ -82,7 +81,6 @@ Semirings can be composed. ScalaGraphMinimizer takes advantage of this by suppli
 
 * OnePath which finds one minimal path between start and end nodes by supplying the next node as an Option[Step]
 * AllPaths which finds all minimal paths between start and end nodes by supplying a set of possible next nodes within an Option[Steps]
-* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps]
 
 
 ## Customizing ScalaGraphMinimizer
