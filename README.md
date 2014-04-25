@@ -61,9 +61,9 @@ For the first release, ScalaGraphMinimizer supplies
 
 * The Floyd Warshall algorithm
 * Dijkstra's algorithm with a Fibonacci Heap
-* A limited version of Brandes' algorithm (fewest nodes only)
+* Brandes' algorithm for betweenness (which requires an AllPaths composable Semiring)
 
-Peter Empen optimized scala-graph's internal representation in scala-graph to ensure these algorithms scaled at their theoretical limits up to 1024 nodes.
+Peter Empen optimized scala-graph's internal representation in scala-graph to ensure that the graph algorithms scaled at their theoretical limits up to 1024 nodes.
 
 * FibonacciHeap is a generic heap that supports an efficient changeKey operation.
 
