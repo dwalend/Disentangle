@@ -98,4 +98,27 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     labelGraph.edges.toOuter should be (expectedEdges)
   }
 
+  val expectedBetweenness:Map[String,Double] = Map(E -> 13.0,
+    F -> 0.0,
+    A -> 0.0,
+    G -> 0.0,
+    B -> 6.5,
+    C -> 13.0,
+    H -> 1.5,
+    D -> 13.0)
+
+
+  "Brandes' algorith" should "produce both the correct label graph and betweenness for Somegraph" in {
+
+    val graph = SomeGraph.testGraph
+
+    val allShortestPaths = new AllShortestPaths[String]
+
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allShortestPaths,new AllShortestPathsGraphBuilder[String](allShortestPaths.semiring))(graph)
+
+    labelGraphAndBetweenness._1.edges.toOuter should be (expectedEdges)
+
+    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+  }
+
 }

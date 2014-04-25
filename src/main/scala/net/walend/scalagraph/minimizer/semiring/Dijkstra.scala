@@ -58,20 +58,36 @@ object Dijkstra {
 
 
   import scala.language.higherKinds
+
   /**
-   * This method runs Dijkstra's algorithm for all nodes.
+   * This method runs Dijkstra's algorithm for all nodes in the label graph.
+   */
+  def allPairsShortestPaths[N:Manifest,
+                            Label,
+                            Key]
+                            (support:GraphMinimizerSupport[Label,Key])
+                            (labelGraph:MutableGraph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
+
+    for(node <- labelGraph.nodes) {
+      dijkstra(labelGraph)(node)(support)
+    }
+    labelGraph
+  }
+
+
+  /**
+   * This method creates the label graph and then runs Dijkstra's algorithm for all nodes.
    */
   def allPairsShortestPaths[N:Manifest,
                             E[X] <: EdgeLikeIn[X],
                             Label,
                             Key]
-                            (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
+                            (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
                             (originalGraph:Graph[N,E]):Graph[N,MLDiEdge] = {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
-    for(node <- labelGraph.nodes) {
-      dijkstra(labelGraph)(node)(support)
-    }
+    allPairsShortestPaths(support)(labelGraph)
+
     labelGraph
   }
 }

@@ -6,6 +6,7 @@ package net.walend.scalagraph.minimizer.semiring
  * @author dwalend
  * @since v1
  */
+//todo remove this code
        /*
 case class PreviousStep[N,CL](weight:CL,predecessors:Set[N],numShortestPaths:Int,creator:AnyRef) extends BrandesLabel[N]
 
