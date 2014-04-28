@@ -20,6 +20,8 @@ fork in test := true
 
 javaOptions in test += "-Xmx3G"
 
+scalacOptions ++= Seq("-feature")
+
 //old sbt cut-paste
 
 //publishMavenStyle := true

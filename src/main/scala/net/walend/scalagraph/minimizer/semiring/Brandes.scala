@@ -70,7 +70,7 @@ object Brandes {
     val nodesToPartialBetweenness: MutableMap[N, Double] = MutableMap()
 
     //for each possible choice of next step
-    for (edge: labelGraph.EdgeT <- edges) {
+    for (edge <- edges) {
       //figure out the partial betweenness to apply to that step
       val label: Label = edge.label.asInstanceOf[Label]
       label match {
@@ -78,7 +78,7 @@ object Brandes {
         case Some(sourceLabel: Steps[N, CL]) => {
           val numChoices: Double = sourceLabel.choices.size
           val partialFromSource = nodesToPartialBetweenness.getOrElse(edge._1.value, 0.0)
-          for (choice: N <- sourceLabel.choices) {
+          for (choice <- sourceLabel.choices) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
               val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0)
@@ -130,7 +130,7 @@ object Brandes {
    */
   def betweenness[N: TypeTag, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
                                                                                (labelGraph: Graph[N, MLDiEdge]): Map[N, Double] = {
-    val partialBetweennesses: Seq[Map[N, Double]] = for (node: labelGraph.NodeT <- labelGraph.nodes.to[Seq]) yield {
+    val partialBetweennesses: Seq[Map[N, Double]] = for (node <- labelGraph.nodes.to[Seq]) yield {
       partialBetweennessWithSort(support)(labelGraph)(node)
     }
 
@@ -166,6 +166,7 @@ object Brandes {
   /**
    * This method creates the label graph, runs Dijkstra's algorithm and calculates betweenness for all nodes.
    */
+  import scala.language.higherKinds
   def allLeastPathsAndBetweenness[N:Manifest,
                                   CL,
                                   E[X] <: EdgeLikeIn[X],
