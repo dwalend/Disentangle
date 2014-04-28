@@ -164,7 +164,7 @@ object Brandes {
   }
 
   /**
-   * This method creates the label graph, runs Dijkstra's algorithm for all nodes, and calculates betweenness.
+   * This method creates the label graph, runs Dijkstra's algorithm and calculates betweenness for all nodes.
    */
   def allLeastPathsAndBetweenness[N:Manifest,
                                   CL,
