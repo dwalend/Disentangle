@@ -38,7 +38,6 @@ object SomeGraph {
 
 }
 
-//todo use this in all tests to check edges. Edge equality doesn't include labels or keys in scala-graph
 object EdgeHelp {
 
   def diffSets[E](given:Set[E],expected:Set[E]):(Set[E],Set[E]) = {

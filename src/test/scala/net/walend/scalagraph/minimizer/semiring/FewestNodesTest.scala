@@ -41,6 +41,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   "Replacing a label in the initial graph" should "only change that one label" in {
@@ -99,7 +100,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
     FewestNodesSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,FewestNodesSemiring.O)
 
     labelGraph.edges.toOuter should be (expectedEdges)
-
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
 
@@ -169,6 +170,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -178,6 +180,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
     val labelGraph = Dijkstra.allPairsShortestPaths(FewestNodes,new FewestNodesGraphBuilder[String])(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   def timeFloyd(nodeCount:Int,calibrate:(Int,Long,Long)):(Int,Long,Long) = {

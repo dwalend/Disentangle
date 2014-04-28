@@ -85,6 +85,8 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     (labelGraph.edges.toOuter.to[Set] -- expectedEdges) should be (Set.empty)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -96,6 +98,8 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     val labelGraph = Dijkstra.allPairsShortestPaths(allShortestPaths,new AllShortestPathsGraphBuilder[String](allShortestPaths.semiring))(graph)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(E -> 13.0,
@@ -117,6 +121,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allShortestPaths,new AllShortestPathsGraphBuilder[String](allShortestPaths.semiring))(graph)
 
     labelGraphAndBetweenness._1.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraphAndBetweenness._1.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

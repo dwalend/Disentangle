@@ -38,6 +38,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 
   "Replacing a label in the initial graph" should "only change that one label" in {
@@ -67,6 +68,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
     TransitiveClosureSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,true)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
 
   }
 
@@ -96,6 +98,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
     TransitiveClosureSemiring.replaceLabel(labelGraph)(labelGraph get A,labelGraph get C,TransitiveClosureSemiring.O)
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
 
   }
 
@@ -165,6 +168,8 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
+
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
@@ -216,5 +221,6 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
     )
 
     labelGraph.edges.toOuter should be (expectedEdges)
+    EdgeHelp.checkEdgeSets(labelGraph.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
   }
 }
