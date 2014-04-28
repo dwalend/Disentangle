@@ -3,7 +3,6 @@ package net.walend.scalagraph.minimizer.semiring
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 import net.walend.scalagraph.minimizer.heap.{FibonacciHeap, Heap}
-import scala.reflect.runtime.universe.TypeTag
 import scalax.collection.GraphPredef._
 import scala.Some
 
@@ -58,11 +57,10 @@ object Brandes {
     (labelGraph,stack)
   }
 
-  //todo do you really need the TypeTags ?
   /**
    * Find partial betweenness
    */
-  def partialBetweenness[N: TypeTag, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
+  def partialBetweenness[N, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
                                                                             (labelGraph: Graph[N, MLDiEdge])
                                                                             (sink: labelGraph.NodeT,edges: Seq[labelGraph.EdgeT]): Map[N, Double] = {
 
@@ -98,7 +96,7 @@ object Brandes {
    * Sorts internally, for when you don't get a stack from Dijkstra's algorithm or some other side effect.
    *
    */
-  def partialBetweennessWithSort[N: TypeTag, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
+  def partialBetweennessWithSort[N, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
                                                                             (labelGraph: Graph[N, MLDiEdge])
                                                                             (sink: labelGraph.NodeT): Map[N, Double] = {
 
@@ -128,7 +126,7 @@ object Brandes {
   /**
    * This method finds betweenness for all nodes, given a labelGraph with all least paths.
    */
-  def betweenness[N: TypeTag, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
+  def betweenness[N, CL, Label <: Option[Steps[N, CL]], Key](support: AllPaths[N, CL, Key])
                                                                                (labelGraph: Graph[N, MLDiEdge]): Map[N, Double] = {
     val partialBetweennesses: Seq[Map[N, Double]] = for (node <- labelGraph.nodes.to[Seq]) yield {
       partialBetweennessWithSort(support)(labelGraph)(node)
