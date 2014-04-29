@@ -17,7 +17,7 @@ object Brandes {
   /**
    * Dijkstra's algorithm, run backwards.
    */
-  def dijkstraToSink [N:Manifest,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstraToSink [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                      (sink:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Seq[labelGraph.EdgeT]) = {
     //Set up the map of Nodes to HeapKeys
@@ -141,7 +141,7 @@ object Brandes {
   /**
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
-  def allLeastPathsAndBetweenness[N:Manifest,
+  def allLeastPathsAndBetweenness[N,
                                   CL,
                                   Label <: Option[Steps[N, CL]],
                                   Key]
@@ -165,7 +165,7 @@ object Brandes {
    * This method creates the label graph, runs Dijkstra's algorithm and calculates betweenness for all nodes.
    */
   import scala.language.higherKinds
-  def allLeastPathsAndBetweenness[N:Manifest,
+  def allLeastPathsAndBetweenness[N,
                                   CL,
                                   E[X] <: EdgeLikeIn[X],
                                   Label <: Option[Steps[N, CL]],

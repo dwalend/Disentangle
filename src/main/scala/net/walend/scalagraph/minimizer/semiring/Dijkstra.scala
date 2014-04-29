@@ -16,7 +16,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N:Manifest,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstra [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                              (innerSourceNode:labelGraph.NodeT)
                                              (support:GraphMinimizerSupport[Label,Key]):Graph[N,MLDiEdge] = {
     //Set up the map of Nodes to HeapKeys
@@ -47,7 +47,7 @@ object Dijkstra {
     labelGraph
   }
 
-  def singleSourceShortestPaths[N:Manifest,Label,Key]
+  def singleSourceShortestPaths[N,Label,Key]
                               (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
                               (sourceNode:N,originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
@@ -62,7 +62,7 @@ object Dijkstra {
   /**
    * This method runs Dijkstra's algorithm for all nodes in the label graph.
    */
-  def allPairsShortestPaths[N:Manifest,
+  def allPairsShortestPaths[N,
                             Label,
                             Key]
                             (support:GraphMinimizerSupport[Label,Key])
@@ -78,7 +78,7 @@ object Dijkstra {
   /**
    * This method creates the label graph and then runs Dijkstra's algorithm for all nodes.
    */
-  def allPairsShortestPaths[N:Manifest,
+  def allPairsShortestPaths[N,
                             E[X] <: EdgeLikeIn[X],
                             Label,
                             Key]

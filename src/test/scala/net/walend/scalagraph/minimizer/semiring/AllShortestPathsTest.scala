@@ -4,7 +4,6 @@ import org.scalatest.{Matchers, FlatSpec}
 
 import SomeGraph._
 
-import scalax.collection.Graph
 import MLDiEdge._
 
 /**

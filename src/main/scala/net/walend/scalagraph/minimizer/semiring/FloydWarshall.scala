@@ -20,7 +20,7 @@ object FloydWarshall {
   }
 
   import scala.language.higherKinds
-  def allPairsShortestPaths[N:Manifest,
+  def allPairsShortestPaths[N,
                             E[X] <: EdgeLikeIn[X],
                             Label]
                             (semiring:Semiring[Label],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
