@@ -108,7 +108,6 @@ object Brandes {
         support.heapKeyForLabel(label)
       }
 
-      //todo test this. Might need to be the opposite order
       override def compare(x: labelGraph.type#EdgeT, y: labelGraph.type#EdgeT): Int = {
         val xKey = keyForEdge(x)
         val yKey = keyForEdge(y)
@@ -117,7 +116,6 @@ object Brandes {
         else 0
       }
     }
-    //todo do a variation that takes the sort in from Dijkstra's algorithm building a stack
     val edges: Seq[labelGraph.EdgeT] = sink.incoming.to[Seq].sorted(new EdgeOrdering)
 
     partialBetweenness(support)(labelGraph)(sink,edges)

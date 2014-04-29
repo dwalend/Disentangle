@@ -1,7 +1,6 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.heap.HeapOrdering
-import MLDiEdge._
 
 /**
  * Labels are true if the sink can be reached from the source, false if not.
@@ -39,9 +38,9 @@ class TransitiveClosureLabelGraphBuilder[N:TypeTag] extends AbsractLabelGraphBui
 final case class TransitiveClosureHeapKey(label:Boolean, state:Int)
 
 object TransitiveClosureHeapKey {
-  val TrueKey = TransitiveClosureHeapKey(true,1)
-  val FalseKey = TransitiveClosureHeapKey(false,0)
-  val TopKey = TransitiveClosureHeapKey(true,2)
+  val TrueKey = TransitiveClosureHeapKey(label = true,1)
+  val FalseKey = TransitiveClosureHeapKey(label = false,0)
+  val TopKey = TransitiveClosureHeapKey(label = true,2)
 
   def keyForLabel(label:Boolean):TransitiveClosureHeapKey = {
     if(label) TrueKey

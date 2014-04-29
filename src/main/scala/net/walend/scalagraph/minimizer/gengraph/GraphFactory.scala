@@ -38,7 +38,7 @@ object GraphFactory {
   def createFullyConnectedGraph(nodeCount:Int):Graph[Int,DiEdge] = {
     val nodes:Set[Int] = (0 until nodeCount).to[Set]
 
-    val edges = for(fromNode <- nodes;toNode <- nodes) yield (fromNode ~> toNode)
+    val edges = for(fromNode <- nodes;toNode <- nodes) yield fromNode ~> toNode
 
     Graph.from(nodes,edges)
   }
