@@ -1,12 +1,14 @@
 ScalaGraphMinimizer
 ===================
 
-ScalaGraphMinimizer is a kit for least-subgraph (think shortest-path) algorithms built on [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse.
+Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code.
+
+ScalaGraphMinimizer is a kit for customizable graph algorithms built on [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
 The current version is 0.0.1-SNAPSHOT. A release version is coming soon.
 
-I am currently seeking feedback on just what the API should look like. Please let me know what could be
-better and what works well.
+I am currently seeking feedback on just what the API should look like. Please let me know what works well and what could be
+better.
 
 
 
