@@ -62,3 +62,4 @@ pomExtra := {
     </developers>
 }
 
+releaseSettings
