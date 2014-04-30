@@ -14,16 +14,26 @@ better.
 
 ## Getting ScalaGraphMinimizer
 
-For now, get the source code, build it via sbt, hack as you like, copy it to your lib directory, and make pull requests
-if you've made things better.
+The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository. In a few days it will be available via
 
-git clone https://github.com/dwalend/ScalaGraphMinimizer.git
-cd ScalaGraphMinimizer
-sbt test package
-cp target/scala-2.10/graph4scalasemirings_2.10-0.0.1-SNAPSHOT.jar /your/projects/lib
+    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.0"
 
-todo -- get it on mvnrepo and add the appropriate libraryDependencies lines
+### The Latest Snapshot
 
+To get the latest snapshot in your build.sbt, add
+
+    resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.0-SNAPSHOT"
+
+### clone the code repository
+
+If you want to change ScalaGraphMinimizer to meet your every whim, fix some bugs and send me pull requests, or just mess around, clone the git repo and have at it.
+
+    git clone https://github.com/dwalend/ScalaGraphMinimizer.git
+    cd ScalaGraphMinimizer
+    sbt test package
+    cp target/scala-2.10/graph4scalasemirings_2.10-0.0.0-SNAPSHOT.jar /your/projects/lib
 
 
 ## Using ScalaGraphMinimizer
@@ -65,7 +75,7 @@ For the first release, ScalaGraphMinimizer supplies
 * Dijkstra's algorithm with a Fibonacci Heap
 * Brandes' algorithm for betweenness (which requires an AllPaths composable Semiring)
 
-Peter Empen optimized scala-graph's internal representation in scala-graph to ensure that the graph algorithms scaled at their theoretical limits up to 1024 nodes.
+Peter Empen optimized scala-graph's internal representation in scala-graph to ensure that the graph algorithms scaled at their theoretical limits. I've tested with graphs with up to 1024 nodes.
 
 * FibonacciHeap is a generic heap that supports an efficient changeKey operation.
 
@@ -125,7 +135,7 @@ Here's an example LabelGraphBuilder that makes Double labels:
 
 If AbstractLabelGraphBuilder won't do, you can implement a LabelGraphBuilder's
 
-   def initialLabelGraph[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge]
+    def initialLabelGraph[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge]
 
 to do whatever is needed.
 
@@ -225,9 +235,9 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 
 * Lazy Dijkstra's
 * MST using that Heap
-* General form of Brandes' algorithm
 * A* and some variations
 * Louvain community detection
+
 
 ### More Semirings
 
@@ -237,9 +247,8 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 
 * Concurrent Graph structure
 * Parallel queued graph minimization
-* More A* variations
-
-
+* Parallel A* variations
+* Parallel Louvain
 
 
 ## License and Contributions
