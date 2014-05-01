@@ -7,7 +7,6 @@ organization := "net.walend"
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
 version := "0.0.0-SNAPSHOT"
 
-//todo 2.11.0 ?
 scalaVersion := "2.11.0"
 
 libraryDependencies += "com.assembla.scala-incubator" % "graph-core_2.11" % "1.8.1"
