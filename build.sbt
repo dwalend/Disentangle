@@ -1,5 +1,10 @@
 import SonatypeKeys._
 
+// Import default settings. This changes `publishTo` settings to use the Sonatype repository and add several commands for publishing.
+sonatypeSettings
+
+releaseSettings
+
 name := "Graph4ScalaSemirings"
 
 organization := "net.walend"
@@ -20,17 +25,6 @@ fork in test := true
 javaOptions in test += "-Xmx3G"
 
 scalacOptions ++= Seq("-feature")
-
-//old sbt cut-paste
-
-//publishMavenStyle := true
-
-//publishArtifact in Test := false
-
-//pomIncludeRepository := { x => false }
-
-// Import default settings. This changes `publishTo` settings to use the Sonatype repository and add several commands for publishing.
-sonatypeSettings
 
 // Your project orgnization (package name)
 organization := "net.walend"
@@ -60,5 +54,3 @@ pomExtra := {
       </developer>
     </developers>
 }
-
-releaseSettings
