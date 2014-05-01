@@ -14,7 +14,7 @@ version := "0.0.0-SNAPSHOT"
 
 scalaVersion := "2.11.0"
 
-crossScalaVersions += "2.11.0"
+crossScalaVersions := Seq(scalaVersion.value)
 
 libraryDependencies += "com.assembla.scala-incubator" % "graph-core_2.11" % "1.8.1"
 
