@@ -14,6 +14,10 @@ version := "0.0.0-SNAPSHOT"
 
 scalaVersion := "2.11.0"
 
+crossScalaVersions := "2.11.0"
+
+scala
+
 libraryDependencies += "com.assembla.scala-incubator" % "graph-core_2.11" % "1.8.1"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.1.5" % "test"
