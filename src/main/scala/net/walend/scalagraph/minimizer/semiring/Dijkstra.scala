@@ -16,7 +16,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstra [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstraSingleSource [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                              (innerSourceNode:labelGraph.NodeT)
                                              (support:GraphMinimizerSupport[Label,Key]):Graph[N,MLDiEdge] = {
     //Set up the map of Nodes to HeapKeys
@@ -53,7 +53,7 @@ object Dijkstra {
 
     val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
     val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
-    dijkstra(labelGraph)(innerSourceNode)(support)
+    dijkstraSingleSource(labelGraph)(innerSourceNode)(support)
   }
 
 
@@ -69,7 +69,7 @@ object Dijkstra {
                             (labelGraph:MutableGraph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
 
     for(node <- labelGraph.nodes) {
-      dijkstra(labelGraph)(node)(support)
+      dijkstraSingleSource(labelGraph)(node)(support)
     }
     labelGraph
   }

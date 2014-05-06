@@ -17,7 +17,7 @@ object Brandes {
   /**
    * Dijkstra's algorithm, run backwards.
    */
-  def dijkstraToSink [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
+  def dijkstraSingleSink [N,Label,Key](labelGraph:MutableGraph[N,MLDiEdge])
                                      (sink:labelGraph.NodeT)
                                      (support:GraphMinimizerSupport[Label,Key]):(Graph[N,MLDiEdge],Seq[labelGraph.EdgeT]) = {
     //Set up the map of Nodes to HeapKeys
@@ -147,7 +147,7 @@ object Brandes {
                                   (labelGraph:MutableGraph[N,MLDiEdge]):(Graph[N,MLDiEdge],Map[N, Double]) = {
 
     val partialBetweennesses: Seq[Map[N, Double]] = for(sink <- labelGraph.nodes.to[Seq]) yield {
-      val labelGraphAndNodeStack = dijkstraToSink(labelGraph)(sink)(support)
+      val labelGraphAndNodeStack = dijkstraSingleSink(labelGraph)(sink)(support)
       partialBetweenness(support)(labelGraph)(sink,labelGraphAndNodeStack._2)
     }
 
