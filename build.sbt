@@ -10,7 +10,7 @@ name := "Graph4ScalaSemirings"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.0.3-SNAPSHOT"
+version := "0.0.3"
 
 scalaVersion := "2.11.0"
 
