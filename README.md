@@ -18,13 +18,13 @@ The easiest way to include this project in yours is to add the jar files from so
 
     libraryDependencies += "net.walend" % "graph4scalasemirings_2.11" % "0.0.0"
 
-### The Latest Snapshot
+### The Latest Snapshot (When Available)
 
 To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.1-SNAPSHOT"
+    libraryDependencies += "net.walend" % "graph4scalasemirings_2.11" % "0.0.1-SNAPSHOT"
 
 ### clone the code repository
 
