@@ -3,6 +3,7 @@ import SonatypeKeys._
 // Import default settings. This changes `publishTo` settings to use the Sonatype repository and add several commands for publishing.
 sonatypeSettings
 
+//todo maybe remove release
 releaseSettings
 
 name := "Graph4ScalaSemirings"
@@ -10,7 +11,7 @@ name := "Graph4ScalaSemirings"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.0.2-SNAPSHOT"
+version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.11.0"
 

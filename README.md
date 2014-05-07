@@ -5,7 +5,7 @@ Most graph libraries available on the internet provide some way to find shortest
 
 ScalaGraphMinimizer is a kit for customizable graph algorithms built on [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-The current version is 0.0.1-SNAPSHOT. A release version is coming soon.
+The current version is 0.0.0. A release version is coming soon.
 
 I am currently seeking feedback on just what the API should look like. Please let me know what works well and what could be
 better.
@@ -16,7 +16,7 @@ better.
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository. In a few days it will be available via
 
-    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.0"
+    libraryDependencies += "net.walend" % "graph4scalasemirings_2.11" % "0.0.0"
 
 ### The Latest Snapshot
 
@@ -24,7 +24,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.0-SNAPSHOT"
+    libraryDependencies += "net.walend" % "graph4scalasemirings_2.10" % "0.0.1-SNAPSHOT"
 
 ### clone the code repository
 
