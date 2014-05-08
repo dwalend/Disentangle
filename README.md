@@ -227,7 +227,7 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 * A*
 * MST using a heap and a GraphBuilder
 * Enron test set
-* Timing study with automatically generated graphs (in the test stage) (And comparison with Jung and scala-graph's own) (See http://docs.oracle.com/javafx/2/image_ops/jfxpub-image_ops.htm Need scalafx-2.10)
+* Timing study with automatically generated graphs (in the test stage) (And comparison with Jung and scala-graph's own)
 
 
 ### API Release and Feedback
