@@ -19,13 +19,19 @@ crossScalaVersions := Seq(scalaVersion.value)
 
 libraryDependencies += "com.assembla.scala-incubator" % "graph-core_2.11" % "1.8.1"
 
+libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
+
+
 libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.1.5" % "test"
 
-libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
+libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
+
 
 fork in test := true
 
-javaOptions in test += "-Xmx3G"
+javaOptions in test += "-Xmx3G" //prevents big GC
+
+javaOptions in test += "-server" //does hotspot optimizations earlier
 
 scalacOptions ++= Seq("-feature")
 

@@ -111,7 +111,7 @@ class AllShortestPathsTest extends FlatSpec with Matchers {
     D -> 13.0)
 
 
-  "Brandes' algorith" should "produce both the correct label graph and betweenness for Somegraph" in {
+  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
     val graph = SomeGraph.testGraph
 
