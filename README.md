@@ -1,15 +1,12 @@
 ScalaGraphMinimizer
 ===================
 
-Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code.
+ScalaGraphMinimizer is a kit for customizable graph algorithms built on [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code. ScalaGraphMinimizer uses semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-ScalaGraphMinimizer is a kit for customizable graph algorithms built on [scala-graph](http://www.scala-graph.org/). The semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+The current version is 0.0.0, the first release.
 
-The current version is 0.0.0. A release version is coming soon.
-
-I am currently seeking feedback on just what the API should look like. Please let me know what works well and what could be
+I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
 better.
-
 
 
 ## Getting ScalaGraphMinimizer
@@ -224,6 +221,13 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 
 
 ## Roadmap for Future Work
+
+### Next release
+
+* A*
+* MST using a heap and a GraphBuilder
+* Enron test set
+* Timing study with automatically generated graphs (in the test stage) (And comparison with Jung and scala-graph's own) (See http://docs.oracle.com/javafx/2/image_ops/jfxpub-image_ops.htm Need scalafx-2.10)
 
 
 ### API Release and Feedback

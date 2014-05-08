@@ -1,14 +1,9 @@
 Pulblicize
 
-* Format for README.md
-* Post on github
-* Post on mvnrepo
-* Post on scala-graph list
 * Blog a bit
 
 Overall
 * Add more to the package doc.
-* Add markdown to the project description
 
 Structures
 
