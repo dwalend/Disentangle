@@ -55,11 +55,11 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
 
   case class InNode(override val value:Node,index:Int) extends this.InnerNodeTrait {
 
-    override def successors: Seq[InnerNodeType] = {
+    override def successors: Seq[InNode] = {
       successorIndices(index).map(x => innerNode(outNodes(x))).flatten
     }
 
-    override def predecessors: Seq[InnerNodeType] = {
+    override def predecessors: Seq[InNode] = {
       predecessorIndices(index).map(x => innerNode(outNodes(x))).flatten
     }
   }

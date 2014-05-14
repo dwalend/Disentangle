@@ -17,6 +17,7 @@ object FloydWarshall {
   }
 
   def allPairsShortestPaths[Node,Edge,Label](digraph:Digraph[Node,Edge],graphConverter:Digraph[Node,Edge]=>Digraph[Node,Label],semiring:Semiring[Label]):Digraph[Node,Label] = {
+
     val labelDigraph = graphConverter(digraph)
 
     floydWarshall(labelDigraph,semiring)

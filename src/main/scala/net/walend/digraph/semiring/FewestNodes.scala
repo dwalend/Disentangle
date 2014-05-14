@@ -58,7 +58,7 @@ object FewestNodesHeapOrdering extends HeapOrdering[Int] {
    * @throws IllegalArgumentException if the key is unusable
    */
   def checkKey(key: Int): Unit = {
-    require(FewestNodesSemiring.inDomain(key),"Key must be between zero (included) and Int.MaxValue (excluded), not "+key)
+    require((FewestNodesSemiring.inDomain(key)||(key == FewestNodesSemiring.O)),"Key must be between zero (included) and Int.MaxValue (excluded), or Int.MaxValue (the annihilator), not "+key)
   }
 
   /**
