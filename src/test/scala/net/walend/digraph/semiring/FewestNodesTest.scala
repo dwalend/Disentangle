@@ -83,14 +83,14 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph,FewestNodes.graphConverter[String,String],FewestNodesSemiring)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph,FewestNodes.convertGraph[String,String],FewestNodes)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(testGraph,FewestNodes.graphConverter[String,String],FewestNodes)
+    val labelGraph = Dijkstra.allPairsShortestPaths(testGraph,FewestNodes.convertGraph[String,String],FewestNodes)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }

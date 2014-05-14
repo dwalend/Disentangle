@@ -8,18 +8,18 @@ package net.walend.digraph.semiring
  */
 object FloydWarshall {
 
-  def floydWarshall[Node,Label](labelGraph:Digraph[Node,Label],semiring:Semiring[Label]):Digraph[Node,Label] = {
+  def floydWarshall[Node,Label,Key](labelGraph:Digraph[Node,Label],support:GraphMinimizerSupport[Label,Key]):Digraph[Node,Label] = {
     val innerNodes = labelGraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
-      semiring.relax(labelGraph)(i,k,j)
+      support.semiring.relax(labelGraph)(i,k,j)
     }
     labelGraph
   }
 
-  def allPairsShortestPaths[Node,Edge,Label](digraph:Digraph[Node,Edge],graphConverter:Digraph[Node,Edge]=>Digraph[Node,Label],semiring:Semiring[Label]):Digraph[Node,Label] = {
+  def allPairsShortestPaths[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],graphConverter:Digraph[Node,Edge]=>Digraph[Node,Label],support:GraphMinimizerSupport[Label,Key]):Digraph[Node,Label] = {
 
     val labelDigraph = graphConverter(digraph)
 
-    floydWarshall(labelDigraph,semiring)
+    floydWarshall(labelDigraph,support)
   }
 }

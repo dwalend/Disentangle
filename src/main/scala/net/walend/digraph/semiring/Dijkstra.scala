@@ -44,51 +44,6 @@ object Dijkstra {
 
     labelGraph
   }
-  /*
-  def singleSourceShortestPaths[Node,Label,Key]
-  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:AbsractLabelGraphBuilder[N,Label])
-  (sourceNode:N,originalGraph:Graph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
-
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
-    val innerSourceNode:labelGraph.NodeT = labelGraph get sourceNode
-    dijkstraSingleSource(labelGraph)(innerSourceNode)(support)
-  }
-
-
-  import scala.language.higherKinds
-
-  /**
-   * This method runs Dijkstra's algorithm for all nodes in the label graph.
-   */
-  def allPairsShortestPaths[N,
-  Label,
-  Key]
-  (support:GraphMinimizerSupport[Label,Key])
-  (labelGraph:MutableGraph[N,MLDiEdge]):Graph[N,MLDiEdge] = {
-
-    for(node <- labelGraph.nodes) {
-      dijkstraSingleSource(labelGraph)(node)(support)
-    }
-    labelGraph
-  }
-
-
-  /**
-   * This method creates the label graph and then runs Dijkstra's algorithm for all nodes.
-   */
-  def allPairsShortestPaths[N,
-  E[X] <: EdgeLikeIn[X],
-  Label,
-  Key]
-  (support:GraphMinimizerSupport[Label,Key],labelGraphBuilder:LabelGraphBuilder[N,Label])
-  (originalGraph:Graph[N,E]):Graph[N,MLDiEdge] = {
-
-    val labelGraph:MutableGraph[N,MLDiEdge] = labelGraphBuilder.initialLabelGraph(originalGraph)
-    allPairsShortestPaths(support)(labelGraph)
-
-    labelGraph
-  }
-  */
 
   def allPairsShortestPaths[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],graphConverter:Digraph[Node,Edge]=>Digraph[Node,Label],support:GraphMinimizerSupport[Label,Key]):Digraph[Node,Label] = {
 
