@@ -12,17 +12,56 @@ import scala.collection.mutable.ArrayBuffer
  */
 //TODO store edge indices in an ArrayBuffer per node to allow for constant-tme successors and predecessors
 
+//TODO make that edgeMatrix a Vector of ArrayBuffers, or even a Vector of Vector of mutable cells.
+//TODO for the Atomic version, make it a Vector of AtomicReferences
 class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
-                             edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (from,to), indexed by node.
+                             edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
                              val noEdgeExistsValue:Edge //value for no edge
                               ) extends Digraph[Node,Edge] {
+
+
+  //todo rewrite with maps and filters if it is not too crazy
+  val predecessorIndices:ArrayBuffer[ArrayBuffer[Int]] = {
+    //for predecessors, if a is reachable from b then
+    //b's ArrayBuffer should have a's index
+    val result:ArrayBuffer[ArrayBuffer[Int]] = edgeMatrix.map(x => ArrayBuffer[Int]())
+    for(rowIndex <- 0 until edgeMatrix.size) {
+      for(columnIndex <- 0 until edgeMatrix.size) {
+        if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
+          result(columnIndex).append(rowIndex)
+        }
+      }
+    }
+    result
+  }
+
+  val successorIndices:ArrayBuffer[ArrayBuffer[Int]] = {
+    //for successors, if a is reachable from b then
+    //a's ArrayBuffer should have b's index
+    val result:ArrayBuffer[ArrayBuffer[Int]] = edgeMatrix.map(x => ArrayBuffer[Int]())
+    for(rowIndex <- 0 until edgeMatrix.size) {
+      for(columnIndex <- 0 until edgeMatrix.size) {
+        if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
+          result(rowIndex).append(columnIndex)
+        }
+      }
+    }
+    result
+  }
 
   override def nodes: Seq[Node] = outNodes
 
   type InnerNodeType = InNode
 
   case class InNode(override val value:Node,index:Int) extends this.InnerNodeTrait {
-    //todo validity check if you ever allow removing nodes
+
+    override def successors: Seq[InnerNodeType] = {
+      successorIndices(index).map(x => innerNode(outNodes(x))).flatten
+    }
+
+    override def predecessors: Seq[InnerNodeType] = {
+      predecessorIndices(index).map(x => innerNode(outNodes(x))).flatten
+    }
   }
 
   //todo maybe an InNode cache?
@@ -59,6 +98,8 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
     edgeMatrix(from.index)(to.index) = edge
+    predecessorIndices(to.index).append(from.index)
+    successorIndices(from.index).append(to.index)
   }
 
 }

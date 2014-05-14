@@ -18,11 +18,11 @@ trait Digraph[Node,Edge] {
    */
   trait InnerNodeTrait {
     def value:Node
-    /* todo after FloydWarshall
-    def successors:Seq[InnerNode]
 
-    def predecessors:Seq[InnerNode]
-    */
+    def successors:Seq[InnerNodeType]
+
+    def predecessors:Seq[InnerNodeType]
+
   }
 
   /**
