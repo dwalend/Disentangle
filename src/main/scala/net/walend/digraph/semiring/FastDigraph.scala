@@ -2,6 +2,8 @@ package net.walend.digraph.semiring
 
 import scala.collection.mutable.ArrayBuffer
 
+
+//TODO outNodes in an Array?
 /**
  * Provides constant-time access and mutators for edges. Stores Nodes in an ArrayBuffer and Edges in an ArrayBuffer of ArrayBuffers.
  *
@@ -17,9 +19,11 @@ class FastDigraph[Node,Edge](outNodes:ArrayBuffer[Node], //provides the master i
                              val noEdgeExistsValue:Edge //value for no edge
                               ) extends Digraph[Node,Edge] {
 
+  override def nodes: Seq[Node] = outNodes
+
   type InnerNodeType = InNode
 
-  case class InNode(override val value:Node,val index:Int) extends this.InnerNodeTrait {
+  case class InNode(override val value:Node,index:Int) extends this.InnerNodeTrait {
     //todo validity check if you ever allow removing nodes
   }
 
@@ -34,14 +38,29 @@ class FastDigraph[Node,Edge](outNodes:ArrayBuffer[Node], //provides the master i
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   }
 
+  /**
+   * @return All of the edges in the graph
+   */
+  override def edges: Seq[(Node, Node, Edge)] = {
+
+    def edgesInRow(row:(ArrayBuffer[Edge],Int)):Seq[(Node,Node,Edge)] = {
+      val rowIndex = row._2
+      val cellsWithIndex = row._1.zipWithIndex
+      val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsValue))
+      cellsWithEdges.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
+    }
+
+    edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
+  }
+
   //todo apply?
   override def edge(from: InNode, to: InNode):Edge = {
 
-    edgeMatrix(from.asInstanceOf[InNode].index)(to.asInstanceOf[InNode].index)
+    edgeMatrix(from.index)(to.index)
   }
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
-    edgeMatrix(from.asInstanceOf[InNode].index)(to.asInstanceOf[InNode].index) = edge
+    edgeMatrix(from.index)(to.index) = edge
   }
 
 }

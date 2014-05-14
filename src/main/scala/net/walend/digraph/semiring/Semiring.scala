@@ -4,12 +4,19 @@ package net.walend.digraph.semiring
  * @author dwalend
  * @since v0.1.0
  */
-trait Semiring[Label] {
+trait Semiring[L] {
 
-  //identity
+  type Label = L
+
+  /** identity */
   def I:Label
-  //annihilator
+  /** annihilator */
   def O:Label
+
+  /**
+   * true if the value is within the Semiring's domain
+   */
+  def inDomain(label:Label):Boolean
 
   /**
    * Implement this method to create the core of a summary operator

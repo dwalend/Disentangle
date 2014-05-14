@@ -10,10 +10,10 @@ import net.walend.scalagraph.minimizer.gengraph.GraphFactory
 import scala.util.Random
 
 /**
- * Tests Transitive Closure semiring
+ * Tests FewestNodes semiring
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 class FewestNodesTest extends FlatSpec with Matchers {
   
