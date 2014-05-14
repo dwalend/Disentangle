@@ -2,10 +2,8 @@ package net.walend.digraph.semiring
 
 import scala.collection.mutable.ArrayBuffer
 
-
-//TODO outNodes in an Array?
 /**
- * Provides constant-time access and mutators for edges. Stores Nodes in an ArrayBuffer and Edges in an ArrayBuffer of ArrayBuffers.
+ * Provides constant-time access and mutators for edges. Stores Nodes in a Vector and Edges in an ArrayBuffer of ArrayBuffers.
  *
  * @author dwalend
  * @since v0.1.0
@@ -14,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 //TODO store edge indices in an ArrayBuffer per node to allow for constant-tme successors and predecessors
 
-class FastDigraph[Node,Edge](outNodes:ArrayBuffer[Node], //provides the master index values for each node.
+class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
                              edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (from,to), indexed by node.
                              val noEdgeExistsValue:Edge //value for no edge
                               ) extends Digraph[Node,Edge] {
@@ -71,11 +69,11 @@ object FastDigraph{
                        extraNodes:Seq[Node] = Seq.empty,
                        noEdgeExistsValue:Edge = null) = {
 
-    val nodeValues:ArrayBuffer[Node] = (extraNodes ++ edgeSeq.map(_._1) ++ edgeSeq.map(_._2)).distinct.to[ArrayBuffer]
+    val nodeValues:Vector[Node] = (extraNodes ++ edgeSeq.map(_._1) ++ edgeSeq.map(_._2)).distinct.to[Vector]
 
     val size = nodeValues.size
 
-    val matrix:ArrayBuffer[ArrayBuffer[Edge]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue))
+    val matrix:ArrayBuffer[ArrayBuffer[Edge]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[ArrayBuffer]
 
     for (edgeTriple <- edgeSeq) {
       val row = nodeValues.indexOf(edgeTriple._1)
