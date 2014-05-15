@@ -43,7 +43,7 @@ trait SemiringSupport[L,Key] {
     /**
      * Override this method to add side effects to the relax operator
      */
-    def relax[N](labelGraph:Digraph[N,Label])
+    def relax[Node](labelGraph:Digraph[Node,Label])
                 (from:labelGraph.InnerNodeType,
                  through:labelGraph.InnerNodeType,
                  to:labelGraph.InnerNodeType):Label = {

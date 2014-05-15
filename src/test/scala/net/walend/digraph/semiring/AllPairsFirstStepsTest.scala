@@ -70,7 +70,7 @@ class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
     labelGraph.edges.to[Set] should be (expectedEdges)
   }
 
-/*
+
   val expectedBetweenness:Map[String,Double] = Map(E -> 13.0,
     F -> 0.0,
     A -> 0.0,
@@ -83,16 +83,11 @@ class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val graph = SomeGraph.testGraph
+    val initialGraph:Digraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(initialGraph,support)
 
-    val allShortestPaths = new AllShortestPaths[String]
-
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allShortestPaths,new AllShortestPathsGraphBuilder[String](allShortestPaths.semiring),graph)
-
-    labelGraphAndBetweenness._1.edges.toOuter should be (expectedEdges)
-    EdgeHelp.checkEdgeSets(labelGraphAndBetweenness._1.edges.toOuter.asInstanceOf[Set[MLDiEdge[String]]],expectedEdges) should be (None)
+    labelGraphAndBetweenness._1.edges.to[Set] should be (expectedEdges)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
-  */
 }

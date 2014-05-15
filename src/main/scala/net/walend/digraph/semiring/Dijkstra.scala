@@ -14,15 +14,15 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstraSingleSource [Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key])
-                                        (sourceInnerNode:labelGraph.InnerNodeType):Digraph[Node,Label] = {
+  def dijkstraSingleSource[Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key])
+                                          (sourceInnerNode:labelGraph.InnerNodeType):Digraph[Node,Label] = {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
     val nodesToHeapMembers:Map[labelGraph.InnerNodeType,heap.HeapMember] =
           labelGraph.innerNodes.map(node => node -> heap.insert(support.heapKeyForLabel(support.semiring.O),node))(breakOut)
 
-    //Raise innerSourceNode's to I
+    //Raise sourceInnerNode's to I
     nodesToHeapMembers.getOrElse(sourceInnerNode,throw new IllegalStateException("No HeapMember for sourceInnerNode "+sourceInnerNode)).raiseKey(support.heapKeyForLabel(support.semiring.I))
 
     //While the heap is not empty

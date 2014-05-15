@@ -9,7 +9,7 @@ import scalax.collection.GraphEdge.DiEdge
  * Create various types of graphs.
  *
  * @author dwalend
- * @since 1/7/14 10:47 PM
+ * @since v0.0.0
  */
 object GraphFactory {
 
