@@ -8,7 +8,7 @@ import scalax.collection.GraphPredef.EdgeLikeIn
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object FloydWarshall {
 

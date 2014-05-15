@@ -4,7 +4,7 @@ package net.walend.scalagraph.minimizer.semiring
  * Finds a single minimal path using a core semiring.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 case class Step[N,CL](weight:CL,next:Option[N]) {}
 

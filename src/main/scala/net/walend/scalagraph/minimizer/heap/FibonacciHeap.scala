@@ -4,7 +4,7 @@ package net.walend.scalagraph.minimizer.heap
  * A generic Fibonacci heap
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {

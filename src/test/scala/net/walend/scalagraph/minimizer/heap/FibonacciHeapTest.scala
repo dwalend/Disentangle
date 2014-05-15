@@ -6,7 +6,7 @@ import org.scalatest.{Matchers, FlatSpec}
  * Tests of a Fibonacci Heap
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 class FibonacciHeapTest extends FlatSpec with Matchers {
 

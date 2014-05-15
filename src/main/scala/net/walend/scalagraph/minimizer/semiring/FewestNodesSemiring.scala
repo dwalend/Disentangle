@@ -6,7 +6,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * Finds the length of a path that traverses the fewest edges.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object FewestNodesSemiring extends Semiring[Int] {
 

@@ -7,7 +7,7 @@ import net.walend.scalagraph.minimizer.semiring.{AllShortestPathsGraphBuilder, A
  *
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 val graph = SomeGraph.testGraph

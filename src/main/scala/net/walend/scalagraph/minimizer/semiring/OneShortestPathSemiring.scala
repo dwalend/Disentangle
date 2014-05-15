@@ -6,7 +6,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * Finds a path that traverses the fewest nodes.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 class OneShortestPath[N] extends OnePath[N,Int,Int](FewestNodes)
 

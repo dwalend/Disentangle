@@ -4,7 +4,7 @@ package net.walend.scalagraph.minimizer.semiring
  * An example graph for eyeball testing
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object SomeGraph {
   import scalax.collection.Graph

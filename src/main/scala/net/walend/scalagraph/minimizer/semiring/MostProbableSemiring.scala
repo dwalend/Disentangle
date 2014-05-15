@@ -6,7 +6,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * Finds most probable paths that traverse from start to end nodes with the on double-weight edges (with weights between zero and one).
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 object MostProbableSemiring extends Semiring[Double] {

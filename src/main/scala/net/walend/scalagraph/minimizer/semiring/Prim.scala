@@ -8,7 +8,7 @@ import net.walend.scalagraph.minimizer.heap.{HeapOrdering, FibonacciHeap, Heap}
  * An implementation of Prim's algorithm for minimum spanning trees
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object Prim {
 

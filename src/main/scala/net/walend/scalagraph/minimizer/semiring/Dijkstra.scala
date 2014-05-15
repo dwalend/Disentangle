@@ -9,7 +9,7 @@ import scalax.collection.GraphPredef.EdgeLikeIn
  * An implementation of Dijkstra's algorithm for general graph minimization.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object Dijkstra {
 

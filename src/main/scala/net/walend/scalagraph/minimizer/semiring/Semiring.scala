@@ -10,7 +10,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  *
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 abstract class Semiring[Label] {
 

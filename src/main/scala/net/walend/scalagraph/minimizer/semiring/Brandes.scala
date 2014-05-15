@@ -10,7 +10,7 @@ import scala.Some
  * Brandes' algorithm for betweenness.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object Brandes {
 

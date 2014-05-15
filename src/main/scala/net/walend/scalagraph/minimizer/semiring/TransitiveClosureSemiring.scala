@@ -6,7 +6,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * Labels are true if the sink can be reached from the source, false if not.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 object TransitiveClosureSemiring extends Semiring[Boolean] {
 

@@ -1,6 +1,6 @@
 /**
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 import scalax.collection.edge.LBase.LEdgeImplicits

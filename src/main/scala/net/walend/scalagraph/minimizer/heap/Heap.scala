@@ -4,7 +4,7 @@ package net.walend.scalagraph.minimizer.heap
  * A structure that makes an extreme key of some key,value pair available
  * 
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 trait Heap[K,V] {
 

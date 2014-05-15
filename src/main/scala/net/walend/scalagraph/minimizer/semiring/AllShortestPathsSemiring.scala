@@ -4,7 +4,7 @@ package net.walend.scalagraph.minimizer.semiring
  * Finds all paths that traverse the fewest nodes.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 class AllShortestPaths[N] extends AllPaths[N,Int,Int](FewestNodes)

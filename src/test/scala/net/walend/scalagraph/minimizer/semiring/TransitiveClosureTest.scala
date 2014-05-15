@@ -10,7 +10,7 @@ import MLDiEdge._
  * Tests Transitive Closure semiring
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 class TransitiveClosureTest extends FlatSpec with Matchers {
 

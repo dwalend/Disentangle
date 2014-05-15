@@ -5,7 +5,7 @@ package net.walend.scalagraph.minimizer.semiring
  * Finds all minimal paths that use the core semiring.
  *
  * @author dwalend
- * @since v1
+ * @since v0.0.0
  */
 
 case class Steps[N,CL](weight:CL,choices:Set[N]) {}
