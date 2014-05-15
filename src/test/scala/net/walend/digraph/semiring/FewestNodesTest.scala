@@ -14,7 +14,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
 
-    val labelGraph = FewestNodes.convertGraph(testGraph,FewestNodes.convertEdgeToLabel)
+    val labelGraph = ConvertToLabelDigraph.convert(testGraph,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     val expectedEdges = Set(
       (A,B,1),
@@ -37,7 +37,6 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }
-
 
   val expectedEdges = Set(
     (E,E,0),
@@ -83,14 +82,16 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph,FewestNodes.convertGraph[String,String],FewestNodes)
+    val initialGraph = ConvertToLabelDigraph.convert(testGraph,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(initialGraph,FewestNodes)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = Dijkstra.allPairsShortestPaths(testGraph,FewestNodes.convertGraph[String,String],FewestNodes)
+    val initialGraph = ConvertToLabelDigraph.convert(testGraph,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labelGraph = Dijkstra.allPairsShortestPaths(initialGraph,FewestNodes)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }

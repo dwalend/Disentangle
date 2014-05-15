@@ -14,7 +14,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstraSingleSource [Node,Label,Key](labelGraph:Digraph[Node,Label],support:GraphMinimizerSupport[Label,Key])
+  def dijkstraSingleSource [Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key])
                                         (sourceInnerNode:labelGraph.InnerNodeType):Digraph[Node,Label] = {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
@@ -45,9 +45,7 @@ object Dijkstra {
     labelGraph
   }
 
-  def allPairsShortestPaths[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],graphConverter:Digraph[Node,Edge]=>Digraph[Node,Label],support:GraphMinimizerSupport[Label,Key]):Digraph[Node,Label] = {
-
-    val labelDigraph = graphConverter(digraph)
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:Digraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
 
     for(source <- labelDigraph.innerNodes) {
       dijkstraSingleSource(labelDigraph,support)(source)

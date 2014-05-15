@@ -8,7 +8,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * @author dwalend
  * @since v0.1.0
  */
-trait GraphMinimizerSupport[L,Key] {
+trait SemiringSupport[L,Key] {
 
   type Label = L
 
@@ -61,24 +61,4 @@ trait GraphMinimizerSupport[L,Key] {
       summaryLabel
     }
   }
-}
-
-trait GraphMinimizerSupportWithGraphConverter[L,Key] extends GraphMinimizerSupport[L,Key] {
-
-  //todo factor this out into its own trait
-  def convertEdgeToLabel[Node,Edge](start:Node,end:Node,edge:Edge):Label
-
-  def convertGraph[Node,Edge](graph:Digraph[Node,Edge],labelForEdge:(Node,Node,Edge)=>Label):Digraph[Node,Label] = {
-
-    val nodes = graph.nodes
-    val edges = graph.nodes.map(x => (x,x,semiring.I)) ++
-      graph.edges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
-
-    FastDigraph(edges,nodes,semiring.O)
-  }
-
-  //todo this kinda becomes its own thing, only in semirings where appropriate
-  def convertGraph[Node,Edge](graph:Digraph[Node,Edge]):Digraph[Node,Label] = convertGraph(graph,convertEdgeToLabel)
-
-//todo this is what the algorithms should take in, a function that creates a graph from anything the user wants  def createLabelGraph[Node,Label](body: ⇒ Digraph[Node,Label]):Digraph[Node,Label]
 }

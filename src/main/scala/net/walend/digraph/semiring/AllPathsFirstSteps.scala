@@ -11,7 +11,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
 
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {}
 
-class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:GraphMinimizerSupport[CoreLabel,Key]) extends GraphMinimizerSupport[Option[FirstSteps[Node,CoreLabel]],Key]{
+class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstSteps[Node,CoreLabel]],Key]{
   
   override type Label = Option[FirstSteps[Node, CoreLabel]]
 
@@ -24,9 +24,17 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:GraphMinimizerSupport[C
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
+  def convertEdgeToLabel[Edge](coreLabelForEdge:(Node,Node,Edge)=>CoreLabel)
+                              (start: Node, end: Node, edge: Edge):Label = {
+    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edge),Set(end)))
+  }
+
+  def convertEdgeToLabelFunc[Edge](coreLabelForEdge:(Node,Node,Edge)=>CoreLabel):((Node,Node,Edge) => Label) = convertEdgeToLabel(coreLabelForEdge)
+
   object AllPathsSemiring extends Semiring {
 
-// todo report bug that I can't do this   val coreSemiring = coreSupport.semiring
+// todo report bug that I can't do this here
+// val coreSemiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
       label match {

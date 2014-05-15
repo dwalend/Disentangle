@@ -8,7 +8,7 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * @author dwalend
  * @since v0.1.0
  */
-object FewestNodes extends GraphMinimizerSupportWithGraphConverter[Int,Int] {
+object FewestNodes extends SemiringSupport[Int,Int] {
 
   def semiring = FewestNodesSemiring
 
