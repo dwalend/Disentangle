@@ -19,30 +19,32 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
                              val noEdgeExistsValue:Edge //value for no edge
                               ) extends Digraph[Node,Edge] {
 
+  val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   //todo rewrite with maps and filters if it is not too crazy
-  val predecessorIndices:ArrayBuffer[ArrayBuffer[Int]] = {
+  val predecessorIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
     //for predecessors, if a is reachable from b then
     //b's ArrayBuffer should have a's index
-    val result:ArrayBuffer[ArrayBuffer[Int]] = edgeMatrix.map(x => ArrayBuffer[Int]())
+    val result:ArrayBuffer[ArrayBuffer[InNode]] = edgeMatrix.map(x => ArrayBuffer[InNode]())
     for(rowIndex <- 0 until edgeMatrix.size) {
       for(columnIndex <- 0 until edgeMatrix.size) {
         if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
-          result(columnIndex).append(rowIndex)
+          result(columnIndex).append(inNodes(rowIndex))
         }
       }
     }
     result
   }
 
-  val successorIndices:ArrayBuffer[ArrayBuffer[Int]] = {
+  val successorIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
     //for successors, if a is reachable from b then
     //a's ArrayBuffer should have b's index
-    val result:ArrayBuffer[ArrayBuffer[Int]] = edgeMatrix.map(x => ArrayBuffer[Int]())
+    val result:ArrayBuffer[ArrayBuffer[InNode]] = edgeMatrix.map(x => ArrayBuffer[InNode]())
     for(rowIndex <- 0 until edgeMatrix.size) {
       for(columnIndex <- 0 until edgeMatrix.size) {
         if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
-          result(rowIndex).append(columnIndex)
+          result(rowIndex).append(inNodes(columnIndex))
         }
       }
     }
@@ -56,19 +58,25 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
   case class InNode(override val value:Node,index:Int) extends this.InnerNodeTrait {
 
     override def successors: Seq[InNode] = {
-      successorIndices(index).map(x => innerNode(outNodes(x))).flatten
+      successorIndices(index)
     }
 
     override def predecessors: Seq[InNode] = {
-      predecessorIndices(index).map(x => innerNode(outNodes(x))).flatten
+      predecessorIndices(index)
+    }
+
+    override def hashCode(): Int = index
+
+    override def equals(obj: Any): Boolean = {
+      obj match {
+        case inNode:InNode => inNode.index == index
+        case _ => false
+      }
     }
   }
 
-  //todo maybe an InNode cache?
   override def innerNode(value: Node): Option[InNode] = {
-    val index:Int = outNodes.indexOf(value)
-    if(index == -1) None
-    else Some(InNode(value,index))
+    nodeToInNode.get(value)
   }
 
   override def innerNodes: Seq[InNode] = {
@@ -97,9 +105,11 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
   }
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
+    if (edgeMatrix(from.index)(to.index) == noEdgeExistsValue) {
+      predecessorIndices(to.index).append(from)
+      successorIndices(from.index).append(to)
+    }
     edgeMatrix(from.index)(to.index) = edge
-    predecessorIndices(to.index).append(from.index)
-    successorIndices(from.index).append(to.index)
   }
 
 }

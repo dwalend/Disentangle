@@ -28,12 +28,17 @@ libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test" //fo
 
 libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
 
-
 fork in test := true
 
 javaOptions in test += "-Xmx3G" //prevents big GC
 
 javaOptions in test += "-server" //does hotspot optimizations earlier
+
+fork in run := true
+
+javaOptions in run += "-Xmx3G" //prevents big GC
+
+javaOptions in run += "-server" //does hotspot optimizations earlier
 
 scalacOptions ++= Seq("-feature")
 

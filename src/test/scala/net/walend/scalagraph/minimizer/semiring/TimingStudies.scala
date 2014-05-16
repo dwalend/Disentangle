@@ -13,26 +13,52 @@ object TimingStudies {
     //Time the Floyd Warshall algorithm with AllShortestPaths
     val floydResults = study(8,timeFloyd,expectedTimeFloyd)
     floydResults.map(x => println(x))
-*/
+
     //Time Dijkstra's algorithm with AllShortestPaths
-    val dijstraResults = study(8,timeDijkstra,expectedTimeDijkstra)
-    dijstraResults.map(x => println(x))
+    val scalaGraphDijstraResults = study(8,timeScalaGraphDijkstra,expectedTimeDijkstra)
+    scalaGraphDijstraResults.map(x => println(x))
+*/
 
     val jungDijkstraResults = study(8,timeJungDijkstra,expectedTimeDijkstra)
     jungDijkstraResults.map(x => println(x))
 
-    val dijkstraMap = dijstraResults.map(x => (x._1,(x._2,x._3))).toMap
-    val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
+    val dijkstraResults = study(8,timeDijkstra,expectedTimeDijkstra)
+    dijkstraResults.map(x => println(x))
 
-    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1 / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+
+//    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
+    val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
+    val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
+//    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     compareResults.map(x => println(x))
 
-/*
+    /*
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
     brandesResults.map(x => println(x))
     */
 
+  }
+
+  def timeDijkstra(nodeCount:Int):Long = {
+
+    import net.walend.digraph.semiring.DigraphFactory
+    import net.walend.digraph.semiring.Digraph
+    import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
+    import net.walend.digraph.semiring.AllPathsFirstSteps
+    import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.digraph.semiring.ConvertToLabelDigraph
+
+    val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
+
+    val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
+
+    val initialGraph:Digraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
+
+    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
+
+    result._2
   }
 
   def timeJungDijkstra(nodeCount:Int):Long = {
@@ -62,7 +88,7 @@ object TimingStudies {
     result._2
   }
 
-  def timeBrandes(nodeCount:Int):Long = {
+  def timeScalaGraphBrandes(nodeCount:Int):Long = {
     val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
 
     val semiring = support.semiring
@@ -84,7 +110,7 @@ object TimingStudies {
     ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
   }
 
-  def timeDijkstra(nodeCount:Int):Long = {
+  def timeScalaGraphDijkstra(nodeCount:Int):Long = {
     val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
 
     val semiring = support.semiring
@@ -100,7 +126,7 @@ object TimingStudies {
     (Math.pow(nodeCount.toDouble/calibration._1,3) * calibration._2).toLong
   }
 
-  def timeFloyd(nodeCount:Int):Long = {
+  def timeScalaGraphFloyd(nodeCount:Int):Long = {
     val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
 
     val semiring = support.semiring
@@ -112,13 +138,16 @@ object TimingStudies {
     result._2
   }
 
-  def study(maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long)] = {
+  def study(maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
 
     warmUp(16,{timeF(64)})
     val nodeCountAndTime:Seq[(Int,Long)] = nodeCountsFrom32(maxExponent).map(x=>(x,timeF(x)))
 
     val calibration = nodeCountAndTime.head
-    nodeCountAndTime.map(x => (x._1,x._2,expectedF(calibration,x._1)))
+    val expected = nodeCountAndTime.map(x => x._1 -> expectedF(calibration,x._1)).toMap
+    val ratio = nodeCountAndTime.map(x => x._1 -> x._2.toDouble/expected.get(x._1).get).toMap
+
+    nodeCountAndTime.map(x => (x._1,x._2,expected(x._1),ratio(x._1)))
   }
 
   def nodeCountsFrom32(exponent:Int):Seq[Int] = {
