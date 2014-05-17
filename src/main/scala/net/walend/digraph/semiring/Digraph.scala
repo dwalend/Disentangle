@@ -70,3 +70,39 @@ trait Digraph[Node,Edge] {
   def updateEdge(from:InnerNodeType,to:InnerNodeType,edge:Edge):Unit
   //todo toString, after FloydWarshall
 }
+
+/**
+ * A digraph that exposes the indices of stored nodes.
+ */
+trait IndexedDigraph[Node,Edge] extends Digraph[Node,Edge] {
+
+  /**
+   * @return All the nodes in the graph, now indexed
+   */
+  def nodes:IndexedSeq[Node]
+
+  /**
+   * @return InnerNode representation of all of the nodes in the graph.
+   */
+  def innerNodes:IndexedSeq[InnerNodeType]
+
+  /**
+   * An internal representation of nodes within the graph
+   */
+  trait InnerIndexedNodeTrait extends InnerNodeTrait {
+
+    def index:Int
+
+  }
+
+  /**
+   * The type of InnerNodeTrait for this digraph representation
+   */
+  type InnerNodeType <: InnerIndexedNodeTrait
+
+  def node(i:Int):Node
+
+  def innerNode(i:Int):InnerNodeType
+
+  def edge(i:Int,j:Int):Edge
+}

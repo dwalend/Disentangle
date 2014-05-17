@@ -14,16 +14,15 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstraSingleSource[Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key])
-                                          (sourceInnerNode:labelGraph.InnerNodeType):Digraph[Node,Label] = {
+  def dijkstraSingleSource[Node,Label,Key](labelGraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key])
+                                          (source:labelGraph.InnerNodeType):Digraph[Node,Label] = {
     //Set up the map of Nodes to HeapKeys
     val heap:Heap[Key,labelGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
     import scala.collection.breakOut
-    val nodesToHeapMembers:Map[labelGraph.InnerNodeType,heap.HeapMember] =
-          labelGraph.innerNodes.map(node => node -> heap.insert(support.heapKeyForLabel(support.semiring.O),node))(breakOut)
-
+    val heapMembers:IndexedSeq[heap.HeapMember] = labelGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    
     //Raise sourceInnerNode's to I
-    nodesToHeapMembers.getOrElse(sourceInnerNode,throw new IllegalStateException("No HeapMember for sourceInnerNode "+sourceInnerNode)).raiseKey(support.heapKeyForLabel(support.semiring.I))
+    heapMembers(source.index).raiseKey(support.heapKeyForLabel(support.semiring.I))
 
     //While the heap is not empty
     while(!heap.isEmpty) {
@@ -32,10 +31,10 @@ object Dijkstra {
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
       for(successor <- topNode.successors) {
         //if the node has not yet been visited (because its key is still in the heap)
-        val heapKey = nodesToHeapMembers.getOrElse(successor,throw new IllegalStateException("No HeapMember for "+successor))
+        val heapKey = heapMembers(successor.index)
         if(heapKey.isInHeap) {
           //Relax to get a new label
-          val label = support.semiring.relax(labelGraph)(sourceInnerNode,topNode,successor)
+          val label = support.semiring.relax(labelGraph)(source,topNode,successor)
           //Try to change the key
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }
@@ -45,7 +44,7 @@ object Dijkstra {
     labelGraph
   }
 
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:Digraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
 
     for(source <- labelDigraph.innerNodes) {
       dijkstraSingleSource(labelDigraph,support)(source)

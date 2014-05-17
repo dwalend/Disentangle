@@ -49,8 +49,10 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
 
-      (fromThroughToLabel,currentLabel) match {
-        case (Some(fromThroughToSteps),Some(currentSteps)) => {
+      if(currentLabel != O) {
+        if(fromThroughToLabel != O){
+          val currentSteps:FirstSteps[Node,CoreLabel] = currentLabel.get
+          val fromThroughToSteps:FirstSteps[Node,CoreLabel] = fromThroughToLabel.get
           val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
             Some(new FirstSteps[Node,CoreLabel](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
@@ -59,20 +61,19 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           else if (summ==currentSteps.weight) currentLabel
           else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.weight+" or proposed "+fromThroughToSteps.weight+" weigt.")
         }
-        case (Some(fromThroughToNodes),O) => fromThroughToLabel
-        case (O,Some(current)) => currentLabel
-        case _ => O
+        else currentLabel
       }
+      else fromThroughToLabel
     }
 
     def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
-
-      (fromThroughLabel,throughToLabel) match {
-        case (Some(fromThroughSteps),Some(throughToSteps)) => {
-          Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
-        }
-        case _ => O
+      //changing the match/case to if/else made this disappear from the sampling profiler
+      if((fromThroughLabel != O)&&(throughToLabel != O)) {
+        val fromThroughSteps:FirstSteps[Node,CoreLabel] = fromThroughLabel.get
+        val throughToSteps:FirstSteps[Node,CoreLabel] = throughToLabel.get
+        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
       }
+      else O
     }
   } 
 }

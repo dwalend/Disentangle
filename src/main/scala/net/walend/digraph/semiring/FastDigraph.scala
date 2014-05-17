@@ -17,13 +17,13 @@ import scala.collection.mutable.ArrayBuffer
 class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
                              edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
                              val noEdgeExistsValue:Edge //value for no edge
-                              ) extends Digraph[Node,Edge] {
+                              ) extends IndexedDigraph[Node,Edge] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   //todo rewrite with maps and filters if it is not too crazy
-  val predecessorIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
+  val predIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
     //for predecessors, if a is reachable from b then
     //b's ArrayBuffer should have a's index
     val result:ArrayBuffer[ArrayBuffer[InNode]] = edgeMatrix.map(x => ArrayBuffer[InNode]())
@@ -37,7 +37,7 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
     result
   }
 
-  val successorIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
+  val succIndices:ArrayBuffer[ArrayBuffer[InNode]] = {
     //for successors, if a is reachable from b then
     //a's ArrayBuffer should have b's index
     val result:ArrayBuffer[ArrayBuffer[InNode]] = edgeMatrix.map(x => ArrayBuffer[InNode]())
@@ -51,18 +51,18 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
     result
   }
 
-  override def nodes: Seq[Node] = outNodes
+  override def nodes: IndexedSeq[Node] = outNodes
 
   type InnerNodeType = InNode
 
-  case class InNode(override val value:Node,index:Int) extends this.InnerNodeTrait {
+  case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
     override def successors: Seq[InNode] = {
-      successorIndices(index)
+      succIndices(index)
     }
 
     override def predecessors: Seq[InNode] = {
-      predecessorIndices(index)
+      predIndices(index)
     }
 
     override def hashCode(): Int = index
@@ -73,13 +73,14 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
         case _ => false
       }
     }
+
   }
 
   override def innerNode(value: Node): Option[InNode] = {
     nodeToInNode.get(value)
   }
 
-  override def innerNodes: Seq[InNode] = {
+  override def innerNodes: IndexedSeq[InNode] = {
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   }
 
@@ -106,11 +107,17 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
     if (edgeMatrix(from.index)(to.index) == noEdgeExistsValue) {
-      predecessorIndices(to.index).append(from)
-      successorIndices(from.index).append(to)
+      predIndices(to.index).append(from)
+      succIndices(from.index).append(to)
     }
     edgeMatrix(from.index)(to.index) = edge
   }
+
+  override def node(i: Int): Node = nodes(i)
+
+  override def innerNode(i: Int): InNode = innerNodes(i)
+
+  override def edge(i: Int, j: Int): Edge = edgeMatrix(i)(j)
 
 }
 

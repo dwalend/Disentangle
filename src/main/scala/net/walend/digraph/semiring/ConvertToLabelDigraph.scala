@@ -21,7 +21,7 @@ object ConvertToLabelDigraph {
    */
   def convert[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
                                    support:SemiringSupport[Label,Key],
-                                   labelForEdge:(Node,Node,Edge)=>Label):Digraph[Node,Label] = {
+                                   labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
 
     val nodes = digraph.nodes
     val edges = digraph.nodes.map(x => (x,x,support.semiring.I)) ++

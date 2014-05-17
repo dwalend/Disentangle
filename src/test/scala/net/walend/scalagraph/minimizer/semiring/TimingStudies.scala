@@ -1,6 +1,7 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
+import net.walend.digraph.semiring.IndexedDigraph
 
 /**
  * @author dwalend
@@ -19,20 +20,20 @@ object TimingStudies {
     scalaGraphDijstraResults.map(x => println(x))
 */
 
-    val jungDijkstraResults = study(8,timeJungDijkstra,expectedTimeDijkstra)
-    jungDijkstraResults.map(x => println(x))
+//    val jungDijkstraResults = study(8,timeJungDijkstra,expectedTimeDijkstra)
+//    jungDijkstraResults.map(x => println(x))
 
-    val dijkstraResults = study(8,timeDijkstra,expectedTimeDijkstra)
+    val dijkstraResults = study(10,timeDijkstra,expectedTimeDijkstra)
     dijkstraResults.map(x => println(x))
 
-
+/*
 //    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
 //    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     compareResults.map(x => println(x))
-
+*/
     /*
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
@@ -54,7 +55,7 @@ object TimingStudies {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val initialGraph:Digraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
+    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
 
     val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
 
