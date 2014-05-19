@@ -10,10 +10,8 @@ import scala.collection.mutable.ArrayBuffer
  */
 /**
  */
-//TODO store edge indices in an ArrayBuffer per node to allow for constant-tme successors and predecessors
-
 //TODO make that edgeMatrix a Vector of ArrayBuffers, or even a Vector of Vector of mutable cells.
-//TODO for the Atomic version, make it a Vector of AtomicReferences
+//TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
 class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
                              edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
                              val noEdgeExistsValue:Edge //value for no edge
@@ -106,7 +104,7 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
   }
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
-    if (edgeMatrix(from.index)(to.index) == noEdgeExistsValue) {
+    if ((edge != noEdgeExistsValue)&&(edgeMatrix(from.index)(to.index) == noEdgeExistsValue)) {
       predIndices(to.index).append(from)
       succIndices(from.index).append(to)
     }
