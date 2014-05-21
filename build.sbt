@@ -32,11 +32,15 @@ fork in test := true
 
 javaOptions in test += "-Xmx3G" //prevents big GC
 
+javaOptions in test += "-Xms3G" //prevents big GC
+
 javaOptions in test += "-server" //does hotspot optimizations earlier
 
 fork in run := true
 
 javaOptions in run += "-Xmx3G" //prevents big GC
+
+javaOptions in run += "-Xms3G" //prevents big GC
 
 javaOptions in run += "-server" //does hotspot optimizations earlier
 

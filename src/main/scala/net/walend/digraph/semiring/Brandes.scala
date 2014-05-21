@@ -31,6 +31,7 @@ object Brandes {
 
     //Stack of visited nodes
     import scala.collection.mutable.Stack
+    //todo take in the heap type as a parameter. Then create a specialized heap to make this stack get recorded as a side effect of takeTopValue. Then make dijkstraSingleSink part of Dikstra
     val stack = Stack[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Option[FirstSteps[Node, CoreLabel]])]()
 
     //While the heap is not empty

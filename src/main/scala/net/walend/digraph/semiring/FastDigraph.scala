@@ -113,7 +113,7 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
 
   override def node(i: Int): Node = nodes(i)
 
-  override def innerNode(i: Int): InNode = innerNodes(i)
+  override def innerNodeForIndex(i: Int): InNode = innerNodes(i)
 
   override def edge(i: Int, j: Int): Edge = edgeMatrix(i)(j)
 

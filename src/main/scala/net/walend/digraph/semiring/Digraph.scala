@@ -102,7 +102,7 @@ trait IndexedDigraph[Node,Edge] extends Digraph[Node,Edge] {
 
   def node(i:Int):Node
 
-  def innerNode(i:Int):InnerNodeType
+  def innerNodeForIndex(i:Int):InnerNodeType
 
   def edge(i:Int,j:Int):Edge
 }

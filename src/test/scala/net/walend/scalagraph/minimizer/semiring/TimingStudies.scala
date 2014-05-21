@@ -1,7 +1,7 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
-import net.walend.digraph.semiring.IndexedDigraph
+import net.walend.digraph.semiring.{FastDigraph, IndexedDigraph}
 
 /**
  * @author dwalend
@@ -20,20 +20,21 @@ object TimingStudies {
     scalaGraphDijstraResults.map(x => println(x))
 */
 
-    val jungDijkstraResults = study(9,timeJungDijkstra,expectedTimeDijkstra)
-    jungDijkstraResults.map(x => println(x))
+//    val jungDijkstraResults = study(9,timeJungDijkstra,expectedTimeDijkstra)
+//    jungDijkstraResults.map(x => println(x))
 
-    val dijkstraResults = study(9,timeDijkstra,expectedTimeDijkstra)
+//    val dijkstraResults = study(9,timeDijkstra,expectedTimeDijkstra)
+    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
     dijkstraResults.map(x => println(x))
 
-
+/*
 //    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
 //    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     compareResults.map(x => println(x))
-
+*/
     /*
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
@@ -52,12 +53,22 @@ object TimingStudies {
     import net.walend.digraph.semiring.ConvertToLabelDigraph
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
+//    val support = FFewestNodes
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
     val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
+//    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,FFewestNodes.convertEdgeToLabel)
 
-    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
+//    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
+
+    val result = timeFunction{
+        val initNode = initialGraph.innerNodes.head
+        DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
+    }
+
+
+    //    println(s"$nodeCount ${result._2}")
 
     result._2
   }
@@ -111,6 +122,16 @@ object TimingStudies {
     ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
   }
 
+  def expectedTimeSingleDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
+
+    //O(|V| ln|V|)
+    def bigO(nodeCount:Int):Double = {
+      nodeCount * Math.log(nodeCount)
+    }
+
+    ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
+  }
+
   def timeScalaGraphDijkstra(nodeCount:Int):Long = {
     val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
 
@@ -141,7 +162,9 @@ object TimingStudies {
 
   def study(maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
 
+    warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
+    warmUp(16,{timeF(128)})
     val nodeCountAndTime:Seq[(Int,Long)] = nodeCountsFrom32(maxExponent).map(x=>(x,timeF(x)))
 
     val calibration = nodeCountAndTime.head
