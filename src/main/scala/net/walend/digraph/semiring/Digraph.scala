@@ -54,8 +54,6 @@ trait Digraph[Node,Edge] {
 
   /**
    * An edge that spans from start to end
-   * @param start
-   * @param end
    * @return the Edge between start and end or noEdgeExistsValue
    */
   def edge(start:InnerNodeType,end:InnerNodeType):Edge
@@ -63,12 +61,28 @@ trait Digraph[Node,Edge] {
   /**
    * Set the edge that spans from start to end to edge
    *
-   * @param from
-   * @param to
-   * @param edge
    */
   def updateEdge(from:InnerNodeType,to:InnerNodeType,edge:Edge):Unit
-  //todo toString, after FloydWarshall
+
+  //todo then make relax for other representations -- ordered lists -- and use them in Dijkstra's algorithm
+  def relax[Key](semiring:SemiringSupport[Edge,Key]#Semiring)
+                 (from:InnerNodeType,
+                  through:InnerNodeType,
+                  to:InnerNodeType):Edge = {
+
+    val fromThrough:Edge = edge(from,through)
+    val throughTo:Edge = edge(through,to)
+    val fromThroughTo:Edge = semiring.extend(fromThrough,throughTo)
+
+    val current:Edge = edge(from,to)
+
+    val summaryLabel:Edge = semiring.summary(fromThroughTo,current)
+
+    updateEdge(from,to,summaryLabel)
+
+    summaryLabel
+  }
+
 }
 
 /**

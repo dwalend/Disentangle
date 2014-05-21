@@ -49,7 +49,7 @@ object Brandes {
         val heapKey = nodesToHeapMembers.getOrElse(predecessor,throw new IllegalStateException("No HeapMember for "+predecessor))
         if(heapKey.isInHeap) {
           //Relax to get a new label
-          val label = support.semiring.relax[Node](labelGraph)(predecessor,topNode,sink)
+          val label = labelGraph.relax(support.semiring)(predecessor,topNode,sink)
           //Try to change the key
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }

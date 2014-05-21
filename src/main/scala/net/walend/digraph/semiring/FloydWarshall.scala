@@ -11,7 +11,7 @@ object FloydWarshall {
   def floydWarshall[Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
     val innerNodes = labelGraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
-      support.semiring.relax(labelGraph)(i,k,j)
+      labelGraph.relax(support.semiring)(i,k,j)
     }
     labelGraph
   }

@@ -35,7 +35,8 @@ object Dijkstra {
         if(heapKey.isInHeap) {
           //Relax to get a new label
           //todo this is the only place where labelGraph shows up in the loops, and the only place where it gets mutated. Replace it with an ArrayBuffer to avoid the weird extra data.
-          val label = support.semiring.relax(labelGraph)(source,topNode,successor)
+          //todo report to intellij
+          val label = labelGraph.relax(support.semiring)(source,topNode,successor)
           //Try to change the key
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }

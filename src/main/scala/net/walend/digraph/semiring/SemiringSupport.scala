@@ -44,24 +44,5 @@ trait SemiringSupport[L,Key] {
      * Override this method to add side effects to the relax operator
      */
 
-    //todo make this a property of the digraph, not the Semiring
-    //todo then make this a property of other representations -- ordered lists -- and use them in Dijkstra's algorithm
-    def relax[Node](labelGraph:Digraph[Node,Label])
-                (from:labelGraph.InnerNodeType,
-                 through:labelGraph.InnerNodeType,
-                 to:labelGraph.InnerNodeType):Label = {
-
-      val fromThrough:Label = labelGraph.edge(from,through)
-      val throughTo:Label = labelGraph.edge(through,to)
-      val fromThroughTo:Label = extend(fromThrough,throughTo)
-
-      val current:Label = labelGraph.edge(from,to)
-
-      val summaryLabel:Label = summary(fromThroughTo,current)
-
-      labelGraph.updateEdge(from,to,summaryLabel)
-
-      summaryLabel
-    }
   }
 }
