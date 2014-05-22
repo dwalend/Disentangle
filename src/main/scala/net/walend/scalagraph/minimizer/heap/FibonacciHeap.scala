@@ -177,18 +177,17 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
         //and this be replaced by x.getRight(); here instead?
       }//while
       top = null
-  
-      for (i <- 0 until fibNodes.length) {
-        if(fibNodes(i)!=null) {
+      for (fibNode <- fibNodes) {
+        if(fibNode!=null) {
           if(top!=null) {
-            fibNodes(i).release()
-            top.cat(fibNodes(i))
-            if(comparator.lt(top.key,fibNodes(i).key)) {
-              top = fibNodes(i)
+            fibNode.release()
+            top.cat(fibNode)
+            if(comparator.lt(top.key,fibNode.key)) {
+              top = fibNode
             }
           }
           else {
-            top = fibNodes(i) 
+            top = fibNode
           }
         }//if fibNodes[i]!=null
       }//for
