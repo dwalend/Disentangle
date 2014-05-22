@@ -9,7 +9,26 @@ import net.walend.scalagraph.minimizer.heap.HeapOrdering
  * @since v0.1.0
  */
 
-case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {}
+case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
+  /**
+   * Overriding equals to speed up.
+   */
+  override def equals(any:Any) = {
+    if(any.isInstanceOf[FirstSteps[Node,CoreLabel]]) {
+      val other:FirstSteps[Node,CoreLabel] = any.asInstanceOf[FirstSteps[Node,CoreLabel]]
+      if(weight == other.weight) {
+        choices == other.choices
+      } else false
+    } else false
+  }
+
+  /**
+   * Overriding hashCode because I overrode equals.
+   */
+  override def hashCode():Int = {
+    weight.hashCode() ^ choices.hashCode()
+  }
+}
 
 class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstSteps[Node,CoreLabel]],Key]{
   

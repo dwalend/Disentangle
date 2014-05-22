@@ -23,7 +23,7 @@ object TimingStudies {
 //    val jungDijkstraResults = study(9,timeJungDijkstra,expectedTimeDijkstra)
 //    jungDijkstraResults.map(x => println(x))
 
-    val dijkstraResults = study(12,timeDijkstra,expectedTimeDijkstra)
+    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
 //    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
     dijkstraResults.map(x => println(x))
 

@@ -93,6 +93,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
     val initialGraph = ConvertToLabelDigraph.convert(testGraph,FewestNodes,FewestNodes.convertEdgeToLabel)
     val labels = Dijkstra.allPairsShortestPaths(initialGraph,FewestNodes)
 
+    labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
   }
 }

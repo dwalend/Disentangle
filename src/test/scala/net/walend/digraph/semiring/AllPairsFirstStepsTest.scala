@@ -67,6 +67,7 @@ class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
     val initialGraph:IndexedDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labels = Dijkstra.allPairsShortestPaths(initialGraph,support)
 
+    labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
   }
 
