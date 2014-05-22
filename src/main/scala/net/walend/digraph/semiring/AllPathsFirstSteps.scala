@@ -71,7 +71,11 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
       if((fromThroughLabel != O)&&(throughToLabel != O)) {
         val fromThroughSteps:FirstSteps[Node,CoreLabel] = fromThroughLabel.get
         val throughToSteps:FirstSteps[Node,CoreLabel] = throughToLabel.get
-        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),fromThroughSteps.choices))
+        //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
+        val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
+                                else fromThroughSteps.choices
+
+        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),choices))
       }
       else O
     }

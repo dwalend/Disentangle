@@ -6,6 +6,8 @@ package net.walend.digraph.semiring
  * @author dwalend
  * @since v0.1.0
  */
+
+//todo split Digraph from MutableDigraph, and look into different implementations
 trait Digraph[Node,Edge] {
 
   /**
@@ -69,7 +71,6 @@ trait Digraph[Node,Edge] {
                  (from:InnerNodeType,
                   through:InnerNodeType,
                   to:InnerNodeType):Edge = {
-
     val fromThrough:Edge = edge(from,through)
     val throughTo:Edge = edge(through,to)
     val fromThroughTo:Edge = semiring.extend(fromThrough,throughTo)
