@@ -65,9 +65,9 @@ class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
     val initialGraph:IndexedDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
-    val labelGraph = Dijkstra.allPairsShortestPaths(initialGraph,support)
+    val labels = Dijkstra.allPairsShortestPaths(initialGraph,support)
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labels.to[Set] should be (expectedEdges)
   }
 
 

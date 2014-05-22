@@ -23,8 +23,8 @@ object TimingStudies {
 //    val jungDijkstraResults = study(9,timeJungDijkstra,expectedTimeDijkstra)
 //    jungDijkstraResults.map(x => println(x))
 
-//    val dijkstraResults = study(9,timeDijkstra,expectedTimeDijkstra)
-    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
+    val dijkstraResults = study(12,timeDijkstra,expectedTimeDijkstra)
+//    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
     dijkstraResults.map(x => println(x))
 
 /*
@@ -60,13 +60,13 @@ object TimingStudies {
     val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
 //    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,FFewestNodes.convertEdgeToLabel)
 
-//    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
-
+    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
+/*
     val result = timeFunction{
         val initNode = initialGraph.innerNodes.head
         DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
     }
-
+*/
 
     //    println(s"$nodeCount ${result._2}")
 
