@@ -25,23 +25,20 @@ object Dijkstra {
     val current:Label = labels(to.index)
     val summaryLabel:Label = semiring.summary(fromThroughTo,current)
 
-    //todo move out to where this array is defined
-    labels(to.index) = summaryLabel
-
     summaryLabel
   }
 
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstraSingleSource[Node,Label,Key](labelGraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key])
-                                          (source:labelGraph.InnerNodeType):ArrayBuffer[(Node,Node,Label)] = {
+  def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key])
+                                          (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
-    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(labelGraph.nodes.size)(support.semiring.O)
+    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
 
-    val heap:Heap[Key,labelGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
+    val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
 
-    val heapMembers:IndexedSeq[heap.HeapMember] = labelGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
     
     //Raise sourceInnerNode's to I
     labels(source.index) = support.semiring.I
@@ -57,14 +54,14 @@ object Dijkstra {
         val heapKey = heapMembers(successor.index)
         if(heapKey.isInHeap) {
           //Relax to get a new label
-          val label = relaxSource(labelGraph,labels,support.semiring)(source,topNode,successor)
-
+          val label = relaxSource(initialGraph,labels,support.semiring)(source,topNode,successor)
+          labels(successor.index) = label
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }
       }
     }
 
-    labels.zipWithIndex.map(x => (source.value,labelGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
+    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
   }
 
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
