@@ -9,7 +9,7 @@ import net.walend.digraph.SomeGraph._
  * @author dwalend
  * @since v0.1.0
  */
-class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
+class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   val expectedEdges = Set(
     (B,B,Some(FirstSteps(0,Set()))),
@@ -84,10 +84,10 @@ class AllPairsFirstFirstStepsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val initialGraph:Digraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val initialGraph:IndexedDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(initialGraph,support)
 
-    labelGraphAndBetweenness._1.edges.to[Set] should be (expectedEdges)
+    labelGraphAndBetweenness._1.to[Set] should be (expectedEdges)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

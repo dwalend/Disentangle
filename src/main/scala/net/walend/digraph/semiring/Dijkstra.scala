@@ -13,10 +13,12 @@ import scala.collection.mutable.ArrayBuffer
 object Dijkstra {
 
 
-  def relaxSource[Node,Label,Key](digraph:IndexedDigraph[Node,Label],labels:ArrayBuffer[Label],semiring:SemiringSupport[Label,Key]#Semiring)
-                (from:digraph.InnerNodeType,
-                 through:digraph.InnerNodeType,
-                 to:digraph.InnerNodeType):Label = {
+  def relaxSource[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
+                                  labels:ArrayBuffer[Label],
+                                  semiring:SemiringSupport[Label,Key]#Semiring)
+                                (from:digraph.InnerNodeType,
+                                 through:digraph.InnerNodeType,
+                                 to:digraph.InnerNodeType):Label = {
 
     val fromThrough:Label = labels(through.index)
     val throughTo:Label = digraph.edge(through,to)
@@ -31,7 +33,8 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    */
-  def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key])
+  def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
+                                           support:SemiringSupport[Label,Key])
                                           (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
