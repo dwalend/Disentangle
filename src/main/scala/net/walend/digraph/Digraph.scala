@@ -62,6 +62,10 @@ trait Digraph[Node,Edge] {
    */
   def edge(start:InnerNodeType,end:InnerNodeType):Edge
 
+}
+
+trait MutableEdgeDigraph[Node,Edge] extends Digraph[Node,Edge] {
+
   /**
    * Set the edge that spans from start to end to edge
    *

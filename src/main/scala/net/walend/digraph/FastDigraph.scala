@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
 class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
                              edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
                              val noEdgeExistsValue:Edge //value for no edge
-                              ) extends IndexedDigraph[Node,Edge] {
+                              ) extends IndexedDigraph[Node,Edge] with MutableEdgeDigraph[Node,Edge] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap

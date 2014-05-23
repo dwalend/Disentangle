@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
-import net.walend.digraph.{IndexedDigraph, Digraph}
+import net.walend.digraph.{IndexedDigraph, Digraph, MutableEdgeDigraph}
 
 /**
  *
@@ -57,7 +57,7 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val initialGraph:Digraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val initialGraph:MutableEdgeDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labelGraph = FloydWarshall.allPairsShortestPaths(initialGraph,support)
 
     labelGraph.edges.to[Set] should be (expectedEdges)

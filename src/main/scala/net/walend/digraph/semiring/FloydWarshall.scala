@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.digraph.Digraph
+import net.walend.digraph.MutableEdgeDigraph
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
@@ -10,7 +10,7 @@ import net.walend.digraph.Digraph
  */
 object FloydWarshall {
 
-  def relax[Node,Edge,Key](labelDigraph:Digraph[Node,Edge],
+  def relax[Node,Edge,Key](labelDigraph:MutableEdgeDigraph[Node,Edge],
                  semiring:SemiringSupport[Edge,Key]#Semiring)
                 (from:labelDigraph.InnerNodeType,
                  through:labelDigraph.InnerNodeType,
@@ -27,7 +27,7 @@ object FloydWarshall {
     summaryLabel
   }
 
-  def floydWarshall[Node,Label,Key](labelGraph:Digraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
+  def floydWarshall[Node,Label,Key](labelGraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
     val innerNodes = labelGraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
       relax(labelGraph,support.semiring)(i,k,j)
@@ -35,7 +35,7 @@ object FloydWarshall {
     labelGraph
   }
 
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:Digraph[Node,Label],support:SemiringSupport[Label,Key]):Digraph[Node,Label] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
 
     floydWarshall(labelDigraph,support)
   }
