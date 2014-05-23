@@ -14,12 +14,14 @@ case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
    * Overriding equals to speed up.
    */
   override def equals(any:Any) = {
-    //todo is there some way to get at AnyRef's equals() ?
-    if(any.isInstanceOf[FirstSteps[Node,CoreLabel]]) {
-      val other:FirstSteps[Node,CoreLabel] = any.asInstanceOf[FirstSteps[Node,CoreLabel]]
-      if(weight == other.weight) {
-        choices == other.choices
-      } else false
+    if (any.isInstanceOf[FirstSteps[Node, CoreLabel]]) {
+      val other: FirstSteps[Node, CoreLabel] = any.asInstanceOf[FirstSteps[Node, CoreLabel]]
+      if (this eq other) true //if they share a memory address, no need to compare
+      else {
+        if (weight == other.weight) {
+          choices == other.choices
+        } else false
+      }
     } else false
   }
 
