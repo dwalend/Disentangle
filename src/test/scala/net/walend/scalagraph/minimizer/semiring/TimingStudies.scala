@@ -14,27 +14,27 @@ object TimingStudies {
     //Time the Floyd Warshall algorithm with AllShortestPaths
     val floydResults = study(8,timeFloyd,expectedTimeFloyd)
     floydResults.map(x => println(x))
-
+     */
     //Time Dijkstra's algorithm with AllShortestPaths
-    val scalaGraphDijstraResults = study(8,timeScalaGraphDijkstra,expectedTimeDijkstra)
-    scalaGraphDijstraResults.map(x => println(x))
-*/
+//    val scalaGraphDijstraResults = study(9,timeScalaGraphDijkstra,expectedTimeDijkstra)
+//    scalaGraphDijstraResults.map(x => println(x))
 
-//    val jungDijkstraResults = study(9,timeJungDijkstra,expectedTimeDijkstra)
-//    jungDijkstraResults.map(x => println(x))
 
-    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
+    val jungDijkstraResults = study(13,timeJungDijkstra,expectedTimeDijkstra)
+    jungDijkstraResults.map(x => println(x))
+
+    val dijkstraResults = study(13,timeDijkstra,expectedTimeDijkstra)
 //    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
     dijkstraResults.map(x => println(x))
 
-/*
+
 //    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
 //    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
     compareResults.map(x => println(x))
-*/
+
     /*
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
