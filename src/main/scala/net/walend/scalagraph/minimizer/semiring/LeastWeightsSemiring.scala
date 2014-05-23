@@ -6,7 +6,7 @@ package net.walend.scalagraph.minimizer.semiring
  * @author dwalend
  * @since v0.0.0
  */
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 object LeastWeightsSemiring extends Semiring[Double] {
 

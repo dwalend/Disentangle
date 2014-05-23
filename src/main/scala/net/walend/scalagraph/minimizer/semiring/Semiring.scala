@@ -4,7 +4,7 @@ import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
 
 import MLDiEdge._
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 /**
  *

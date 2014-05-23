@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 /**
  * Parts for semiring-based graph minimizing algorithms.

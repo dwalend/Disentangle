@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.scalagraph.minimizer.heap.{FibonacciHeap, Heap}
+import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
 
 /**

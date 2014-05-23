@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 /**
  * Finds the length of a path that traverses the fewest edges.

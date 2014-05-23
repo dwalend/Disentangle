@@ -2,7 +2,7 @@ package net.walend.scalagraph.minimizer.semiring
 
 import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
-import net.walend.scalagraph.minimizer.heap.{FibonacciHeap, Heap}
+import net.walend.heap.{FibonacciHeap, Heap}
 import scalax.collection.GraphPredef.EdgeLikeIn
 
 /**

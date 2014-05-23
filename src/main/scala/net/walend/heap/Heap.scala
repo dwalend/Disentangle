@@ -1,4 +1,4 @@
-package net.walend.scalagraph.minimizer.heap
+package net.walend.heap
 
 /**
  * A structure that makes an extreme key of some key,value pair available

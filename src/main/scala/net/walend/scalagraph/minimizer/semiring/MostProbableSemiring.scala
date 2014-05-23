@@ -1,6 +1,6 @@
 package net.walend.scalagraph.minimizer.semiring
 
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 /**
  * Finds most probable paths that traverse from start to end nodes with the on double-weight edges (with weights between zero and one).

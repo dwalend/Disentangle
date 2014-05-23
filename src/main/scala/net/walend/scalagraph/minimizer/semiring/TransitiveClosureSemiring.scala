@@ -1,6 +1,6 @@
 package net.walend.scalagraph.minimizer.semiring
 
-import net.walend.scalagraph.minimizer.heap.HeapOrdering
+import net.walend.heap.HeapOrdering
 
 /**
  * Labels are true if the sink can be reached from the source, false if not.

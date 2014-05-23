@@ -1,4 +1,4 @@
-package net.walend.scalagraph.minimizer.heap
+package net.walend.heap
 
 /**
  * A generic Fibonacci heap
