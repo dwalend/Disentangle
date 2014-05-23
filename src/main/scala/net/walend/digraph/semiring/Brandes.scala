@@ -14,11 +14,11 @@ import net.walend.digraph.{IndexedDigraph, Digraph}
 object Brandes {
 
   def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
-                                  labels:ArrayBuffer[Label],
-                                  semiring:SemiringSupport[Label,Key]#Semiring)
-                                 (from:digraph.InnerNodeType,
-                                  through:digraph.InnerNodeType,
-                                  to:digraph.InnerNodeType):Label = {
+                                labels:ArrayBuffer[Label],
+                                semiring:SemiringSupport[Label,Key]#Semiring)
+                               (from:digraph.InnerNodeType,
+                                through:digraph.InnerNodeType,
+                                to:digraph.InnerNodeType):Label = {
 
     val fromThrough:Label = digraph.edge(from,through)
     val throughTo:Label = labels(through.index)
@@ -29,22 +29,17 @@ object Brandes {
   }
 
   /**
-   * Dijkstra's algorithm for a single sink, with a Seq of visited edges.
+   * Dijkstra's algorithm for a single sink. This supports a heap argument to enable Brandes' algorithm.
    */
-  def dijkstraSingleSink[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key])
-                                          (sink:initialGraph.InnerNodeType):(Seq[(Node,Node,Label)],
-                                                                             Seq[(initialGraph.InnerNodeType,initialGraph.InnerNodeType,Label)]) = {
+  //todo could not use default argument for the heap. Report that as a possible bug.
+  def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
+                                                   support:SemiringSupport[Label,Key])
+                                                  (sink:initialGraph.InnerNodeType,
+                                                   heap:Heap[Key,initialGraph.InnerNodeType]):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
 
-    val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
-
     val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
-
-    //Stack of visited nodes
-    import scala.collection.mutable.Stack
-    //todo take in the heap type as a parameter. Then create a specialized heap to make this stack get recorded as a side effect of takeTopValue. Then make dijkstraSingleSink part of Dikstra
-    val stack = Stack[(initialGraph.InnerNodeType,initialGraph.InnerNodeType,Label)]()
 
     //Raise sourceInnerNode's to I
     labels(sink.index) = support.semiring.I
@@ -54,8 +49,6 @@ object Brandes {
     while(!heap.isEmpty) {
       //take the top node
       val topNode = heap.takeTopValue()
-      //todo make this a side effect of takeTopValue
-      stack.push((topNode,sink,labels(topNode.index)))
 
       //For any node that can reach this node not yet visited (because it's key is still in the heap)
       for(predecessor <- topNode.predecessors) {
@@ -70,12 +63,48 @@ object Brandes {
       }
     }
 
-    val finalLabels = labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1)).filter(x => x._3 != support.semiring.O)
-    (finalLabels,stack)
+    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
+  }
+
+  /**
+   * Dijkstra's algorithm for a single sink.
+   */
+  def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
+                                        support:SemiringSupport[Label,Key])
+                                        (sink:initialDigraph.InnerNodeType):Seq[(Node,Node,Label)] = {
+    val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)
+    dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
   }
 
 
   /**
+   * Dijkstra's algorithm for a single sink, with a Seq of visited edges to support Brandes' algorithm.
+   */
+  def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
+                                         support:SemiringSupport[Label,Key])
+                                        (sink:initialDigraph.InnerNodeType):(Seq[(Node,Node,Label)],
+                                                                            Seq[(Node,Label)]) = {
+
+    import scala.collection.mutable.Stack
+    val stack = Stack[initialDigraph.InnerNodeType]()
+
+    val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering) {
+
+      override def takeTopValue():initialDigraph.InnerNodeType = {
+        val result = super.takeTopValue()
+        stack.push(result)
+        result
+      }
+
+    }
+
+    val allEdges = dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
+    val originEdgeStack = stack.map(x => (x.value,allEdges(x.index)._3))
+
+    //todo filter allEdges
+    (allEdges.filter(x => x._3 != support.semiring.O),originEdgeStack)
+  }
+    /**
    * Find partial betweenness
    */
   def partialBetweenness[Node, 
@@ -83,24 +112,23 @@ object Brandes {
                           Label <: Option[FirstSteps[Node, CoreLabel]], 
                           Key]
                           (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:Digraph[Node,Label])
-                          (sink: labelGraph.InnerNodeType,edges:Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)]): Map[Node, Double] = {
-//todo can definitely just use Nodes instead of InnerNodeTypes in here
+                          (sink: labelGraph.InnerNodeType,stack:Seq[(Node,Label)]): Map[Node, Double] = {
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
 
     //for each possible choice of next step
-    for (edge <- edges) {
+    for (edge <- stack) {
       //figure out the partial betweenness to apply to that step
-      val label: Label = edge._3
+      val label: Label = edge._2
       label match {
         case None => //nothing to do
         case Some(sourceLabel: FirstSteps[Node, CoreLabel]) => {
           val numChoices: Double = sourceLabel.choices.size
-          val partialFromSource = nodesToPartialBetweenness.getOrElse(edge._1.value, 0.0)
+          val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(edge._1, 0.0)
           for (choice <- sourceLabel.choices) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
-              val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0)
+              val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0.0)
               //new value is the old value plus (value for coming through the source, plus the source)/number of choices
               val newPartial: Double = oldPartial + ((1.0 + partialFromSource) / numChoices)
               nodesToPartialBetweenness.put(choice, newPartial)
@@ -125,8 +153,7 @@ object Brandes {
     type Label = support.Label
 
     val edgesAndPartialBetweennesses:Seq[(Seq[(Node,Node,Label)],Map[Node, Double])] = for(sink <- initialGraph.innerNodes) yield {
-      val edgesAndNodeStack:(Seq[(Node,Node,Label)],
-        Seq[(initialGraph.InnerNodeType,initialGraph.InnerNodeType,Label)]) = dijkstraSingleSink(initialGraph,support)(sink)
+      val edgesAndNodeStack:(Seq[(Node,Node,Label)],Seq[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
       val partialB = partialBetweenness(support,initialGraph)(sink,edgesAndNodeStack._2)
       (edgesAndNodeStack._1,partialB)
     }
