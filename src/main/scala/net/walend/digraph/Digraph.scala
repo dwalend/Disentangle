@@ -1,7 +1,5 @@
 package net.walend.digraph
 
-import net.walend.digraph.semiring.SemiringSupport
-
 /**
  * Methods required for a Digraph representation for the algorithms.
  *
@@ -9,7 +7,7 @@ import net.walend.digraph.semiring.SemiringSupport
  * @since v0.1.0
  */
 
-//todo split Digraph from MutableDigraph, and look into different implementations
+//todo look into different implementations
 trait Digraph[Node,Edge] {
 
   /**

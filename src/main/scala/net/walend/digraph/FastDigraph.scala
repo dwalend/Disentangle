@@ -108,6 +108,7 @@ class FastDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index 
       predIndices(to.index).append(from)
       succIndices(from.index).append(to)
     }
+    //todo if edge == noEdgeExistsValue, hunt down the old entries in the edge lists and remove them.
     edgeMatrix(from.index)(to.index) = edge
   }
 

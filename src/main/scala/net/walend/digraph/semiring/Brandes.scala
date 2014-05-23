@@ -1,7 +1,6 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
-import scala.collection.mutable.ArrayBuffer
 import net.walend.digraph.{IndexedDigraph, Digraph}
 
 /**

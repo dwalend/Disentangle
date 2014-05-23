@@ -22,17 +22,17 @@ object FloydWarshall {
 
     val summaryLabel:Edge = semiring.relax(fromThrough,throughTo,current)
 
-    labelDigraph.updateEdge(from,to,summaryLabel)
 
     summaryLabel
   }
 
-  def floydWarshall[Node,Label,Key](labelGraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
-    val innerNodes = labelGraph.innerNodes
+  def floydWarshall[Node,Label,Key](labelDigraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
+    val innerNodes = labelDigraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
-      relax(labelGraph,support.semiring)(i,k,j)
+      val summaryLabel = relax(labelDigraph,support.semiring)(i,k,j)
+      labelDigraph.updateEdge(i,j,summaryLabel)
     }
-    labelGraph
+    labelDigraph
   }
 
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
