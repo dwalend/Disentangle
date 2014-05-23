@@ -1,7 +1,7 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
-import net.walend.digraph.semiring.{FastDigraph, IndexedDigraph}
+import net.walend.digraph.{FastDigraph, IndexedDigraph}
 
 /**
  * @author dwalend
@@ -45,12 +45,12 @@ object TimingStudies {
 
   def timeDijkstra(nodeCount:Int):Long = {
 
-    import net.walend.digraph.semiring.DigraphFactory
-    import net.walend.digraph.semiring.Digraph
+    import net.walend.digraph.DigraphFactory
     import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
     import net.walend.digraph.semiring.AllPathsFirstSteps
     import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
     import net.walend.digraph.semiring.ConvertToLabelDigraph
+    import net.walend.digraph.Digraph
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 //    val support = FFewestNodes

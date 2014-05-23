@@ -1,6 +1,6 @@
 package net.walend.digraph
 
-import net.walend.digraph.semiring.{FastDigraph, Digraph}
+import net.walend.digraph.FastDigraph
 
 /**
  * An example graph for eyeball testing

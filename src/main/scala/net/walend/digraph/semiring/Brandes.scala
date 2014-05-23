@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
+import net.walend.digraph.{IndexedDigraph, Digraph}
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -21,12 +22,10 @@ object Brandes {
 
     val fromThrough:Label = digraph.edge(from,through)
     val throughTo:Label = labels(through.index)
-    val fromThroughTo:Label = semiring.extend(fromThrough,throughTo)
 
     val current:Label = labels(from.index)
-    val summaryLabel:Label = semiring.summary(fromThroughTo,current)
 
-    summaryLabel
+    semiring.relax(fromThrough,throughTo,current)
   }
 
   /**

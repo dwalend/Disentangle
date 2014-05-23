@@ -1,4 +1,6 @@
-package net.walend.digraph.semiring
+package net.walend.digraph
+
+import net.walend.digraph.semiring.SemiringSupport
 
 /**
  * Methods required for a Digraph representation for the algorithms.
@@ -65,24 +67,6 @@ trait Digraph[Node,Edge] {
    *
    */
   def updateEdge(from:InnerNodeType,to:InnerNodeType,edge:Edge):Unit
-
-  //todo then make relax for other representations -- ordered lists -- and use them in Dijkstra's algorithm
-  def relax[Key](semiring:SemiringSupport[Edge,Key]#Semiring)
-                 (from:InnerNodeType,
-                  through:InnerNodeType,
-                  to:InnerNodeType):Edge = {
-    val fromThrough:Edge = edge(from,through)
-    val throughTo:Edge = edge(through,to)
-    val fromThroughTo:Edge = semiring.extend(fromThrough,throughTo)
-
-    val current:Edge = edge(from,to)
-
-    val summaryLabel:Edge = semiring.summary(fromThroughTo,current)
-
-    updateEdge(from,to,summaryLabel)
-
-    summaryLabel
-  }
 
 }
 

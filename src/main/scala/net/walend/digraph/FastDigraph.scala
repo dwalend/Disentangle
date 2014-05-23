@@ -1,4 +1,4 @@
-package net.walend.digraph.semiring
+package net.walend.digraph
 
 import scala.collection.mutable.ArrayBuffer
 

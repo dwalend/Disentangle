@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
+import net.walend.digraph.IndexedDigraph
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization.
@@ -22,12 +23,10 @@ object Dijkstra {
 
     val fromThrough:Label = labels(through.index)
     val throughTo:Label = digraph.edge(through,to)
-    val fromThroughTo:Label = semiring.extend(fromThrough,throughTo)
 
     val current:Label = labels(to.index)
-    val summaryLabel:Label = semiring.summary(fromThroughTo,current)
 
-    summaryLabel
+    semiring.relax(fromThrough,throughTo,current)
   }
 
   /**

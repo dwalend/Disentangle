@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
+import net.walend.digraph.{IndexedDigraph, Digraph}
 
 /**
  *

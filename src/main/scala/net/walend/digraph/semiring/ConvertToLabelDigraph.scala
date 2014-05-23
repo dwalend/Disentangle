@@ -1,5 +1,7 @@
 package net.walend.digraph.semiring
 
+import net.walend.digraph.{FastDigraph, IndexedDigraph, Digraph}
+
 /**
  * Converts Digraphs to Digraphs of Labels for semiring algorithms. 
  * 
