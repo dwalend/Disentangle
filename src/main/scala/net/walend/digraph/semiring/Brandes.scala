@@ -13,70 +13,6 @@ import net.walend.digraph.{IndexedDigraph, Digraph}
 
 object Brandes {
 
-  def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
-                                labels:ArrayBuffer[Label],
-                                semiring:SemiringSupport[Label,Key]#Semiring)
-                               (from:digraph.InnerNodeType,
-                                through:digraph.InnerNodeType,
-                                to:digraph.InnerNodeType):Label = {
-
-    val fromThrough:Label = digraph.edge(from,through)
-    val throughTo:Label = labels(through.index)
-
-    val current:Label = labels(from.index)
-
-    semiring.relax(fromThrough,throughTo,current)
-  }
-
-  /**
-   * Dijkstra's algorithm for a single sink. This supports a heap argument to enable Brandes' algorithm.
-   */
-  //todo could not use default argument for the heap. Report that as a possible bug.
-  def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
-                                                   support:SemiringSupport[Label,Key])
-                                                  (sink:initialGraph.InnerNodeType,
-                                                   heap:Heap[Key,initialGraph.InnerNodeType]):Seq[(Node,Node,Label)] = {
-    //Set up the map of Nodes to HeapKeys
-    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
-
-    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
-
-    //Raise sourceInnerNode's to I
-    labels(sink.index) = support.semiring.I
-    heapMembers(sink.index).raiseKey(support.heapKeyForLabel(support.semiring.I))
-
-    //While the heap is not empty
-    while(!heap.isEmpty) {
-      //take the top node
-      val topNode = heap.takeTopValue()
-
-      //For any node that can reach this node not yet visited (because it's key is still in the heap)
-      for(predecessor <- topNode.predecessors) {
-        //if the node has not yet been visited (because its key is still in the heap)
-        val heapKey = heapMembers(predecessor.index)
-        if(heapKey.isInHeap) {
-          //Relax to get a new label
-          val label = relaxSink(initialGraph,labels,support.semiring)(predecessor,topNode,sink)
-          labels(predecessor.index) = label
-          heapKey.raiseKey(support.heapKeyForLabel(label))
-        }
-      }
-    }
-
-    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
-  }
-
-  /**
-   * Dijkstra's algorithm for a single sink.
-   */
-  def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
-                                        support:SemiringSupport[Label,Key])
-                                        (sink:initialDigraph.InnerNodeType):Seq[(Node,Node,Label)] = {
-    val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)
-    dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
-  }
-
-
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited edges to support Brandes' algorithm.
    */
@@ -84,7 +20,6 @@ object Brandes {
                                          support:SemiringSupport[Label,Key])
                                         (sink:initialDigraph.InnerNodeType):(Seq[(Node,Node,Label)],
                                                                             Seq[(Node,Label)]) = {
-
     import scala.collection.mutable.Stack
     val stack = Stack[initialDigraph.InnerNodeType]()
 
@@ -95,15 +30,15 @@ object Brandes {
         stack.push(result)
         result
       }
-
     }
 
-    val allEdges = dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
+    val allEdges = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
     val originEdgeStack = stack.map(x => (x.value,allEdges(x.index)._3))
 
     //todo filter allEdges
     (allEdges.filter(x => x._3 != support.semiring.O),originEdgeStack)
   }
+
     /**
    * Find partial betweenness
    */
