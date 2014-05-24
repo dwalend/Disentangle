@@ -1,7 +1,7 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
-import net.walend.digraph.{FastDigraph, IndexedDigraph}
+import net.walend.digraph.IndexedDigraph
 
 /**
  * @author dwalend
@@ -16,8 +16,8 @@ object TimingStudies {
     floydResults.map(x => println(x))
      */
     //Time Dijkstra's algorithm with AllShortestPaths
-//    val scalaGraphDijstraResults = study(9,timeScalaGraphDijkstra,expectedTimeDijkstra)
-//    scalaGraphDijstraResults.map(x => println(x))
+    val scalaGraphDijstraResults = study(10,timeScalaGraphDijkstra,expectedTimeDijkstra)
+    scalaGraphDijstraResults.map(x => println(x))
 
 
     val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
@@ -28,11 +28,12 @@ object TimingStudies {
     dijkstraResults.map(x => println(x))
 
 
-//    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
+    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
     val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
-//    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
-    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+//    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+
     compareResults.map(x => println(x))
 
     /*
@@ -50,7 +51,6 @@ object TimingStudies {
     import net.walend.digraph.semiring.AllPathsFirstSteps
     import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
     import net.walend.digraph.semiring.ConvertToLabelDigraph
-    import net.walend.digraph.Digraph
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 //    val support = FFewestNodes
