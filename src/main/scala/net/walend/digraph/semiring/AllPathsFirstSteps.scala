@@ -9,6 +9,7 @@ import net.walend.heap.HeapOrdering
  * @since v0.1.0
  */
 
+//todo is there some way to make this an inner class and a parameter? (Same for OnePathFirstStep)
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
   /**
    * Overriding equals to speed up.
