@@ -1,8 +1,9 @@
 For this release
 
-* automatically draw the results of the timing studies (and comparison with Jung)
-* move existing semirings
 * build translator from scala-graph to net.walend.digraph.FastGraph and (maybe) back
+* automatically plot the results of the timing studies (and comparison with Jung)
+* Enron
+* test existing semirings
 * path representation for net.walend.digraph
 * translator from net.walend.digraph.path to scala-graph's paths
 * subgraph representation for net.walend.digraph

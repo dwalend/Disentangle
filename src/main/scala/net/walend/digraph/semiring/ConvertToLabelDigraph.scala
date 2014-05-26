@@ -4,12 +4,6 @@ import net.walend.digraph.{FastDigraph, Digraph}
 
 /**
  * Converts Digraphs to Digraphs of Labels for semiring algorithms. 
- * 
- * The most general case for this is 
- * 
- * def createLabelGraph[Node,Label](body: ⇒ Digraph[Node,Label]):Digraph[Node,Label]
- * 
- * but that's not terribly useful.
  *
  * @author dwalend
  * @since v0.1.0
