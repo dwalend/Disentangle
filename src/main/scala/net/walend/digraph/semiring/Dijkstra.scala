@@ -51,6 +51,7 @@ object Dijkstra {
       //take the top node
       val topNode = heap.takeTopValue()
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
+      //todo if you can get successors and edges in one call, you won't need the edge() call in relax, and can avoid building the edge matrix
       for(successor <- topNode.successors) {
         //if the node has not yet been visited (because its key is still in the heap)
         val heapKey = heapMembers(successor.index)

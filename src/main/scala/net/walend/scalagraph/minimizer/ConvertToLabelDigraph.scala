@@ -20,8 +20,8 @@ object ConvertToLabelDigraph {
    * @return a FastDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
   import scala.language.higherKinds
-  def convert[Node,E[X] <: EdgeLikeIn[X],Label,Key](originalGraph:Graph[Node,E])
-                                                   (support:SemiringSupport[Label,Key],
+  def convert[Node,E[X] <: EdgeLikeIn[X],Label,Key](originalGraph:Graph[Node,E],
+                                                    support:SemiringSupport[Label,Key])(
                                                     labelForEdge:originalGraph.EdgeT=>(Node,Node,Label)):FastDigraph[Node,Label] = {
 
     val nodes:Seq[Node] = originalGraph.nodes.toOuter.to[Seq]

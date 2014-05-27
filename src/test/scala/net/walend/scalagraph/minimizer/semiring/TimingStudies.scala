@@ -16,26 +16,27 @@ object TimingStudies {
     floydResults.map(x => println(x))
      */
     //Time Dijkstra's algorithm with AllShortestPaths
+    val dijkstraResults = study(10,timeDijkstra,expectedTimeDijkstra)
+    dijkstraResults.map(x => println(x))
+
     val scalaGraphDijstraResults = study(10,timeScalaGraphDijkstra,expectedTimeDijkstra)
     scalaGraphDijstraResults.map(x => println(x))
 
+    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
+    scalaGraphConvertDijstraResults.map(x => println(x))
 
-    val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
-    jungDijkstraResults.map(x => println(x))
+    /*
+        val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
+        jungDijkstraResults.map(x => println(x))
 
-    val dijkstraResults = study(10,timeDijkstra,expectedTimeDijkstra)
-//    val dijkstraResults = study(12,timeDijkstra,expectedTimeSingleDijkstra)
-    dijkstraResults.map(x => println(x))
+        val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
+        val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
+        val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
+        val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
+    //    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
 
-
-    val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
-    val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
-    val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
-    val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
-//    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
-
-    compareResults.map(x => println(x))
-
+        compareResults.map(x => println(x))
+    */
     /*
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
@@ -140,6 +141,31 @@ object TimingStudies {
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
     val labelGraph = new AllShortestPathsGraphBuilder[Int](semiring).initialLabelGraph(graph)
     val result = timeFunction{Dijkstra.allPairsShortestPaths(support)(labelGraph)}
+
+    result._2
+  }
+
+  def timeScalaGraphConvertDijkstra(nodeCount:Int):Long = {
+
+    import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
+    import net.walend.digraph.semiring.{AllPathsFirstSteps, FirstSteps}
+    import scalax.collection.Graph
+    import scalax.collection.GraphEdge.DiEdge
+    import net.walend.scalagraph.minimizer.ConvertToLabelDigraph
+
+    val support:AllPathsFirstSteps[Int,Int,Int] = new AllPathsFirstSteps(FFewestNodes)
+
+    val graph:Graph[Int,DiEdge] = GraphFactory.createRandomNormalGraph(nodeCount,16)
+
+    def convertToLabel(edge:graph.EdgeT):(Int,Int,Option[FirstSteps[Int,Int]]) = {
+      (edge._1.value,edge._2.value,Some(FirstSteps(1,Set.empty[Int])))
+    }
+
+    val result = timeFunction{
+      val initialGraph = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
+      DDijkstra.allPairsShortestPaths(initialGraph,support)
+    }
 
     result._2
   }
