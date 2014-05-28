@@ -29,6 +29,6 @@ object DigraphFactory {
 
     val edges:Seq[(Int,Int,Boolean)] = seqOfListOfEdges.flatten
 
-    FastDigraph(edges,nodes.to[Seq],false)
+    MatrixAndAdjacencyDigraph(edges,nodes.to[Seq],false)
   }
 }

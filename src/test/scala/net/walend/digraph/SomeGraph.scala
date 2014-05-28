@@ -1,7 +1,5 @@
 package net.walend.digraph
 
-import net.walend.digraph.FastDigraph
-
 /**
  * An example graph for eyeball testing
  *
@@ -35,6 +33,6 @@ object SomeGraph {
 
   val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:Digraph[String,String] = FastDigraph(testEdges,testNodes,"")
+  val testGraph:Digraph[String,String] = MatrixAndAdjacencyDigraph(testEdges,testNodes,"")
 
 }

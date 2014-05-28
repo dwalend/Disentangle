@@ -6,8 +6,6 @@ package net.walend.digraph
  * @author dwalend
  * @since v0.1.0
  */
-
-//todo look into different implementations
 trait Digraph[Node,Edge] {
 
   /**
@@ -21,9 +19,9 @@ trait Digraph[Node,Edge] {
   trait InnerNodeTrait {
     def value:Node
 
-    def successors:Seq[InnerNodeType]
+    def successors:Seq[(InnerNodeType,Edge)]
 
-    def predecessors:Seq[InnerNodeType]
+    def predecessors:Seq[(InnerNodeType,Edge)]
 
   }
 

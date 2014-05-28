@@ -1,7 +1,7 @@
 package net.walend.scalagraph.minimizer
 
 import net.walend.digraph.semiring.SemiringSupport
-import net.walend.digraph.FastDigraph
+import net.walend.digraph.MatrixAndAdjacencyDigraph
 
 import scalax.collection.GraphPredef.EdgeLikeIn
 import scalax.collection.Graph
@@ -22,7 +22,7 @@ object ConvertToLabelDigraph {
   import scala.language.higherKinds
   def convert[Node,E[X] <: EdgeLikeIn[X],Label,Key](originalGraph:Graph[Node,E],
                                                     support:SemiringSupport[Label,Key])(
-                                                    labelForEdge:originalGraph.EdgeT=>(Node,Node,Label)):FastDigraph[Node,Label] = {
+                                                    labelForEdge:originalGraph.EdgeT=>(Node,Node,Label)):MatrixAndAdjacencyDigraph[Node,Label] = {
 
     val nodes:Seq[Node] = originalGraph.nodes.toOuter.to[Seq]
 
@@ -31,7 +31,7 @@ object ConvertToLabelDigraph {
 
     val edges:Seq[(Node,Node,Label)] = identityEdges ++ graphEdges
 
-    FastDigraph(edges,nodes,support.semiring.O)
+    MatrixAndAdjacencyDigraph(edges,nodes,support.semiring.O)
   }
 
 }
