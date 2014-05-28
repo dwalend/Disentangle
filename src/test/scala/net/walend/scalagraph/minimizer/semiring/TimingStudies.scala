@@ -51,14 +51,13 @@ object TimingStudies {
     import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
     import net.walend.digraph.semiring.AllPathsFirstSteps
     import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
-    import net.walend.digraph.semiring.ConvertToLabelDigraph
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 //    val support = FFewestNodes
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
+    val initialGraph:IndexedDigraph[Int,support.Label] = DDijkstra.convert(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
 //    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,FFewestNodes.convertEdgeToLabel)
 
     val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}

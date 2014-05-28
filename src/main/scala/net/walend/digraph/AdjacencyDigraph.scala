@@ -11,20 +11,20 @@ import scala.collection.mutable.ArrayBuffer
 /**
   */
 class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
-                                   outSuccessors:Vector[Vector[(Node,Edge)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
-                                   outPredecessors:Vector[Vector[(Node,Edge)]],
+                                   outSuccessors:Vector[Vector[(Node,Node,Edge)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
+                                   outPredecessors:Vector[Vector[(Node,Node,Edge)]],
                                    val noEdgeExistsValue:Edge //value for no edge
                                             ) extends IndexedDigraph[Node,Edge] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborVector(vector:Vector[(Node,Edge)]):Vector[(InNode,Edge)] = {
-    vector.map(x => (nodeToInNode.get(x._1).get,x._2))
+  def neighborVector(vector:Vector[(Node,Node,Edge)]):Vector[(InNode,InNode,Edge)] = {
+    vector.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
   }
 
-  val inSuccessors:Vector[Vector[(InNode,Edge)]] = outSuccessors.map(neighborVector)
-  val inPredecessors:Vector[Vector[(InNode,Edge)]] = outPredecessors.map(neighborVector)
+  val inSuccessors:Vector[Vector[(InNode,InNode,Edge)]] = outSuccessors.map(neighborVector)
+  val inPredecessors:Vector[Vector[(InNode,InNode,Edge)]] = outPredecessors.map(neighborVector)
 
   override def nodes: IndexedSeq[Node] = outNodes
 
@@ -32,11 +32,11 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    override def successors: Seq[(InNode,Edge)] = {
+    override def successors: Seq[(InNode,InNode,Edge)] = {
       inSuccessors(index)
     }
 
-    override def predecessors: Seq[(InNode,Edge)] = {
+    override def predecessors: Seq[(InNode,InNode,Edge)] = {
       inPredecessors(index)
     }
 
@@ -60,20 +60,13 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
   /**
    * @return All of the edges in the graph
    */
-  override def edges: Seq[(Node, Node, Edge)] = {
-
-    def edgesForSuccessors(nodeAndSuccessors:(Node,Vector[(Node,Edge)])):Vector[(Node,Node,Edge)] = {
-      nodeAndSuccessors._2.map(x => (nodeAndSuccessors._1,x._1,x._2))
-    }
-
-    outNodes.zip(outSuccessors).map(edgesForSuccessors).flatten
-  }
+  override def edges: Seq[(Node, Node, Edge)] = outSuccessors.flatten
 
   //todo apply?
   override def edge(from: InNode, to: InNode):Edge = {
-    inSuccessors(from.index).filter(x => x._1 == to) match {
+    inSuccessors(from.index).filter(x => x._2 == to) match {
       case Vector() => noEdgeExistsValue
-      case Vector(nodeAndEdge) => nodeAndEdge._2
+      case Vector(nodeAndEdge) => nodeAndEdge._3
       case x => throw new IllegalStateException(s"Multiple edges from $from to $to: "+x)
     }
   }
@@ -83,9 +76,9 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
   override def innerNodeForIndex(i: Int): InNode = innerNodes(i)
 
   override def edge(i: Int, j: Int): Edge = {
-    inSuccessors(i).filter(x => x._1 == inNodes(j)) match {
+    inSuccessors(i).filter(x => x._2 == inNodes(j)) match {
       case Vector() => noEdgeExistsValue
-      case Vector(nodeAndEdge) => nodeAndEdge._2
+      case Vector(nodeAndEdge) => nodeAndEdge._3
       case x => throw new IllegalStateException(s"Multiple edges from ${inSuccessors(i)} to ${inNodes(j)}: "+x)
     }
   }
@@ -100,22 +93,11 @@ object AdjacencyDigraph{
 
     val nodeValues:Vector[Node] = (extraNodes ++ edgeSeq.map(_._1) ++ edgeSeq.map(_._2)).distinct.to[Vector]
 
-    val size = nodeValues.size
+    val successorMap:Map[Node,Seq[(Node,Node,Edge)]] = edgeSeq.groupBy(_._1)
+    val predecessorMap:Map[Node,Seq[(Node,Node,Edge)]] = edgeSeq.groupBy(_._2)
 
-    val successorAdjacencyBuffers:Vector[ArrayBuffer[(Node,Edge)]] = nodeValues.map(x => ArrayBuffer[(Node,Edge)]())
-    val predecessorAdjacencyBuffers:Vector[ArrayBuffer[(Node,Edge)]] = nodeValues.map(x => ArrayBuffer[(Node,Edge)]())
-
-    for (edgeTriple <- edgeSeq) {
-      val fromIndex = nodeValues.indexOf(edgeTriple._1)
-      val toIndex = nodeValues.indexOf(edgeTriple._2)
-
-      successorAdjacencyBuffers(fromIndex) += ((edgeTriple._2,edgeTriple._3))
-      predecessorAdjacencyBuffers(toIndex) += ((edgeTriple._1,edgeTriple._3))
-
-      //todo check for multiple edges between the same start and end nodes
-    }
-    val successorAdjacencies:Vector[Vector[(Node,Edge)]] = successorAdjacencyBuffers.map(_.to[Vector])
-    val predecessorAdjacencies:Vector[Vector[(Node,Edge)]] = predecessorAdjacencyBuffers.map(_.to[Vector])
+    val successorAdjacencies:Vector[Vector[(Node,Node,Edge)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Edge)]).to[Vector])
+    val predecessorAdjacencies:Vector[Vector[(Node,Node,Edge)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Edge)]).to[Vector])
 
     new AdjacencyDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
   }

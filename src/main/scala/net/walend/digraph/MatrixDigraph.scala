@@ -8,20 +8,16 @@ import scala.collection.mutable.ArrayBuffer
  * @author dwalend
  * @since v0.1.0
  */
-/**
- */
 //TODO make that edgeMatrix a Vector of ArrayBuffers, or even a Vector of Vector of mutable cells.
-//todo can remove this file I think.
 //TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
-/*
-class MatrixAndAdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
-                             edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
-                             val noEdgeExistsValue:Edge //value for no edge
-                              ) extends IndexedDigraph[Node,Edge] with MutableEdgeDigraph[Node,Edge] {
+class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
+                               edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
+                               val noEdgeExistsValue:Edge //value for no edge
+                                ) extends IndexedDigraph[Node,Edge] with MutableEdgeDigraph[Node,Edge] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-
+/*
   //todo rewrite with maps and filters if it is not too crazy
   val predIndices:ArrayBuffer[ArrayBuffer[(InNode,Edge)]] = {
     //for predecessors, if a is reachable from b then
@@ -50,19 +46,19 @@ class MatrixAndAdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the
     }
     result
   }
-
+*/
   override def nodes: IndexedSeq[Node] = outNodes
 
   type InnerNodeType = InNode
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    override def successors: Seq[(InNode,Edge)] = {
-      succIndices(index)
+    override def successors: Seq[(InNode,InNode,Edge)] = {
+      ??? //todo
     }
 
-    override def predecessors: Seq[(InNode,Edge)] = {
-      predIndices(index)
+    override def predecessors: Seq[(InNode,InNode,Edge)] = {
+      ??? //todo
     }
 
     override def hashCode(): Int = index
@@ -106,11 +102,6 @@ class MatrixAndAdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the
   }
 
   override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
-    if ((edge != noEdgeExistsValue)&&(edgeMatrix(from.index)(to.index) == noEdgeExistsValue)) {
-      predIndices(to.index).append((from,edge))
-      succIndices(from.index).append((to,edge))
-    }
-    //todo if edge == noEdgeExistsValue, hunt down the old entries in the edge lists and remove them.
     edgeMatrix(from.index)(to.index) = edge
   }
 
@@ -122,7 +113,7 @@ class MatrixAndAdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the
 
 }
 
-object MatrixAndAdjacencyDigraph{
+object MatrixDigraph{
 
   def apply[Node,Edge](edgeSeq:Seq[(Node,Node,Edge)] = Seq.empty,
                        extraNodes:Seq[Node] = Seq.empty,
@@ -143,8 +134,7 @@ object MatrixAndAdjacencyDigraph{
       matrix(row)(column) = edgeTriple._3
     }
 
-    new MatrixAndAdjacencyDigraph(nodeValues,matrix,noEdgeExistsValue)
+    new MatrixDigraph(nodeValues,matrix,noEdgeExistsValue)
   }
 
 }
-*/

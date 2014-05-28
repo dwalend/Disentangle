@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.digraph.MutableEdgeDigraph
+import net.walend.digraph.{Digraph, MutableEdgeDigraph}
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
@@ -39,4 +39,23 @@ object FloydWarshall {
 
     floydWarshall(labelDigraph,support)
   }
+
+  /**
+   * Create a digraph of Labels from an arbitrary Digraph.
+   *
+   * @return a FastDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   */
+  def convert[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
+                                   support:SemiringSupport[Label,Key],
+                                   labelForEdge:(Node,Node,Edge)=>Label):MutableEdgeDigraph[Node,Label] = {
+    val nodes = digraph.nodes
+    val nonSelfEdges = digraph.edges.filter(x => x._1 != x._2)
+    val edges = digraph.nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
+
+    //todo just hand back a pure matrix Digraph instead
+    import net.walend.digraph.MatrixDigraph
+    MatrixDigraph(edges,nodes,support.semiring.O)
+  }
+
 }

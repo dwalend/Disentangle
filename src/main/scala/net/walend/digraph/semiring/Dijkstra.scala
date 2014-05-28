@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.digraph.IndexedDigraph
+import net.walend.digraph.{Digraph, IndexedDigraph}
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
@@ -19,12 +19,12 @@ object Dijkstra {
                                   semiring:SemiringSupport[Label,Key]#Semiring)
                                 (from:digraph.InnerNodeType,
                                  through:digraph.InnerNodeType,
-                                 to:(digraph.InnerNodeType,Label)):Label = {
+                                 to:(digraph.InnerNodeType,digraph.InnerNodeType,Label)):Label = {
 
     val fromThrough:Label = labels(through.index)
-    val throughTo:Label = to._2
+    val throughTo:Label = to._3
 
-    val current:Label = labels(to._1.index)
+    val current:Label = labels(to._2.index)
 
     semiring.relax(fromThrough,throughTo,current)
   }
@@ -54,11 +54,11 @@ object Dijkstra {
       //todo if you can get successors and edges in one call, you won't need the edge() call in relax, and can avoid building the edge matrix
       for(successor <- topNode.successors) {
         //if the node has not yet been visited (because its key is still in the heap)
-        val heapKey = heapMembers(successor._1.index)
+        val heapKey = heapMembers(successor._2.index)
         if(heapKey.isInHeap) {
           //Relax to get a new label
           val label = relaxSource(initialGraph,labels,support.semiring)(source,topNode,successor)
-          labels(successor._1.index) = label
+          labels(successor._2.index) = label
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }
       }
@@ -75,11 +75,11 @@ object Dijkstra {
   def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
                                 labels:ArrayBuffer[Label],
                                 semiring:SemiringSupport[Label,Key]#Semiring)
-                               (from:(digraph.InnerNodeType,Label),
+                               (from:(digraph.InnerNodeType,digraph.InnerNodeType,Label),
                                 through:digraph.InnerNodeType,
                                 to:digraph.InnerNodeType):Label = {
 
-    val fromThrough:Label = from._2
+    val fromThrough:Label = from._3
     val throughTo:Label = labels(through.index)
 
     val current:Label = labels(from._1.index)
@@ -135,5 +135,22 @@ object Dijkstra {
     dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
   }
 
+  /**
+   * Create a digraph of Labels from an arbitrary Digraph.
+   *
+   * @return a FastDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   */
+  def convert[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
+                                   support:SemiringSupport[Label,Key],
+                                   labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
+
+    val nodes = digraph.nodes
+    val nonSelfEdges = digraph.edges.filter(x => x._1 != x._2)
+    val edges = digraph.nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
+
+    import net.walend.digraph.AdjacencyDigraph
+    AdjacencyDigraph(edges,nodes,support.semiring.O)
+  }
 }
 

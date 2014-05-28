@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
-import net.walend.digraph.{IndexedDigraph, Digraph, MutableEdgeDigraph}
+import net.walend.digraph.{IndexedDigraph, MutableEdgeDigraph}
 
 /**
  *
@@ -57,7 +57,7 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val initialGraph:MutableEdgeDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val initialGraph:MutableEdgeDigraph[String,support.Label] = FloydWarshall.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labelGraph = FloydWarshall.allPairsShortestPaths(initialGraph,support)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
@@ -65,7 +65,7 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val initialGraph:IndexedDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val initialGraph:IndexedDigraph[String,support.Label] = Dijkstra.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labels = Dijkstra.allPairsShortestPaths(initialGraph,support)
 
     labels.size should be (expectedEdges.size)
@@ -85,7 +85,7 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val initialGraph:IndexedDigraph[String,support.Label] = ConvertToLabelDigraph.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val initialGraph:IndexedDigraph[String,support.Label] = Dijkstra.convert(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(initialGraph,support)
 
     labelGraphAndBetweenness._1.to[Set] should be (expectedEdges)

@@ -19,9 +19,9 @@ trait Digraph[Node,Edge] {
   trait InnerNodeTrait {
     def value:Node
 
-    def successors:Seq[(InnerNodeType,Edge)]
+    def successors:Seq[(InnerNodeType,InnerNodeType,Edge)]
 
-    def predecessors:Seq[(InnerNodeType,Edge)]
+    def predecessors:Seq[(InnerNodeType,InnerNodeType,Edge)]
 
   }
 

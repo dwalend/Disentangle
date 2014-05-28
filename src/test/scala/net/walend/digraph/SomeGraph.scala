@@ -33,6 +33,6 @@ object SomeGraph {
 
   val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:Digraph[String,String] = MatrixAndAdjacencyDigraph(testEdges,testNodes,"")
+  val testGraph:Digraph[String,String] = AdjacencyDigraph(testEdges,testNodes,"")
 
 }

@@ -101,4 +101,7 @@ object Brandes {
 
     (edges,betweennessMap)
   }
+
+  //todo add convert, call Dijkstra's convert with the wrapper AllPathsFirstSteps semiring
+
 }
