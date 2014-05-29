@@ -3,50 +3,19 @@ package net.walend.digraph
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Provides constant-time access and mutators for edges. Stores Nodes in a Vector and Edges in an ArrayBuffer of ArrayBuffers.
+ * Provides constant-time access and mutators for edges. Stores Nodes in a Vector and Edges in a Vector of ArrayBuffers.
  *
  * @author dwalend
  * @since v0.1.0
  */
-//TODO make that edgeMatrix a Vector of ArrayBuffers, or even a Vector of Vector of mutable cells.
 //TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
 class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
-                               edgeMatrix:ArrayBuffer[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
+                               edgeMatrix:Vector[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
                                val noEdgeExistsValue:Edge //value for no edge
                                 ) extends IndexedDigraph[Node,Edge] with MutableEdgeDigraph[Node,Edge] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-/*
-  //todo rewrite with maps and filters if it is not too crazy
-  val predIndices:ArrayBuffer[ArrayBuffer[(InNode,Edge)]] = {
-    //for predecessors, if a is reachable from b then
-    //b's ArrayBuffer should have a's index
-    val result:ArrayBuffer[ArrayBuffer[(InNode,Edge)]] = edgeMatrix.map(x => ArrayBuffer[(InNode,Edge)]())
-    for(rowIndex <- 0 until edgeMatrix.size) {
-      for(columnIndex <- 0 until edgeMatrix.size) {
-        if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
-          result(columnIndex).append((inNodes(rowIndex),edgeMatrix(rowIndex)(columnIndex)))
-        }
-      }
-    }
-    result
-  }
-
-  val succIndices:ArrayBuffer[ArrayBuffer[(InNode,Edge)]] = {
-    //for successors, if a is reachable from b then
-    //a's ArrayBuffer should have b's index
-    val result:ArrayBuffer[ArrayBuffer[(InNode,Edge)]] = edgeMatrix.map(x => ArrayBuffer[(InNode,Edge)]())
-    for(rowIndex <- 0 until edgeMatrix.size) {
-      for(columnIndex <- 0 until edgeMatrix.size) {
-        if (edgeMatrix(rowIndex)(columnIndex) != noEdgeExistsValue) {
-          result(rowIndex).append((inNodes(columnIndex),edgeMatrix(rowIndex)(columnIndex)))
-        }
-      }
-    }
-    result
-  }
-*/
   override def nodes: IndexedSeq[Node] = outNodes
 
   type InnerNodeType = InNode
@@ -54,11 +23,12 @@ class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master inde
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
     override def successors: Seq[(InNode,InNode,Edge)] = {
-      ??? //todo
+      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsValue)
     }
 
     override def predecessors: Seq[(InNode,InNode,Edge)] = {
-      ??? //todo
+      val edgeColumn:Seq[Edge] = edgeMatrix.map(_(index))
+      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsValue)
     }
 
     override def hashCode(): Int = index
@@ -95,7 +65,6 @@ class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master inde
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
   }
 
-  //todo apply?
   override def edge(from: InNode, to: InNode):Edge = {
 
     edgeMatrix(from.index)(to.index)
@@ -123,7 +92,7 @@ object MatrixDigraph{
 
     val size = nodeValues.size
 
-    val matrix:ArrayBuffer[ArrayBuffer[Edge]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[ArrayBuffer]
+    val matrix:Vector[ArrayBuffer[Edge]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
 
     for (edgeTriple <- edgeSeq) {
       val row = nodeValues.indexOf(edgeTriple._1)
