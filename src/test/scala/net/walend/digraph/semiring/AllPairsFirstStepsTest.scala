@@ -57,16 +57,14 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val initialGraph:MutableEdgeDigraph[String,support.Label] = FloydWarshall.createLabelDigraph(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
-    val labelGraph = FloydWarshall.allPairsShortestPaths(initialGraph,support)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val initialGraph:IndexedDigraph[String,support.Label] = Dijkstra.createLabelDigraph(testGraph,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
-    val labels = Dijkstra.allPairsShortestPaths(initialGraph,support)
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
@@ -85,8 +83,7 @@ class AllPairsFirstStepsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val initialGraph:IndexedDigraph[String,support.Label] = Brandes.createLabelDigraph(testGraph,support,FewestNodes.convertEdgeToLabel)
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(initialGraph,support)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,support,FewestNodes.convertEdgeToLabel)
 
     labelGraphAndBetweenness._1.to[Set] should be (expectedEdges)
 

@@ -71,6 +71,33 @@ object Dijkstra {
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 
+  /**
+   * Create a digraph of Labels from an edge list.
+   *
+   * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   */
+  def createLabelDigraph[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                              extraNodes:Seq[Node] = Seq.empty,
+                                              support:SemiringSupport[Label,Key],
+                                              labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
+
+    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nonSelfEdges = edges.filter(x => x._1 != x._2)
+    val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
+
+    import net.walend.digraph.AdjacencyDigraph
+    AdjacencyDigraph(labelEdges,nodes,support.semiring.O)
+  }
+
+  def allPairsShortestPaths[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                            extraNodes:Seq[Node] = Seq.empty,
+                                            support:SemiringSupport[Label,Key],
+                                            labelForEdge:(Node,Node,Edge)=>Label):Seq[(Node,Node,Label)] = {
+    val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
+    labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
+  }
+
   def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
                                 labels:ArrayBuffer[Label],
                                 semiring:SemiringSupport[Label,Key]#Semiring)
@@ -132,24 +159,6 @@ object Dijkstra {
                                         (sink:initialDigraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)
     dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
-  }
-
-  /**
-   * Create a digraph of Labels from an arbitrary Digraph.
-   *
-   * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
-   */
-  def createLabelDigraph[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
-                                   support:SemiringSupport[Label,Key],
-                                   labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
-
-    val nodes = digraph.nodes
-    val nonSelfEdges = digraph.edges.filter(x => x._1 != x._2)
-    val edges = digraph.nodes.map(x => (x,x,support.semiring.I)) ++
-      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
-
-    import net.walend.digraph.AdjacencyDigraph
-    AdjacencyDigraph(edges,nodes,support.semiring.O)
   }
 }
 

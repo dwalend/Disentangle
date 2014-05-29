@@ -103,15 +103,23 @@ object Brandes {
   }
 
   /**
-   * Create a digraph of Labels from an arbitrary Digraph.
+   * Create a digraph of Labels from an edge list.
    *
    * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,Edge,CoreLabel,Key](digraph:Digraph[Node,Edge],
-                                              support:AllPathsFirstSteps[Node, CoreLabel, Key],
-                                              labelForEdge:(Node,Node,Edge)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
+  def createLabelDigraph[Node,Edge,CoreLabel,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                                  extraNodes:Seq[Node] = Seq.empty,
+                                                  support:AllPathsFirstSteps[Node, CoreLabel, Key],
+                                                  labelForEdge:(Node,Node,Edge)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
 
-    Dijkstra.createLabelDigraph(digraph,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
+    Dijkstra.createLabelDigraph(edges,extraNodes,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
   }
 
+  def allLeastPathsAndBetweenness[Node,Edge,CoreLabel,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                                           extraNodes:Seq[Node] = Seq.empty,
+                                                           support:AllPathsFirstSteps[Node, CoreLabel, Key],
+                                                           labelForEdge:(Node,Node,Edge)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
+    val labelGraph =  Dijkstra.createLabelDigraph(edges,extraNodes,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
+    allLeastPathsAndBetweenness(labelGraph,support)
+  }
 }

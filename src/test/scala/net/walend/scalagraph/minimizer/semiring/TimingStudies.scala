@@ -1,7 +1,7 @@
 package net.walend.scalagraph.minimizer.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
-import net.walend.digraph.IndexedDigraph
+import net.walend.digraph.{AdjacencyDigraph, IndexedDigraph}
 
 /**
  * @author dwalend
@@ -57,10 +57,7 @@ object TimingStudies {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val initialGraph:IndexedDigraph[Int,support.Label] = DDijkstra.createLabelDigraph(graph,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))
-//    val initialGraph:IndexedDigraph[Int,support.Label] = ConvertToLabelDigraph.convert(graph,support,FFewestNodes.convertEdgeToLabel)
-
-    val result = timeFunction{DDijkstra.allPairsShortestPaths(initialGraph,support)}
+    val result = timeFunction{DDijkstra.allPairsShortestPaths(graph.edges,graph.nodes,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))}
 /*
     val result = timeFunction{
         val initNode = initialGraph.innerNodes.head
@@ -162,8 +159,11 @@ object TimingStudies {
     }
 
     val result = timeFunction{
-      val initialGraph = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
-      DDijkstra.allPairsShortestPaths(initialGraph,support)
+      val labelGraphParts = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
+
+      //todo is there a way to do this without the cast?
+      def labelForLabel[N,E,L](from:N,to:N,edge:E):L = edge.asInstanceOf[L]
+      DDijkstra.allPairsShortestPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
     }
 
     result._2

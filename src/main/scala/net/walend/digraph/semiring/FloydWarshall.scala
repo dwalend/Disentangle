@@ -45,16 +45,24 @@ object FloydWarshall {
    *
    * @return a Digraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
-                                   support:SemiringSupport[Label,Key],
-                                   labelForEdge:(Node,Node,Edge)=>Label):MutableEdgeDigraph[Node,Label] = {
-    val nodes = digraph.nodes
-    val nonSelfEdges = digraph.edges.filter(x => x._1 != x._2)
-    val edges = digraph.nodes.map(x => (x,x,support.semiring.I)) ++
+  def createLabelDigraph[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                              extraNodes:Seq[Node] = Seq.empty,
+                                              support:SemiringSupport[Label,Key],
+                                              labelForEdge:(Node,Node,Edge)=>Label):MutableEdgeDigraph[Node,Label] = {
+    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nonSelfEdges = edges.filter(x => x._1 != x._2)
+    val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
     import net.walend.digraph.MatrixDigraph
-    MatrixDigraph(edges,nodes,support.semiring.O)
+    MatrixDigraph(labelEdges,nodes,support.semiring.O)
   }
 
+  def allPairsShortestPaths[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+                                                 extraNodes:Seq[Node] = Seq.empty,
+                                                 support:SemiringSupport[Label,Key],
+                                                 labelForEdge:(Node,Node,Edge)=>Label):MutableEdgeDigraph[Node,Label] = {
+    val initialDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
+    floydWarshall(initialDigraph,support)
+  }
 }

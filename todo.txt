@@ -1,6 +1,6 @@
 For this release
 
-* build translator from scala-graph to net.walend.digraph.FastGraph and (maybe) back
+* build translator from scala-graph to net.walend.digraph.Digraph and (maybe) back
 * automatically plot the results of the timing studies (and comparison with Jung)
 * Enron
 * test existing semirings
