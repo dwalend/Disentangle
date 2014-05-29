@@ -51,7 +51,6 @@ object Dijkstra {
       //take the top node
       val topNode = heap.takeTopValue()
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
-      //todo if you can get successors and edges in one call, you won't need the edge() call in relax, and can avoid building the edge matrix
       for(successor <- topNode.successors) {
         //if the node has not yet been visited (because its key is still in the heap)
         val heapKey = heapMembers(successor._2.index)
@@ -138,9 +137,9 @@ object Dijkstra {
   /**
    * Create a digraph of Labels from an arbitrary Digraph.
    *
-   * @return a FastDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def convert[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
+  def createLabelDigraph[Node,Edge,Label,Key](digraph:Digraph[Node,Edge],
                                    support:SemiringSupport[Label,Key],
                                    labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
 

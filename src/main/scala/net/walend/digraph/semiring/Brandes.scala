@@ -102,6 +102,16 @@ object Brandes {
     (edges,betweennessMap)
   }
 
-  //todo add convert, call Dijkstra's convert with the wrapper AllPathsFirstSteps semiring
+  /**
+   * Create a digraph of Labels from an arbitrary Digraph.
+   *
+   * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   */
+  def createLabelDigraph[Node,Edge,CoreLabel,Key](digraph:Digraph[Node,Edge],
+                                              support:AllPathsFirstSteps[Node, CoreLabel, Key],
+                                              labelForEdge:(Node,Node,Edge)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
+
+    Dijkstra.createLabelDigraph(digraph,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
+  }
 
 }

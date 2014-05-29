@@ -1,7 +1,5 @@
 package net.walend.digraph
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
  * Provides constant-time access for successor and predecessor edges for a node.
  *
@@ -62,7 +60,6 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
    */
   override def edges: Seq[(Node, Node, Edge)] = outSuccessors.flatten
 
-  //todo apply?
   override def edge(from: InNode, to: InNode):Edge = {
     inSuccessors(from.index).filter(x => x._2 == to) match {
       case Vector() => noEdgeExistsValue
