@@ -13,7 +13,9 @@ import net.walend.digraph.{Digraph, IndexedDigraph}
 
 object Dijkstra {
 
-
+  /**
+   * O(1)
+   */
   def relaxSource[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
                                   labels:ArrayBuffer[Label],
                                   semiring:SemiringSupport[Label,Key]#Semiring)
@@ -31,6 +33,8 @@ object Dijkstra {
 
   /**
    * Dijkstra's algorithm.
+   *
+   * O(n ln(n) + e)
    */
   def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
@@ -66,6 +70,9 @@ object Dijkstra {
     labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
   }
 
+  /**
+   * O(n^2 ln(n) + ne)
+   */
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
@@ -73,6 +80,8 @@ object Dijkstra {
 
   /**
    * Create a digraph of Labels from an edge list.
+   *
+   * O(n ln(n) + e ln(n))
    *
    * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
@@ -90,6 +99,9 @@ object Dijkstra {
     AdjacencyDigraph(labelEdges,nodes,support.semiring.O)
   }
 
+  /**
+   * O(n^2 ln(n) + ne)
+   */
   def allPairsShortestPaths[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
                                             extraNodes:Seq[Node] = Seq.empty,
                                             support:SemiringSupport[Label,Key],
@@ -98,6 +110,9 @@ object Dijkstra {
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 
+  /**
+   * O(1)
+   */
   def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
                                 labels:ArrayBuffer[Label],
                                 semiring:SemiringSupport[Label,Key]#Semiring)
@@ -115,6 +130,8 @@ object Dijkstra {
 
   /**
    * Dijkstra's algorithm for a single sink. This supports a heap argument to enable Brandes' algorithm. private to the semiring package to keep people out of trouble.
+   *
+   * O(n ln(n) + e)
    */
   //todo could not use default argument for the heap. Report that as a possible bug.
   private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
@@ -153,6 +170,8 @@ object Dijkstra {
 
   /**
    * Dijkstra's algorithm for a single sink.
+   *
+   * O(n ln(n) + e)
    */
   def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])

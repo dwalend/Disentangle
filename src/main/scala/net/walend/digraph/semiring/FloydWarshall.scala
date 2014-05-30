@@ -10,6 +10,9 @@ import net.walend.digraph.{Digraph, MutableEdgeDigraph}
  */
 object FloydWarshall {
 
+  /**
+   * O(1)
+   */
   def relax[Node,Edge,Key](labelDigraph:MutableEdgeDigraph[Node,Edge],
                  semiring:SemiringSupport[Edge,Key]#Semiring)
                 (from:labelDigraph.InnerNodeType,
@@ -26,6 +29,9 @@ object FloydWarshall {
     summaryLabel
   }
 
+  /**
+   * O(n^3)
+   */
   def floydWarshall[Node,Label,Key](labelDigraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
     val innerNodes = labelDigraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
@@ -35,6 +41,9 @@ object FloydWarshall {
     labelDigraph
   }
 
+  /**
+   * O(n^3)
+   */
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:MutableEdgeDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableEdgeDigraph[Node,Label] = {
 
     floydWarshall(labelDigraph,support)
@@ -42,6 +51,8 @@ object FloydWarshall {
 
   /**
    * Create a digraph of Labels from an arbitrary Digraph.
+   *
+   * O(n ln(n) + en)
    *
    * @return a Digraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
@@ -58,6 +69,9 @@ object FloydWarshall {
     MatrixDigraph(labelEdges,nodes,support.semiring.O)
   }
 
+  /**
+   * O(n^3)
+   */
   def allPairsShortestPaths[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
                                                  extraNodes:Seq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],

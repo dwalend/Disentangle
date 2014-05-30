@@ -7,6 +7,7 @@ package net.walend.heap
  * @since v0.0.0
  */
 
+//todo heap efficiencies
 class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
 
   def isEmpty:Boolean = size==0

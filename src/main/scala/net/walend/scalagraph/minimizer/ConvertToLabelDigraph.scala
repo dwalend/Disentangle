@@ -26,7 +26,7 @@ object ConvertToLabelDigraph {
     val nodes:Seq[Node] = originalGraph.nodes.toOuter.to[Seq]
 
     val identityEdges:Seq[(Node,Node,Label)] = nodes.map(x => (x,x,support.semiring.I))
-    val graphEdges:Seq[(Node,Node,Label)] = originalGraph.edges.map(labelForEdge).to[Seq]
+    val graphEdges:Seq[(Node,Node,Label)] = originalGraph.edges.map(labelForEdge).to[Seq].filter(x => x._1 != x._2) //no self-edges
 
     val edges:Seq[(Node,Node,Label)] = identityEdges ++ graphEdges
 

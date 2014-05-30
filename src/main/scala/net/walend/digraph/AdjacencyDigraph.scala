@@ -3,11 +3,11 @@ package net.walend.digraph
 /**
  * Provides constant-time access for successor and predecessor edges for a node.
  *
+ * The constructor is O(n + e ln(n))
+ *
  * @author dwalend
  * @since v0.1.0
  */
-/**
-  */
 class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
                                    outSuccessors:Vector[Vector[(Node,Node,Edge)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
                                    outPredecessors:Vector[Vector[(Node,Node,Edge)]],
@@ -49,17 +49,34 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
 
   }
 
+  /**
+   * O(ln(n))
+   *
+   * @return Some inner node if it exists in the digraph or None
+   */
   override def innerNode(value: Node): Option[InNode] = {
     nodeToInNode.get(value)
   }
 
+  /**
+   * O(1)
+   *
+   * @return InnerNode representation of all of the nodes in the graph.
+   */
   override def innerNodes: IndexedSeq[InNode] = inNodes
 
   /**
+   * O(n)
+   *
    * @return All of the edges in the graph
    */
   override def edges: Seq[(Node, Node, Edge)] = outSuccessors.flatten
 
+  /**
+   * O(n)
+   *
+   * @return the Edge between start and end or noEdgeExistsValue
+   */
   override def edge(from: InNode, to: InNode):Edge = {
     inSuccessors(from.index).filter(x => x._2 == to) match {
       case Vector() => noEdgeExistsValue
@@ -68,10 +85,25 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
     }
   }
 
+  /**
+   * O(1)
+   *
+   * @return
+   */
   override def node(i: Int): Node = nodes(i)
 
+  /**
+   * O(1)
+   *
+   * @return
+   */
   override def innerNodeForIndex(i: Int): InNode = innerNodes(i)
 
+  /**
+   * O(n)
+   *
+   * @return
+   */
   override def edge(i: Int, j: Int): Edge = {
     inSuccessors(i).filter(x => x._2 == inNodes(j)) match {
       case Vector() => noEdgeExistsValue
@@ -82,6 +114,9 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
 
 }
 
+/**
+ * O(n ln(n) + e ln(n))
+ */
 object AdjacencyDigraph{
 
   def apply[Node,Edge](edgeSeq:Seq[(Node,Node,Edge)] = Seq.empty,
