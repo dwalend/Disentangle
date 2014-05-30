@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.digraph.{Digraph, MutableEdgeDigraph}
+import net.walend.digraph.MutableEdgeDigraph
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.

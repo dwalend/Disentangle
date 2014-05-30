@@ -13,12 +13,11 @@ organization := "net.walend"
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
 version := "0.0.1-SNAPSHOT"
 
-//todo 2.11.1
-scalaVersion := "2.11.0"
+scalaVersion := "2.11.1"
 
 crossScalaVersions := Seq(scalaVersion.value)
 
-libraryDependencies += "com.assembla.scala-incubator" % "graph-core_2.11" % "1.8.1"
+libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.9.0"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
