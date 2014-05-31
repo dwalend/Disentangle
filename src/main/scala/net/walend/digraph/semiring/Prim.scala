@@ -9,6 +9,7 @@ import net.walend.heap.Heap
  * @author dwalend
  * @since v0.0.0
  */
+//todo do this with a subgraph
 object Prim {
 
   /**

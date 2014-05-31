@@ -2,7 +2,6 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
-import net.walend.digraph.{IndexedDigraph, MutableEdgeDigraph}
 
 /**
  *
@@ -10,7 +9,7 @@ import net.walend.digraph.{IndexedDigraph, MutableEdgeDigraph}
  * @author dwalend
  * @since v0.1.0
  */
-class AllPairsFirstStepsTest extends FlatSpec with Matchers {
+class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   val expectedEdges = Set(
     (B,B,Some(FirstSteps(0,Set()))),
