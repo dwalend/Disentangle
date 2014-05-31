@@ -1,8 +1,7 @@
-package net.walend.scalagraph.minimizer.semiring
+package net.walend.digraph.semiring
 
-import scalax.collection.Graph
 import scalax.collection.mutable.{Graph => MutableGraph}
-import net.walend.heap.{HeapOrdering, FibonacciHeap, Heap}
+import net.walend.heap.Heap
 
 /**
  * An implementation of Prim's algorithm for minimum spanning trees

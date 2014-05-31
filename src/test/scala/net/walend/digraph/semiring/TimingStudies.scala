@@ -1,7 +1,6 @@
-package net.walend.scalagraph.minimizer.semiring
+package net.walend.digraph.semiring
 
 import net.walend.scalagraph.minimizer.gengraph.GraphFactory
-import net.walend.digraph.{AdjacencyDigraph, IndexedDigraph}
 
 /**
  * @author dwalend
@@ -18,9 +17,6 @@ object TimingStudies {
     //Time Dijkstra's algorithm with AllShortestPaths
     val dijkstraResults = study(10,timeDijkstra,expectedTimeDijkstra)
     dijkstraResults.map(x => println(x))
-
-    val scalaGraphDijstraResults = study(10,timeScalaGraphDijkstra,expectedTimeDijkstra)
-    scalaGraphDijstraResults.map(x => println(x))
 
     val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
     scalaGraphConvertDijstraResults.map(x => println(x))
@@ -97,18 +93,6 @@ object TimingStudies {
     result._2
   }
 
-  def timeScalaGraphBrandes(nodeCount:Int):Long = {
-    val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
-
-    val semiring = support.semiring
-
-    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-    val labelGraph = new AllShortestPathsGraphBuilder[Int](semiring).initialLabelGraph(graph)
-    val result = timeFunction{Brandes.betweenness(support)(labelGraph)}
-
-    result._2
-  }
-
   def expectedTimeDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
 
     //O(|V|^2 ln|V|)
@@ -127,18 +111,6 @@ object TimingStudies {
     }
 
     ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
-  }
-
-  def timeScalaGraphDijkstra(nodeCount:Int):Long = {
-    val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
-
-    val semiring = support.semiring
-
-    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-    val labelGraph = new AllShortestPathsGraphBuilder[Int](semiring).initialLabelGraph(graph)
-    val result = timeFunction{Dijkstra.allPairsShortestPaths(support)(labelGraph)}
-
-    result._2
   }
 
   def timeScalaGraphConvertDijkstra(nodeCount:Int):Long = {
@@ -171,18 +143,6 @@ object TimingStudies {
 
   def expectedTimeFloyd(calibration:(Int,Long),nodeCount:Int):Long = {
     (Math.pow(nodeCount.toDouble/calibration._1,3) * calibration._2).toLong
-  }
-
-  def timeScalaGraphFloyd(nodeCount:Int):Long = {
-    val support:AllPaths[Int,Int,Int] = new AllPaths(FewestNodes)
-
-    val semiring = support.semiring
-
-    val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-    val labelGraph = new AllShortestPathsGraphBuilder[Int](semiring).initialLabelGraph(graph)
-    val result = timeFunction{FloydWarshall.floydWarshall(semiring)(labelGraph)}
-
-    result._2
   }
 
   def study(maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
