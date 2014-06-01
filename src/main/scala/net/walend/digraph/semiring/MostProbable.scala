@@ -58,7 +58,7 @@ object MostProbable extends SemiringSupport[Double,Double] {
      */
     //todo look again for a version that handles NaNs and infinities
     def tryCompare(x: Double, y: Double): Option[Int] = {
-      Some(y.compareTo(x))
+      Some(x.compareTo(y))
     }
 
     def keyDomainDescription = "between one and zero (the annihilator)"

@@ -1,7 +1,6 @@
 package net.walend.digraph.semiring
 
-import org.scalatest.{Matchers, 
-FlatSpec}
+import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
 
 /**
@@ -14,14 +13,14 @@ import net.walend.digraph.SomeGraph._
 class LeastWeightsTest extends FlatSpec with Matchers {
 
   val edgesToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
-                          ,bc -> 2.0
-                          ,cd -> 3.0
-                          ,de -> 4.0
-                          ,ef -> 5.0
-                          ,eb -> 6.0
-                          ,eh -> 7.0
-                          ,hc -> 8.0
-                          )
+                                                              ,bc -> 2.0
+                                                              ,cd -> 3.0
+                                                              ,de -> 4.0
+                                                              ,ef -> 5.0
+                                                              ,eb -> 6.0
+                                                              ,eh -> 7.0
+                                                              ,hc -> 8.0
+                                                              )
 
   def convertEdgeToLabel(start: String, end: String, edge: String): LeastWeights.Label = edgesToWeights.get((start,end,edge)).get
 
@@ -46,25 +45,25 @@ class LeastWeightsTest extends FlatSpec with Matchers {
                           (C,E,7.0),
                           (C,F,12.0),
                           (C,H,14.0),
-                          (D,B,10.0), //
-                          (D,C,12.0),  //
+                          (D,B,10.0),
+                          (D,C,12.0),
                           (D,D,0.0),
                           (D,E,4.0),
                           (D,F,9.0),
                           (D,H,11.0),
-                          (E,B,6.0),  //
-                          (E,C,8.0),  //
-                          (E,D,11.0), //
+                          (E,B,6.0),
+                          (E,C,8.0),
+                          (E,D,11.0),
                           (E,E,0.0),
                           (E,F,5.0),
                           (E,H,7.0),
                           (F,F,0.0),
                           (G,G,0.0),
-                          (H,B,21.0), //
-                          (H,C,8.0),  //
-                          (H,D,11.0), //
-                          (H,E,15.0), //
-                          (H,F,20.0), //
+                          (H,B,21.0),
+                          (H,C,8.0),
+                          (H,D,11.0),
+                          (H,E,15.0),
+                          (H,F,20.0),
                           (H,H,0.0)
                         )
 
