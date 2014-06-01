@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.digraph.{Digraph, IndexedDigraph}
+import net.walend.digraph.IndexedDigraph
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.

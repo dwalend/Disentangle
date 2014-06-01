@@ -58,7 +58,7 @@ object LeastWeights extends SemiringSupport[Double,Double] {
      */
     //todo look again for a version that handles NaNs and infinities
     def tryCompare(x: Double, y: Double): Option[Int] = {
-      Some(x.compareTo(y))
+      Some(y.compareTo(x))
     }
 
     def keyDomainDescription = "between zero and Double.PositiveInfinity (the annihilator)"

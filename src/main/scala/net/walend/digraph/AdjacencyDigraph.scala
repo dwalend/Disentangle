@@ -112,6 +112,10 @@ class AdjacencyDigraph[Node,Edge](outNodes:Vector[Node], //provides the master i
     }
   }
 
+  override def toString():String = {
+    s"$inNodes $edges"
+  }
+
 }
 
 /**
