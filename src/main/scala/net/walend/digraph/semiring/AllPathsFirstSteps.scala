@@ -43,7 +43,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
   def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
   def heapKeyForLabel = {
-    case Some(nextStep) => nextStep.weight.asInstanceOf[Key]
+    case Some(nextStep) => coreSupport.heapKeyForLabel(nextStep.weight)
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 

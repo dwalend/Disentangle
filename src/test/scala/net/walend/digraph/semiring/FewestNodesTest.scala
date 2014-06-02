@@ -94,4 +94,24 @@ class FewestNodesTest extends FlatSpec with Matchers {
     labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
   }
+
+  val expectedBetweenness:Map[String,Double] = Map(
+    A -> 0.0,
+    B -> 6.5,
+    C -> 13.0,
+    D -> 13.0,
+    E -> 13.0,
+    F -> 0.0,
+    G -> 0.0,
+    H -> 1.5
+  )
+
+  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+
+    val brandesSupport = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
+
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,FewestNodes.convertEdgeToLabel)
+
+    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+  }
 }

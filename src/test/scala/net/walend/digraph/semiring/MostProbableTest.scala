@@ -83,4 +83,25 @@ class MostProbableTest extends FlatSpec with Matchers {
     expectedEdges -- labels.to[Set] should be (Set.empty)
     labels.to[Set] should be (expectedEdges)
   }
+
+  val expectedBetweenness:Map[String,Double] = Map(
+    A -> 0.0,
+    B -> 8.0,
+    C -> 13.0,
+    D -> 13.0,
+    E -> 13.0,
+    F -> 0.0,
+    G -> 0.0,
+    H -> 0.0
+  )
+
+  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+
+    val brandesSupport = new AllPathsFirstSteps[String,Double,Double](MostProbable)
+
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,convertEdgeToLabel)
+
+    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+  }
+
 }
