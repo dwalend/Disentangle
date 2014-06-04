@@ -1,6 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.HeapOrdering
+import net.walend.digraph.Digraph
 
 /**
  * Finds all minimal paths that use the core semiring.
@@ -54,6 +55,47 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertEdgeToLabelFunc[Edge](coreLabelForEdge:(Node,Node,Edge)=>CoreLabel):((Node,Node,Edge) => Label) = convertEdgeToLabel(coreLabelForEdge)
 
+  /*
+  //branching to figure this out
+  //todo use a Stream
+  def allPaths(labelGraph:Digraph[Node,Label],from:Node,to:Node):Seq[(Node,Seq[(Label,Node)])] = {
+
+    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
+    val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
+
+    val label:Label = labelGraph.edge(innerFrom,innerTo)
+    label match {
+      case Some(firstSteps) => {
+        firstSteps.choices.map(step => allPaths(labelGraph,step,to))
+
+
+      }
+      case None => Seq.empty
+    }
+  }
+  */
+  /**
+   * Create the subgraph defined by AllPathsFirstSteps
+   */
+  /*
+  def subgraph(labelGraph:Digraph[Node,Label],from:Node,to:Node):Set[(Node,Node,Label)] = {
+
+    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
+    val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
+
+    val label:Label = labelGraph.edge(innerFrom,innerTo)
+    label match {
+      case Some(firstSteps) => {
+        val theseSteps:Set[(Node,Node,Label)] = firstSteps.choices.map(step => (from,step,firstSteps))
+        val explore:Set[(Node,Node,Label)] = firstSteps.choices.map(step => subgraph(labelGraph,step,to)).flatten
+
+        theseSteps ++ explore
+      }
+      case None => Set.empty
+    }
+
+  }
+  */
   object AllPathsSemiring extends Semiring {
 
 // todo report bug that I can't do this here

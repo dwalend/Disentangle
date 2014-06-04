@@ -1,6 +1,6 @@
 package net.walend.digraph.semiring
 
-import net.walend.scalagraph.minimizer.gengraph.GraphFactory
+import net.walend.scalagraph.semiring.GraphFactory
 
 /**
  * @author dwalend
@@ -120,7 +120,7 @@ object TimingStudies {
     import net.walend.digraph.semiring.{AllPathsFirstSteps, FirstSteps}
     import scalax.collection.Graph
     import scalax.collection.GraphEdge.DiEdge
-    import net.walend.scalagraph.minimizer.ConvertToLabelDigraph
+    import net.walend.scalagraph.semiring.ConvertToLabelDigraph
 
     val support:AllPathsFirstSteps[Int,Int,Int] = new AllPathsFirstSteps(FFewestNodes)
 

@@ -1,4 +1,4 @@
-package net.walend.scalagraph.minimizer.gengraph
+package net.walend.scalagraph.semiring
 
 import scalax.collection.immutable.Graph
 import scala.util.Random

@@ -1,4 +1,4 @@
-package net.walend.scalagraph.minimizer
+package net.walend.scalagraph.semiring
 
 import net.walend.digraph.semiring.SemiringSupport
 
