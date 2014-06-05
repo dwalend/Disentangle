@@ -12,7 +12,7 @@ import net.walend.digraph.SomeGraph._
 
 class TransitiveClosureTest extends FlatSpec with Matchers {
 
-  val expectedEdges = Set(
+  val expectedArcs = Set(
     (A,A,true),
     (A,B,true),
     (A,C,true),
@@ -56,17 +56,17 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,TransitiveClosure,TransitiveClosure.convertArcToLabel)
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,TransitiveClosure,TransitiveClosure.convertArcToLabel)
 
-    labels.size should be (expectedEdges.size)
-    labels.to[Set] should be (expectedEdges)
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -84,7 +84,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
     val brandesSupport = new AllPathsFirstSteps[String,Boolean,TransitiveClosureHeapKey](TransitiveClosure)
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,TransitiveClosure.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,TransitiveClosure.convertArcToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

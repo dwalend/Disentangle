@@ -3,7 +3,7 @@ package net.walend.digraph.semiring
 import net.walend.heap.HeapOrdering
 
 /**
- * Finds the length of a path that traverses the fewest edges.
+ * Finds the length of a path that traverses the fewest arcs.
  *
  * @author dwalend
  * @since v0.1.0
@@ -16,7 +16,7 @@ object FewestNodes extends SemiringSupport[Int,Int] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertEdgeToLabel[Node, Edge](start: Node, end: Node, edge: Edge): FewestNodes.Label = 1
+  def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): FewestNodes.Label = 1
 
   object FewestNodesSemiring extends Semiring {
 

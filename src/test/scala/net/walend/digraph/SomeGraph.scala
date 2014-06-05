@@ -31,8 +31,8 @@ object SomeGraph {
   val eh = (E,H,"eh")
   val hc = (H,C,"hc")
 
-  val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
+  val testArcs = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:Digraph[String,String] = AdjacencyDigraph(testEdges,testNodes,"")
+  val testGraph:Digraph[String,String] = AdjacencyDigraph(testArcs,testNodes,"")
 
 }

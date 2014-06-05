@@ -12,7 +12,7 @@ import net.walend.digraph.SomeGraph._
 
 class MostProbableTest extends FlatSpec with Matchers {
 
-  val edgesToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
+  val arcsToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
                                                               ,bc -> 0.9
                                                               ,cd -> 0.8
                                                               ,de -> 0.7
@@ -22,10 +22,10 @@ class MostProbableTest extends FlatSpec with Matchers {
                                                               ,hc -> 0.3
                                                             )
 
-  def convertEdgeToLabel(start: String, end: String, edge: String): LeastWeights.Label = edgesToWeights.get((start,end,edge)).get
+  def convertEdgeToLabel(start: String, end: String, edge: String): LeastWeights.Label = arcsToWeights.get((start,end,edge)).get
 
 
-  val expectedEdges = Set(
+  val expectedArcs = Set(
                           (A,A,1.0),
                           (A,B,1.0),
                           (A,C,0.9),
@@ -70,18 +70,18 @@ class MostProbableTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,MostProbable,convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,MostProbable,convertEdgeToLabel)
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,MostProbable,convertEdgeToLabel)
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,MostProbable,convertEdgeToLabel)
 
-    labels.to[Set] -- expectedEdges should be (Set.empty)
-    expectedEdges -- labels.to[Set] should be (Set.empty)
-    labels.to[Set] should be (expectedEdges)
+    labels.to[Set] -- expectedArcs should be (Set.empty)
+    expectedArcs -- labels.to[Set] should be (Set.empty)
+    labels.to[Set] should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -99,7 +99,7 @@ class MostProbableTest extends FlatSpec with Matchers {
 
     val brandesSupport = new AllPathsFirstSteps[String,Double,Double](MostProbable)
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,convertEdgeToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

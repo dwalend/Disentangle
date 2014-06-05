@@ -12,11 +12,11 @@ import net.walend.digraph.SomeGraph._
 
 class FewestNodesTest extends FlatSpec with Matchers {
 
-  "Initializing the label graph" should "produce a label graph with self-edges and edges where SomeGraph has them" in {
+  "Initializing the label graph" should "produce a label graph with self-arcs and arcs where SomeGraph has them" in {
 
-    val labelGraph = FloydWarshall.createLabelDigraph(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.createLabelDigraph(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
 
-    val expectedEdges = Set(
+    val expectedArcs = Set(
       (A,B,1),
       (A,A,0),
       (B,C,1),
@@ -35,10 +35,10 @@ class FewestNodesTest extends FlatSpec with Matchers {
       (H,H,0)
     )
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
-  val expectedEdges = Set(
+  val expectedArcs = Set(
     (A,A,0),
     (A,B,1),
     (A,C,2),
@@ -82,17 +82,17 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
 
-    labels.size should be (expectedEdges.size)
-    labels.to[Set] should be (expectedEdges)
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -110,7 +110,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     val brandesSupport = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,FewestNodes.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,FewestNodes.convertArcToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

@@ -11,7 +11,7 @@ import net.walend.digraph.SomeGraph._
  */
 class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
-  val expectedEdges = Set(
+  val expectedArcs = Set(
     (A,A,Some(FirstSteps(0,Set()))),
     (A,B,Some(FirstSteps(1,Set(B)))),
     (A,C,Some(FirstSteps(2,Set(B)))),
@@ -57,17 +57,17 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
 
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
 
-    labels.size should be (expectedEdges.size)
-    labels.to[Set] should be (expectedEdges)
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -83,9 +83,9 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,support,FewestNodes.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,support,FewestNodes.convertArcToLabel)
 
-    labelGraphAndBetweenness._1.to[Set] should be (expectedEdges)
+    labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

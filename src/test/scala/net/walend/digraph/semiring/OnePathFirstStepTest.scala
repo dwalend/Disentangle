@@ -11,7 +11,7 @@ import net.walend.digraph.SomeGraph._
  */
 class OnePathFirstStepTest extends FlatSpec with Matchers {
 
-  val expectedEdges = Set[(String, String, Option[net.walend.digraph.semiring.FirstStep[String,Int]])](
+  val expectedArcs = Set[(String, String, Option[net.walend.digraph.semiring.FirstStep[String,Int]])](
     (A,A,Some(FirstStep(0,None))),
     (A,B,Some(FirstStep(1,Some(B)))),
     (A,C,Some(FirstStep(2,Some(B)))),
@@ -57,17 +57,17 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
 
-    labelGraph.edges.to[Set] -- expectedEdges should be (Set.empty)
-    labelGraph.edges.to[Set] should be (expectedEdges)
+    labelGraph.arcs.to[Set] -- expectedArcs should be (Set.empty)
+    labelGraph.arcs.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
 
-    labels.size should be (expectedEdges.size)
-    labels.to[Set] should be (expectedEdges)
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
   }
 }

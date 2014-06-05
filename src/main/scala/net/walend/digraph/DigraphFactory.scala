@@ -13,22 +13,22 @@ object DigraphFactory {
   /**
    * Create a randomly connected graph, where each node has a limited number of connections to other nodes
    */
-  def createRandomNormalDigraph(nodeCount:Int,maxOutEdgesPerNode:Int):Digraph[Int,Boolean] = {
+  def createRandomNormalDigraph(nodeCount:Int,maxOutArcsPerNode:Int):Digraph[Int,Boolean] = {
 
-    require(maxOutEdgesPerNode < nodeCount)
+    require(maxOutArcsPerNode < nodeCount)
 
     val nodes:Set[Int] = (0 until nodeCount).to[Set]
 
-    val seqOfListOfEdges:IndexedSeq[Seq[(Int,Int,Boolean)]] = for(fromNode:Int <- 0 until nodeCount) yield {
-      val toNodes:Seq[Int] = Random.shuffle((nodes - fromNode).to[Seq]).take(Random.nextInt(maxOutEdgesPerNode))
-      val someEdges:Seq[(Int,Int,Boolean)] = for(toNode:Int <- toNodes) yield {
+    val seqOfListOfArcs:IndexedSeq[Seq[(Int,Int,Boolean)]] = for(fromNode:Int <- 0 until nodeCount) yield {
+      val toNodes:Seq[Int] = Random.shuffle((nodes - fromNode).to[Seq]).take(Random.nextInt(maxOutArcsPerNode))
+      val someArcs:Seq[(Int,Int,Boolean)] = for(toNode:Int <- toNodes) yield {
         (fromNode,toNode,true)
       }
-      someEdges
+      someArcs
     }
 
-    val edges:Seq[(Int,Int,Boolean)] = seqOfListOfEdges.flatten
+    val arcs:Seq[(Int,Int,Boolean)] = seqOfListOfArcs.flatten
 
-    AdjacencyDigraph(edges,nodes.to[Seq],false)
+    AdjacencyDigraph(arcs,nodes.to[Seq],false)
   }
 }

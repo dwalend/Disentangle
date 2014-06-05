@@ -13,7 +13,7 @@ import net.walend.digraph.{IndexedDigraph, Digraph}
 object Brandes {
 
   /**
-   * Dijkstra's algorithm for a single sink, with a Seq of visited edges to support Brandes' algorithm.
+   * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
    */
   def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
@@ -31,11 +31,11 @@ object Brandes {
       }
     }
 
-    val allEdges = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
-    val originEdgeStack = stack.map(x => (x.value,allEdges(x.index)._3))
+    val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
+    val originArcStack = stack.map(x => (x.value,allArcs(x.index)._3))
 
-    //todo filter allEdges
-    (allEdges.filter(x => x._3 != support.semiring.O),originEdgeStack)
+    //todo filter allArcs
+    (allArcs.filter(x => x._3 != support.semiring.O),originArcStack)
   }
 
     /**
@@ -51,14 +51,14 @@ object Brandes {
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
 
     //for each possible choice of next step
-    for (edge <- stack) {
+    for (arc <- stack) {
       //figure out the partial betweenness to apply to that step
-      val label: Label = edge._2
+      val label: Label = arc._2
       label match {
         case None => //nothing to do
         case Some(sourceLabel: FirstSteps[Node, CoreLabel]) => {
           val numChoices: Double = sourceLabel.choices.size
-          val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(edge._1, 0.0)
+          val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(arc._1, 0.0)
           for (choice <- sourceLabel.choices) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
@@ -86,40 +86,40 @@ object Brandes {
 
     type Label = support.Label
 
-    val edgesAndPartialBetweennesses:Seq[(Seq[(Node,Node,Label)],Map[Node, Double])] = for(sink <- initialGraph.innerNodes) yield {
-      val edgesAndNodeStack:(Seq[(Node,Node,Label)],Seq[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
-      val partialB = partialBetweenness(support,initialGraph)(sink,edgesAndNodeStack._2)
-      (edgesAndNodeStack._1,partialB)
+    val arcsAndPartialBetweennesses:Seq[(Seq[(Node,Node,Label)],Map[Node, Double])] = for(sink <- initialGraph.innerNodes) yield {
+      val arcsAndNodeStack:(Seq[(Node,Node,Label)],Seq[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
+      val partialB = partialBetweenness(support,initialGraph)(sink,arcsAndNodeStack._2)
+      (arcsAndNodeStack._1,partialB)
     }
 
     def betweennessForNode(node: Node): Double = {
-      edgesAndPartialBetweennesses.map(x => x._2.getOrElse(node, 0.0)).sum
+      arcsAndPartialBetweennesses.map(x => x._2.getOrElse(node, 0.0)).sum
     }
     val betweennessMap:Map[Node, Double] = initialGraph.nodes.map(node => (node, betweennessForNode(node))).toMap
 
-    val edges:Seq[(Node,Node,Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten
+    val arcs:Seq[(Node,Node,Label)] = arcsAndPartialBetweennesses.map(x => x._1).flatten
 
-    (edges,betweennessMap)
+    (arcs,betweennessMap)
   }
 
   /**
-   * Create a digraph of Labels from an edge list.
+   * Create a digraph of Labels from an arc list.
    *
-   * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   * @return an IndexedDigraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,Edge,CoreLabel,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+  def createLabelDigraph[Node,Arc,CoreLabel,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
                                                   extraNodes:Seq[Node] = Seq.empty,
                                                   support:AllPathsFirstSteps[Node, CoreLabel, Key],
-                                                  labelForEdge:(Node,Node,Edge)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
+                                                  labelForArc:(Node,Node,Arc)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
 
-    Dijkstra.createLabelDigraph(edges,extraNodes,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
+    Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[Arc](labelForArc))
   }
 
-  def allLeastPathsAndBetweenness[Node,Edge,CoreLabel,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+  def allLeastPathsAndBetweenness[Node,Arc,CoreLabel,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
                                                            extraNodes:Seq[Node] = Seq.empty,
                                                            support:AllPathsFirstSteps[Node, CoreLabel, Key],
-                                                           labelForEdge:(Node,Node,Edge)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
-    val labelGraph =  Dijkstra.createLabelDigraph(edges,extraNodes,support,support.convertEdgeToLabelFunc[Edge](labelForEdge))
+                                                           labelForArc:(Node,Node,Arc)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
+    val labelGraph =  Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[Arc](labelForArc))
     allLeastPathsAndBetweenness(labelGraph,support)
   }
 }

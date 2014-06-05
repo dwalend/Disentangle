@@ -34,7 +34,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    *
-   * O(n ln(n) + e)
+   * O(n ln(n) + a)
    */
   def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
@@ -71,7 +71,7 @@ object Dijkstra {
   }
 
   /**
-   * O(n^2 ln(n) + ne)
+   * O(n^2 ln(n) + na)
    */
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
@@ -79,34 +79,34 @@ object Dijkstra {
   }
 
   /**
-   * Create a digraph of Labels from an edge list.
+   * Create a digraph of Labels from an arc list.
    *
-   * O(n ln(n) + e ln(n))
+   * O(n ln(n) + a ln(n))
    *
-   * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
+   * @return an IndexedDigraph with all nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+  def createLabelDigraph[Node,Arc,Label,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
                                               extraNodes:Seq[Node] = Seq.empty,
                                               support:SemiringSupport[Label,Key],
-                                              labelForEdge:(Node,Node,Edge)=>Label):IndexedDigraph[Node,Label] = {
+                                              labelForArc:(Node,Node,Arc)=>Label):IndexedDigraph[Node,Label] = {
 
-    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
-    val nonSelfEdges = edges.filter(x => x._1 != x._2)
-    val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
-      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
+    val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
+    val nonSelfArcs = arcs.filter(x => x._1 != x._2)
+    val labelArcs = nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfArcs.map(x => (x._1,x._2,labelForArc(x._1,x._2,x._3)))
 
     import net.walend.digraph.AdjacencyDigraph
-    AdjacencyDigraph(labelEdges,nodes,support.semiring.O)
+    AdjacencyDigraph(labelArcs,nodes,support.semiring.O)
   }
 
   /**
-   * O(n^2 ln(n) + ne)
+   * O(n^2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,Edge,Label,Key](edges:Seq[(Node,Node,Edge)] = Seq.empty,
+  def allPairsShortestPaths[Node,Arc,Label,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
                                             extraNodes:Seq[Node] = Seq.empty,
                                             support:SemiringSupport[Label,Key],
-                                            labelForEdge:(Node,Node,Edge)=>Label):Seq[(Node,Node,Label)] = {
-    val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
+                                            labelForArc:(Node,Node,Arc)=>Label):Seq[(Node,Node,Label)] = {
+    val labelDigraph = createLabelDigraph(arcs,extraNodes,support,labelForArc)
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 
@@ -131,7 +131,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm for a single sink. This supports a heap argument to enable Brandes' algorithm. private to the semiring package to keep people out of trouble.
    *
-   * O(n ln(n) + e)
+   * O(n ln(n) + a)
    */
   //todo could not use default argument for the heap. Report that as a possible bug.
   private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
@@ -165,13 +165,14 @@ object Dijkstra {
       }
     }
 
+    //todo filter out arcs == semiring.O
     labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
   }
 
   /**
    * Dijkstra's algorithm for a single sink.
    *
-   * O(n ln(n) + e)
+   * O(n ln(n) + a)
    */
   def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])

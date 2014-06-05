@@ -3,18 +3,18 @@ package net.walend.digraph
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Provides constant-time access and mutators for edges. Stores Nodes in a Vector and Edges in a Vector of ArrayBuffers.
+ * Provides constant-time access and mutator for arcs. Stores Nodes in a Vector and Arcs in a Vector of ArrayBuffers.
  *
  * The constructor is O(n)
  *
  * @author dwalend
  * @since v0.1.0
  */
-//TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
-class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master index values for each node.
-                               edgeMatrix:Vector[ArrayBuffer[Edge]], // (row,column) is (start,end), indexed by node.
-                               val noEdgeExistsValue:Edge //value for no edge
-                                ) extends IndexedDigraph[Node,Edge] with MutableEdgeDigraph[Node,Edge] {
+//TODO for the Atomic version, make arcMatrix a Vector of AtomicReferences
+class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index values for each node.
+                               arcMatrix:Vector[ArrayBuffer[Arc]], // (row,column) is (start,end), indexed by node.
+                               val noArcExistsValue:Arc //value for no arc
+                                ) extends IndexedDigraph[Node,Arc] with MutableArcDigraph[Node,Arc] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
@@ -30,16 +30,16 @@ class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master inde
     /**
      * O(n^2)
      */
-    override def successors: Seq[(InNode,InNode,Edge)] = {
-      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsValue)
+    override def successors: Seq[(InNode,InNode,Arc)] = {
+      inNodes.zip(arcMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noArcExistsValue)
     }
 
     /**
      * O(n^2)
      */
-    override def predecessors: Seq[(InNode,InNode,Edge)] = {
-      val edgeColumn:Seq[Edge] = edgeMatrix.map(_(index))
-      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsValue)
+    override def predecessors: Seq[(InNode,InNode,Arc)] = {
+      val arcColumn:Seq[Arc] = arcMatrix.map(_(index))
+      inNodes.zip(arcColumn).map(x => (x._1,this,x._2)).filter(_._2 != noArcExistsValue)
     }
 
     override def hashCode(): Int = index
@@ -71,36 +71,33 @@ class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master inde
   /**
    * O(n^2)
    *
-   * @return All of the edges in the graph
+   * @return All of the arcs in the graph
    */
-  override def edges: Seq[(Node, Node, Edge)] = {
+  override def arcs: Seq[(Node, Node, Arc)] = {
 
-    def edgesInRow(row:(ArrayBuffer[Edge],Int)):Seq[(Node,Node,Edge)] = {
+    def arcsInRow(row:(ArrayBuffer[Arc],Int)):Seq[(Node,Node,Arc)] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
-      val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsValue))
-      cellsWithEdges.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
+      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsValue))
+      cellsWithArcs.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
     }
 
-    edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
+    arcMatrix.zipWithIndex.map(row => arcsInRow(row)).flatten
   }
 
   /**
    * O(1)
    *
-   * @return the Edge between start and end or noEdgeExistsValue
+   * @return the Arc between start and end or noArcExistsValue
    */
-  override def edge(from: InNode, to: InNode):Edge = {
-
-    edgeMatrix(from.index)(to.index)
-  }
+  override def arc(from: InNode, to: InNode):Arc = arcMatrix(from.index)(to.index)
+ 
 
   /**
    * O(1)
    */
-  override def updateEdge(from: InNode, to: InNode, edge: Edge): Unit = {
-    edgeMatrix(from.index)(to.index) = edge
-  }
+  override def upsertArc(from: InNode, to: InNode, arc: Arc): Unit = arcMatrix(from.index)(to.index) = arc
+
 
   /**
    * O(1)
@@ -115,7 +112,7 @@ class MatrixDigraph[Node,Edge](outNodes:Vector[Node], //provides the master inde
   /**
    * O(1)
    */
-  override def edge(i: Int, j: Int): Edge = edgeMatrix(i)(j)
+  override def arc(i: Int, j: Int): Arc = arcMatrix(i)(j)
 
 }
 
@@ -124,26 +121,26 @@ object MatrixDigraph{
   /**
    * O(n ln(n) + en)
    */
-  def apply[Node,Edge](edgeSeq:Seq[(Node,Node,Edge)] = Seq.empty,
+  def apply[Node,Arc](arcSeq:Seq[(Node,Node,Arc)] = Seq.empty,
                        extraNodes:Seq[Node] = Seq.empty,
-                       noEdgeExistsValue:Edge = null) = {
+                       noArcExistsValue:Arc = null) = {
 
-    val nodeValues:Vector[Node] = (extraNodes ++ edgeSeq.map(_._1) ++ edgeSeq.map(_._2)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (extraNodes ++ arcSeq.map(_._1) ++ arcSeq.map(_._2)).distinct.to[Vector]
 
     val size = nodeValues.size
 
-    val matrix:Vector[ArrayBuffer[Edge]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
+    val matrix:Vector[ArrayBuffer[Arc]] = nodeValues.map(x => ArrayBuffer.fill(size)(noArcExistsValue)).to[Vector]
 
-    for (edgeTriple <- edgeSeq) {
-      val row = nodeValues.indexOf(edgeTriple._1)
-      val column = nodeValues.indexOf(edgeTriple._2)
+    for (arcTriple <- arcSeq) {
+      val row = nodeValues.indexOf(arcTriple._1)
+      val column = nodeValues.indexOf(arcTriple._2)
 
-      assert(matrix(row)(column)==noEdgeExistsValue,s"edgeSeq includes two edges between ${edgeTriple._1} and ${edgeTriple._2}, ${matrix(row)(column)} and ${edgeTriple._3}")
+      assert(matrix(row)(column)==noArcExistsValue,s"arcSeq includes two arcs between ${arcTriple._1} and ${arcTriple._2}, ${matrix(row)(column)} and ${arcTriple._3}")
 
-      matrix(row)(column) = edgeTriple._3
+      matrix(row)(column) = arcTriple._3
     }
 
-    new MatrixDigraph(nodeValues,matrix,noEdgeExistsValue)
+    new MatrixDigraph(nodeValues,matrix,noArcExistsValue)
   }
 
 }

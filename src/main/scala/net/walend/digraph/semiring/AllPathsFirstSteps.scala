@@ -48,12 +48,12 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
-  def convertEdgeToLabel[Edge](coreLabelForEdge:(Node,Node,Edge)=>CoreLabel)
-                              (start: Node, end: Node, edge: Edge):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edge),Set(end)))
+  def convertArcToLabel[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel)
+                              (start: Node, end: Node, arc: Arc):Label = {
+    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arc),Set(end)))
   }
 
-  def convertEdgeToLabelFunc[Edge](coreLabelForEdge:(Node,Node,Edge)=>CoreLabel):((Node,Node,Edge) => Label) = convertEdgeToLabel(coreLabelForEdge)
+  def convertArcToLabelFunc[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel):((Node,Node,Arc) => Label) = convertArcToLabel(coreLabelForArc)
 
   /*
   //branching to figure this out
@@ -63,7 +63,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
     val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
 
-    val label:Label = labelGraph.edge(innerFrom,innerTo)
+    val label:Label = labelGraph.arc(innerFrom,innerTo)
     label match {
       case Some(firstSteps) => {
         firstSteps.choices.map(step => allPaths(labelGraph,step,to))
@@ -83,7 +83,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
     val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
 
-    val label:Label = labelGraph.edge(innerFrom,innerTo)
+    val label:Label = labelGraph.arc(innerFrom,innerTo)
     label match {
       case Some(firstSteps) => {
         val theseSteps:Set[(Node,Node,Label)] = firstSteps.choices.map(step => (from,step,firstSteps))

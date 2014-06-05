@@ -3,7 +3,7 @@ package net.walend.digraph.semiring
 import net.walend.heap.HeapOrdering
 
 /**
- * Finds most probable paths that traverse from start to end nodes with the on double-weight edges (weights between zero and one).
+ * Finds most probable paths that traverse from start to end nodes with the on double-weight arc (weights between zero and one).
  *
  * @author dwalend
  * @since v0.1.0
@@ -17,7 +17,7 @@ object MostProbable extends SemiringSupport[Double,Double] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertEdgeToLabel[Node, Edge](start: Node, end: Node, edge: Edge): MostProbable.Label = 1
+  def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): MostProbable.Label = 1
 
   object MostProbableSemiring extends Semiring {
 
