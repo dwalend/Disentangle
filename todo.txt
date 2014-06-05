@@ -9,6 +9,8 @@ For this release
 
 * a test of scala-graph translated
 * automatically plot the results of the timing studies (and comparison with Jung)
+* 2.10 and 2.11 versions
+
 * Enron
 * path representation for net.walend.digraph
 * translator from net.walend.digraph.path to scala-graph's paths
