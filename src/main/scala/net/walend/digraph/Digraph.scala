@@ -10,7 +10,7 @@ package net.walend.digraph
  * @since v0.1.0
  */
 //todo split up and start a package.scala
-
+//todo edge type - Pair, (InnerNodeType,InnerNodeType,Arc), etc, and an edges method
 trait Graph[Node] {
 
   def nodes:Seq[Node]

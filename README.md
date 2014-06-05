@@ -97,132 +97,110 @@ Semirings can be composed. ScalaGraphMinimizer takes advantage of this by suppli
 
 ## Customizing ScalaGraphMinimizer
 
-Customize ScalaGraphMinimizer with your own Semirings, and algorithms.
+Customize ScalaGraphMinimizer with your own mappings, Semirings and algorithms.
 
+### Converting Your Graph to a Sequence of (Node,Node,Arc) Tuples
 
-//todo start here
-### Creating a Custom LabelGraphBuilder
+FloydWarshall, Dijkstra, and Brandes each include a method that take sequences of (Node,Node,Arc) tuples. These methods require you to provide a function that converts a tuple into a label that fits your semiring's Label. 
+
+These are typically very straightforward to create. The decorator semirings listed above each include helper functions that require a similar function to convert the tuple to the core semiring's Label.
+
+    labelForArc:(Node,Node,Arc)=>Label
+
+These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the arcs, and has some influence over the ordering of the algorithm's output.
+
+FloydWarshall, Dijkstra, and Brandes each also include a method that takes a Digraph implementation. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
+
+    labelDigraph:IndexedDigraph[Node,Label]
 
 You are very likely to need your own LabelGraphBuilder to create a label graph from your own specialized graph. The easiest way is to extend AbstractLabelGraphBuilder and fill in
 
     def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
                                                         (edgeT:originalGraph.EdgeT):Label
 
-AbstractLabelGraphBuilder has a semiring available. From the originalGraph, it creates a graph with a node for each original node, a self-edge with an identity (semiring.I) label, and calls initialLabelFromGraphEdge to create a lable for MLDiEdge for each original directed edge.
-
-In a future release I hope to provide GraphBuilders that can help with the decorator semirings. That's part of the puzzle to solve with the API in the first release.
-
-Here's an example LabelGraphBuilder that makes Double labels:
-
-    import scala.reflect.runtime.universe.TypeTag
-    class MostProbableGraphBuilder[N:TypeTag] extends AbsractLabelGraphBuilder[N,Double](MostProbableSemiring) {
-
-      import scalax.collection.Graph
-      import scalax.collection.GraphPredef.EdgeLikeIn
-      import scala.language.higherKinds
-
-      def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph: Graph[N, E])
-                                                          (edgeT: originalGraph.type#EdgeT): Double = {
-
-        val edge:E[N] = edgeT.toOuter
-        require(edge.label.isInstanceOf[Double],"Edge labels must exist and be Doubles")
-        val weight = edge.label.asInstanceOf[Double]
-        require(weight >= 0.0,"Edge labels must be at least 0")
-        require(weight <= 1.0,"Edge labels must be at most 1")
-
-        weight
-      }
-    }
-
-
-If AbstractLabelGraphBuilder won't do, you can implement a LabelGraphBuilder's
-
-    def initialLabelGraph[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E]):MutableGraph[N,MLDiEdge]
-
-to do whatever is needed.
 
 ### Creating A Custom Semiring and Other Support Classes
 
-You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's algorithm requires some extra help to use it's heap. Implement GraphMinimizerSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys.
+You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the most probable paths:
 
-     object MostProbable extends GraphMinimizerSupport[Double,Double] {
-       def semiring = MostProbableSemiring
+    object MostProbable extends SemiringSupport[Double,Double] {
+    
+      def semiring = MostProbableSemiring
+    
+      def heapOrdering = MostProbableOrdering
+    
+      def heapKeyForLabel = {label:Label => label}
+    
+Sometimes it can be helpful to provide a possible convertArcToLabel function 
+    
+      def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): MostProbable.Label = semiring.I
+    
+For your Semiring supply identity and annihilator values, and summary and extend operators. Here's an example:
 
-       def heapOrdering = MostProbableHeapOrdering
-
-       def heapKeyForLabel = {label:Double => label}
-
-     }
-
-Semiring is an abstract class with a Label type parameter. Supply identity and annihilator values, and summary and extend operators. Here's an example:
-
-    object MostProbableSemiring extends Semiring[Double] {
-
-      //identity and annihilator
-      def I = 1.0
-      def O = 0.0
-
-      /**
-       * Implement this method to create the core of a summary operator
-       */
-      def summary(fromThroughToLabel:Double,
-                  currentLabel:Double):Double = {
-        if(fromThroughToLabel > currentLabel) {
-          fromThroughToLabel
+      object MostProbableSemiring extends Semiring {
+    
+        def I = 1.0
+        def O = 0.0
+    
+        def inDomain(label: Label): Boolean = {
+          I >= label && label > O
         }
-        else currentLabel
+    
+        def summary(fromThroughToLabel:Label,
+                    currentLabel:Label):Label = {
+          if(fromThroughToLabel > currentLabel) {
+            fromThroughToLabel
+          }
+          else currentLabel
+        }
+    
+        def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
+          if ((fromThroughLabel == O) || (throughToLabel == O)) O
+          else {
+            fromThroughLabel * throughToLabel
+          }
+        }
       }
+    
+The HeapOrdering is actually trickier to get right. The Heap needs a special Key, AlwaysTop, that will always be higher than the highest possible Label and AlwaysBottom, that will only be on the bottom of the heap. The identity and annihilator sometimes work as these special values. Watch out for strange behaviors of floating point infinities and wrap-around with integers.
 
       /**
-       * Implement this method to create the core of an extend operator
+       * A heap ordering that puts lower numbers on the top of the heap
        */
-      def extend(fromThroughLabel:Double,throughToLabel:Double):Double = {
-        fromThroughLabel * throughToLabel
+      object MostProbableOrdering extends HeapOrdering[Double] {
+    
+        def lteq(x: Double, y: Double): Boolean = {
+          x <= y
+        }
+    
+        /**
+         * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
+         */
+        //todo look again for a version that handles NaNs and infinities
+        def tryCompare(x: Double, y: Double): Option[Int] = {
+          Some(x.compareTo(y))
+        }
+    
+        def keyDomainDescription = "between one and zero (the annihilator)"
+    
+        /**
+         * @throws IllegalArgumentException if the key is unusable
+         */
+        def checkKey(key: Double): Unit = {
+          require((MostProbable.MostProbableSemiring.inDomain(key)||(key == MostProbable.MostProbableSemiring.O)),s"Key must be $keyDomainDescription, not $key")
+        }
+    
+        /**
+         * Minimum value for the DoubleHeap
+         */
+        def AlwaysTop:Double = semiring.I + 0.01
+    
+        /**
+         * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+         */
+        def AlwaysBottom: Double = semiring.O
       }
     }
-
-The HeapOrdering is actually trickier to get right. The Heap needs a special Key, AlwaysTop, that will always be higher than the highest possible Label and AlwaysBottom, that will only be on the bottom of the heap. The identity and annihilator sometimes have these special values. Watch out for strange behaviors of floating point infinities and extreme values of integers.
-
-    /**
-     * A heap ordering that puts higher numbers on the top of the heap
-     */
-    object MostProbableHeapOrdering extends HeapOrdering[Double] {
-
-      def lteq(x: Double, y: Double): Boolean = {
-        y >= x
-      }
-
-      /**
-       * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
-
-       */
-      def tryCompare(x: Double, y: Double): Option[Int] = {
-        val diff = x-y
-        if(diff>0) Some(1)
-        else if (diff<0) Some(-1)
-        else Some(0)
-      }
-
-      /**
-       * @throws IllegalArgumentException if the key is unusable
-       */
-      def checkKey(key: Double): Unit = {
-        require(key >= 0.0,"Key must be zero or greater, not "+key)
-        require(key <= 1.0,"Key must be one or less, not "+key)
-      }
-
-      /**
-       * A top value for the DoubleHeap
-       */
-      def AlwaysTop:Double = 1.01
-
-      /**
-       * A key that will be among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
-       */
-      def AlwaysBottom: Double = 0.0
-    }
-
-
 
 
 ## Roadmap for Future Work

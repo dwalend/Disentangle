@@ -17,7 +17,7 @@ object MostProbable extends SemiringSupport[Double,Double] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): MostProbable.Label = 1
+  def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): MostProbable.Label = semiring.I
 
   object MostProbableSemiring extends Semiring {
 
