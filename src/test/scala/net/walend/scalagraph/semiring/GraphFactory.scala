@@ -1,7 +1,7 @@
 package net.walend.scalagraph.semiring
 
-import scalax.collection.immutable.Graph
 import scala.util.Random
+import scalax.collection.immutable.Graph
 import scalax.collection.GraphPredef._
 import scalax.collection.GraphEdge.DiEdge
 
@@ -34,6 +34,4 @@ object GraphFactory {
 
     Graph.from(nodes,edges)
   }
-
-
 }

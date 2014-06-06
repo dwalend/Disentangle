@@ -1,6 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.scalagraph.semiring.GraphFactory
+import scalax.collection.GraphPredef.EdgeLikeIn
 
 /**
  * @author dwalend
@@ -126,8 +127,9 @@ object TimingStudies {
 
     val graph:Graph[Int,DiEdge] = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
-    def convertToLabel(edge:graph.EdgeT):(Int,Int,Option[FirstSteps[Int,Int]]) = {
-      (edge._1.value,edge._2.value,Some(FirstSteps(1,Set.empty[Int])))
+    import scala.language.higherKinds
+    def convertToLabel[E[X] <: EdgeLikeIn[X]](edge:E[Int]):(Int,Int,Option[FirstSteps[Int,Int]]) = {
+      (edge._1,edge._2,Some(FirstSteps(1,Set.empty[Int])))
     }
 
     val result = timeFunction{
