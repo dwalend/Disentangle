@@ -46,12 +46,12 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
-  def convertArcToLabel[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel)
-                              (start: Node, end: Node, arc: Arc):Label = {
+  def convertArcToLabel[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel)
+                              (start: Node, end: Node, arc: ArcLabel):Label = {
     Some(FirstStep[Node,CoreLabel](coreLabelForArc(start,end,arc),Some(end)))
   }
 
-  def convertArcToLabelFunc[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel):((Node,Node,Arc) => Label) = convertArcToLabel(coreLabelForArc)
+  def convertArcToLabelFunc[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel):((Node,Node,ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
 
   object OnePathSemiring extends Semiring {
 

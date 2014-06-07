@@ -8,21 +8,21 @@ package net.walend.digraph
  * @author dwalend
  * @since v0.1.0
  */
-class AdjacencyDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index values for each node.
-                                   outSuccessors:Vector[Vector[(Node,Node,Arc)]], // (i) is the successors for node i, (j) is the node,arc pair to reach that second node.
-                                   outPredecessors:Vector[Vector[(Node,Node,Arc)]],
-                                   val noArcExistsValue:Arc //value for no arc
-                                            ) extends IndexedDigraph[Node,Arc] {
+class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
+                                        outSuccessors:Vector[Vector[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,arc pair to reach that second node.
+                                       outPredecessors:Vector[Vector[(Node,Node,Label)]],
+                                       val noArcExistsValue:Label //value for no arc
+                                            ) extends IndexedLabelDigraph[Node,Label] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborVector(vector:Vector[(Node,Node,Arc)]):Vector[(InNode,InNode,Arc)] = {
+  def neighborVector(vector:Vector[(Node,Node,Label)]):Vector[(InNode,InNode,Label)] = {
     vector.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
   }
 
-  val inSuccessors:Vector[Vector[(InNode,InNode,Arc)]] = outSuccessors.map(neighborVector)
-  val inPredecessors:Vector[Vector[(InNode,InNode,Arc)]] = outPredecessors.map(neighborVector)
+  val inSuccessors:Vector[Vector[(InNode,InNode,Label)]] = outSuccessors.map(neighborVector)
+  val inPredecessors:Vector[Vector[(InNode,InNode,Label)]] = outPredecessors.map(neighborVector)
 
   override def nodes: IndexedSeq[Node] = outNodes
 
@@ -30,11 +30,11 @@ class AdjacencyDigraph[Node,Arc](outNodes:Vector[Node], //provides the master in
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    override def successors: Seq[(InNode,InNode,Arc)] = {
+    override def successors: Seq[(InNode,InNode,Label)] = {
       inSuccessors(index)
     }
 
-    override def predecessors: Seq[(InNode,InNode,Arc)] = {
+    override def predecessors: Seq[(InNode,InNode,Label)] = {
       inPredecessors(index)
     }
 
@@ -70,14 +70,14 @@ class AdjacencyDigraph[Node,Arc](outNodes:Vector[Node], //provides the master in
    *
    * @return All of the arcs in the graph
    */
-  override def arcs: Seq[(Node, Node, Arc)] = outSuccessors.flatten
+  override def arcs: Seq[(Node, Node, Label)] = outSuccessors.flatten
 
   /**
    * O(n)
    *
    * @return the Arc between start and end or noArcExistsValue
    */
-  override def arc(from: InNode, to: InNode):Arc = {
+  override def label(from: InNode, to: InNode):Label = {
     inSuccessors(from.index).filter(x => x._2 == to) match {
       case Vector() => noArcExistsValue
       case Vector(nodeAndArc) => nodeAndArc._3
@@ -104,7 +104,7 @@ class AdjacencyDigraph[Node,Arc](outNodes:Vector[Node], //provides the master in
    *
    * @return
    */
-  override def arc(i: Int, j: Int): Arc = {
+  override def label(i: Int, j: Int): Label = {
     inSuccessors(i).filter(x => x._2 == inNodes(j)) match {
       case Vector() => noArcExistsValue
       case Vector(nodeAndArc) => nodeAndArc._3
@@ -121,7 +121,7 @@ class AdjacencyDigraph[Node,Arc](outNodes:Vector[Node], //provides the master in
 /**
  * O(n ln(n) + e ln(n))
  */
-object AdjacencyDigraph{
+object AdjacencyLabelDigraph{
 
   def apply[Node,Arc](arcSeq:Seq[(Node,Node,Arc)] = Seq.empty,
                        extraNodes:Seq[Node] = Seq.empty,
@@ -135,7 +135,7 @@ object AdjacencyDigraph{
     val successorAdjacencies:Vector[Vector[(Node,Node,Arc)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Arc)]).to[Vector])
     val predecessorAdjacencies:Vector[Vector[(Node,Node,Arc)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Arc)]).to[Vector])
 
-    new AdjacencyDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noArcExistsValue)
+    new AdjacencyLabelDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noArcExistsValue)
   }
 
 }

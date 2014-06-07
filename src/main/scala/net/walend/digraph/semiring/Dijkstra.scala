@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.digraph.IndexedDigraph
+import net.walend.digraph.IndexedLabelDigraph
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
@@ -16,7 +16,7 @@ object Dijkstra {
   /**
    * O(1)
    */
-  def relaxSource[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
+  def relaxSource[Node,Label,Key](digraph:IndexedLabelDigraph[Node,Label],
                                   labels:ArrayBuffer[Label],
                                   semiring:SemiringSupport[Label,Key]#Semiring)
                                 (from:digraph.InnerNodeType,
@@ -36,7 +36,7 @@ object Dijkstra {
    *
    * O(n ln(n) + a)
    */
-  def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
+  def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
                                           (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
@@ -73,7 +73,7 @@ object Dijkstra {
   /**
    * O(n^2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
@@ -85,27 +85,27 @@ object Dijkstra {
    *
    * @return an IndexedDigraph with all nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,Arc,Label,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
-                                              extraNodes:Seq[Node] = Seq.empty,
-                                              support:SemiringSupport[Label,Key],
-                                              labelForArc:(Node,Node,Arc)=>Label):IndexedDigraph[Node,Label] = {
+  def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
+                                                  extraNodes:Seq[Node] = Seq.empty,
+                                                  support:SemiringSupport[Label,Key],
+                                                  labelForArc:(Node,Node,ArcLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
 
     val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
     val nonSelfArcs = arcs.filter(x => x._1 != x._2)
     val labelArcs = nodes.map(x => (x,x,support.semiring.I)) ++
       nonSelfArcs.map(x => (x._1,x._2,labelForArc(x._1,x._2,x._3)))
 
-    import net.walend.digraph.AdjacencyDigraph
-    AdjacencyDigraph(labelArcs,nodes,support.semiring.O)
+    import net.walend.digraph.AdjacencyLabelDigraph
+    AdjacencyLabelDigraph(labelArcs,nodes,support.semiring.O)
   }
 
   /**
    * O(n^2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,Arc,Label,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
-                                            extraNodes:Seq[Node] = Seq.empty,
-                                            support:SemiringSupport[Label,Key],
-                                            labelForArc:(Node,Node,Arc)=>Label):Seq[(Node,Node,Label)] = {
+  def allPairsShortestPaths[Node,ArcLabel,Label,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
+                                                    extraNodes:Seq[Node] = Seq.empty,
+                                                    support:SemiringSupport[Label,Key],
+                                                    labelForArc:(Node,Node,ArcLabel)=>Label):Seq[(Node,Node,Label)] = {
     val labelDigraph = createLabelDigraph(arcs,extraNodes,support,labelForArc)
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
@@ -113,7 +113,7 @@ object Dijkstra {
   /**
    * O(1)
    */
-  def relaxSink[Node,Label,Key](digraph:IndexedDigraph[Node,Label],
+  def relaxSink[Node,Label,Key](digraph:IndexedLabelDigraph[Node,Label],
                                 labels:ArrayBuffer[Label],
                                 semiring:SemiringSupport[Label,Key]#Semiring)
                                (from:(digraph.InnerNodeType,digraph.InnerNodeType,Label),
@@ -134,7 +134,7 @@ object Dijkstra {
    * O(n ln(n) + a)
    */
   //todo could not use default argument for the heap. Report that as a possible bug.
-  private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedDigraph[Node,Label],
+  private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                                    support:SemiringSupport[Label,Key])
                                                   (sink:initialGraph.InnerNodeType,
                                                    heap:Heap[Key,initialGraph.InnerNodeType]):Seq[(Node,Node,Label)] = {
@@ -165,7 +165,7 @@ object Dijkstra {
       }
     }
 
-    //todo filter out arcs == semiring.O
+    //todo filter out labels == semiring.O
     labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
   }
 
@@ -174,7 +174,7 @@ object Dijkstra {
    *
    * O(n ln(n) + a)
    */
-  def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
+  def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
                                         (sink:initialDigraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)

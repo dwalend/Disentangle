@@ -1,7 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.HeapOrdering
-import net.walend.digraph.Digraph
+import net.walend.digraph.LabelDigraph
 
 /**
  * Finds all minimal paths that use the core semiring.
@@ -48,12 +48,12 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
-  def convertArcToLabel[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel)
-                              (start: Node, end: Node, arc: Arc):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arc),Set(end)))
+  def convertArcToLabel[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel)
+                              (start: Node, end: Node, arcLabel: ArcLabel):Label = {
+    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),Set(end)))
   }
 
-  def convertArcToLabelFunc[Arc](coreLabelForArc:(Node,Node,Arc)=>CoreLabel):((Node,Node,Arc) => Label) = convertArcToLabel(coreLabelForArc)
+  def convertArcToLabelFunc[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel):((Node,Node,ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
 
   /*
   //branching to figure this out

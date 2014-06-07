@@ -37,9 +37,9 @@ If you want to change ScalaGraphMinimizer to meet your every whim, fix some bugs
 
 You'll need to
 
-* bring a graph of your own, or at least a Seq[(Node,Node,Arc)]. 
+* bring a graph of your own, or at least a Seq[(Node,Node,ArcLabel)]. 
 * choose or create a SemiringSupport implementation like FewestNodes.
-* provide a function to convert from a (Node,Node,Arc) tuple to the Label defined by your SemiringSupport.
+* provide a function to convert from a (Node,Node,ArcLabel) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
 * choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm)
 * arrange for your code to run the algorithm on your graph
@@ -99,13 +99,13 @@ Semirings can be composed. ScalaGraphMinimizer takes advantage of this by suppli
 
 Customize ScalaGraphMinimizer with your own mappings, Semirings and algorithms.
 
-### Converting Your Graph to a Sequence of (Node,Node,Arc) Tuples
+### Converting Your Graph to a Sequence of (Node,Node,ArcLabel) Tuples
 
-FloydWarshall, Dijkstra, and Brandes each include a method that take sequences of (Node,Node,Arc) tuples. These methods require you to provide a function that converts a tuple into a label that fits your semiring's Label. 
+FloydWarshall, Dijkstra, and Brandes each include a method that take sequences of (Node,Node,ArcLabel) tuples. These methods require you to provide a function that converts a tuple into a label that fits your semiring's Label. 
 
 These are typically very straightforward to create. The decorator semirings listed above each include helper functions that require a similar function to convert the tuple to the core semiring's Label.
 
-    labelForArc:(Node,Node,Arc)=>Label
+    labelForArc:(Node,Node,ArcLabel)=>Label
 
 These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the arcs, and has some influence over the ordering of the algorithm's output.
 
@@ -123,6 +123,8 @@ You are very likely to need your own LabelGraphBuilder to create a label graph f
 
 You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the most probable paths:
 
+TODO update this with the latest
+
     object MostProbable extends SemiringSupport[Double,Double] {
     
       def semiring = MostProbableSemiring
@@ -133,7 +135,7 @@ You will likely want to create your own Semirings to match the problems you are 
     
 Sometimes it can be helpful to provide a possible convertArcToLabel function 
     
-      def convertArcToLabel[Node, Arc](start: Node, end: Node, arc: Arc): MostProbable.Label = semiring.I
+      def convertArcToLabel[Node, ArcLabel](start: Node, end: Node, arc: ArcLabel): MostProbable.Label = semiring.I
     
 For your Semiring supply identity and annihilator values, and summary and extend operators. Here's an example:
 

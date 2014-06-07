@@ -6,7 +6,7 @@ import net.walend.digraph.semiring.Dijkstra
 import net.walend.digraph.semiring.FewestNodes
 import net.walend.digraph.semiring.FloydWarshall
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.digraph.{AdjacencyDigraph, Digraph}
+import net.walend.digraph.{AdjacencyLabelDigraph, LabelDigraph}
 
 import scalax.collection.immutable.Graph
 import scalax.collection.GraphPredef._

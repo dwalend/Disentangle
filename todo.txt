@@ -3,11 +3,11 @@ In this release
 * built translator from scala-graph to net.walend.digraph.Digraph and (maybe) back
 * optimized digraph representation for algorithms
 ** Now adapt any graph to use the algorithms, not just scala-graph
+* a test of scala-graph translated
 
 
 For this release
 
-* a test of scala-graph translated
 * automatically plot the results of the timing studies (and comparison with Jung)
 * 2.10 and 2.11 versions
 

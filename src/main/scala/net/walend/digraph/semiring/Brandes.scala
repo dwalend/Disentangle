@@ -1,7 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
-import net.walend.digraph.{IndexedDigraph, Digraph}
+import net.walend.digraph.{IndexedLabelDigraph, LabelDigraph}
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -15,7 +15,7 @@ object Brandes {
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
    */
-  def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedDigraph[Node,Label],
+  def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
                                         (sink:initialDigraph.InnerNodeType):(Seq[(Node,Node,Label)],
                                                                             Seq[(Node,Label)]) = {
@@ -45,7 +45,7 @@ object Brandes {
                           CoreLabel, 
                           Label <: Option[FirstSteps[Node, CoreLabel]], 
                           Key]
-                          (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:Digraph[Node,Label])
+                          (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:LabelDigraph[Node,Label])
                           (sink: labelGraph.InnerNodeType,stack:Seq[(Node,Label)]): Map[Node, Double] = {
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
@@ -82,7 +82,7 @@ object Brandes {
   def allLeastPathsAndBetweenness[Node,
                                   CoreLabel,
                                   Key]
-                                  (initialGraph:IndexedDigraph[Node,Option[FirstSteps[Node, CoreLabel]]],support:AllPathsFirstSteps[Node, CoreLabel, Key]):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
+                                  (initialGraph:IndexedLabelDigraph[Node,Option[FirstSteps[Node, CoreLabel]]],support:AllPathsFirstSteps[Node, CoreLabel, Key]):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
 
     type Label = support.Label
 
@@ -107,19 +107,19 @@ object Brandes {
    *
    * @return an IndexedDigraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,Arc,CoreLabel,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
+  def createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
                                                   extraNodes:Seq[Node] = Seq.empty,
                                                   support:AllPathsFirstSteps[Node, CoreLabel, Key],
-                                                  labelForArc:(Node,Node,Arc)=>CoreLabel):IndexedDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
+                                                  labelForArc:(Node,Node,ArcLabel)=>CoreLabel):IndexedLabelDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
 
-    Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[Arc](labelForArc))
+    Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[ArcLabel](labelForArc))
   }
 
-  def allLeastPathsAndBetweenness[Node,Arc,CoreLabel,Key](arcs:Seq[(Node,Node,Arc)] = Seq.empty,
+  def allLeastPathsAndBetweenness[Node,ArcLabel,CoreLabel,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
                                                            extraNodes:Seq[Node] = Seq.empty,
                                                            support:AllPathsFirstSteps[Node, CoreLabel, Key],
-                                                           labelForArc:(Node,Node,Arc)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
-    val labelGraph =  Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[Arc](labelForArc))
+                                                           labelForArc:(Node,Node,ArcLabel)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
+    val labelGraph =  Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[ArcLabel](labelForArc))
     allLeastPathsAndBetweenness(labelGraph,support)
   }
 }

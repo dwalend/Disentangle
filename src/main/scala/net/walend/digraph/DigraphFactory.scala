@@ -13,7 +13,7 @@ object DigraphFactory {
   /**
    * Create a randomly connected graph, where each node has a limited number of connections to other nodes
    */
-  def createRandomNormalDigraph(nodeCount:Int,maxOutArcsPerNode:Int):Digraph[Int,Boolean] = {
+  def createRandomNormalDigraph(nodeCount:Int,maxOutArcsPerNode:Int):LabelDigraph[Int,Boolean] = {
 
     require(maxOutArcsPerNode < nodeCount)
 
@@ -29,6 +29,6 @@ object DigraphFactory {
 
     val arcs:Seq[(Int,Int,Boolean)] = seqOfListOfArcs.flatten
 
-    AdjacencyDigraph(arcs,nodes.to[Seq],false)
+    AdjacencyLabelDigraph(arcs,nodes.to[Seq],false)
   }
 }

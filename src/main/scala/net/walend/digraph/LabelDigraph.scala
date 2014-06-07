@@ -43,10 +43,10 @@ trait Graph[Node] {
 
 
 /**
- * A graph with directed zero or one arc from any single node to any other single node.
+ * A graph with directed zero or one label from any single node to any other single node.
  * 
  */
-trait Digraph[Node,Arc] extends Graph[Node] {
+trait LabelDigraph[Node,Label] extends Graph[Node] {
 
   /**
    * An internal representation of nodes within the graph
@@ -54,9 +54,9 @@ trait Digraph[Node,Arc] extends Graph[Node] {
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
     def value:Node
 
-    def successors:Seq[(InnerNodeType,InnerNodeType,Arc)]
+    def successors:Seq[(InnerNodeType,InnerNodeType,Label)]
 
-    def predecessors:Seq[(InnerNodeType,InnerNodeType,Arc)]
+    def predecessors:Seq[(InnerNodeType,InnerNodeType,Label)]
 
   }
 
@@ -66,20 +66,20 @@ trait Digraph[Node,Arc] extends Graph[Node] {
   type InnerNodeType <: DigraphInnerNodeTrait
 
   /**
-   * @return the value to return when no arc exists
+   * @return the label to return when no arc exists
    */
-  def noArcExistsValue:Arc
+  def noArcExistsValue:Label
 
   /**
    * @return All of the arcs in the graph
    */
   //todo change to InnerNodeType,InnerNodeType,Arc
-  def arcs:Seq[(Node,Node,Arc)]
+  def arcs:Seq[(Node,Node,Label)]
 
   /**
    * @return the Arc between start and end or noArcExistsValue
    */
-  def arc(start:InnerNodeType,end:InnerNodeType):Arc
+  def label(start:InnerNodeType,end:InnerNodeType):Label
 
 }
 
@@ -87,20 +87,20 @@ trait Digraph[Node,Arc] extends Graph[Node] {
  * A graph where arcs can be upserted.
  * 
  */
-trait MutableArcDigraph[Node,Arc] extends Digraph[Node,Arc] {
+trait MutableLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
 
   /**
    * Set the arc that spans from start to end
    *
    */
-  def upsertArc(from:InnerNodeType,to:InnerNodeType,arc:Arc):Unit
+  def upsertArc(from:InnerNodeType,to:InnerNodeType,label:Label):Unit
 
 }
 
 /**
  * A digraph that exposes the indices of stored nodes.
  */
-trait IndexedDigraph[Node,Arc] extends Digraph[Node,Arc] {
+trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
 
   /**
    * @return All the nodes in the graph
@@ -131,5 +131,5 @@ trait IndexedDigraph[Node,Arc] extends Digraph[Node,Arc] {
 
   def innerNodeForIndex(i:Int):InnerNodeType
 
-  def arc(i:Int,j:Int):Arc
+  def label(i:Int,j:Int):Label
 }

@@ -11,10 +11,10 @@ import scala.collection.mutable.ArrayBuffer
  * @since v0.1.0
  */
 //TODO for the Atomic version, make arcMatrix a Vector of AtomicReferences
-class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index values for each node.
-                               arcMatrix:Vector[ArrayBuffer[Arc]], // (row,column) is (start,end), indexed by node.
-                               val noArcExistsValue:Arc //value for no arc
-                                ) extends IndexedDigraph[Node,Arc] with MutableArcDigraph[Node,Arc] {
+class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
+                                   arcMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
+                                   val noArcExistsValue:Label //value for no arc
+                                    ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
@@ -30,15 +30,15 @@ class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index
     /**
      * O(n^2)
      */
-    override def successors: Seq[(InNode,InNode,Arc)] = {
+    override def successors: Seq[(InNode,InNode,Label)] = {
       inNodes.zip(arcMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noArcExistsValue)
     }
 
     /**
      * O(n^2)
      */
-    override def predecessors: Seq[(InNode,InNode,Arc)] = {
-      val arcColumn:Seq[Arc] = arcMatrix.map(_(index))
+    override def predecessors: Seq[(InNode,InNode,Label)] = {
+      val arcColumn:Seq[Label] = arcMatrix.map(_(index))
       inNodes.zip(arcColumn).map(x => (x._1,this,x._2)).filter(_._2 != noArcExistsValue)
     }
 
@@ -73,9 +73,9 @@ class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index
    *
    * @return All of the arcs in the graph
    */
-  override def arcs: Seq[(Node, Node, Arc)] = {
+  override def arcs: Seq[(Node, Node, Label)] = {
 
-    def arcsInRow(row:(ArrayBuffer[Arc],Int)):Seq[(Node,Node,Arc)] = {
+    def arcsInRow(row:(ArrayBuffer[Label],Int)):Seq[(Node,Node,Label)] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsValue))
@@ -90,13 +90,13 @@ class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index
    *
    * @return the Arc between start and end or noArcExistsValue
    */
-  override def arc(from: InNode, to: InNode):Arc = arcMatrix(from.index)(to.index)
+  override def label(from: InNode, to: InNode):Label = arcMatrix(from.index)(to.index)
  
 
   /**
    * O(1)
    */
-  override def upsertArc(from: InNode, to: InNode, arc: Arc): Unit = arcMatrix(from.index)(to.index) = arc
+  override def upsertArc(from: InNode, to: InNode, arc: Label): Unit = arcMatrix(from.index)(to.index) = arc
 
 
   /**
@@ -112,11 +112,11 @@ class MatrixDigraph[Node,Arc](outNodes:Vector[Node], //provides the master index
   /**
    * O(1)
    */
-  override def arc(i: Int, j: Int): Arc = arcMatrix(i)(j)
+  override def label(i: Int, j: Int): Label = arcMatrix(i)(j)
 
 }
 
-object MatrixDigraph{
+object MatrixLabelDigraph{
 
   /**
    * O(n ln(n) + en)
@@ -140,7 +140,7 @@ object MatrixDigraph{
       matrix(row)(column) = arcTriple._3
     }
 
-    new MatrixDigraph(nodeValues,matrix,noArcExistsValue)
+    new MatrixLabelDigraph(nodeValues,matrix,noArcExistsValue)
   }
 
 }
