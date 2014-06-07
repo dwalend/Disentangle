@@ -11,11 +11,11 @@ name := "Graph4ScalaSemirings"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.0.1-SNAPSHOT"
+version := "0.1.0-SNAPSHOT"
 
 scalaVersion := "2.11.1"
 
-crossScalaVersions := Seq(scalaVersion.value)
+crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
 libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.9.0"
 
