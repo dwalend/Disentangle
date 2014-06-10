@@ -34,8 +34,7 @@ object Brandes {
     val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
     val originArcStack = stack.map(x => (x.value,allArcs(x.index)._3))
 
-    //todo filter allArcs
-    (allArcs.filter(x => x._3 != support.semiring.O),originArcStack)
+    (allArcs.filter(x => x._3 != support.semiring.O),originArcStack.filter(_._2 != support.semiring.O))
   }
 
     /**

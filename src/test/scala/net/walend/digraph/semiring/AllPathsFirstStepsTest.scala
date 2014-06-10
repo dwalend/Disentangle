@@ -89,4 +89,80 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
+
+  "Brandes' algorithm" should "produce the same betweenness as Jung for the Enron dataset" in {
+
+    import scala.io.Source
+    import scala.util.matching.Regex
+
+    /*
+"FROST, CARMILLA"       "AA2 35"
+"KILLRAVEN/JONATHAN R"  "AA2 35"
+"M'SHULLA"      "AA2 35"
+"24-HOUR MAN/EMMANUEL"  "AA2 35"
+"OLD SKULL"     "AA2 35"
+"G'RATH"        "AA2 35"
+"3-D MAN/CHARLES CHAN"  "M/PRM 35"
+     */
+
+    val lines = Source.fromURL(getClass.getResource("/16320/labeled_edges.tsv")).getLines()
+    //todo start here.
+    //turn them into arcs
+    def arcFromLine(line:String):Option[(String,String,Unit)] = {
+      import com.github.verbalexpressions.VerbalExpression
+      import VerbalExpression._
+
+      val verbalExpression:VerbalExpression = $.startOfLine().andThen("\"")
+        .beginCapture.anythingBut("\"").endCapture
+        .andThen("\"").whitespaces().andThen("\"")
+        .beginCapture.anythingBut("\"").endCapture
+        .andThen("\"").endOfLine()
+
+      val regex:Regex = verbalExpression.regexp.r
+
+
+      regex.findFirstMatchIn(line) match {
+        case Some(m) => Some((m.group(1),m.group(2),()))
+        case None => {
+          println(s"Couldn't parse $line")
+          None
+        }
+      }
+    }
+
+    val arcs = lines.map(arcFromLine).flatten.to[Seq]
+    //find betweenness
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(arcs,Seq.empty,support,FewestNodes.convertArcToLabel)
+    val betweennesses = labelGraphAndBetweenness._2.to[Set]
+
+    //find betweenness with Jung
+    import edu.uci.ics.jung.graph.DirectedSparseGraph
+    import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
+
+    val jungGraph = new DirectedSparseGraph[String,Any]()
+
+    val nodes = (arcs.map(_._1) ++ arcs.map(_._2)).distinct
+    for(node <- nodes) {
+      jungGraph.addVertex(node)
+    }
+
+    var edgeCounter = 0
+    for(arc <- arcs) {
+      jungGraph.addEdge(edgeCounter,arc._1,arc._2)
+      edgeCounter = edgeCounter + 1
+    }
+
+    val jungBetweenCalc = new BetweennessCentrality(jungGraph)
+    import scala.collection.JavaConversions._
+
+    val jungBetwennesses = jungGraph.getVertices.to[Set].map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
+
+    //error if they differ
+    betweennesses -- jungBetwennesses should be(Set.empty)
+
+    betweennesses should be(jungBetwennesses)
+  }
+
+
+
 }
