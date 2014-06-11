@@ -137,7 +137,7 @@ object Dijkstra {
   private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                                    support:SemiringSupport[Label,Key])
                                                   (sink:initialGraph.InnerNodeType,
-                                                   heap:Heap[Key,initialGraph.InnerNodeType]):Seq[(Node,Node,Label)] = {
+                                                   heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSeq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
 
@@ -165,7 +165,7 @@ object Dijkstra {
       }
     }
 
-    //todo filter out labels == semiring.O
+    //don't filter out where labels == semiring.O. Need the indexes in tact
     labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
   }
 

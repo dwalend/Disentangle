@@ -1,7 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
-import net.walend.digraph.{IndexedLabelDigraph, LabelDigraph}
+import net.walend.digraph.IndexedLabelDigraph
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -11,15 +11,14 @@ import net.walend.digraph.{IndexedLabelDigraph, LabelDigraph}
  */
 
 object Brandes {
-
+  import scala.collection.mutable.Stack
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
    */
   def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
-                                        (sink:initialDigraph.InnerNodeType):(Seq[(Node,Node,Label)],
-                                                                            Seq[(Node,Label)]) = {
-    import scala.collection.mutable.Stack
+                                        (sink:initialDigraph.InnerNodeType):(IndexedSeq[(Node,Node,Label)],
+                                                                            Stack[(Node,Label)]) = {
     val stack = Stack[initialDigraph.InnerNodeType]()
 
     val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering) {
@@ -34,7 +33,7 @@ object Brandes {
     val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
     val originArcStack = stack.map(x => (x.value,allArcs(x.index)._3))
 
-    (allArcs.filter(x => x._3 != support.semiring.O),originArcStack.filter(_._2 != support.semiring.O))
+    (allArcs,originArcStack.filter(_._2 != support.semiring.O))
   }
 
     /**
@@ -44,27 +43,34 @@ object Brandes {
                           CoreLabel, 
                           Label <: Option[FirstSteps[Node, CoreLabel]], 
                           Key]
-                          (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:LabelDigraph[Node,Label])
-                          (sink: labelGraph.InnerNodeType,stack:Seq[(Node,Label)]): Map[Node, Double] = {
+                          (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:IndexedLabelDigraph[Node,Label])
+                          (sink: labelGraph.InnerNodeType,stack:Stack[(Node,Label)],shortestPathsToSink:IndexedSeq[(Node,Node,Label)]): Map[Node, Double] = {
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
 
-    //for each possible choice of next step
-    for (arc <- stack) {
+    //for each possible choice of next step in the stack
+    while(!stack.isEmpty) {
+      val arc = stack.pop() //w
       //figure out the partial betweenness to apply to that step
       val label: Label = arc._2
       label match {
         case None => //nothing to do
         case Some(sourceLabel: FirstSteps[Node, CoreLabel]) => {
-          val numChoices: Double = sourceLabel.choices.size
+          val sourceCount: Double = sourceLabel.pathCount
           val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(arc._1, 0.0)
           for (choice <- sourceLabel.choices) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
               val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0.0)
-              //new value is the old value plus (value for coming through the source, plus the source)/number of choices
-              val newPartial: Double = oldPartial + ((1.0 + partialFromSource) / numChoices)
-              nodesToPartialBetweenness.put(choice, newPartial)
+              //todo switch over the stack to be (innerNode,Label) to avoid the index lookup
+              val choiceIndex: Int = labelGraph.innerNode(choice).get.index
+              val choiceLabel:Label = shortestPathsToSink(choiceIndex)._3
+              if(choiceLabel != None) {
+                val choiceCount: Double = choiceLabel.get.pathCount
+                //new value is the old value plus (value for coming through the source, plus the source)/number of choices
+                val newPartial: Double = oldPartial + ((1.0 + partialFromSource) * (choiceCount / sourceCount))
+                nodesToPartialBetweenness.put(choice, newPartial)
+              }
             }
           }
         }
@@ -86,9 +92,9 @@ object Brandes {
     type Label = support.Label
 
     val arcsAndPartialBetweennesses:Seq[(Seq[(Node,Node,Label)],Map[Node, Double])] = for(sink <- initialGraph.innerNodes) yield {
-      val arcsAndNodeStack:(Seq[(Node,Node,Label)],Seq[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
-      val partialB = partialBetweenness(support,initialGraph)(sink,arcsAndNodeStack._2)
-      (arcsAndNodeStack._1,partialB)
+      val arcsAndNodeStack:(IndexedSeq[(Node,Node,Label)],Stack[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
+      val partialB = partialBetweenness(support,initialGraph)(sink,arcsAndNodeStack._2,arcsAndNodeStack._1)
+      (arcsAndNodeStack._1.filter(_._3 != support.semiring.O),partialB)
     }
 
     def betweennessForNode(node: Node): Double = {

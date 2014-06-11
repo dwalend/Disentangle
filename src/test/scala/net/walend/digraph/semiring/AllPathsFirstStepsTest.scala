@@ -11,46 +11,46 @@ import net.walend.digraph.SomeGraph._
  */
 class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
-  val expectedArcs = Set(
-    (A,A,Some(FirstSteps(0,Set()))),
-    (A,B,Some(FirstSteps(1,Set(B)))),
-    (A,C,Some(FirstSteps(2,Set(B)))),
-    (A,D,Some(FirstSteps(3,Set(B)))),
-    (A,E,Some(FirstSteps(4,Set(B)))),
-    (A,F,Some(FirstSteps(5,Set(B)))),
-    (A,H,Some(FirstSteps(5,Set(B)))),
-    (B,B,Some(FirstSteps(0,Set()))),
-    (B,C,Some(FirstSteps(1,Set(C)))),
-    (B,D,Some(FirstSteps(2,Set(C)))),
-    (B,E,Some(FirstSteps(3,Set(C)))),
-    (B,F,Some(FirstSteps(4,Set(C)))),
-    (B,H,Some(FirstSteps(4,Set(C)))),
-    (C,B,Some(FirstSteps(3,Set(D)))),
-    (C,C,Some(FirstSteps(0,Set()))),
-    (C,D,Some(FirstSteps(1,Set(D)))),
-    (C,E,Some(FirstSteps(2,Set(D)))),
-    (C,F,Some(FirstSteps(3,Set(D)))),
-    (C,H,Some(FirstSteps(3,Set(D)))),
-    (D,B,Some(FirstSteps(2,Set(E)))),
-    (D,C,Some(FirstSteps(3,Set(E)))),
-    (D,D,Some(FirstSteps(0,Set()))),
-    (D,E,Some(FirstSteps(1,Set(E)))),
-    (D,F,Some(FirstSteps(2,Set(E)))),
-    (D,H,Some(FirstSteps(2,Set(E)))),
-    (E,B,Some(FirstSteps(1,Set(B)))),
-    (E,C,Some(FirstSteps(2,Set(B, H)))),
-    (E,D,Some(FirstSteps(3,Set(B, H)))),
-    (E,E,Some(FirstSteps(0,Set()))),
-    (E,F,Some(FirstSteps(1,Set(F)))),
-    (E,H,Some(FirstSteps(1,Set(H)))),
-    (F,F,Some(FirstSteps(0,Set()))),
-    (G,G,Some(FirstSteps(0,Set()))),
-    (H,B,Some(FirstSteps(4,Set(C)))),
-    (H,C,Some(FirstSteps(1,Set(C)))),
-    (H,D,Some(FirstSteps(2,Set(C)))),
-    (H,E,Some(FirstSteps(3,Set(C)))),
-    (H,F,Some(FirstSteps(4,Set(C)))),
-    (H,H,Some(FirstSteps(0,Set())))
+  val expectedArcs = Set[(String,String,Option[FirstSteps[String,Int]])](
+    (A,A,Some(FirstSteps(0,1,Set()))),
+    (A,B,Some(FirstSteps(1,1,Set(B)))),
+    (A,C,Some(FirstSteps(2,1,Set(B)))),
+    (A,D,Some(FirstSteps(3,1,Set(B)))),
+    (A,E,Some(FirstSteps(4,1,Set(B)))),
+    (A,F,Some(FirstSteps(5,1,Set(B)))),
+    (A,H,Some(FirstSteps(5,1,Set(B)))),
+    (B,B,Some(FirstSteps(0,1,Set()))),
+    (B,C,Some(FirstSteps(1,1,Set(C)))),
+    (B,D,Some(FirstSteps(2,1,Set(C)))),
+    (B,E,Some(FirstSteps(3,1,Set(C)))),
+    (B,F,Some(FirstSteps(4,1,Set(C)))),
+    (B,H,Some(FirstSteps(4,1,Set(C)))),
+    (C,B,Some(FirstSteps(3,1,Set(D)))),
+    (C,C,Some(FirstSteps(0,1,Set()))),
+    (C,D,Some(FirstSteps(1,1,Set(D)))),
+    (C,E,Some(FirstSteps(2,1,Set(D)))),
+    (C,F,Some(FirstSteps(3,1,Set(D)))),
+    (C,H,Some(FirstSteps(3,1,Set(D)))),
+    (D,B,Some(FirstSteps(2,1,Set(E)))),
+    (D,C,Some(FirstSteps(3,1,Set(E)))),
+    (D,D,Some(FirstSteps(0,1,Set()))),
+    (D,E,Some(FirstSteps(1,1,Set(E)))),
+    (D,F,Some(FirstSteps(2,1,Set(E)))),
+    (D,H,Some(FirstSteps(2,1,Set(E)))),
+    (E,B,Some(FirstSteps(1,1,Set(B)))),
+    (E,C,Some(FirstSteps(2,2,Set(B, H)))),
+    (E,D,Some(FirstSteps(3,2,Set(B, H)))),
+    (E,E,Some(FirstSteps(0,1,Set()))),
+    (E,F,Some(FirstSteps(1,1,Set(F)))),
+    (E,H,Some(FirstSteps(1,1,Set(H)))),
+    (F,F,Some(FirstSteps(0,1,Set()))),
+    (G,G,Some(FirstSteps(0,1,Set()))),
+    (H,B,Some(FirstSteps(4,1,Set(C)))),
+    (H,C,Some(FirstSteps(1,1,Set(C)))),
+    (H,D,Some(FirstSteps(2,1,Set(C)))),
+    (H,E,Some(FirstSteps(3,1,Set(C)))),
+    (H,F,Some(FirstSteps(4,1,Set(C)))),
+    (H,H,Some(FirstSteps(0,1,Set())))
   )
 
   val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
@@ -85,58 +85,41 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,support,FewestNodes.convertArcToLabel)
 
+    (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
+
     labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
 
-  def marvelArcs = {
+  "Brandes' algorithm" should "produce both the correct label graph and betweenness for a figure-8 graph" in {
 
-    import scala.io.Source
-    import scala.util.matching.Regex
+    val expectedB:Map[String,Double] = Map(
+      A -> 1.6666666666666665,
+      B -> 6.666666666666667,
+      C -> 1.6666666666666665,
+      D -> 1.6666666666666665,
+      E -> 6.666666666666666,
+      F -> 1.6666666666666665
+    )
 
-    /*
-"FROST, CARMILLA"       "AA2 35"
-"KILLRAVEN/JONATHAN R"  "AA2 35"
-"M'SHULLA"      "AA2 35"
-"24-HOUR MAN/EMMANUEL"  "AA2 35"
-"OLD SKULL"     "AA2 35"
-"G'RATH"        "AA2 35"
-"3-D MAN/CHARLES CHAN"  "M/PRM 35"
-     */
+    val allArcs = brandesTestArcs ++ brandesTestArcs.map(arc => (arc._2,arc._1,arc._3))
 
-    val lines = Source.fromURL(getClass.getResource("/16320/labeled_edges.tsv")).getLines()
-    //turn them into arcs
-    def arcFromLine(line:String):Option[(String,String,Unit)] = {
-      import com.github.verbalexpressions.VerbalExpression
-      import VerbalExpression._
+    val result = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertArcToLabel)
 
-      val verbalExpression:VerbalExpression = $.startOfLine().andThen("\"")
-        .beginCapture.anythingBut("\"").endCapture
-        .andThen("\"").whitespaces().andThen("\"")
-        .beginCapture.anythingBut("\"").endCapture
-        .andThen("\"").endOfLine()
+    val betweennesses = result._2.toMap
 
-      val regex:Regex = verbalExpression.regexp.r
-
-
-      regex.findFirstMatchIn(line) match {
-        case Some(m) => Some((m.group(1),m.group(2),()))
-        case None => {
-          println(s"Couldn't parse $line")
-          None
-        }
-      }
+    //if only    betweennesses should be(jungBetwennesses)
+    for(node <- betweennesses.keys) {
+      import scala.math.abs
+      val epsilon = 0.000000000000001 * betweennesses(node)
+      assert(abs(betweennesses(node) - expectedB(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match jung's ${expectedB(node)}")
     }
-
-    val arcs = lines.map(arcFromLine).flatten.to[Seq]
-    println("Finished walend.net betweenness")
-
-    arcs
   }
 
+
+
   def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Set[(Node,Double)] = {
-    //    import edu.uci.ics.jung.graph.DirectedSparseGraph
     import edu.uci.ics.jung.graph.UndirectedSparseGraph
     import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
 
@@ -158,35 +141,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     val jb = jungGraph.getVertices.to[Set].map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
 
-    println("Finished jung betweenness")
-
     jb
-  }
-
-  ignore should "produce the same betweenness as Jung for the marvel dataset" in {
-
-    val arcs = marvelArcs
-    val nodes = (arcs.map(_._1) ++ arcs.map(_._2)).distinct
-
-    println(s"${nodes.size} nodes, ${arcs.size} arcs")
-
-    //now make an arc going the other way
-    val allArcs = arcs ++ arcs.map(arc => (arc._2,arc._1,arc._3))
-
-    //find betweenness
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertArcToLabel)
-    val betweennesses = labelGraphAndBetweenness._2.to[Set].map(bet => (bet._1,(bet._2/2)))
-
-
-    //find betweenness with Jung
-    val jungBetwennesses = jungBetweenness(arcs)
-
-    println("Finished jung betweenness")
-
-    //error if they differ
-    betweennesses -- jungBetwennesses should be(Set.empty)
-
-    betweennesses should be(jungBetwennesses)
   }
 
   def usStateEdges = {
@@ -215,7 +170,6 @@ AL TN
 
       val regex:Regex = verbalExpression.regexp.r
 
-
       regex.findFirstMatchIn(line) match {
         case Some(m) => Some((m.group(1),m.group(2),()))
         case None => {
@@ -225,9 +179,7 @@ AL TN
       }
     }
 
-//    val arcs = lines.map(arcFromLine).flatten.to[Seq]
-    //33 works, 34 does not. Why? todo start here
-    val arcs = lines.take(33).map(arcFromLine).flatten.to[Seq]
+    val arcs = lines.map(arcFromLine).flatten.to[Seq]
 
     arcs
   }
@@ -235,24 +187,22 @@ AL TN
   "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataset" in {
 
     val arcs = usStateEdges
-    val nodes = (arcs.map(_._1) ++ arcs.map(_._2)).distinct
-
-    println(s"${nodes.size} nodes, ${arcs.size} arcs")
 
     //now make an arc going the other way
     val allArcs = arcs ++ arcs.map(arc => (arc._2,arc._1,arc._3))
 
     //find betweenness
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertArcToLabel)
-    val betweennesses = labelGraphAndBetweenness._2.to[Set].map(bet => (bet._1,(bet._2/2))).toMap
-
+    val betweennesses:Map[String,Double] = labelGraphAndBetweenness._2.to[Set].map(bet => (bet._1,(bet._2/2))).toMap
 
     //find betweenness with Jung
-    val jungBetwennesses = jungBetweenness(arcs).toMap
+    val jungB:Map[String,Double] = jungBetweenness(arcs).toMap
 
-    //error if they differ
-    for(node <- betweennesses.keys) println(s"$node ${betweennesses.get(node).get} ${jungBetwennesses.get(node).get}")
-
-    betweennesses should be(jungBetwennesses)
+    //if only    betweennesses should be(jungBetwennesses)
+    for(node <- betweennesses.keys) {
+      import scala.math.abs
+      val epsilon = 0.000000000000001 * betweennesses(node)
+      assert(abs(betweennesses(node) - jungB(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match jung's ${jungB(node)}")
+    }
   }
 }

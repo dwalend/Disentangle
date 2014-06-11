@@ -1,7 +1,6 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.HeapOrdering
-import net.walend.digraph.LabelDigraph
 
 /**
  * Finds all minimal paths that use the core semiring.
@@ -11,7 +10,9 @@ import net.walend.digraph.LabelDigraph
  */
 
 //todo is there some way to make this an inner class and a parameter? (Same for OnePathFirstStep)
-case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
+//todo maybe make choices a Map from Node to Int number of paths. Then pathCount is a sum of the values in choices
+//todo but to really make that work, you need both inbound and outbound choices
+case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set[Node]) {
   /**
    * Overriding equals to speed up.
    */
@@ -50,7 +51,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertArcToLabel[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel)
                               (start: Node, end: Node, arcLabel: ArcLabel):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),Set(end)))
+    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),1,Set(end)))
   }
 
   def convertArcToLabelFunc[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel):((Node,Node,ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
@@ -109,7 +110,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,Set[Node]()))
+    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,1,Set[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -120,7 +121,9 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           val fromThroughToSteps:FirstSteps[Node,CoreLabel] = fromThroughToLabel.get
           val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
-            Some(new FirstSteps[Node,CoreLabel](currentSteps.weight,currentSteps.choices ++ fromThroughToSteps.choices))
+            Some(new FirstSteps[Node,CoreLabel](currentSteps.weight,
+                                                currentSteps.pathCount+fromThroughToSteps.pathCount,
+                                                currentSteps.choices ++ fromThroughToSteps.choices))
           }
           else if (summ==fromThroughToSteps.weight) fromThroughToLabel
           else if (summ==currentSteps.weight) currentLabel
@@ -140,7 +143,9 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
-        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),choices))
+        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
+                                            fromThroughSteps.pathCount * throughToSteps.pathCount,
+                                            choices))
       }
       else O
     }

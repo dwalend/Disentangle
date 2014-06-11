@@ -35,4 +35,8 @@ object SomeGraph {
 
   val testGraph:LabelDigraph[String,String] = AdjacencyLabelDigraph(testArcs,testNodes,"")
 
+  val af = (A,F,"af")
+  val be = (B,E,"be")
+
+  val brandesTestArcs = Seq(ab,bc,cd,de,ef,af,be)
 }
