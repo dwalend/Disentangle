@@ -1,6 +1,7 @@
 package net.walend.digraph
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.{GenSeq, GenTraversable}
 
 /**
  * Provides constant-time access and mutator for arcs. Stores Nodes in a Vector and Arcs in a Vector of ArrayBuffers.
@@ -13,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 //TODO for the Atomic version, make arcMatrix a Vector of AtomicReferences
 class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
                                    arcMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
-                                   val noArcExistsValue:Label //value for no arc
+                                   val noArcExistsLabel:Label //value for no arc
                                     ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
@@ -28,18 +29,18 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
     /**
-     * O(n^2)
+     * O(n&#94;2)
      */
     override def successors: Seq[(InNode,InNode,Label)] = {
-      inNodes.zip(arcMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noArcExistsValue)
+      inNodes.zip(arcMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noArcExistsLabel)
     }
 
     /**
-     * O(n^2)
+     * O(n&#94;2)
      */
     override def predecessors: Seq[(InNode,InNode,Label)] = {
       val arcColumn:Seq[Label] = arcMatrix.map(_(index))
-      inNodes.zip(arcColumn).map(x => (x._1,this,x._2)).filter(_._2 != noArcExistsValue)
+      inNodes.zip(arcColumn).map(x => (x._1,this,x._2)).filter(_._2 != noArcExistsLabel)
     }
 
     override def hashCode(): Int = index
@@ -68,17 +69,34 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   }
 
+  override type InnerEdgeType = (InNode,InNode,Label)
+
   /**
-   * O(n^2)
+   * @return A Traversable of the edges as represented in the graph
+   */
+  override def innerEdges: Vector[InnerEdgeType] = {
+
+    def arcsInRow(row:(ArrayBuffer[Label],Int)):Seq[(InNode,InNode,Label)] = {
+      val rowIndex = row._2
+      val cellsWithIndex = row._1.zipWithIndex
+      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsLabel))
+      cellsWithArcs.map(x => (inNodes(rowIndex),inNodes(x._2),x._1))
+    }
+
+    arcMatrix.zipWithIndex.map(row => arcsInRow(row)).flatten
+  }
+
+  /**
+   * O(n&#94;2)
    *
    * @return All of the arcs in the graph
    */
-  override def arcs: Seq[(Node, Node, Label)] = {
+  override def arcs: Vector[(Node, Node, Label)] = {
 
     def arcsInRow(row:(ArrayBuffer[Label],Int)):Seq[(Node,Node,Label)] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
-      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsValue))
+      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsLabel))
       cellsWithArcs.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
     }
 
@@ -121,15 +139,15 @@ object MatrixLabelDigraph{
   /**
    * O(n ln(n) + en)
    */
-  def apply[Node,Arc](arcSeq:Seq[(Node,Node,Arc)] = Seq.empty,
-                       extraNodes:Seq[Node] = Seq.empty,
-                       noArcExistsValue:Arc = null) = {
+  def apply[Node,Label](arcSeq:GenTraversable[(Node,Node,Label)] = Seq.empty,
+                       extraNodes:GenSeq[Node] = Seq.empty,
+                       noArcExistsValue:Label = null) = {
 
     val nodeValues:Vector[Node] = (extraNodes ++ arcSeq.map(_._1) ++ arcSeq.map(_._2)).distinct.to[Vector]
 
     val size = nodeValues.size
 
-    val matrix:Vector[ArrayBuffer[Arc]] = nodeValues.map(x => ArrayBuffer.fill(size)(noArcExistsValue)).to[Vector]
+    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.map(x => ArrayBuffer.fill(size)(noArcExistsValue)).to[Vector]
 
     for (arcTriple <- arcSeq) {
       val row = nodeValues.indexOf(arcTriple._1)

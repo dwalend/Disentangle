@@ -29,6 +29,8 @@ libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //fo
 
 resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases/"
 
+//no 2.10 support
+
 libraryDependencies += "com.github.verbalexpressions" %% "ScalaVerbalExpression" % "1.0.1" % "test" //for loading the Enron graph
 
 fork in test := true

@@ -4,16 +4,25 @@ In this release
 * optimized digraph representation for algorithms
 ** Now adapt any graph to use the algorithms, not just scala-graph
 * a test of scala-graph translated
+* 2.10 and 2.11 versions
 
 
 For this release
 
 * automatically plot the results of the timing studies (and comparison with Jung)
-* 2.10 and 2.11 versions
+* edges in top-level graph representation
+* profile Floyd
+* profile Dijkstra
+* profile Brandes
 
+For next release
+
+* publicize on twitter
+* blog
 * Enron
 * path representation for net.walend.digraph
 * translator from net.walend.digraph.path to scala-graph's paths
+
 * subgraph representation for net.walend.digraph
 * Probabilty semiring
 

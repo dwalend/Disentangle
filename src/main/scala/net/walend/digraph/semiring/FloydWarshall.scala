@@ -1,6 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.digraph.MutableLabelDigraph
+import scala.collection.{GenSeq, GenTraversable}
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
@@ -27,7 +28,7 @@ object FloydWarshall {
   }
 
   /**
-   * O(n^3)
+   * O(n&#94;3)
    */
   def floydWarshall[Node,Label,Key](labelDigraph:MutableLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableLabelDigraph[Node,Label] = {
     val innerNodes = labelDigraph.innerNodes
@@ -39,7 +40,7 @@ object FloydWarshall {
   }
 
   /**
-   * O(n^3)
+   * O(n&#94;3)
    */
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:MutableLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableLabelDigraph[Node,Label] = {
 
@@ -53,8 +54,8 @@ object FloydWarshall {
    *
    * @return a Digraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
-                                              extraNodes:Seq[Node] = Seq.empty,
+  def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
+                                              extraNodes:GenSeq[Node] = Seq.empty,
                                               support:SemiringSupport[Label,Key],
                                               labelForArc:(Node,Node,ArcLabel)=>Label):MutableLabelDigraph[Node,Label] = {
     val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
@@ -67,10 +68,10 @@ object FloydWarshall {
   }
 
   /**
-   * O(n^3)
+   * O(n&#94;3)
    */
-  def allPairsShortestPaths[Node,ArcLabel,Label,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
-                                                 extraNodes:Seq[Node] = Seq.empty,
+  def allPairsShortestPaths[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
+                                                 extraNodes:GenSeq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],
                                                  labelForArc:(Node,Node,ArcLabel)=>Label):MutableLabelDigraph[Node,Label] = {
     val initialDigraph = createLabelDigraph(arcs,extraNodes,support,labelForArc)

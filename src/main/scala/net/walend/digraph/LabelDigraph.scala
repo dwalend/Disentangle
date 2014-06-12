@@ -1,5 +1,7 @@
 package net.walend.digraph
 
+import scala.collection.GenTraversable
+
 /**
  * A graph with Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph
  *
@@ -10,7 +12,6 @@ package net.walend.digraph
  * @since v0.1.0
  */
 //todo split up and start a package.scala
-//todo edge type - Pair, (InnerNodeType,InnerNodeType,Arc), etc, and an edges method
 trait Graph[Node] {
 
   def nodes:Seq[Node]
@@ -39,6 +40,19 @@ trait Graph[Node] {
    */
   def innerNode(value:Node):Option[InnerNodeType]
 
+  type OuterEdgeType
+
+  type InnerEdgeType
+
+  /**
+   * @return A Traversable (usually something more specific) of the edges
+   */
+  def edges:GenTraversable[OuterEdgeType]
+
+  /**
+   * @return A Traversable of the edges as represented in the graph
+   */
+  def innerEdges:GenTraversable[InnerEdgeType]
 }
 
 
@@ -46,6 +60,7 @@ trait Graph[Node] {
  * A graph with directed zero or one label from any single node to any other single node.
  * 
  */
+//todo any way to pass InnerNodeType up as part of Edge?
 trait LabelDigraph[Node,Label] extends Graph[Node] {
 
   /**
@@ -65,16 +80,19 @@ trait LabelDigraph[Node,Label] extends Graph[Node] {
    */
   type InnerNodeType <: DigraphInnerNodeTrait
 
+  type OuterEdgeType = (Node,Node,Label)
+
   /**
    * @return the label to return when no arc exists
    */
-  def noArcExistsValue:Label
+  def noArcExistsLabel:Label
 
   /**
    * @return All of the arcs in the graph
    */
-  //todo change to InnerNodeType,InnerNodeType,Arc
-  def arcs:Seq[(Node,Node,Label)]
+  def arcs:GenTraversable[OuterEdgeType]
+
+  def edges:GenTraversable[OuterEdgeType] = arcs
 
   /**
    * @return the Arc between start and end or noArcExistsValue

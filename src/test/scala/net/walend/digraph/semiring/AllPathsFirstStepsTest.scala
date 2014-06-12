@@ -143,7 +143,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     jb
   }
-
+/* todo turn back on when verbal expressions supports 2.10 */
   def usStateEdges = {
 
     import scala.io.Source

@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import net.walend.digraph.IndexedLabelDigraph
+import scala.collection.GenTraversable
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -15,23 +16,23 @@ object Brandes {
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
    */
-  def dijkstraSingleSinkForBrandes[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
+  def dijkstraSingleSinkForBrandes[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
-                                        (sink:initialDigraph.InnerNodeType):(IndexedSeq[(Node,Node,Label)],
-                                                                            Stack[(Node,Label)]) = {
-    val stack = Stack[initialDigraph.InnerNodeType]()
+                                        (sink:labelDigraph.InnerNodeType):(IndexedSeq[(Node,Node,Label)],
+                                                                            Stack[(labelDigraph.InnerNodeType,Label)]) = {
+    val stack = Stack[labelDigraph.InnerNodeType]()
 
-    val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering) {
+    val heap:Heap[Key,labelDigraph.InnerNodeType] = new FibonacciHeap[Key,labelDigraph.InnerNodeType](support.heapOrdering) {
 
-      override def takeTopValue():initialDigraph.InnerNodeType = {
+      override def takeTopValue():labelDigraph.InnerNodeType = {
         val result = super.takeTopValue()
         stack.push(result)
         result
       }
     }
 
-    val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap)
-    val originArcStack = stack.map(x => (x.value,allArcs(x.index)._3))
+    val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(labelDigraph,support)(sink,heap)
+    val originArcStack:Stack[(labelDigraph.InnerNodeType,Label)] = stack.map(x => (x,allArcs(x.index)._3))
 
     (allArcs,originArcStack.filter(_._2 != support.semiring.O))
   }
@@ -44,7 +45,7 @@ object Brandes {
                           Label <: Option[FirstSteps[Node, CoreLabel]], 
                           Key]
                           (support: AllPathsFirstSteps[Node, CoreLabel, Key],labelGraph:IndexedLabelDigraph[Node,Label])
-                          (sink: labelGraph.InnerNodeType,stack:Stack[(Node,Label)],shortestPathsToSink:IndexedSeq[(Node,Node,Label)]): Map[Node, Double] = {
+                          (sink: labelGraph.InnerNodeType,stack:Stack[(labelGraph.InnerNodeType,Label)],shortestPathsToSink:IndexedSeq[(Node,Node,Label)]): Map[Node, Double] = {
     import scala.collection.mutable.{Map => MutableMap}
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
 
@@ -57,12 +58,12 @@ object Brandes {
         case None => //nothing to do
         case Some(sourceLabel: FirstSteps[Node, CoreLabel]) => {
           val sourceCount: Double = sourceLabel.pathCount
-          val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(arc._1, 0.0)
+          val partialFromSource:Double = nodesToPartialBetweenness.getOrElse(arc._1.value, 0.0)
           for (choice <- sourceLabel.choices) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
               val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0.0)
-              //todo switch over the stack to be (innerNode,Label) to avoid the index lookup
+              //todo switch over the choice to be an innerNode to avoid the index lookup
               val choiceIndex: Int = labelGraph.innerNode(choice).get.index
               val choiceLabel:Label = shortestPathsToSink(choiceIndex)._3
               if(choiceLabel != None) {
@@ -92,7 +93,7 @@ object Brandes {
     type Label = support.Label
 
     val arcsAndPartialBetweennesses:Seq[(Seq[(Node,Node,Label)],Map[Node, Double])] = for(sink <- initialGraph.innerNodes) yield {
-      val arcsAndNodeStack:(IndexedSeq[(Node,Node,Label)],Stack[(Node,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
+      val arcsAndNodeStack:(IndexedSeq[(Node,Node,Label)],Stack[(initialGraph.InnerNodeType,Label)]) = dijkstraSingleSinkForBrandes(initialGraph,support)(sink)
       val partialB = partialBetweenness(support,initialGraph)(sink,arcsAndNodeStack._2,arcsAndNodeStack._1)
       (arcsAndNodeStack._1.filter(_._3 != support.semiring.O),partialB)
     }
@@ -112,7 +113,7 @@ object Brandes {
    *
    * @return an IndexedDigraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  def createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
+  def createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
                                                   extraNodes:Seq[Node] = Seq.empty,
                                                   support:AllPathsFirstSteps[Node, CoreLabel, Key],
                                                   labelForArc:(Node,Node,ArcLabel)=>CoreLabel):IndexedLabelDigraph[Node,Option[FirstSteps[Node,CoreLabel]]] = {
@@ -120,7 +121,7 @@ object Brandes {
     Dijkstra.createLabelDigraph(arcs,extraNodes,support,support.convertArcToLabelFunc[ArcLabel](labelForArc))
   }
 
-  def allLeastPathsAndBetweenness[Node,ArcLabel,CoreLabel,Key](arcs:Seq[(Node,Node,ArcLabel)] = Seq.empty,
+  def allLeastPathsAndBetweenness[Node,ArcLabel,CoreLabel,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
                                                            extraNodes:Seq[Node] = Seq.empty,
                                                            support:AllPathsFirstSteps[Node, CoreLabel, Key],
                                                            labelForArc:(Node,Node,ArcLabel)=>CoreLabel):(Seq[(Node,Node,Option[FirstSteps[Node,CoreLabel]])],Map[Node, Double]) = {
