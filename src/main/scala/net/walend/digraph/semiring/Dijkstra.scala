@@ -166,7 +166,7 @@ object Dijkstra {
       }
     }
 
-    //don't filter out where labels == semiring.O. Need the indexes in tact
+    //don't filter out where labels == semiring.O. Need the indexes intact
     labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
   }
 

@@ -12,6 +12,8 @@ import net.walend.heap.HeapOrdering
 //todo is there some way to make this an inner class and a parameter? (Same for OnePathFirstStep)
 //todo maybe make choices a Map from Node to Int number of paths. Then pathCount is a sum of the values in choices
 //todo but to really make that work, you need both inbound and outbound choices
+
+//todo try making choices a Set[InnerNode] where InnerNode <: LabelDigraph#DigraphInnerNodeTrait
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set[Node]) {
   /**
    * Overriding equals to speed up.

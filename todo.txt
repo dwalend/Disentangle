@@ -9,8 +9,8 @@ In this release
 
 For this release
 
-* automatically plot the results of the timing studies (and comparison with Jung)
 * edges in top-level graph representation
+* automatically plot the results of the timing studies (and comparison with Jung)
 * profile Floyd
 * profile Dijkstra
 * profile Brandes
