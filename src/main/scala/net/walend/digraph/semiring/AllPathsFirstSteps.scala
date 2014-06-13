@@ -36,6 +36,8 @@ case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set
   override def hashCode():Int = {
     weight.hashCode() ^ choices.hashCode()
   }
+
+
 }
 
 class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstSteps[Node,CoreLabel]],Key]{

@@ -15,6 +15,8 @@ object Brandes {
   import scala.collection.mutable.Stack
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
+   *
+   * O(n ln(n) + a)
    */
   def dijkstraSingleSinkForBrandes[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
@@ -39,6 +41,8 @@ object Brandes {
 
     /**
    * Find partial betweenness
+     *
+     * O(a ln(n)) but could be O(a)
    */
   def partialBetweenness[Node, 
                           CoreLabel, 
@@ -63,7 +67,7 @@ object Brandes {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choice != sink.value)  {
               val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0.0)
-              //todo switch over the choice to be an innerNode to avoid the index lookup
+              //todo switch over the choice to be an innerNode to avoid the index lookup and O(ln(n)) cost
               val choiceIndex: Int = labelGraph.innerNode(choice).get.index
               val choiceLabel:Label = shortestPathsToSink(choiceIndex)._3
               if(choiceLabel != None) {
