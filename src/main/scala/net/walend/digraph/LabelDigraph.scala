@@ -55,9 +55,8 @@ trait Graph[Node] {
   def innerEdges:GenTraversable[InnerEdgeType]
 }
 
-
 /**
- * A graph with directed zero or one label from any single node to any other single node.
+ * A graph with directed zero or one arc from any single node to any other single node, with the type label.
  * 
  */
 //todo any way to pass InnerNodeType up as part of Edge?

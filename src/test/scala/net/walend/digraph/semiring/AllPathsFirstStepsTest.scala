@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
+import net.walend.digraph.AdjacencyLabelDigraph
 
 /**
  *
@@ -64,10 +65,19 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
+    val arcs = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
 
-    labels.size should be (expectedArcs.size)
-    labels.to[Set] should be (expectedArcs)
+    arcs.size should be (expectedArcs.size)
+    arcs.to[Set] should be (expectedArcs)
+
+    val resultDigraph = AdjacencyLabelDigraph(arcSeq = arcs,noArcExistsValue = support.semiring.O)
+
+    //todo add a test
+    /*
+    for(arc <- arcs) {
+      println(s"${arc._1},${arc._2}  ${support.subgraphEdges(resultDigraph,arc._1,arc._2)}")
+    }
+    */
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -117,8 +127,6 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
     }
   }
 
-
-
   def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Set[(Node,Double)] = {
     import edu.uci.ics.jung.graph.UndirectedSparseGraph
     import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
@@ -143,7 +151,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     jb
   }
-/* todo turn back on when verbal expressions supports 2.10 */
+
   def usStateEdges = {
 
     import scala.io.Source

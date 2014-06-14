@@ -1,6 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.HeapOrdering
+import net.walend.digraph.LabelDigraph
 
 /**
  * Finds all minimal paths that use the core semiring.
@@ -15,6 +16,7 @@ import net.walend.heap.HeapOrdering
 
 //todo try making choices a Set[InnerNode] where InnerNode <: LabelDigraph#DigraphInnerNodeTrait
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set[Node]) {
+
   /**
    * Overriding equals to speed up.
    */
@@ -36,8 +38,6 @@ case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set
   override def hashCode():Int = {
     weight.hashCode() ^ choices.hashCode()
   }
-
-
 }
 
 class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstSteps[Node,CoreLabel]],Key]{
@@ -82,25 +82,31 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
   /**
    * Create the subgraph defined by AllPathsFirstSteps
    */
-  /*
-  def subgraph(labelGraph:Digraph[Node,Label],from:Node,to:Node):Set[(Node,Node,Label)] = {
 
-    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
+  def subgraphEdges(labelGraph:LabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+
     val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
+    //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
+    def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+      val label:Label = labelGraph.label(innerFrom,innerTo)
+      label match {
+        case Some(firstSteps) => {
 
-    val label:Label = labelGraph.arc(innerFrom,innerTo)
-    label match {
-      case Some(firstSteps) => {
-        val theseSteps:Set[(Node,Node,Label)] = firstSteps.choices.map(step => (from,step,firstSteps))
-        val explore:Set[(Node,Node,Label)] = firstSteps.choices.map(step => subgraph(labelGraph,step,to)).flatten
+          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
+          val closeArcs:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
 
-        theseSteps ++ explore
+          val farArcs:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+
+          closeArcs ++ farArcs
+        }
+        case None => Set.empty
       }
-      case None => Set.empty
     }
+    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
 
+    recurse(innerFrom,innerTo)
   }
-  */
+
   object AllPathsSemiring extends Semiring {
 
 // todo report bug that I can't do this here
