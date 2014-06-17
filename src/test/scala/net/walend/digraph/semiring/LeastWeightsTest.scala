@@ -2,6 +2,7 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
+import net.walend.digraph.semiring.Brandes.BrandesSupport
 
 /**
  * Tests algorithms with LeastWeights
@@ -97,7 +98,7 @@ class LeastWeightsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val brandesSupport = new AllPathsFirstSteps[String,Double,Double](LeastWeights)
+    val brandesSupport = new Brandes.BrandesSupport[String,Double,Double](LeastWeights)
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,convertArcToLabel)
 

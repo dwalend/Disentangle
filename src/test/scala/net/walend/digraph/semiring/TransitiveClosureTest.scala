@@ -82,7 +82,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val brandesSupport = new AllPathsFirstSteps[String,Boolean,TransitiveClosureHeapKey](TransitiveClosure)
+    val brandesSupport = new Brandes.BrandesSupport[String,Boolean,TransitiveClosureHeapKey](TransitiveClosure)
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,TransitiveClosure.convertArcToLabel)
 

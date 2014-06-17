@@ -124,7 +124,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val brandesSupport = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
+    val brandesSupport = new Brandes.BrandesSupport[String,Int,Int](FewestNodes)
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(graphParts._1,graphParts._2,brandesSupport,FewestNodes.convertArcToLabel)
 
