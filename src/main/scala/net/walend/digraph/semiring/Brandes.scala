@@ -1,7 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.{HeapOrdering, FibonacciHeap, Heap}
-import net.walend.digraph.{AdjacencyLabelDigraph, LabelDigraph, IndexedLabelDigraph}
+import net.walend.digraph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import scala.collection.GenTraversable
 
 /**
@@ -11,8 +11,6 @@ import scala.collection.GenTraversable
  * @since v0.1.0
  */
 
-//todo use a common interface for it and AllPairsFirstSteps, but this one has pathcount and a Map from Nodes to Indices internally
-//todo let the internal parts be mutable to get through the init.
 object Brandes {
 
   import scala.collection.mutable.Stack
@@ -55,6 +53,7 @@ object Brandes {
   (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
   (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): Map[Node, Double] = {
     import scala.collection.mutable.{Map => MutableMap}
+    //todo rework this map to be an ArrayBuffer[Double] by node index
     val nodesToPartialBetweenness: MutableMap[Node, Double] = MutableMap()
 
     //for each possible choice of next step in the stack
@@ -67,12 +66,11 @@ object Brandes {
         case Some(sourceLabel: BrandesSteps[Node, CoreLabel]) => {
           val sourceCount: Double = sourceLabel.pathCount
           val partialFromSource: Double = nodesToPartialBetweenness.getOrElse(arc._1.value, 0.0)
-          for (choice <- sourceLabel.choices) {
+          for (choiceIndex <- sourceLabel.choiceIndexes) {
             //only calculate betweenness for the between nodes, not arriving at the sink
-            if (choice != sink.value) {
+            if (choiceIndex != sink.index) {
+              val choice = labelGraph.node(choiceIndex)
               val oldPartial: Double = nodesToPartialBetweenness.getOrElse(choice, 0.0)
-              //todo switch over the choice to be an innerNode to avoid the index lookup and O(ln(n)) cost
-              val choiceIndex: Int = labelGraph.innerNode(choice).get.index
               val choiceLabel: Label = shortestPathsToSink(choiceIndex)._3
               if (choiceLabel != None) {
                 val choiceCount: Double = choiceLabel.get.pathCount
