@@ -90,9 +90,10 @@ object Brandes {
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
   def allLeastPathsAndBetweenness[Node,
-  CoreLabel,
-  Key]
-  (initialGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]], support: BrandesSupport[Node, CoreLabel, Key]): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+                                  CoreLabel,
+                                  Key]
+                                  (initialGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]],
+                                   support: BrandesSupport[Node, CoreLabel, Key]): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
 
     type Label = support.Label
 
@@ -122,8 +123,6 @@ object Brandes {
                                                          support: BrandesSupport[Node, CoreLabel, Key],
                                                          labelForArc: (Node, Node, ArcLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
-    //todo start here
-
     //Create the core label digraph to get everything's index
     val coreLabelDigraph:AdjacencyLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs, extraNodes, support.coreSupport, labelForArc)
 
@@ -142,19 +141,18 @@ object Brandes {
   }
 
   //todo remove choices
-  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choices: Set[Node], choiceIndexes:Set[Int]) {
+  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Set[Int]) {
 
     /**
      * Overriding equals to speed up.
      */
-    //todo pathCount
     override def equals(any: Any) = {
       if (any.isInstanceOf[BrandesSteps[Node, CoreLabel]]) {
         val other: BrandesSteps[Node, CoreLabel] = any.asInstanceOf[BrandesSteps[Node, CoreLabel]]
         if (this eq other) true //if they share a memory address, no need to compare
         else {
-          if (weight == other.weight) {
-            choices == other.choices
+          if ((weight == other.weight) && (pathCount == other.pathCount)) {
+            choiceIndexes == other.choiceIndexes
           } else false
         }
       } else false
@@ -165,7 +163,7 @@ object Brandes {
      */
     //todo pathCount
     override def hashCode(): Int = {
-      weight.hashCode() ^ choices.hashCode()
+      weight.hashCode() ^ choiceIndexes.hashCode() ^ pathCount
     }
   }
 
@@ -184,7 +182,7 @@ object Brandes {
 
     def convertCoreLabelToLabel(labelDigraph:AdjacencyLabelDigraph[Node,CoreLabel])
                          (arc:labelDigraph.InnerEdgeType): Label = {
-      Some(BrandesSteps[Node, CoreLabel](arc._3, 1, Set(arc._2.value), Set(arc._2.index)))
+      Some(BrandesSteps[Node, CoreLabel](arc._3, 1, Set(arc._2.index)))
     }
 
     /**
@@ -200,7 +198,7 @@ object Brandes {
       }
 
       //identity and annihilator
-      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Set.empty, Set.empty))
+      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Set.empty))
       val O = None
 
       def summary(fromThroughToLabel: Label, currentLabel: Label): Label = {
@@ -213,7 +211,6 @@ object Brandes {
             if ((summ == fromThroughToSteps.weight) && (summ == currentSteps.weight)) {
               Some(new BrandesSteps[Node, CoreLabel](currentSteps.weight,
                 currentSteps.pathCount + fromThroughToSteps.pathCount,
-                currentSteps.choices ++ fromThroughToSteps.choices,
                 currentSteps.choiceIndexes ++ fromThroughToSteps.choiceIndexes))
             }
             else if (summ == fromThroughToSteps.weight) fromThroughToLabel
@@ -231,14 +228,11 @@ object Brandes {
           val fromThroughSteps: BrandesSteps[Node, CoreLabel] = fromThroughLabel.get
           val throughToSteps: BrandesSteps[Node, CoreLabel] = throughToLabel.get
           //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
-          val choices: Set[Node] = if (fromThroughLabel == I) throughToSteps.choices
-          else fromThroughSteps.choices
           val choiceIndexes: Set[Int] = if (fromThroughLabel == I) throughToSteps.choiceIndexes
-          else fromThroughSteps.choiceIndexes
+                                        else fromThroughSteps.choiceIndexes
 
           Some(new BrandesSteps[Node, CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight, throughToSteps.weight),
             fromThroughSteps.pathCount * throughToSteps.pathCount,
-            choices,
             choiceIndexes
             ))
         }
