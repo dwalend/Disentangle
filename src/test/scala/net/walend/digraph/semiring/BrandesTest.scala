@@ -2,7 +2,6 @@ package net.walend.digraph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.digraph.SomeGraph._
-import net.walend.digraph.AdjacencyLabelDigraph
 import net.walend.digraph.semiring.Brandes.{BrandesSteps, BrandesSupport}
 
 /**
@@ -14,72 +13,48 @@ import net.walend.digraph.semiring.Brandes.{BrandesSteps, BrandesSupport}
 class BrandesTest extends FlatSpec with Matchers {
 
   val expectedArcs = Set[(String,String,Option[BrandesSteps[String,Int]])](
-    (A,A,Some(BrandesSteps(0,1,Set()))),
-    (A,B,Some(BrandesSteps(1,1,Set(B)))),
-    (A,C,Some(BrandesSteps(2,1,Set(B)))),
-    (A,D,Some(BrandesSteps(3,1,Set(B)))),
-    (A,E,Some(BrandesSteps(4,1,Set(B)))),
-    (A,F,Some(BrandesSteps(5,1,Set(B)))),
-    (A,H,Some(BrandesSteps(5,1,Set(B)))),
-    (B,B,Some(BrandesSteps(0,1,Set()))),
-    (B,C,Some(BrandesSteps(1,1,Set(C)))),
-    (B,D,Some(BrandesSteps(2,1,Set(C)))),
-    (B,E,Some(BrandesSteps(3,1,Set(C)))),
-    (B,F,Some(BrandesSteps(4,1,Set(C)))),
-    (B,H,Some(BrandesSteps(4,1,Set(C)))),
-    (C,B,Some(BrandesSteps(3,1,Set(D)))),
-    (C,C,Some(BrandesSteps(0,1,Set()))),
-    (C,D,Some(BrandesSteps(1,1,Set(D)))),
-    (C,E,Some(BrandesSteps(2,1,Set(D)))),
-    (C,F,Some(BrandesSteps(3,1,Set(D)))),
-    (C,H,Some(BrandesSteps(3,1,Set(D)))),
-    (D,B,Some(BrandesSteps(2,1,Set(E)))),
-    (D,C,Some(BrandesSteps(3,1,Set(E)))),
-    (D,D,Some(BrandesSteps(0,1,Set()))),
-    (D,E,Some(BrandesSteps(1,1,Set(E)))),
-    (D,F,Some(BrandesSteps(2,1,Set(E)))),
-    (D,H,Some(BrandesSteps(2,1,Set(E)))),
-    (E,B,Some(BrandesSteps(1,1,Set(B)))),
-    (E,C,Some(BrandesSteps(2,2,Set(B, H)))),
-    (E,D,Some(BrandesSteps(3,2,Set(B, H)))),
-    (E,E,Some(BrandesSteps(0,1,Set()))),
-    (E,F,Some(BrandesSteps(1,1,Set(F)))),
-    (E,H,Some(BrandesSteps(1,1,Set(H)))),
-    (F,F,Some(BrandesSteps(0,1,Set()))),
-    (G,G,Some(BrandesSteps(0,1,Set()))),
-    (H,B,Some(BrandesSteps(4,1,Set(C)))),
-    (H,C,Some(BrandesSteps(1,1,Set(C)))),
-    (H,D,Some(BrandesSteps(2,1,Set(C)))),
-    (H,E,Some(BrandesSteps(3,1,Set(C)))),
-    (H,F,Some(BrandesSteps(4,1,Set(C)))),
-    (H,H,Some(BrandesSteps(0,1,Set())))
+    (A,A,Some(BrandesSteps(0,1,Set(),Set()))),
+    (A,B,Some(BrandesSteps(1,1,Set(B),Set(2)))),
+    (A,C,Some(BrandesSteps(2,1,Set(B),Set(2)))),
+    (A,D,Some(BrandesSteps(3,1,Set(B),Set(2)))),
+    (A,E,Some(BrandesSteps(4,1,Set(B),Set(2)))),
+    (A,F,Some(BrandesSteps(5,1,Set(B),Set(2)))),
+    (A,H,Some(BrandesSteps(5,1,Set(B),Set(2)))),
+    (B,B,Some(BrandesSteps(0,1,Set(),Set()))),
+    (B,C,Some(BrandesSteps(1,1,Set(C),Set(3)))),
+    (B,D,Some(BrandesSteps(2,1,Set(C),Set(3)))),
+    (B,E,Some(BrandesSteps(3,1,Set(C),Set(3)))),
+    (B,F,Some(BrandesSteps(4,1,Set(C),Set(3)))),
+    (B,H,Some(BrandesSteps(4,1,Set(C),Set(3)))),
+    (C,B,Some(BrandesSteps(3,1,Set(D),Set(4)))),
+    (C,C,Some(BrandesSteps(0,1,Set(),Set()))),
+    (C,D,Some(BrandesSteps(1,1,Set(D),Set(4)))),
+    (C,E,Some(BrandesSteps(2,1,Set(D),Set(4)))),
+    (C,F,Some(BrandesSteps(3,1,Set(D),Set(4)))),
+    (C,H,Some(BrandesSteps(3,1,Set(D),Set(4)))),
+    (D,B,Some(BrandesSteps(2,1,Set(E),Set(5)))),
+    (D,C,Some(BrandesSteps(3,1,Set(E),Set(5)))),
+    (D,D,Some(BrandesSteps(0,1,Set(),Set()))),
+    (D,E,Some(BrandesSteps(1,1,Set(E),Set(5)))),
+    (D,F,Some(BrandesSteps(2,1,Set(E),Set(5)))),
+    (D,H,Some(BrandesSteps(2,1,Set(E),Set(5)))),
+    (E,B,Some(BrandesSteps(1,1,Set(B),Set(2)))),
+    (E,C,Some(BrandesSteps(2,2,Set(B, H),Set(2,8)))),
+    (E,D,Some(BrandesSteps(3,2,Set(B, H),Set(2,8)))),
+    (E,E,Some(BrandesSteps(0,1,Set(),Set()))),
+    (E,F,Some(BrandesSteps(1,1,Set(F),Set(6)))),
+    (E,H,Some(BrandesSteps(1,1,Set(H),Set(8)))),
+    (F,F,Some(BrandesSteps(0,1,Set(),Set()))),
+    (G,G,Some(BrandesSteps(0,1,Set(),Set()))),
+    (H,B,Some(BrandesSteps(4,1,Set(C),Set(3)))),
+    (H,C,Some(BrandesSteps(1,1,Set(C),Set(3)))),
+    (H,D,Some(BrandesSteps(2,1,Set(C),Set(3)))),
+    (H,E,Some(BrandesSteps(3,1,Set(C),Set(3)))),
+    (H,F,Some(BrandesSteps(4,1,Set(C),Set(3)))),
+    (H,H,Some(BrandesSteps(0,1,Set(),Set())))
   )
 
   val support = new BrandesSupport[String,Int,Int](FewestNodes)
-
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
-
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
-
-    labelGraph.arcs.to[Set] should be (expectedArcs)
-  }
-
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
-
-    val arcs = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
-
-    arcs.size should be (expectedArcs.size)
-    arcs.to[Set] should be (expectedArcs)
-
-    val resultDigraph = AdjacencyLabelDigraph(arcSeq = arcs,noArcExistsValue = support.semiring.O)
-
-    //todo add a test
-    /*
-    for(arc <- arcs) {
-      println(s"${arc._1},${arc._2}  ${support.subgraphEdges(resultDigraph,arc._1,arc._2)}")
-    }
-    */
-  }
 
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,

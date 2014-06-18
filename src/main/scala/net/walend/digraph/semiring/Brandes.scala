@@ -1,7 +1,7 @@
 package net.walend.digraph.semiring
 
 import net.walend.heap.{HeapOrdering, FibonacciHeap, Heap}
-import net.walend.digraph.{LabelDigraph, IndexedLabelDigraph}
+import net.walend.digraph.{AdjacencyLabelDigraph, LabelDigraph, IndexedLabelDigraph}
 import scala.collection.GenTraversable
 
 /**
@@ -126,18 +126,27 @@ object Brandes {
                                                          support: BrandesSupport[Node, CoreLabel, Key],
                                                          labelForArc: (Node, Node, ArcLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
-    Dijkstra.createLabelDigraph(arcs, extraNodes, support, support.convertArcToLabelFunc[ArcLabel](labelForArc))
+    //todo start here
+
+    //Create the core label digraph to get everything's index
+    val coreLabelDigraph:AdjacencyLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs, extraNodes, support.coreSupport, labelForArc)
+
+    //Use that to create the Brandes labels
+    val brandesArcs = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
+
+    AdjacencyLabelDigraph(brandesArcs,coreLabelDigraph.nodes,support.semiring.O)
   }
 
   def allLeastPathsAndBetweenness[Node, ArcLabel, CoreLabel, Key](arcs: GenTraversable[(Node, Node, ArcLabel)] = Seq.empty,
                                                                   extraNodes: Seq[Node] = Seq.empty,
                                                                   support: BrandesSupport[Node, CoreLabel, Key],
                                                                   labelForArc: (Node, Node, ArcLabel) => CoreLabel): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
-    val labelGraph = Dijkstra.createLabelDigraph(arcs, extraNodes, support, support.convertArcToLabelFunc[ArcLabel](labelForArc))
+    val labelGraph = createLabelDigraph(arcs, extraNodes, support, labelForArc)
     allLeastPathsAndBetweenness(labelGraph, support)
   }
 
-  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choices: Set[Node]) {
+  //todo remove choices
+  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choices: Set[Node], choiceIndexes:Set[Int]) {
 
     /**
      * Overriding equals to speed up.
@@ -164,7 +173,7 @@ object Brandes {
     }
   }
 
-  class BrandesSupport[Node, CoreLabel, Key](coreSupport: SemiringSupport[CoreLabel, Key]) extends SemiringSupport[Option[BrandesSteps[Node, CoreLabel]], Key] {
+  class BrandesSupport[Node, CoreLabel, Key](val coreSupport: SemiringSupport[CoreLabel, Key]) extends SemiringSupport[Option[BrandesSteps[Node, CoreLabel]], Key] {
 
     override type Label = Option[BrandesSteps[Node, CoreLabel]]
 
@@ -177,12 +186,10 @@ object Brandes {
       case None => coreSupport.heapOrdering.AlwaysBottom
     }
 
-    def convertArcToLabel[ArcLabel](coreLabelForArc: (Node, Node, ArcLabel) => CoreLabel)
-                                   (start: Node, end: Node, arcLabel: ArcLabel): Label = {
-      Some(BrandesSteps[Node, CoreLabel](coreLabelForArc(start, end, arcLabel), 1, Set(end)))
+    def convertCoreLabelToLabel(labelDigraph:AdjacencyLabelDigraph[Node,CoreLabel])
+                         (arc:labelDigraph.InnerEdgeType): Label = {
+      Some(BrandesSteps[Node, CoreLabel](arc._3, 1, Set(arc._2.value), Set(arc._2.index)))
     }
-
-    def convertArcToLabelFunc[ArcLabel](coreLabelForArc: (Node, Node, ArcLabel) => CoreLabel): ((Node, Node, ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
 
     /**
      * A semiring for use with Brandes algorithm
@@ -197,7 +204,7 @@ object Brandes {
       }
 
       //identity and annihilator
-      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Set[Node]()))
+      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Set.empty, Set.empty))
       val O = None
 
       def summary(fromThroughToLabel: Label, currentLabel: Label): Label = {
@@ -210,7 +217,8 @@ object Brandes {
             if ((summ == fromThroughToSteps.weight) && (summ == currentSteps.weight)) {
               Some(new BrandesSteps[Node, CoreLabel](currentSteps.weight,
                 currentSteps.pathCount + fromThroughToSteps.pathCount,
-                currentSteps.choices ++ fromThroughToSteps.choices))
+                currentSteps.choices ++ fromThroughToSteps.choices,
+                currentSteps.choiceIndexes ++ fromThroughToSteps.choiceIndexes))
             }
             else if (summ == fromThroughToSteps.weight) fromThroughToLabel
             else if (summ == currentSteps.weight) currentLabel
@@ -229,10 +237,14 @@ object Brandes {
           //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
           val choices: Set[Node] = if (fromThroughLabel == I) throughToSteps.choices
           else fromThroughSteps.choices
+          val choiceIndexes: Set[Int] = if (fromThroughLabel == I) throughToSteps.choiceIndexes
+          else fromThroughSteps.choiceIndexes
 
           Some(new BrandesSteps[Node, CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight, throughToSteps.weight),
             fromThroughSteps.pathCount * throughToSteps.pathCount,
-            choices))
+            choices,
+            choiceIndexes
+            ))
         }
         else O
       }
