@@ -129,13 +129,12 @@ object TimingStudies {
 
     import scala.language.higherKinds
     def convertToLabel[E[X] <: EdgeLikeIn[X]](edge:E[Int]):(Int,Int,Option[FirstSteps[Int,Int]]) = {
-      (edge._1,edge._2,Some(FirstSteps(1,1,Set.empty[Int])))
+      (edge._1,edge._2,Some(FirstSteps(1,Set.empty[Int])))
     }
 
     val result = timeFunction{
       val labelGraphParts = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
 
-      //todo is there a way to do this without the cast?
       def labelForLabel[N,E,L](from:N,to:N,edge:E):L = edge.asInstanceOf[L]
       DDijkstra.allPairsShortestPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
     }

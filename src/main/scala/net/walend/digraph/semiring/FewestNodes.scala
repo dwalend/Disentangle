@@ -16,8 +16,6 @@ object FewestNodes extends SemiringSupport[Int,Int] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  //todo use covariant arguments
-  //todo and use ArcLabel instead of Label
   def convertArcToLabel[Node, ArcLabel](start: Node, end: Node, label: ArcLabel): FewestNodes.Label = 1
 
   object FewestNodesSemiring extends Semiring {

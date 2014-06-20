@@ -10,9 +10,8 @@ import net.walend.digraph.LabelDigraph
  * @since v0.1.0
  */
 
-//todo is there some way to make this an inner class and a parameter? (Same for OnePathFirstStep)
-//todo drop pathcount after you've got it working in Brandes' algorithm
-case class FirstSteps[Node,CoreLabel](weight:CoreLabel,pathCount:Int,choices:Set[Node]) {
+//todo is there some way to make this use an inner node ? (Same for OnePathFirstStep)
+case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
 
   /**
    * Overriding equals to speed up.
@@ -52,14 +51,14 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertArcToLabel[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel)
                               (start: Node, end: Node, arcLabel: ArcLabel):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),1,Set(end)))
+    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),Set(end)))
   }
 
   def convertArcToLabelFunc[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel):((Node,Node,ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
 
   /*
   //branching to figure this out
-  //todo use a Stream
+  //todo use a Stream ?
   def allPaths(labelGraph:Digraph[Node,Label],from:Node,to:Node):Seq[(Node,Seq[(Label,Node)])] = {
 
     val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
@@ -117,7 +116,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,1,Set[Node]()))
+    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,Set[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -129,7 +128,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
             Some(new FirstSteps[Node,CoreLabel](currentSteps.weight,
-                                                currentSteps.pathCount+fromThroughToSteps.pathCount,
                                                 currentSteps.choices ++ fromThroughToSteps.choices))
           }
           else if (summ==fromThroughToSteps.weight) fromThroughToLabel
@@ -151,7 +149,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
                                 else fromThroughSteps.choices
 
         Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
-                                            fromThroughSteps.pathCount * throughToSteps.pathCount,
                                             choices))
       }
       else O

@@ -124,7 +124,7 @@ object Brandes {
                                                          labelForArc: (Node, Node, ArcLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
     //Create the core label digraph to get everything's index
-    val coreLabelDigraph:AdjacencyLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs, extraNodes, support.coreSupport, labelForArc)
+    val coreLabelDigraph:IndexedLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs, extraNodes, support.coreSupport, labelForArc)
 
     //Use that to create the Brandes labels
     val brandesArcs = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
@@ -140,7 +140,6 @@ object Brandes {
     allLeastPathsAndBetweenness(labelGraph, support)
   }
 
-  //todo remove choices
   case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Set[Int]) {
 
     /**
@@ -161,7 +160,6 @@ object Brandes {
     /**
      * Overriding hashCode because I overrode equals.
      */
-    //todo pathCount
     override def hashCode(): Int = {
       weight.hashCode() ^ choiceIndexes.hashCode() ^ pathCount
     }
@@ -180,7 +178,7 @@ object Brandes {
       case None => coreSupport.heapOrdering.AlwaysBottom
     }
 
-    def convertCoreLabelToLabel(labelDigraph:AdjacencyLabelDigraph[Node,CoreLabel])
+    def convertCoreLabelToLabel(labelDigraph:IndexedLabelDigraph[Node,CoreLabel])
                          (arc:labelDigraph.InnerEdgeType): Label = {
       Some(BrandesSteps[Node, CoreLabel](arc._3, 1, Set(arc._2.index)))
     }

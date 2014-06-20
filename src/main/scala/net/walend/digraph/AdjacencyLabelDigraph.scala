@@ -67,7 +67,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
    */
   override def innerNodes: IndexedSeq[InNode] = inNodes
 
-  type InnerEdgeType = (InNode,InNode,Label)
+  override type InnerEdgeType = (InNode,InNode,Label)
 
   /**
    * @return A Traversable of the edges as represented in the graph

@@ -143,6 +143,8 @@ trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
    */
   type InnerNodeType <: InnerIndexedNodeTrait
 
+  type InnerEdgeType = (InnerNodeType,InnerNodeType,Label)
+
   //todo remove after changing the output from Dijkstra's algorithm
   def node(i:Int):Node
 

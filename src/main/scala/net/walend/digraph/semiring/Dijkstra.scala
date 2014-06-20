@@ -86,11 +86,10 @@ object Dijkstra {
    *
    * @return an IndexedDigraph with all nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
    */
-  //todo give IndexedLabelDigraph the right inner edge type, then convert this back to return IndexedLabelDigraph
   def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
                                                   extraNodes:Seq[Node] = Seq.empty,
                                                   support:SemiringSupport[Label,Key],
-                                                  labelForArc:(Node,Node,ArcLabel)=>Label):AdjacencyLabelDigraph[Node,Label] = {
+                                                  labelForArc:(Node,Node,ArcLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
 
     val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
     val nonSelfArcs = arcs.filter(x => x._1 != x._2)
