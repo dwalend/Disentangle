@@ -34,7 +34,7 @@ object FloydWarshall {
     val innerNodes = labelDigraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
       val summaryLabel = relax(labelDigraph,support.semiring)(i,k,j)
-      labelDigraph.upsertArc(i,j,summaryLabel)
+      labelDigraph.upsertEdge(i,j,summaryLabel)
     }
     labelDigraph
   }
@@ -52,29 +52,29 @@ object FloydWarshall {
    *
    * O(n ln(n) + an)
    *
-   * @return a Digraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
+   * @return a Digraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
+  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                               extraNodes:GenSeq[Node] = Seq.empty,
                                               support:SemiringSupport[Label,Key],
-                                              labelForArc:(Node,Node,ArcLabel)=>Label):MutableLabelDigraph[Node,Label] = {
-    val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
-    val nonSelfArcs = arcs.filter(x => x._1 != x._2)
-    val labelArcs = nodes.map(x => (x,x,support.semiring.I)) ++
-      nonSelfArcs.map(x => (x._1,x._2,labelForArc(x._1,x._2,x._3)))
+                                              labelForEdge:(Node,Node,EdgeLabel)=>Label):MutableLabelDigraph[Node,Label] = {
+    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nonSelfEdges = edges.filter(x => x._1 != x._2)
+    val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
     import net.walend.digraph.MatrixLabelDigraph
-    MatrixLabelDigraph(labelArcs,nodes,support.semiring.O)
+    MatrixLabelDigraph(labelEdges,nodes,support.semiring.O)
   }
 
   /**
    * O(n&#94;3)
    */
-  def allPairsShortestPaths[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
+  def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                                  extraNodes:GenSeq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],
-                                                 labelForArc:(Node,Node,ArcLabel)=>Label):MutableLabelDigraph[Node,Label] = {
-    val initialDigraph = createLabelDigraph(arcs,extraNodes,support,labelForArc)
+                                                 labelForEdge:(Node,Node,EdgeLabel)=>Label):MutableLabelDigraph[Node,Label] = {
+    val initialDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
     floydWarshall(initialDigraph,support)
   }
 }

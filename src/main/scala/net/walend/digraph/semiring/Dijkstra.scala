@@ -3,7 +3,7 @@ package net.walend.digraph.semiring
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
 import net.walend.digraph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
-import scala.collection.GenTraversable
+import scala.collection.{GenSeq, GenTraversable}
 
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
@@ -80,34 +80,34 @@ object Dijkstra {
   }
 
   /**
-   * Create a digraph of Labels from an arc list.
+   * Create a digraph of Labels from an edge list.
    *
    * O(n ln(n) + a ln(n))
    *
-   * @return an IndexedDigraph with all nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
+   * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for label edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
-                                                  extraNodes:Seq[Node] = Seq.empty,
+  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                  extraNodes:GenSeq[Node] = Seq.empty,
                                                   support:SemiringSupport[Label,Key],
-                                                  labelForArc:(Node,Node,ArcLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
+                                                  labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
 
-    val nodes = (extraNodes ++ arcs.map(_._1) ++ arcs.map(_._2)).distinct
-    val nonSelfArcs = arcs.filter(x => x._1 != x._2)
-    val labelArcs = nodes.map(x => (x,x,support.semiring.I)) ++
-      nonSelfArcs.map(x => (x._1,x._2,labelForArc(x._1,x._2,x._3)))
+    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nonSelfEdges = edges.filter(x => x._1 != x._2)
+    val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
     import net.walend.digraph.AdjacencyLabelDigraph
-    AdjacencyLabelDigraph(labelArcs,nodes,support.semiring.O)
+    AdjacencyLabelDigraph(labelEdges,nodes,support.semiring.O)
   }
 
   /**
    * O(n&#94;2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,ArcLabel,Label,Key](arcs:GenTraversable[(Node,Node,ArcLabel)] = Seq.empty,
-                                                    extraNodes:Seq[Node] = Seq.empty,
+  def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                    extraNodes:GenSeq[Node] = Seq.empty,
                                                     support:SemiringSupport[Label,Key],
-                                                    labelForArc:(Node,Node,ArcLabel)=>Label):Seq[(Node,Node,Label)] = {
-    val labelDigraph = createLabelDigraph(arcs,extraNodes,support,labelForArc)
+                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):Seq[(Node,Node,Label)] = {
+    val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 

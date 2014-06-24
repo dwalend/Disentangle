@@ -4,17 +4,17 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
- * Provides constant-time access and mutator for arcs. Stores Nodes in a Vector and Arcs in a Vector of ArrayBuffers.
+ * Provides constant-time access and mutator for edges. Stores Nodes in a Vector and Labels in a Vector of ArrayBuffers.
  *
  * The constructor is O(n)
  *
  * @author dwalend
  * @since v0.1.0
  */
-//TODO for the Atomic version, make arcMatrix a Vector of AtomicReferences
+//TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
 class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
-                                   arcMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
-                                   val noArcExistsLabel:Label //value for no arc
+                                   edgeMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
+                                   val noEdgeExistsLabel:Label //value for no edge
                                     ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
@@ -32,15 +32,15 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
      * O(n&#94;2)
      */
     override def successors: Seq[(InNode,InNode,Label)] = {
-      inNodes.zip(arcMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noArcExistsLabel)
+      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsLabel)
     }
 
     /**
      * O(n&#94;2)
      */
     override def predecessors: Seq[(InNode,InNode,Label)] = {
-      val arcColumn:Seq[Label] = arcMatrix.map(_(index))
-      inNodes.zip(arcColumn).map(x => (x._1,this,x._2)).filter(_._2 != noArcExistsLabel)
+      val edgeColumn:Seq[Label] = edgeMatrix.map(_(index))
+      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsLabel)
     }
 
     override def hashCode(): Int = index
@@ -76,45 +76,45 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
    */
   override def innerEdges: Vector[InnerEdgeType] = {
 
-    def arcsInRow(row:(ArrayBuffer[Label],Int)):Seq[(InNode,InNode,Label)] = {
+    def edgesInRow(row:(ArrayBuffer[Label],Int)):Seq[(InNode,InNode,Label)] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
-      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsLabel))
-      cellsWithArcs.map(x => (inNodes(rowIndex),inNodes(x._2),x._1))
+      val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
+      cellsWithEdges.map(x => (inNodes(rowIndex),inNodes(x._2),x._1))
     }
 
-    arcMatrix.zipWithIndex.map(row => arcsInRow(row)).flatten
+    edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
   }
 
   /**
    * O(n&#94;2)
    *
-   * @return All of the arcs in the graph
+   * @return All of the edges in the graph
    */
-  override def arcs: Vector[(Node, Node, Label)] = {
+  override def edges: Vector[(Node, Node, Label)] = {
 
-    def arcsInRow(row:(ArrayBuffer[Label],Int)):Seq[(Node,Node,Label)] = {
+    def edgesInRow(row:(ArrayBuffer[Label],Int)):Seq[(Node,Node,Label)] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
-      val cellsWithArcs = cellsWithIndex.filter(x => (x._1 != noArcExistsLabel))
-      cellsWithArcs.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
+      val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
+      cellsWithEdges.map(x => (outNodes(rowIndex),outNodes(x._2),x._1))
     }
 
-    arcMatrix.zipWithIndex.map(row => arcsInRow(row)).flatten
+    edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
   }
 
   /**
    * O(1)
    *
-   * @return the Arc between start and end or noArcExistsValue
+   * @return the edge between start and end or noEdgeExistsValue
    */
-  override def label(from: InNode, to: InNode):Label = arcMatrix(from.index)(to.index)
+  override def label(from: InNode, to: InNode):Label = edgeMatrix(from.index)(to.index)
  
 
   /**
    * O(1)
    */
-  override def upsertArc(from: InNode, to: InNode, arc: Label): Unit = arcMatrix(from.index)(to.index) = arc
+  override def upsertEdge(from: InNode, to: InNode, label: Label): Unit = edgeMatrix(from.index)(to.index) = label
 
 
   /**
@@ -130,7 +130,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
   /**
    * O(1)
    */
-  override def label(i: Int, j: Int): Label = arcMatrix(i)(j)
+  override def label(i: Int, j: Int): Label = edgeMatrix(i)(j)
 
 }
 
@@ -139,26 +139,26 @@ object MatrixLabelDigraph{
   /**
    * O(n ln(n) + en)
    */
-  def apply[Node,Label](arcSeq:GenTraversable[(Node,Node,Label)] = Seq.empty,
+  def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
                        extraNodes:GenSeq[Node] = Seq.empty,
-                       noArcExistsValue:Label = null) = {
+                       noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (extraNodes ++ arcSeq.map(_._1) ++ arcSeq.map(_._2)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
 
     val size = nodeValues.size
 
-    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.map(x => ArrayBuffer.fill(size)(noArcExistsValue)).to[Vector]
+    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
 
-    for (arcTriple <- arcSeq) {
-      val row = nodeValues.indexOf(arcTriple._1)
-      val column = nodeValues.indexOf(arcTriple._2)
+    for (edgeTriple <- edges) {
+      val row = nodeValues.indexOf(edgeTriple._1)
+      val column = nodeValues.indexOf(edgeTriple._2)
 
-      assert(matrix(row)(column)==noArcExistsValue,s"arcSeq includes two arcs between ${arcTriple._1} and ${arcTriple._2}, ${matrix(row)(column)} and ${arcTriple._3}")
+      assert(matrix(row)(column)==noEdgeExistsValue,s"edges includes two edges between ${edgeTriple._1} and ${edgeTriple._2}, ${matrix(row)(column)} and ${edgeTriple._3}")
 
-      matrix(row)(column) = arcTriple._3
+      matrix(row)(column) = edgeTriple._3
     }
 
-    new MatrixLabelDigraph(nodeValues,matrix,noArcExistsValue)
+    new MatrixLabelDigraph(nodeValues,matrix,noEdgeExistsValue)
   }
 
 }

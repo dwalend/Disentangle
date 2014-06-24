@@ -16,7 +16,7 @@ object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKe
 
   def heapKeyForLabel = {label:Label => TransitiveClosureHeapKey.keyForLabel(label)}
 
-  def convertArcToLabel[Node, ArcLabel](start: Node, end: Node, arc: ArcLabel): TransitiveClosure.Label = true
+  def convertEdgeToLabel[Node, EdgeLabel](start: Node, end: Node, label: EdgeLabel): TransitiveClosure.Label = true
 
   object TransitiveClosureSemiring extends Semiring {
 

@@ -17,7 +17,7 @@ object LeastWeights extends SemiringSupport[Double,Double] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertArcToLabel[Node, Label](start: Node, end: Node, arc: Label): LeastWeights.Label = 1
+  def convertEdgeToLabel[Node, Label](start: Node, end: Node, edge: Label): LeastWeights.Label = 1
 
   object LeastWeightsSemiring extends Semiring {
 

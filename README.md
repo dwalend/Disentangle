@@ -44,7 +44,7 @@ You'll need to
 * choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm)
 * arrange for your code to run the algorithm on your graph
 
-You'll get a Digraph with your nodes and arcs that contain the results of the minimization.
+You'll get a Digraph with your nodes and edges that contain the results of the minimization.
 
 For example, this code snippet finds zero or one shortest path in a directed graph with String nodes:
 
@@ -61,7 +61,7 @@ For example, this code snippet finds zero or one shortest path in a directed gra
 
     //finds a shortest path for each pair of nodes if that path exists
     val labelTuples:Seq[(String,String,Option[FirstStep[String,Int]])] = 
-      Dijkstra.allPairsShortestPaths(arcs = yourArcs,
+      Dijkstra.allPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
 
@@ -107,7 +107,7 @@ These are typically very straightforward to create. The decorator semirings list
 
     labelForArc:(Node,Node,ArcLabel)=>Label
 
-These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the arcs, and has some influence over the ordering of the algorithm's output.
+These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and has some influence over the ordering of the algorithm's output.
 
 FloydWarshall, Dijkstra, and Brandes each also include a method that takes a Digraph implementation. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
 

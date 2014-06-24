@@ -31,12 +31,12 @@ object SomeGraph {
   val eh = (E,H,"eh")
   val hc = (H,C,"hc")
 
-  val testArcs = Seq(ab,bc,cd,de,ef,eb,eh,hc)
+  val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:LabelDigraph[String,String] = AdjacencyLabelDigraph(testArcs,testNodes,"")
+  val testGraph:LabelDigraph[String,String] = AdjacencyLabelDigraph(testEdges,testNodes,"")
 
   val af = (A,F,"af")
   val be = (B,E,"be")
 
-  val brandesTestArcs = Seq(ab,bc,cd,de,ef,af,be)
+  val brandesTestEdges = Seq(ab,bc,cd,de,ef,af,be)
 }

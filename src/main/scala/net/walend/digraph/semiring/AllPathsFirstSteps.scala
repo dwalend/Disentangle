@@ -49,12 +49,12 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
-  def convertArcToLabel[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel)
-                              (start: Node, end: Node, arcLabel: ArcLabel):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForArc(start,end,arcLabel),Set(end)))
+  def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
+                              (start: Node, end: Node, edgeLabel: EdgeLabel):Label = {
+    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edgeLabel),Set(end)))
   }
 
-  def convertArcToLabelFunc[ArcLabel](coreLabelForArc:(Node,Node,ArcLabel)=>CoreLabel):((Node,Node,ArcLabel) => Label) = convertArcToLabel(coreLabelForArc)
+  def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
 
   /*
   //branching to figure this out
@@ -64,7 +64,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
     val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
 
-    val label:Label = labelGraph.arc(innerFrom,innerTo)
+    val label:Label = labelGraph.label(innerFrom,innerTo)
     label match {
       case Some(firstSteps) => {
         firstSteps.choices.map(step => allPaths(labelGraph,step,to))
@@ -89,11 +89,11 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         case Some(firstSteps) => {
 
           val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
-          val closeArcs:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
+          val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
 
-          val farArcs:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+          val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
 
-          closeArcs ++ farArcs
+          closeEdges ++ farEdges
         }
         case None => Set.empty
       }

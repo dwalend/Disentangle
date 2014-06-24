@@ -1,6 +1,6 @@
 package net.walend.digraph
 
-import scala.collection.GenTraversable
+import scala.collection.{GenSeq, GenTraversable}
 
 /**
  * A graph with Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph
@@ -11,10 +11,11 @@ import scala.collection.GenTraversable
  * @author dwalend
  * @since v0.1.0
  */
-//todo split up and start a package.scala
+//todo split up
 trait Graph[Node] {
 
-  def nodes:Seq[Node]
+  //todo this should really be a Set, but you need a Set with a fixed, controlled order, accessible by index
+  def nodes:GenSeq[Node]
 
   /**
    * An internal representation of nodes within the graph
@@ -56,22 +57,17 @@ trait Graph[Node] {
 }
 
 /**
- * A graph with directed zero or one arc from any single node to any other single node, with the type label.
- * 
+ * A graph with directed zero or one edge from any single node to any other single node.
+ *
  */
-//todo any way to pass InnerNodeType up as part of Edge?
-trait LabelDigraph[Node,Label] extends Graph[Node] {
+trait Digraph[Node] extends Graph[Node] {
 
-  /**
-   * An internal representation of nodes within the graph
-   */
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
     def value:Node
 
-    def successors:Seq[(InnerNodeType,InnerNodeType,Label)]
+    def successors:Seq[InnerEdgeType]
 
-    def predecessors:Seq[(InnerNodeType,InnerNodeType,Label)]
-
+    def predecessors:Seq[InnerEdgeType]
   }
 
   /**
@@ -79,38 +75,40 @@ trait LabelDigraph[Node,Label] extends Graph[Node] {
    */
   type InnerNodeType <: DigraphInnerNodeTrait
 
-  type OuterEdgeType = (Node,Node,Label)
-
-  /**
-   * @return the label to return when no arc exists
-   */
-  def noArcExistsLabel:Label
-
-  /**
-   * @return All of the arcs in the graph
-   */
-  def arcs:GenTraversable[OuterEdgeType]
-
-  def edges:GenTraversable[OuterEdgeType] = arcs
-
-  /**
-   * @return the Arc between start and end or noArcExistsValue
-   */
-  def label(start:InnerNodeType,end:InnerNodeType):Label
-
 }
 
 /**
- * A graph where arcs can be upserted.
+ * A directed graph with labeled edges.
+ * 
+ */
+trait LabelDigraph[Node,Label] extends Digraph[Node] {
+
+  type OuterEdgeType = (Node,Node,Label)
+
+  type InnerEdgeType = (InnerNodeType,InnerNodeType,Label)
+
+  /**
+   * @return the label to return when no edge exists
+   */
+  def noEdgeExistsLabel:Label
+
+  /**
+   * @return the Edge between start and end or noEdgeExistsValue
+   */
+  def label(start:InnerNodeType,end:InnerNodeType):Label
+}
+
+/**
+ * A graph where edges can be upserted.
  * 
  */
 trait MutableLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
 
   /**
-   * Set the arc that spans from start to end
+   * Set the edge that spans from start to end
    *
    */
-  def upsertArc(from:InnerNodeType,to:InnerNodeType,label:Label):Unit
+  def upsertEdge(from:InnerNodeType,to:InnerNodeType,label:Label):Unit
 
 }
 
@@ -142,8 +140,6 @@ trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
    * The type of InnerNodeTrait for this digraph representation
    */
   type InnerNodeType <: InnerIndexedNodeTrait
-
-  type InnerEdgeType = (InnerNodeType,InnerNodeType,Label)
 
   //todo remove after changing the output from Dijkstra's algorithm
   def node(i:Int):Node

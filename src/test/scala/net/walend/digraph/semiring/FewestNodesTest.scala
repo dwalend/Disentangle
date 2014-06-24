@@ -14,7 +14,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-arcs and arcs where SomeGraph has them" in {
 
-    val labelGraph = FloydWarshall.createLabelDigraph(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
+    val labelGraph = FloydWarshall.createLabelDigraph(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     val expectedArcs = Set(
       (A,B,1),
@@ -35,7 +35,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
       (H,H,0)
     )
 
-    labelGraph.arcs.to[Set] should be (expectedArcs)
+    labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   val expectedArcs = Set(
@@ -82,14 +82,14 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
 
-    labelGraph.arcs.to[Set] should be (expectedArcs)
+    labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,FewestNodes,FewestNodes.convertArcToLabel)
+    val labels = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     labels.size should be (expectedArcs.size)
     labels.to[Set] should be (expectedArcs)
@@ -110,7 +110,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     val brandesSupport = new Brandes.BrandesSupport[String,Int,Int](FewestNodes)
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,FewestNodes.convertArcToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,FewestNodes.convertEdgeToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

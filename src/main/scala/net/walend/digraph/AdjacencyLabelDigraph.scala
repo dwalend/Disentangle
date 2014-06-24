@@ -3,7 +3,7 @@ package net.walend.digraph
 import scala.collection.{GenMap, GenSeq, GenTraversable}
 
 /**
- * Provides constant-time access for successor and predecessor arcs of a node.
+ * Provides constant-time access for successor and predecessor edges of a node.
  *
  * The constructor is O(n + a ln(n))
  *
@@ -11,9 +11,9 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
  * @since v0.1.0
  */
 class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
-                                        outSuccessors:Vector[Vector[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,arc pair to reach that second node.
+                                        outSuccessors:Vector[Vector[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
                                        outPredecessors:Vector[Vector[(Node,Node,Label)]],
-                                       val noArcExistsLabel:Label //value for no arc
+                                       val noEdgeExistsLabel:Label //value for no edge
                                             ) extends IndexedLabelDigraph[Node,Label] {
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
@@ -77,20 +77,20 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
   /**
    * O(n&#94;2)
    *
-   * @return All of the arcs in the graph
+   * @return All of the edges in the graph
    */
-  override def arcs: Seq[OuterEdgeType] = outSuccessors.flatten
+  override def edges: Seq[OuterEdgeType] = outSuccessors.flatten
 
   /**
    * O(n)
    *
-   * @return the Arc between start and end or noArcExistsValue
+   * @return the edge between start and end or noEdgeExistsValue
    */
   override def label(from: InNode, to: InNode):Label = {
     inSuccessors(from.index).filter(x => x._2 == to) match {
-      case Vector() => noArcExistsLabel
-      case Vector(nodeAndArc) => nodeAndArc._3
-      case x => throw new IllegalStateException(s"Multiple arcs from $from to $to: "+x)
+      case Vector() => noEdgeExistsLabel
+      case Vector(nodeAndEdge) => nodeAndEdge._3
+      case x => throw new IllegalStateException(s"Multiple edges from $from to $to: "+x)
     }
   }
 
@@ -115,14 +115,14 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
    */
   override def label(i: Int, j: Int): Label = {
     inSuccessors(i).filter(x => x._2 == inNodes(j)) match {
-      case Vector() => noArcExistsLabel
-      case Vector(nodeAndArc) => nodeAndArc._3
-      case x => throw new IllegalStateException(s"Multiple arcs from ${inSuccessors(i)} to ${inNodes(j)}: "+x)
+      case Vector() => noEdgeExistsLabel
+      case Vector(nodeAndEdge) => nodeAndEdge._3
+      case x => throw new IllegalStateException(s"Multiple edges from ${inSuccessors(i)} to ${inNodes(j)}: "+x)
     }
   }
 
   override def toString:String = {
-    s"$inNodes $arcs"
+    s"$inNodes $edges"
   }
 }
 
@@ -131,19 +131,19 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
  */
 object AdjacencyLabelDigraph{
 
-  def apply[Node,Label](arcSeq:GenTraversable[(Node,Node,Label)] = Seq.empty,
+  def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
                        extraNodes:GenSeq[Node] = Seq.empty,
-                       noArcExistsValue:Label = null) = {
+                       noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (extraNodes ++ arcSeq.map(_._1) ++ arcSeq.map(_._2)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
 
-    val successorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = arcSeq.groupBy(_._1)
-    val predecessorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = arcSeq.groupBy(_._2)
+    val successorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._1)
+    val predecessorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._2)
 
     val successorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
     val predecessorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
 
-    new AdjacencyLabelDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noArcExistsValue)
+    new AdjacencyLabelDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
   }
 
 }

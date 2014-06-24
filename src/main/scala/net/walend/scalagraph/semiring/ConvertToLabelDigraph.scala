@@ -18,7 +18,7 @@ object ConvertToLabelDigraph {
   /**
    * Create a digraph of Labels from an arbitrary Digraph.
    *
-   * @return label arcs, nodes, and support.semiring.O to build a net.walend.digraph.Digraph.
+   * @return label edges, nodes, and support.semiring.O to build a net.walend.digraph.Digraph.
    */
   import scala.language.higherKinds
   def convert[Node,E[X] <: EdgeLikeIn[X],Label,Key](originalGraph:Graph[Node,E],
@@ -27,12 +27,12 @@ object ConvertToLabelDigraph {
 
     val nodes:Seq[Node] = originalGraph.nodes.toOuter.to[Seq]
 
-    val identityArcs:Seq[(Node,Node,Label)] = nodes.map(x => (x,x,support.semiring.I))
-    val graphArcs:Seq[(Node,Node,Label)] = originalGraph.edges.map(x => labelForEdge(x.toOuter)).to[Seq].filter(y => y._1 != y._2) //no self-edges
+    val identityEdges:Seq[(Node,Node,Label)] = nodes.map(x => (x,x,support.semiring.I))
+    val graphEdges:Seq[(Node,Node,Label)] = originalGraph.edges.map(x => labelForEdge(x.toOuter)).to[Seq].filter(y => y._1 != y._2) //no self-edges
 
-    val arcs:Seq[(Node,Node,Label)] = identityArcs ++ graphArcs
+    val edges:Seq[(Node,Node,Label)] = identityEdges ++ graphEdges
 
-    (arcs,nodes,support.semiring.O)
+    (edges,nodes,support.semiring.O)
   }
 
   //todo labelForEdge for all of the different scala-graph edges

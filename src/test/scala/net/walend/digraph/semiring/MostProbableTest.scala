@@ -70,18 +70,18 @@ class MostProbableTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,MostProbable,convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,MostProbable,convertEdgeToLabel)
 
-    labelGraph.arcs.to[Set] should be (expectedArcs)
+    labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,MostProbable,convertEdgeToLabel)
+    val edges = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,MostProbable,convertEdgeToLabel)
 
-    labels.to[Set] -- expectedArcs should be (Set.empty)
-    expectedArcs -- labels.to[Set] should be (Set.empty)
-    labels.to[Set] should be (expectedArcs)
+    edges.to[Set] -- expectedArcs should be (Set.empty)
+    expectedArcs -- edges.to[Set] should be (Set.empty)
+    edges.to[Set] should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -99,7 +99,7 @@ class MostProbableTest extends FlatSpec with Matchers {
 
     val brandesSupport = new Brandes.BrandesSupport[String,Double,Double](MostProbable)
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.arcs,testGraph.nodes,brandesSupport,convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes,brandesSupport,convertEdgeToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

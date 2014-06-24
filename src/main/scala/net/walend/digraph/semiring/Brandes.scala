@@ -2,7 +2,7 @@ package net.walend.digraph.semiring
 
 import net.walend.heap.{HeapOrdering, FibonacciHeap, Heap}
 import net.walend.digraph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
-import scala.collection.GenTraversable
+import scala.collection.{GenSeq, GenTraversable}
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -16,7 +16,7 @@ object Brandes {
   import scala.collection.mutable.Stack
 
   /**
-   * Dijkstra's algorithm for a single sink, with a Seq of visited arcs to support Brandes' algorithm.
+   * Dijkstra's algorithm for a single sink, with a Seq of visited edges to support Brandes' algorithm.
    *
    * O(n ln(n) + a)
    */
@@ -35,10 +35,10 @@ object Brandes {
       }
     }
 
-    val allArcs = Dijkstra.dijkstraSingleSinkCustomHeap(labelDigraph, support)(sink, heap)
-    val originArcStack: Stack[(labelDigraph.InnerNodeType, Label)] = stack.map(x => (x, allArcs(x.index)._3))
+    val allEdges = Dijkstra.dijkstraSingleSinkCustomHeap(labelDigraph, support)(sink, heap)
+    val originEdgeStack: Stack[(labelDigraph.InnerNodeType, Label)] = stack.map(x => (x, allEdges(x.index)._3))
 
-    (allArcs, originArcStack.filter(_._2 != support.semiring.O))
+    (allEdges, originEdgeStack.filter(_._2 != support.semiring.O))
   }
 
   /**
@@ -57,14 +57,14 @@ object Brandes {
 
     //for each possible choice of next step in the stack
     while (!stack.isEmpty) {
-      val arc = stack.pop() //w
+      val edge = stack.pop() //w
       //figure out the partial betweenness to apply to that step
-      val label: Label = arc._2
+      val label: Label = edge._2
       label match {
         case None => //nothing to do
         case Some(sourceLabel: BrandesSteps[Node, CoreLabel]) => {
           val sourceCount: Double = sourceLabel.pathCount
-          val partialFromSource: Double = partialBetweenness(arc._1.index)
+          val partialFromSource: Double = partialBetweenness(edge._1.index)
           for (choiceIndex <- sourceLabel.choiceIndexes) {
             //only calculate betweenness for the between nodes, not arriving at the sink
             if (choiceIndex != sink.index) {
@@ -97,46 +97,46 @@ object Brandes {
 
     type Label = support.Label
 
-    val arcsAndPartialBetweennesses: Seq[(Seq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes) yield {
-      val arcsAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
-      val partialB = partialBetweenness(support, initialGraph)(sink, arcsAndNodeStack._2, arcsAndNodeStack._1)
-      (arcsAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
+    val edgesAndPartialBetweennesses: Seq[(Seq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes) yield {
+      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
+      val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
+      (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
     }
 
     def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = {
-      arcsAndPartialBetweennesses.map(x => x._2(innerNode.index)).sum
+      edgesAndPartialBetweennesses.map(x => x._2(innerNode.index)).sum
     }
     val betweennessMap: Map[Node, Double] = initialGraph.innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
 
-    val arcs: Seq[(Node, Node, Label)] = arcsAndPartialBetweennesses.map(x => x._1).flatten
+    val edges: Seq[(Node, Node, Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten
 
-    (arcs, betweennessMap)
+    (edges, betweennessMap)
   }
 
   /**
-   * Create a digraph of Labels from an arc list.
+   * Create a digraph of Labels from an edge list.
    *
-   * @return an IndexedDigraph with graph's nodes, a self-arc for each node with the semiring's identifier, and an arc for each arc specified by labelForArc.
+   * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node, ArcLabel, CoreLabel, Key](arcs: GenTraversable[(Node, Node, ArcLabel)] = Seq.empty,
-                                                         extraNodes: Seq[Node] = Seq.empty,
+  def createLabelDigraph[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
+                                                         extraNodes: GenSeq[Node] = Seq.empty,
                                                          support: BrandesSupport[Node, CoreLabel, Key],
-                                                         labelForArc: (Node, Node, ArcLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
+                                                         labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
     //Create the core label digraph to get everything's index
-    val coreLabelDigraph:IndexedLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,ArcLabel,CoreLabel,Key](arcs, extraNodes, support.coreSupport, labelForArc)
+    val coreLabelDigraph:IndexedLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,EdgeLabel,CoreLabel,Key](edges, extraNodes, support.coreSupport, labelForEdge)
 
     //Use that to create the Brandes labels
-    val brandesArcs = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
+    val brandesEdges = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
 
-    AdjacencyLabelDigraph(brandesArcs,coreLabelDigraph.nodes,support.semiring.O)
+    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes,support.semiring.O)
   }
 
-  def allLeastPathsAndBetweenness[Node, ArcLabel, CoreLabel, Key](arcs: GenTraversable[(Node, Node, ArcLabel)] = Seq.empty,
-                                                                  extraNodes: Seq[Node] = Seq.empty,
+  def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
+                                                                  extraNodes: GenSeq[Node] = Seq.empty,
                                                                   support: BrandesSupport[Node, CoreLabel, Key],
-                                                                  labelForArc: (Node, Node, ArcLabel) => CoreLabel): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
-    val labelGraph = createLabelDigraph(arcs, extraNodes, support, labelForArc)
+                                                                  labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+    val labelGraph = createLabelDigraph(edges, extraNodes, support, labelForEdge)
     allLeastPathsAndBetweenness(labelGraph, support)
   }
 
@@ -179,8 +179,8 @@ object Brandes {
     }
 
     def convertCoreLabelToLabel(labelDigraph:IndexedLabelDigraph[Node,CoreLabel])
-                         (arc:labelDigraph.InnerEdgeType): Label = {
-      Some(BrandesSteps[Node, CoreLabel](arc._3, 1, Set(arc._2.index)))
+                         (edge:labelDigraph.InnerEdgeType): Label = {
+      Some(BrandesSteps[Node, CoreLabel](edge._3, 1, Set(edge._2.index)))
     }
 
     /**

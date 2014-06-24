@@ -58,19 +58,19 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
-    labelGraph.arcs.to[Set] should be (expectedArcs)
+    labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val arcs = Dijkstra.allPairsShortestPaths(testGraph.arcs,testGraph.nodes,support,support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel))
+    val arcs = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
 
-    val resultDigraph = AdjacencyLabelDigraph(arcSeq = arcs,noArcExistsValue = support.semiring.O)
+    val resultDigraph = AdjacencyLabelDigraph(edges = arcs,noEdgeExistsValue = support.semiring.O)
 
     //todo add a test
     /*
