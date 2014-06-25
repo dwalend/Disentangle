@@ -19,10 +19,20 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
 
   val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+
+  /**
+   * O(1)
+   *
+   * @return All the nodes in the graph in an indexed seq
+   */
+  override def nodesSeq: IndexedSeq[Node] = outNodes
+
+  override def nodes = outNodes.to[Set]
+
   /**
    * O(1)
    */
-  override def nodes: IndexedSeq[Node] = outNodes
+  override def nodeCount: Int = outNodes.size
 
   type InnerNodeType = InNode
 
@@ -120,7 +130,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
   /**
    * O(1)
    */
-  override def node(i: Int): Node = nodes(i)
+  override def node(i: Int): Node = outNodes(i)
 
   /**
    * O(1)

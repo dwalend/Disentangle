@@ -54,7 +54,7 @@ object TimingStudies {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{DDijkstra.allPairsShortestPaths(graph.edges,graph.nodes,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))}
+    val result = timeFunction{DDijkstra.allPairsShortestPaths(graph.edges,graph.nodesSeq,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))}
 /*
     val result = timeFunction{
         val initNode = initialGraph.innerNodes.head

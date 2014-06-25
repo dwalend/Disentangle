@@ -1,6 +1,6 @@
 package net.walend.graph
 
-import scala.collection.{GenTraversable, GenSeq}
+import scala.collection.{GenSet, GenTraversable}
 
 /**
  * Ancestor trait for a variety of Graphs.
@@ -14,8 +14,9 @@ import scala.collection.{GenTraversable, GenSeq}
  */
 trait Graph[Node] {
 
-  //todo this should really be a GenSet, but subtraits need a Set with a fixed, controlled order, accessible by index
-  def nodes:GenSeq[Node]
+  def nodes:GenSet[Node]
+
+  def nodeCount:Int
 
   /**
    * An internal representation of nodes within the graph

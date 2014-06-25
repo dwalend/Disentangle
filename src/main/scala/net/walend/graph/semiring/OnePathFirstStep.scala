@@ -55,8 +55,8 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
   object OnePathSemiring extends Semiring {
 
-    // todo report bug that I can't do this here
-    // val coreSemiring = coreSupport.semiring
+    // todo report bug that I can't do this here, but I can if I make coreSemiring a val in the outer OnePathFirstStep
+    //val coreSemiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
       label match {

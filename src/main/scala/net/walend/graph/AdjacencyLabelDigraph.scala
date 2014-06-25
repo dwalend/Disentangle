@@ -26,7 +26,11 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
   val inSuccessors:Vector[Vector[(InNode,InNode,Label)]] = outSuccessors.map(neighborVector)
   val inPredecessors:Vector[Vector[(InNode,InNode,Label)]] = outPredecessors.map(neighborVector)
 
-  override def nodes: IndexedSeq[Node] = outNodes
+  def nodes = outNodes.to[Set]
+
+  def nodesSeq = outNodes
+
+  override def nodeCount: Int = outNodes.size
 
   type InnerNodeType = InNode
 
@@ -99,7 +103,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
    *
    * @return
    */
-  override def node(i: Int): Node = nodes(i)
+  override def node(i: Int): Node = outNodes(i)
 
   /**
    * O(1)

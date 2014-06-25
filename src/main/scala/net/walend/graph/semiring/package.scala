@@ -14,5 +14,5 @@ package object semiring {
 
 }
 //todo pathcount as a decorator semiring
-//todo core-and-many-decorator semirings
+//todo core-and-many-decorator semiring
 //todo flag in SemiringSupport for where Dijkstra's algorithm is OK

@@ -13,7 +13,7 @@ object DigraphFactory {
   /**
    * Create a randomly connected graph, where each node has a limited number of connections to other nodes
    */
-  def createRandomNormalDigraph(nodeCount:Int,maxOutEdgesPerNode:Int):LabelDigraph[Int,Boolean] = {
+  def createRandomNormalDigraph(nodeCount:Int,maxOutEdgesPerNode:Int):IndexedLabelDigraph[Int,Boolean] = {
 
     require(maxOutEdgesPerNode < nodeCount)
 

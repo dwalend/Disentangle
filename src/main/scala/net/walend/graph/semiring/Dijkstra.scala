@@ -41,7 +41,7 @@ object Dijkstra {
                                            support:SemiringSupport[Label,Key])
                                           (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
-    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
+    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
     val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
 
@@ -140,7 +140,7 @@ object Dijkstra {
                                                   (sink:initialGraph.InnerNodeType,
                                                    heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSeq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
-    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodes.size)(support.semiring.O)
+    val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
     val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
 

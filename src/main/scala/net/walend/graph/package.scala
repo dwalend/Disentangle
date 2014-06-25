@@ -1,7 +1,7 @@
 package net.walend
 
 /**
- * Representations of various kinds of graphs. The top level, Graph, holds a collection of Nodes and a
+ * Representations of various kinds of graphs. The top level, Graph, holds a Set of Nodes and a
  * second collection of things that relate the nodes to each other -- the edges. Subtraits add features to these, and
  * concrete implementations fill in with code tuned to particular uses.
  *

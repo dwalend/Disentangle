@@ -53,7 +53,7 @@ object Brandes {
   (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
   (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): IndexedSeq[Double] = {
     import scala.collection.mutable.ArrayBuffer
-    val partialBetweenness: ArrayBuffer[Double] = ArrayBuffer.fill(labelGraph.nodes.size)(0.0)
+    val partialBetweenness: ArrayBuffer[Double] = ArrayBuffer.fill(labelGraph.nodeCount)(0.0)
 
     //for each possible choice of next step in the stack
     while (!stack.isEmpty) {
@@ -129,7 +129,7 @@ object Brandes {
     //Use that to create the Brandes labels
     val brandesEdges = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
 
-    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes,support.semiring.O)
+    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
   }
 
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,

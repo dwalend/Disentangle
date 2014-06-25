@@ -57,7 +57,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodesSeq,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labelGraph.edges.to[Set] -- expectedArcs should be (Set.empty)
     labelGraph.edges.to[Set] should be (expectedArcs)
@@ -67,7 +67,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
     val labelTuples:Seq[(String,String,Option[FirstStep[String,Int]])] = Dijkstra.allPairsShortestPaths(
                                                 edges = testGraph.edges,
-                                                extraNodes = testGraph.nodes,
+                                                extraNodes = testGraph.nodesSeq,
                                                 support = support,
                                                 labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 

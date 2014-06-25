@@ -33,7 +33,7 @@ object SomeGraph {
 
   val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:LabelDigraph[String,String] = AdjacencyLabelDigraph(testEdges,testNodes,"")
+  val testGraph:IndexedLabelDigraph[String,String] = AdjacencyLabelDigraph(testEdges,testNodes,"")
 
   val af = (A,F,"af")
   val be = (B,E,"be")
