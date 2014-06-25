@@ -1,6 +1,6 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
-import net.walend.digraph.MutableLabelDigraph
+import net.walend.graph.MutableLabelDigraph
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
@@ -63,7 +63,7 @@ object FloydWarshall {
     val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
-    import net.walend.digraph.MatrixLabelDigraph
+    import net.walend.graph.MatrixLabelDigraph
     MatrixLabelDigraph(labelEdges,nodes,support.semiring.O)
   }
 

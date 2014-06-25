@@ -1,4 +1,4 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import net.walend.scalagraph.semiring.GraphFactory
 import scalax.collection.GraphPredef.EdgeLikeIn
@@ -44,10 +44,10 @@ object TimingStudies {
 
   def timeDijkstra(nodeCount:Int):Long = {
 
-    import net.walend.digraph.DigraphFactory
-    import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
-    import net.walend.digraph.semiring.AllPathsFirstSteps
-    import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.graph.DigraphFactory
+    import net.walend.graph.semiring.{Dijkstra => DDijkstra}
+    import net.walend.graph.semiring.AllPathsFirstSteps
+    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 //    val support = FFewestNodes
@@ -116,9 +116,9 @@ object TimingStudies {
 
   def timeScalaGraphConvertDijkstra(nodeCount:Int):Long = {
 
-    import net.walend.digraph.semiring.{FewestNodes => FFewestNodes}
-    import net.walend.digraph.semiring.{Dijkstra => DDijkstra}
-    import net.walend.digraph.semiring.{AllPathsFirstSteps, FirstSteps}
+    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.graph.semiring.{Dijkstra => DDijkstra}
+    import net.walend.graph.semiring.{AllPathsFirstSteps, FirstSteps}
     import scalax.collection.Graph
     import scalax.collection.GraphEdge.DiEdge
     import net.walend.scalagraph.semiring.ConvertToLabelDigraph

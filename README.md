@@ -48,7 +48,7 @@ You'll get a Digraph with your nodes and edges that contain the results of the m
 
 For example, this code snippet finds zero or one shortest path in a directed graph with String nodes:
 
-    import net.walend.digraph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
+    import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
     //You supply the graph
     val yourArcs:Seq[(String,String,String)] = ???

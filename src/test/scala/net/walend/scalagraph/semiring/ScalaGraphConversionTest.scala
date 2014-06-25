@@ -1,12 +1,12 @@
 package net.walend.scalagraph.semiring
 
-import net.walend.digraph.semiring.AllPathsFirstSteps
-import net.walend.digraph.semiring.Brandes
-import net.walend.digraph.semiring.Dijkstra
-import net.walend.digraph.semiring.FewestNodes
-import net.walend.digraph.semiring.FloydWarshall
+import net.walend.graph.semiring.AllPathsFirstSteps
+import net.walend.graph.semiring.Brandes
+import net.walend.graph.semiring.Dijkstra
+import net.walend.graph.semiring.FewestNodes
+import net.walend.graph.semiring.FloydWarshall
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.digraph.{AdjacencyLabelDigraph, LabelDigraph}
+import net.walend.graph.{AdjacencyLabelDigraph, LabelDigraph}
 
 import scalax.collection.immutable.Graph
 import scalax.collection.GraphPredef._

@@ -1,7 +1,7 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.digraph.SomeGraph._
+import net.walend.graph.SomeGraph._
 
 /**
  *
@@ -11,7 +11,7 @@ import net.walend.digraph.SomeGraph._
  */
 class OnePathFirstStepTest extends FlatSpec with Matchers {
 
-  val expectedArcs = Set[(String, String, Option[net.walend.digraph.semiring.FirstStep[String,Int]])](
+  val expectedArcs = Set[(String, String, Option[net.walend.graph.semiring.FirstStep[String,Int]])](
     (A,A,Some(FirstStep(0,None))),
     (A,B,Some(FirstStep(1,Some(B)))),
     (A,C,Some(FirstStep(2,Some(B)))),

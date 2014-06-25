@@ -1,8 +1,8 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.digraph.SomeGraph._
-import net.walend.digraph.AdjacencyLabelDigraph
+import net.walend.graph.SomeGraph._
+import net.walend.graph.AdjacencyLabelDigraph
 
 /**
  *

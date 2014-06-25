@@ -1,6 +1,6 @@
 In this release
 
-* built translator from scala-graph to net.walend.digraph.Digraph and (maybe) back
+* built translator from scala-graph to net.walend.graph.Digraph and (maybe) back
 * optimized digraph representation for algorithms
 ** Now adapt any graph to use the algorithms, not just scala-graph
 * a test of scala-graph translated
@@ -20,10 +20,10 @@ For next release
 * publicize on twitter
 * blog
 * Enron
-* path representation for net.walend.digraph
-* translator from net.walend.digraph.path to scala-graph's paths
+* path representation for net.walend.graph
+* translator from net.walend.graph.path to scala-graph's paths
 
-* subgraph representation for net.walend.digraph
+* subgraph representation for net.walend.graph
 * Probabilty semiring
 
 

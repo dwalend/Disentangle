@@ -1,6 +1,6 @@
 package net.walend.scalagraph.semiring
 
-import net.walend.digraph.semiring.SemiringSupport
+import net.walend.graph.semiring.SemiringSupport
 
 import scalax.collection.GraphPredef.EdgeLikeIn
 import scalax.collection.Graph
@@ -18,7 +18,7 @@ object ConvertToLabelDigraph {
   /**
    * Create a digraph of Labels from an arbitrary Digraph.
    *
-   * @return label edges, nodes, and support.semiring.O to build a net.walend.digraph.Digraph.
+   * @return label edges, nodes, and support.semiring.O to build a net.walend.graph.Digraph.
    */
   import scala.language.higherKinds
   def convert[Node,E[X] <: EdgeLikeIn[X],Label,Key](originalGraph:Graph[Node,E],

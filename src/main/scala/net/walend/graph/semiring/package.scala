@@ -1,4 +1,4 @@
-package net.walend.digraph
+package net.walend.graph
 
 /**
  * Semirings and semiring-based graph minimizing algorithms.

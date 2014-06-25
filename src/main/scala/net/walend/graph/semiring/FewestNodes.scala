@@ -1,28 +1,27 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import net.walend.heap.HeapOrdering
 
 /**
- * Finds paths that traverse from start to end nodes with the least Double-valued weight.
+ * Finds the length of a path that traverses the fewest edges.
  *
  * @author dwalend
  * @since v0.1.0
  */
+object FewestNodes extends SemiringSupport[Int,Int] {
 
-object LeastWeights extends SemiringSupport[Double,Double] {
+  def semiring = FewestNodesSemiring
 
-  def semiring = LeastWeightsSemiring
-
-  def heapOrdering = LeastWeightsOrdering
+  def heapOrdering = FewestNodesHeapOrdering
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertEdgeToLabel[Node, Label](start: Node, end: Node, edge: Label): LeastWeights.Label = 1
+  def convertEdgeToLabel[Node, EdgeLabel](start: Node, end: Node, label: EdgeLabel): FewestNodes.Label = 1
 
-  object LeastWeightsSemiring extends Semiring {
+  object FewestNodesSemiring extends Semiring {
 
     def I = 0
-    def O = Double.PositiveInfinity
+    def O = Int.MaxValue
 
     def inDomain(label: Label): Boolean = {
       I <= label && label < O
@@ -39,7 +38,9 @@ object LeastWeights extends SemiringSupport[Double,Double] {
     def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
       if ((fromThroughLabel == O) || (throughToLabel == O)) O
       else {
-        fromThroughLabel + throughToLabel
+        val result = fromThroughLabel + throughToLabel
+        if(result < 0) O
+        else result
       }
     }
   }
@@ -47,38 +48,37 @@ object LeastWeights extends SemiringSupport[Double,Double] {
   /**
    * A heap ordering that puts lower numbers on the top of the heap
    */
-  object LeastWeightsOrdering extends HeapOrdering[Double] {
+  object FewestNodesHeapOrdering extends HeapOrdering[Int] {
 
-    def lteq(x: Double, y: Double): Boolean = {
+    def lteq(x: Int, y: Int): Boolean = {
       x >= y
     }
 
     /**
      * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
      */
-    //todo look again for a version that handles NaNs and infinities
-    def tryCompare(x: Double, y: Double): Option[Int] = {
-      Some(y.compareTo(x))
+    def tryCompare(x: Int, y: Int): Option[Int] = {
+      Some(y-x)
     }
 
-    def keyDomainDescription = "between zero and Double.PositiveInfinity (the annihilator)"
+    def keyDomainDescription = "between zero and Int.MaxValue (the annihilator)"
 
     /**
      * @throws IllegalArgumentException if the key is unusable
      */
-    def checkKey(key: Double): Unit = {
-      require((LeastWeights.LeastWeightsSemiring.inDomain(key)||(key == LeastWeights.LeastWeightsSemiring.O)),s"Key must be $keyDomainDescription, not $key")
+    def checkKey(key: Int): Unit = {
+      require((FewestNodes.FewestNodesSemiring.inDomain(key)||(key == FewestNodes.FewestNodesSemiring.O)),s"Key must be $keyDomainDescription, not $key")
     }
 
     /**
      * Minimum value for the DoubleHeap
      */
-    def AlwaysTop:Double =  -Double.MinPositiveValue
+    def AlwaysTop:Int = -1
 
     /**
      * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
      */
-    def AlwaysBottom: Double = Double.PositiveInfinity
+    def AlwaysBottom: Int = Int.MaxValue
   }
-}
 
+}

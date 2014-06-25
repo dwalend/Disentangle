@@ -1,7 +1,7 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import net.walend.heap.HeapOrdering
-import net.walend.digraph.LabelDigraph
+import net.walend.graph.LabelDigraph
 
 /**
  * Finds all minimal paths that use the core semiring.

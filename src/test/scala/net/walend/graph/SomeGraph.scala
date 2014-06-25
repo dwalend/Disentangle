@@ -1,4 +1,4 @@
-package net.walend.digraph
+package net.walend.graph
 
 /**
  * An example graph for eyeball testing

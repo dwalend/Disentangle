@@ -14,6 +14,6 @@ package net.walend
  * @since v0.1.0
  */
 //todo rename the package graph
-package object digraph {
+package object graph {
 
 }

@@ -1,4 +1,4 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import scalax.collection.mutable.{Graph => MutableGraph}
 import net.walend.heap.Heap

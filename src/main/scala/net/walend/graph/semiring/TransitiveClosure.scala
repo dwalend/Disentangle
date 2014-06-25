@@ -1,4 +1,4 @@
-package net.walend.digraph.semiring
+package net.walend.graph.semiring
 
 import net.walend.heap.HeapOrdering
 

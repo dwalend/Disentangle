@@ -1,4 +1,4 @@
-package net.walend.digraph
+package net.walend.graph
 
 import scala.collection.{GenMap, GenSeq, GenTraversable}
 
