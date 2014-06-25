@@ -13,7 +13,6 @@ package net.walend
  * @author dwalend
  * @since v0.1.0
  */
-//todo rename the package graph
 package object graph {
 
 }

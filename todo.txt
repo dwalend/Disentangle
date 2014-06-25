@@ -1,6 +1,7 @@
 In this release
 
 * built translator from scala-graph to net.walend.graph.Digraph and (maybe) back
+* top-level graph representation
 * optimized digraph representation for algorithms
 ** Now adapt any graph to use the algorithms, not just scala-graph
 * a test of scala-graph translated
@@ -9,7 +10,6 @@ In this release
 
 For this release
 
-* edges in top-level graph representation
 * automatically plot the results of the timing studies (and comparison with Jung)
 * profile Floyd
 * profile Dijkstra

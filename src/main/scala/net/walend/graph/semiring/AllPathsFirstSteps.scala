@@ -9,8 +9,6 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
-
-//todo is there some way to make this use an inner node ? (Same for OnePathFirstStep)
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
 
   /**

@@ -69,14 +69,5 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
-
-    val resultDigraph = AdjacencyLabelDigraph(edges = arcs,noEdgeExistsValue = support.semiring.O)
-
-    //todo add a test
-    /*
-    for(arc <- arcs) {
-      println(s"${arc._1},${arc._2}  ${support.subgraphEdges(resultDigraph,arc._1,arc._2)}")
-    }
-    */
   }
 }

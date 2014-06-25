@@ -2,7 +2,7 @@ package net.walend.graph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
+import net.walend.graph.IndexedLabelDigraph
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
