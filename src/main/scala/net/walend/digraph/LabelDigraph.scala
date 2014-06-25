@@ -14,7 +14,7 @@ import scala.collection.{GenSeq, GenTraversable}
 //todo split up
 trait Graph[Node] {
 
-  //todo this should really be a Set, but you need a Set with a fixed, controlled order, accessible by index
+  //todo this should really be a GenSet, but subtraits need a Set with a fixed, controlled order, accessible by index
   def nodes:GenSeq[Node]
 
   /**
