@@ -2,7 +2,6 @@ package net.walend.graph.semiring
 
 import net.walend.scalagraph.semiring.GraphFactory
 import scalax.collection.GraphPredef.EdgeLikeIn
-import net.walend.graph.semiring.Brandes.BrandesSupport
 
 /**
  * @author dwalend
@@ -96,7 +95,7 @@ object TimingStudies {
 
     import net.walend.graph.DigraphFactory
 
-    val support = new BrandesSupport[AnyVal,Int,Int](FewestNodes)
+    val support = FewestNodes
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 

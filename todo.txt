@@ -10,21 +10,19 @@ In this release
 
 For this release
 
-* automatically plot the results of the timing studies (and comparison with Jung)
-* profile Floyd
-* profile Dijkstra
-* profile Brandes
 
 For next release
 
+* subgraph representation for net.walend.graph
+* Probabilty semiring
+
+* automatically plot the results of the timing studies (and comparison with Jung)
 * publicize on twitter
 * blog
 * Enron
 * path representation for net.walend.graph
 * translator from net.walend.graph.path to scala-graph's paths
 
-* subgraph representation for net.walend.graph
-* Probabilty semiring
 
 
 Pulblicize

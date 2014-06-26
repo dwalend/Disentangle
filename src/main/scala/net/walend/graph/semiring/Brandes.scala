@@ -132,11 +132,11 @@ object Brandes {
     AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
   }
 
-  //todo why expose BrandesSupport?
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
                                                                   extraNodes: GenSeq[Node] = Seq.empty,
-                                                                  support: BrandesSupport[Node, CoreLabel, Key],
+                                                                  coreSupport: SemiringSupport[CoreLabel, Key],
                                                                   labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): (Seq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+    val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
     val labelGraph = createLabelDigraph(edges, extraNodes, support, labelForEdge)
     allLeastPathsAndBetweenness(labelGraph, support)
   }

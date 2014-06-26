@@ -2,7 +2,7 @@ package net.walend.graph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.graph.SomeGraph._
-import net.walend.graph.semiring.Brandes.{BrandesSteps, BrandesSupport}
+import net.walend.graph.semiring.Brandes.BrandesSteps
 
 /**
  *
@@ -54,7 +54,7 @@ class BrandesTest extends FlatSpec with Matchers {
     (H,H,Some(BrandesSteps(0,1,Seq())))
   )
 
-  val support = new BrandesSupport[String,Int,Int](FewestNodes)
+  val support = FewestNodes
 
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,
