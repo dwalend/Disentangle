@@ -2,6 +2,7 @@ package net.walend.graph.semiring
 
 import net.walend.scalagraph.semiring.GraphFactory
 import scalax.collection.GraphPredef.EdgeLikeIn
+import net.walend.graph.semiring.Brandes.BrandesSupport
 
 /**
  * @author dwalend
@@ -10,17 +11,17 @@ import scalax.collection.GraphPredef.EdgeLikeIn
 object TimingStudies {
 
   def main (args:Array[String]) {
-    /*
-    //Time the Floyd Warshall algorithm with AllShortestPaths
-    val floydResults = study(8,timeFloyd,expectedTimeFloyd)
-    floydResults.map(x => println(x))
-     */
-    //Time Dijkstra's algorithm with AllShortestPaths
-    val dijkstraResults = study(10,timeDijkstra,expectedTimeDijkstra)
-    dijkstraResults.map(x => println(x))
 
-    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
-    scalaGraphConvertDijstraResults.map(x => println(x))
+    //Time the Floyd Warshall algorithm with AllShortestPaths
+//    val floydResults = study(8,timeFloyd,expectedTimeFloyd)
+//    floydResults.map(x => println(x))
+
+    //Time Dijkstra's algorithm with AllShortestPaths
+//    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
+//    dijkstraResults.map(x => println(x))
+
+//    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
+//    scalaGraphConvertDijstraResults.map(x => println(x))
 
     /*
         val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
@@ -34,12 +35,36 @@ object TimingStudies {
 
         compareResults.map(x => println(x))
     */
-    /*
+
     //Time Brandes' algorithm with AllShortestPaths
-    val brandesResults = study(8,timeBrandes,expectedTimeDijkstra)
+    val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
     brandesResults.map(x => println(x))
+
+
+  }
+
+  def timeFloyd(nodeCount:Int):Long = {
+
+    import net.walend.graph.DigraphFactory
+    import net.walend.graph.semiring.AllPathsFirstSteps
+    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
+
+    val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
+    //    val support = FFewestNodes
+
+    val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
+
+    val result = timeFunction{FloydWarshall.allPairsShortestPaths(graph.edges,graph.nodesSeq,support,support.convertEdgeToLabelFunc[Boolean](FFewestNodes.convertEdgeToLabel))}
+    /*
+        val result = timeFunction{
+            val initNode = initialGraph.innerNodes.head
+            DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
+        }
     */
 
+    //    println(s"$nodeCount ${result._2}")
+
+    result._2
   }
 
   def timeDijkstra(nodeCount:Int):Long = {
@@ -61,6 +86,28 @@ object TimingStudies {
         DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
     }
 */
+
+    //    println(s"$nodeCount ${result._2}")
+
+    result._2
+  }
+
+  def timeBrandes(nodeCount:Int):Long = {
+
+    import net.walend.graph.DigraphFactory
+
+    val support = new BrandesSupport[AnyVal,Int,Int](FewestNodes)
+
+    val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
+
+    val result = timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,graph.nodesSeq,support,FewestNodes.convertEdgeToLabel)}
+
+    /*
+        val result = timeFunction{
+            val initNode = initialGraph.innerNodes.head
+            DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
+        }
+    */
 
     //    println(s"$nodeCount ${result._2}")
 

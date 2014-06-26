@@ -132,6 +132,7 @@ object Brandes {
     AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
   }
 
+  //todo why expose BrandesSupport?
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
                                                                   extraNodes: GenSeq[Node] = Seq.empty,
                                                                   support: BrandesSupport[Node, CoreLabel, Key],
@@ -140,7 +141,7 @@ object Brandes {
     allLeastPathsAndBetweenness(labelGraph, support)
   }
 
-  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Set[Int]) {
+  case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Seq[Int]) {
 
     /**
      * Overriding equals to speed up.
@@ -180,7 +181,7 @@ object Brandes {
 
     def convertCoreLabelToLabel(labelDigraph:IndexedLabelDigraph[Node,CoreLabel])
                          (edge:labelDigraph.InnerEdgeType): Label = {
-      Some(BrandesSteps[Node, CoreLabel](edge._3, 1, Set(edge._2.index)))
+      Some(BrandesSteps[Node, CoreLabel](edge._3, 1, Seq(edge._2.index)))
     }
 
     /**
@@ -196,7 +197,7 @@ object Brandes {
       }
 
       //identity and annihilator
-      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Set.empty))
+      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Seq.empty))
       val O = None
 
       def summary(fromThroughToLabel: Label, currentLabel: Label): Label = {
@@ -226,7 +227,7 @@ object Brandes {
           val fromThroughSteps: BrandesSteps[Node, CoreLabel] = fromThroughLabel.get
           val throughToSteps: BrandesSteps[Node, CoreLabel] = throughToLabel.get
           //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
-          val choiceIndexes: Set[Int] = if (fromThroughLabel == I) throughToSteps.choiceIndexes
+          val choiceIndexes: Seq[Int] = if (fromThroughLabel == I) throughToSteps.choiceIndexes
                                         else fromThroughSteps.choiceIndexes
 
           Some(new BrandesSteps[Node, CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight, throughToSteps.weight),

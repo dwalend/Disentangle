@@ -9,6 +9,7 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
+//todo can choices be a Seq instead of a Set?
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
 
   /**

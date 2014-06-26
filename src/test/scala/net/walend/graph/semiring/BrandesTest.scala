@@ -13,45 +13,45 @@ import net.walend.graph.semiring.Brandes.{BrandesSteps, BrandesSupport}
 class BrandesTest extends FlatSpec with Matchers {
 
   val expectedArcs = Set[(String,String,Option[BrandesSteps[String,Int]])](
-    (A,A,Some(BrandesSteps(0,1,Set()))),
-    (A,B,Some(BrandesSteps(1,1,Set(1)))),
-    (A,C,Some(BrandesSteps(2,1,Set(1)))),
-    (A,D,Some(BrandesSteps(3,1,Set(1)))),
-    (A,E,Some(BrandesSteps(4,1,Set(1)))),
-    (A,F,Some(BrandesSteps(5,1,Set(1)))),
-    (A,H,Some(BrandesSteps(5,1,Set(1)))),
-    (B,B,Some(BrandesSteps(0,1,Set()))),
-    (B,C,Some(BrandesSteps(1,1,Set(2)))),
-    (B,D,Some(BrandesSteps(2,1,Set(2)))),
-    (B,E,Some(BrandesSteps(3,1,Set(2)))),
-    (B,F,Some(BrandesSteps(4,1,Set(2)))),
-    (B,H,Some(BrandesSteps(4,1,Set(2)))),
-    (C,B,Some(BrandesSteps(3,1,Set(3)))),
-    (C,C,Some(BrandesSteps(0,1,Set()))),
-    (C,D,Some(BrandesSteps(1,1,Set(3)))),
-    (C,E,Some(BrandesSteps(2,1,Set(3)))),
-    (C,F,Some(BrandesSteps(3,1,Set(3)))),
-    (C,H,Some(BrandesSteps(3,1,Set(3)))),
-    (D,B,Some(BrandesSteps(2,1,Set(4)))),
-    (D,C,Some(BrandesSteps(3,2,Set(4)))),
-    (D,D,Some(BrandesSteps(0,1,Set()))),
-    (D,E,Some(BrandesSteps(1,1,Set(4)))),
-    (D,F,Some(BrandesSteps(2,1,Set(4)))),
-    (D,H,Some(BrandesSteps(2,1,Set(4)))),
-    (E,B,Some(BrandesSteps(1,1,Set(1)))),
-    (E,C,Some(BrandesSteps(2,2,Set(1,7)))),
-    (E,D,Some(BrandesSteps(3,2,Set(1,7)))),
-    (E,E,Some(BrandesSteps(0,1,Set()))),
-    (E,F,Some(BrandesSteps(1,1,Set(5)))),
-    (E,H,Some(BrandesSteps(1,1,Set(7)))),
-    (F,F,Some(BrandesSteps(0,1,Set()))),
-    (G,G,Some(BrandesSteps(0,1,Set()))),
-    (H,B,Some(BrandesSteps(4,1,Set(2)))),
-    (H,C,Some(BrandesSteps(1,1,Set(2)))),
-    (H,D,Some(BrandesSteps(2,1,Set(2)))),
-    (H,E,Some(BrandesSteps(3,1,Set(2)))),
-    (H,F,Some(BrandesSteps(4,1,Set(2)))),
-    (H,H,Some(BrandesSteps(0,1,Set())))
+    (A,A,Some(BrandesSteps(0,1,Seq()))),
+    (A,B,Some(BrandesSteps(1,1,Seq(1)))),
+    (A,C,Some(BrandesSteps(2,1,Seq(1)))),
+    (A,D,Some(BrandesSteps(3,1,Seq(1)))),
+    (A,E,Some(BrandesSteps(4,1,Seq(1)))),
+    (A,F,Some(BrandesSteps(5,1,Seq(1)))),
+    (A,H,Some(BrandesSteps(5,1,Seq(1)))),
+    (B,B,Some(BrandesSteps(0,1,Seq()))),
+    (B,C,Some(BrandesSteps(1,1,Seq(2)))),
+    (B,D,Some(BrandesSteps(2,1,Seq(2)))),
+    (B,E,Some(BrandesSteps(3,1,Seq(2)))),
+    (B,F,Some(BrandesSteps(4,1,Seq(2)))),
+    (B,H,Some(BrandesSteps(4,1,Seq(2)))),
+    (C,B,Some(BrandesSteps(3,1,Seq(3)))),
+    (C,C,Some(BrandesSteps(0,1,Seq()))),
+    (C,D,Some(BrandesSteps(1,1,Seq(3)))),
+    (C,E,Some(BrandesSteps(2,1,Seq(3)))),
+    (C,F,Some(BrandesSteps(3,1,Seq(3)))),
+    (C,H,Some(BrandesSteps(3,1,Seq(3)))),
+    (D,B,Some(BrandesSteps(2,1,Seq(4)))),
+    (D,C,Some(BrandesSteps(3,2,Seq(4)))),
+    (D,D,Some(BrandesSteps(0,1,Seq()))),
+    (D,E,Some(BrandesSteps(1,1,Seq(4)))),
+    (D,F,Some(BrandesSteps(2,1,Seq(4)))),
+    (D,H,Some(BrandesSteps(2,1,Seq(4)))),
+    (E,B,Some(BrandesSteps(1,1,Seq(1)))),
+    (E,C,Some(BrandesSteps(2,2,Seq(1,7)))),
+    (E,D,Some(BrandesSteps(3,2,Seq(1,7)))),
+    (E,E,Some(BrandesSteps(0,1,Seq()))),
+    (E,F,Some(BrandesSteps(1,1,Seq(5)))),
+    (E,H,Some(BrandesSteps(1,1,Seq(7)))),
+    (F,F,Some(BrandesSteps(0,1,Seq()))),
+    (G,G,Some(BrandesSteps(0,1,Seq()))),
+    (H,B,Some(BrandesSteps(4,1,Seq(2)))),
+    (H,C,Some(BrandesSteps(1,1,Seq(2)))),
+    (H,D,Some(BrandesSteps(2,1,Seq(2)))),
+    (H,E,Some(BrandesSteps(3,1,Seq(2)))),
+    (H,F,Some(BrandesSteps(4,1,Seq(2)))),
+    (H,H,Some(BrandesSteps(0,1,Seq())))
   )
 
   val support = new BrandesSupport[String,Int,Int](FewestNodes)
@@ -103,7 +103,7 @@ class BrandesTest extends FlatSpec with Matchers {
     }
   }
 
-  def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Set[(Node,Double)] = {
+  def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Seq[(Node,Double)] = {
     import edu.uci.ics.jung.graph.UndirectedSparseGraph
     import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
 
@@ -123,7 +123,7 @@ class BrandesTest extends FlatSpec with Matchers {
     val jungBetweenCalc = new BetweennessCentrality(jungGraph)
     import scala.collection.JavaConversions._
 
-    val jb = jungGraph.getVertices.to[Set].map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
+    val jb = jungGraph.getVertices.to[Seq].map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
 
     jb
   }
@@ -168,7 +168,7 @@ AL TN
     arcs
   }
 
-  "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataset" in {
+  "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataSeq" in {
 
     val arcs = usStateEdges
 
@@ -177,7 +177,7 @@ AL TN
 
     //find betweenness
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
-    val betweennesses:Map[String,Double] = labelGraphAndBetweenness._2.to[Set].map(bet => (bet._1,(bet._2/2))).toMap
+    val betweennesses:Map[String,Double] = labelGraphAndBetweenness._2.to[Seq].map(bet => (bet._1,(bet._2/2))).toMap
 
     //find betweenness with Jung
     val jungB:Map[String,Double] = jungBetweenness(arcs).toMap
