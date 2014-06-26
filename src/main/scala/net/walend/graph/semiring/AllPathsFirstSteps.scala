@@ -9,8 +9,9 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
-//todo can choices be a Seq instead of a Set?
-case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
+case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Seq[Node]) {
+
+  lazy val choiceSet = choices.to[Set]
 
   /**
    * Overriding equals to speed up.
@@ -21,7 +22,8 @@ case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
       if (this eq other) true //if they share a memory address, no need to compare
       else {
         if (weight == other.weight) {
-          choices == other.choices
+          if(choices == other.choices) true
+          else choiceSet == other.choiceSet
         } else false
       }
     } else false
@@ -31,7 +33,7 @@ case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Set[Node]) {
    * Overriding hashCode because I overrode equals.
    */
   override def hashCode():Int = {
-    weight.hashCode() ^ choices.hashCode()
+    weight.hashCode() ^ choiceSet.hashCode()
   }
 }
 
@@ -50,7 +52,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, edgeLabel: EdgeLabel):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edgeLabel),Set(end)))
+    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edgeLabel),Seq(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -87,7 +89,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
       label match {
         case Some(firstSteps) => {
 
-          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
+          val innerChoices = firstSteps.choiceSet.map(choice => labelGraph.innerNode(choice).get)
           val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
 
           val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
@@ -115,7 +117,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,Set[Node]()))
+    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,Seq[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -144,7 +146,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         val fromThroughSteps:FirstSteps[Node,CoreLabel] = fromThroughLabel.get
         val throughToSteps:FirstSteps[Node,CoreLabel] = throughToLabel.get
         //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
-        val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
+        val choices:Seq[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
         Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
