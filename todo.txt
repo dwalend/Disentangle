@@ -14,7 +14,9 @@ For this release
 For next release
 
 * subgraph representation for net.walend.graph
-* Probabilty semiring
+* Probabilty semiring, and non-selecting marker for Semirings
+* Paths and subgraphs with original edges for AllPathsFirstSteps and OnePathFirstStep semirings
+
 
 * automatically plot the results of the timing studies (and comparison with Jung)
 * publicize on twitter

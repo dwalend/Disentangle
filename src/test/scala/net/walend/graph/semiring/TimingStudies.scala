@@ -164,7 +164,7 @@ object TimingStudies {
 
     import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
     import net.walend.graph.semiring.{Dijkstra => DDijkstra}
-    import net.walend.graph.semiring.{AllPathsFirstSteps, FirstSteps}
+    import net.walend.graph.semiring.AllPathsFirstSteps
     import scalax.collection.Graph
     import scalax.collection.GraphEdge.DiEdge
     import net.walend.scalagraph.semiring.ConvertToLabelDigraph
@@ -174,8 +174,8 @@ object TimingStudies {
     val graph:Graph[Int,DiEdge] = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
     import scala.language.higherKinds
-    def convertToLabel[E[X] <: EdgeLikeIn[X]](edge:E[Int]):(Int,Int,Option[FirstSteps[Int,Int]]) = {
-      (edge._1,edge._2,Some(FirstSteps(1,Seq.empty[Int])))
+    def convertToLabel[E[X] <: EdgeLikeIn[X]](edge:E[Int]):(Int,Int,Option[FirstStepsTrait[Int,Int]]) = {
+      (edge._1,edge._2,Some(support.FirstSteps(1,Seq.empty[Int])))
     }
 
     val result = timeFunction{

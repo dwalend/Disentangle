@@ -9,38 +9,9 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
-//todo make this an inner class of AllPathsFirstSteps
-case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Seq[Node]) {
-
-  lazy val choiceSet = choices.to[Set]
-
-  /**
-   * Overriding equals to speed up.
-   */
-  override def equals(any:Any) = {
-    if (any.isInstanceOf[FirstSteps[Node, CoreLabel]]) {
-      val other: FirstSteps[Node, CoreLabel] = any.asInstanceOf[FirstSteps[Node, CoreLabel]]
-      if (this eq other) true //if they share a memory address, no need to compare
-      else {
-        if (weight == other.weight) {
-          if(choices == other.choices) true
-          else choiceSet == other.choiceSet
-        } else false
-      }
-    } else false
-  }
-
-  /**
-   * Overriding hashCode because I overrode equals.
-   */
-  override def hashCode():Int = {
-    weight.hashCode() ^ choiceSet.hashCode()
-  }
-}
-
-class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstSteps[Node,CoreLabel]],Key]{
+class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
   
-  override type Label = Option[FirstSteps[Node, CoreLabel]]
+  override type Label = Option[FirstStepsTrait[Node, CoreLabel]]
 
   def semiring: Semiring = AllPathsSemiring
 
@@ -51,9 +22,38 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
+  case class FirstSteps(weight:CoreLabel,choices:Seq[Node]) extends FirstStepsTrait[Node, CoreLabel] {
+
+    lazy val choiceSet = choices.to[Set]
+
+    /**
+     * Overriding equals to speed up.
+     */
+    override def equals(any:Any) = {
+      if (any.isInstanceOf[FirstSteps]) {
+        val other: FirstSteps = any.asInstanceOf[FirstSteps]
+        if (this eq other) true //if they share a memory address, no need to compare
+        else {
+          if (weight == other.weight) {
+            if(choices == other.choices) true
+            else choiceSet == other.choiceSet
+          } else false
+        }
+      } else false
+    }
+
+    /**
+     * Overriding hashCode because I overrode equals.
+     */
+    override def hashCode():Int = {
+      weight.hashCode() ^ choiceSet.hashCode()
+    }
+  }
+
+
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, edgeLabel: EdgeLabel):Label = {
-    Some(FirstSteps[Node,CoreLabel](coreLabelForEdge(start,end,edgeLabel),Seq(end)))
+    Some(FirstSteps(coreLabelForEdge(start,end,edgeLabel),Seq(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -112,25 +112,25 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
     def inDomain(label: Label): Boolean = {
       label match {
-        case Some(steps:FirstSteps[Node,CoreLabel]) => coreSupport.semiring.inDomain(steps.weight)
+        case Some(steps:FirstSteps) => coreSupport.semiring.inDomain(steps.weight)
         case None => true
       } 
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps[Node,CoreLabel](coreSupport.semiring.I,Seq[Node]()))
+    val I = Some(FirstSteps(coreSupport.semiring.I,Seq[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
 
       if(currentLabel != O) {
         if(fromThroughToLabel != O){
-          val currentSteps:FirstSteps[Node,CoreLabel] = currentLabel.get
-          val fromThroughToSteps:FirstSteps[Node,CoreLabel] = fromThroughToLabel.get
+          val currentSteps:FirstStepsTrait[Node,CoreLabel] = currentLabel.get
+          val fromThroughToSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughToLabel.get
           val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
-            Some(new FirstSteps[Node,CoreLabel](currentSteps.weight,
-                                                currentSteps.choices ++ fromThroughToSteps.choices))
+            Some(new FirstSteps(currentSteps.weight,
+                                currentSteps.choices ++ fromThroughToSteps.choices))
           }
           else if (summ==fromThroughToSteps.weight) fromThroughToLabel
           else if (summ==currentSteps.weight) currentLabel
@@ -144,16 +144,26 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
       //changing the match/case to if/else made this disappear from the sampling profiler
       if((fromThroughLabel != O)&&(throughToLabel != O)) {
-        val fromThroughSteps:FirstSteps[Node,CoreLabel] = fromThroughLabel.get
-        val throughToSteps:FirstSteps[Node,CoreLabel] = throughToLabel.get
+        val fromThroughSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughLabel.get
+        val throughToSteps:FirstStepsTrait[Node,CoreLabel] = throughToLabel.get
         //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
         val choices:Seq[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
-        Some(new FirstSteps[Node,CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
+        Some(new FirstSteps(coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
                                             choices))
       }
       else O
     }
   } 
+}
+
+trait FirstStepsTrait[Node,CoreLabel] {
+
+  def weight:CoreLabel
+
+  //todo rename choiceSeq
+  def choices:Seq[Node]
+
+  def choiceSet:Set[Node]
 }
