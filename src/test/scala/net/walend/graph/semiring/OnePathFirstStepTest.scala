@@ -74,4 +74,55 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
     labelTuples.size should be (expectedArcs.size)
     labelTuples.to[Set] should be (expectedArcs)
   }
+
+  "OnePathFirstStep and FloydWarshall's algorithm" should "produce labels that can create the correct shortest paths for Somegraph" in {
+    
+    val expectedPaths = Map(
+      (H,H) -> Some(List()),
+      (E,E) -> Some(List()),
+      (B,H) -> Some(List(C, D, E, H)),
+      (E,H) -> Some(List(H)),
+      (D,H) -> Some(List(E, H)),
+      (D,F) -> Some(List(E, F)),
+      (A,B) -> Some(List(B)),
+      (A,F) -> Some(List(B, C, D, E, F)),
+      (C,B) -> Some(List(D, E, B)),
+      (H,C) -> Some(List(C)),
+      (H,F) -> Some(List(C, D, E, F)),
+      (A,A) -> Some(List()),
+      (B,D) -> Some(List(C, D)),
+      (B,F) -> Some(List(C, D, E, F)),
+      (B,C) -> Some(List(C)),
+      (C,H) -> Some(List(D, E, H)),
+      (C,D) -> Some(List(D)),
+      (D,C) -> Some(List(E, B, C)),
+      (H,D) -> Some(List(C, D)),
+      (A,H) -> Some(List(B, C, D, E, H)),
+      (E,C) -> Some(List(B, C)),
+      (B,B) -> Some(List()),
+      (C,C) -> Some(List()),
+      (E,D) -> Some(List(B, C, D)),
+      (B,E) -> Some(List(C, D, E)),
+      (D,B) -> Some(List(E, B)),
+      (H,E) -> Some(List(C, D, E)),
+      (E,B) -> Some(List(B)),
+      (D,E) -> Some(List(E)),
+      (A,C) -> Some(List(B, C)),
+      (D,D) -> Some(List()),
+      (E,F) -> Some(List(F)),
+      (G,G) -> Some(List()),
+      (A,E) -> Some(List(B, C, D, E)),
+      (C,F) -> Some(List(D, E, F)),
+      (A,D) -> Some(List(B, C, D)),
+      (C,E) -> Some(List(D, E)),
+      (H,B) -> Some(List(C, D, E, B)),
+      (F,F) -> Some(List())
+    )
+    
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodesSeq,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+
+    val pairsToPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.leastPath(edge._1,edge._2)(labelGraph))).toMap
+
+    pairsToPaths should be (expectedPaths)
+  }
 }

@@ -10,15 +10,6 @@ import net.walend.graph.{IndexedLabelDigraph, LabelDigraph}
  * @since v0.1.0
  */
 
-//todo replace Node with Int
-trait FirstStepTrait[Node,CoreLabel] {
-
-  def weight:CoreLabel
-
-  def step:Option[Node]
-
-}
-
 class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepTrait[Node,CoreLabel]],Key]{
 
   override type Label = Option[FirstStepTrait[Node, CoreLabel]]
@@ -56,7 +47,7 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     }
   }
 
-  def leastPath(from:Node,to:Node)(leastPathDigraph:IndexedLabelDigraph[Node,Label]):Option[Seq[Node]] = {
+  def leastPath(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Option[Seq[Node]] = {
 
     //todo store and use indices directly, and return inner nodes
     val fromInner = leastPathDigraph.innerNode(from)
@@ -137,6 +128,13 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
       else O
     }
   }
+}
 
+//todo replace Node with Int
+trait FirstStepTrait[Node,CoreLabel] {
+
+  def weight:CoreLabel
+
+  def step:Option[Node]
 
 }
