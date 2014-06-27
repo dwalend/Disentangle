@@ -1,6 +1,7 @@
 package net.walend.graph.semiring
 
 import net.walend.heap.HeapOrdering
+import net.walend.graph.{IndexedLabelDigraph, LabelDigraph}
 
 /**
  * Finds one minimal path that use the core semiring.
@@ -9,33 +10,18 @@ import net.walend.heap.HeapOrdering
  * @since v0.1.0
  */
 
-case class FirstStep[Node,CoreLabel](weight:CoreLabel,step:Option[Node]) {
-  /**
-   * Overriding equals to speed up.
-   */
-  override def equals(any:Any) = {
-    if (any.isInstanceOf[FirstStep[Node, CoreLabel]]) {
-      val other: FirstStep[Node, CoreLabel] = any.asInstanceOf[FirstStep[Node, CoreLabel]]
-      if (this eq other) true //if they share a memory address, no need to compare
-      else {
-        if (weight == other.weight) {
-          step == other.step
-        } else false
-      }
-    } else false
-  }
+//todo replace Node with Int
+trait FirstStepTrait[Node,CoreLabel] {
 
-  /**
-   * Overriding hashCode because I overrode equals.
-   */
-  override def hashCode():Int = {
-    weight.hashCode() ^ step.hashCode()
-  }
+  def weight:CoreLabel
+
+  def step:Option[Node]
+
 }
 
-class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStep[Node,CoreLabel]],Key]{
+class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepTrait[Node,CoreLabel]],Key]{
 
-  override type Label = Option[FirstStep[Node, CoreLabel]]
+  override type Label = Option[FirstStepTrait[Node, CoreLabel]]
 
   def semiring: Semiring = OnePathSemiring
 
@@ -46,9 +32,61 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
+  case class FirstStep(weight:CoreLabel,step:Option[Node]) extends FirstStepTrait[Node,CoreLabel] {
+    /**
+     * Overriding equals to speed up.
+     */
+    override def equals(any:Any) = {
+      if (any.isInstanceOf[FirstStep]) {
+        val other: FirstStep = any.asInstanceOf[FirstStep]
+        if (this eq other) true //if they share a memory address, no need to compare
+        else {
+          if (weight == other.weight) {
+            step == other.step
+          } else false
+        }
+      } else false
+    }
+
+    /**
+     * Overriding hashCode because I overrode equals.
+     */
+    override def hashCode():Int = {
+      weight.hashCode() ^ step.hashCode()
+    }
+  }
+
+  def leastPath(from:Node,to:Node)(leastPathDigraph:IndexedLabelDigraph[Node,Label]):Option[Seq[Node]] = {
+
+    //todo store and use indices directly, and return inner nodes
+    val fromInner = leastPathDigraph.innerNode(from)
+    val toInner = leastPathDigraph.innerNode(to)
+    (fromInner,toInner) match {
+      case (Some(f),Some(t)) => {
+        val label:Label = leastPathDigraph.label(f,t)
+        label match {
+          case Some(firstStep) => {
+            firstStep.step match {
+              case Some(step) => {
+                val tailOption = leastPath(step,to)(leastPathDigraph)
+                tailOption match {
+                  case Some(tail) => Some(step +: tail)
+                  case None => None //Following a broken path. Should never happen.
+                }
+              }
+              case None => Some(Seq.empty[Node]) //No further steps. from should be to and the label should be I
+            }
+          }
+          case None => None //No path from one to the other
+        }
+      }
+      case _ => None //One node or the other isn't in the graph
+    }
+  }
+
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, coreLabel: EdgeLabel):Label = {
-    Some(FirstStep[Node,CoreLabel](coreLabelForEdge(start,end,coreLabel),Some(end)))
+    Some(FirstStep(coreLabelForEdge(start,end,coreLabel),Some(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -60,21 +98,21 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
     def inDomain(label: Label): Boolean = {
       label match {
-        case Some(step:FirstStep[Node,CoreLabel]) => coreSupport.semiring.inDomain(step.weight)
+        case Some(step:FirstStep) => coreSupport.semiring.inDomain(step.weight)
         case None => true
       }
     }
 
     //identity and annihilator
-    val I = Some(FirstStep[Node,CoreLabel](coreSupport.semiring.I,None))
+    val I = Some(FirstStep(coreSupport.semiring.I,None))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
 
       if(currentLabel != O) {
         if(fromThroughToLabel != O){
-          val currentStep:FirstStep[Node,CoreLabel] = currentLabel.get
-          val fromThroughToStep:FirstStep[Node,CoreLabel] = fromThroughToLabel.get
+          val currentStep:FirstStepTrait[Node,CoreLabel] = currentLabel.get
+          val fromThroughToStep:FirstStepTrait[Node,CoreLabel] = fromThroughToLabel.get
           val summ = coreSupport.semiring.summary(fromThroughToStep.weight,currentStep.weight)
           if (summ==currentStep.weight) currentLabel
           else if (summ==fromThroughToStep.weight) fromThroughToLabel
@@ -88,15 +126,17 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     def extend(fromThroughLabel:Label,throughToLabel:Label):Label = {
       //changing the match/case to if/else made this disappear from the sampling profiler
       if((fromThroughLabel != O)&&(throughToLabel != O)) {
-        val fromThroughStep:FirstStep[Node,CoreLabel] = fromThroughLabel.get
-        val throughToStep:FirstStep[Node,CoreLabel] = throughToLabel.get
+        val fromThroughStep:FirstStepTrait[Node,CoreLabel] = fromThroughLabel.get
+        val throughToStep:FirstStepTrait[Node,CoreLabel] = throughToLabel.get
         //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
         val step:Option[Node] = if(fromThroughLabel == I) throughToStep.step
         else fromThroughStep.step
 
-        Some(new FirstStep[Node,CoreLabel](coreSupport.semiring.extend(fromThroughStep.weight,throughToStep.weight),step))
+        Some(new FirstStep(coreSupport.semiring.extend(fromThroughStep.weight,throughToStep.weight),step))
       }
       else O
     }
   }
+
+
 }

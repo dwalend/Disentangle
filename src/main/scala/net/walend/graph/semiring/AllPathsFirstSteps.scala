@@ -9,6 +9,7 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
+//todo make this an inner class of AllPathsFirstSteps
 case class FirstSteps[Node,CoreLabel](weight:CoreLabel,choices:Seq[Node]) {
 
   lazy val choiceSet = choices.to[Set]

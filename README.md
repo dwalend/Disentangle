@@ -1,9 +1,9 @@
 ScalaGraphMinimizer
 ===================
 
-ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures and incorrect assumptions. ScalaGraphMinimizer uses semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-The current version is 0.1.0, the second release. In the first release I got feedback suggesting major refactoring to improve performance, and a request make the algorithms independent of scala-graph. To get there, I reworked almost all of the API so I incremented the middle revision number.
+The current version is 0.1.0, the second release. In the first release I got feedback suggesting major rework to improve performance, and a request make the algorithms independent of scala-graph. To get there, I reworked almost all of the API so I incremented the middle revision number.
 
 I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
 better.
@@ -25,47 +25,48 @@ To get the latest snapshot in your build.sbt, add
 
 ### clone the code repository
 
-If you want to change ScalaGraphMinimizer to meet your every whim, fix some bugs and send me pull requests, or just mess around, clone the git repo and have at it.
+If you want to change ScalaGraphMinimizer to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
 
     git clone https://github.com/dwalend/ScalaGraphMinimizer.git
     cd ScalaGraphMinimizer
     sbt test package
-    cp target/scala-2.10/graph4scalasemirings_2.11-0.1.0-SNAPSHOT.jar /your/projects/lib
+    cp target/scala-2.10/graph4scalasemirings_2.11-0.1.0-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using ScalaGraphMinimizer
 
+### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
+
 You'll need to
 
-* bring a graph of your own, or at least a Seq[(Node,Node,ArcLabel)]. 
-* choose or create a SemiringSupport implementation like FewestNodes.
-* provide a function to convert from a (Node,Node,ArcLabel) tuple to the Label defined by your SemiringSupport.
+* bring a graph of your own, or at least a Seq[(Node,Node,MaybeAnEdge)]. 
+* choose or create a SemiringSupport implementation, like FewestNodes.
+* provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
-* choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm)
+* choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm.)
 * arrange for your code to run the algorithm on your graph
 
-You'll get a Digraph with your nodes and edges that contain the results of the minimization.
-
-For example, this code snippet finds zero or one shortest path in a directed graph with String nodes:
+Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that plus a Map[Node,Double] that holds each node's betweenness.
 
     import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
     //You supply the graph
-    val yourArcs:Seq[(String,String,String)] = ???
+    val yourEdges:Seq[(String,String,String)] = ???
     
     //find one path that traverses the fewest nodes, or None
+    
+    //create the support class
     val support = new OnePathFirstStep[String,Int,Int](FewestNodes)
 
-    //will be used to convert from the arc tuples to labels
-    val labelForArc = support.convertArcToLabelFunc[String](FewestNodes.convertArcToLabel) 
+    //this will be used to convert from the arc tuples to labels
+    val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
 
     //finds a shortest path for each pair of nodes if that path exists
-    val labelTuples:Seq[(String,String,Option[FirstStep[String,Int]])] = 
+    val shortestPaths:Seq[(String,String,Option[FirstStep[String,Int]])] = 
       Dijkstra.allPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
 
-    //todo get the actual shortest path
 
 ### Algorithms
 
