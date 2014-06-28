@@ -175,7 +175,7 @@ object TimingStudies {
 
     import scala.language.higherKinds
     def convertToLabel[E[X] <: EdgeLikeIn[X]](edge:E[Int]):(Int,Int,Option[FirstStepsTrait[Int,Int]]) = {
-      (edge._1,edge._2,Some(support.FirstSteps(1,Seq.empty[Int])))
+      (edge._1,edge._2,Some(support.FirstSteps(1,Set.empty[Int])))
     }
 
     val result = timeFunction{

@@ -214,7 +214,7 @@ object Brandes {
             }
             else if (summ == fromThroughToSteps.weight) fromThroughToLabel
             else if (summ == currentSteps.weight) currentLabel
-            else throw new IllegalStateException("Core semiring's summary " + summ + " did not return either current " + currentSteps.weight + " or proposed " + fromThroughToSteps.weight + " weigt.")
+            else throw new IllegalStateException("Core semiring's summary " + summ + " did not return either current " + currentSteps.weight + " or proposed " + fromThroughToSteps.weight + " weight.")
           }
           else currentLabel
         }

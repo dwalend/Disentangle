@@ -22,9 +22,8 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     case None => coreSupport.heapOrdering.AlwaysBottom
   }
 
-  case class FirstSteps(weight:CoreLabel,choices:Seq[Node]) extends FirstStepsTrait[Node, CoreLabel] {
-
-    lazy val choiceSet = choices.to[Set]
+  //todo could be a Seq instead if just used in Dijkstra's algorithm
+  case class FirstSteps(weight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
 
     /**
      * Overriding equals to speed up.
@@ -35,8 +34,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         if (this eq other) true //if they share a memory address, no need to compare
         else {
           if (weight == other.weight) {
-            if(choices == other.choices) true
-            else choiceSet == other.choiceSet
+            choices == other.choices
           } else false
         }
       } else false
@@ -46,14 +44,14 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
      * Overriding hashCode because I overrode equals.
      */
     override def hashCode():Int = {
-      weight.hashCode() ^ choiceSet.hashCode()
+      weight.hashCode() ^ choices.hashCode()
     }
   }
 
 
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, edgeLabel: EdgeLabel):Label = {
-    Some(FirstSteps(coreLabelForEdge(start,end,edgeLabel),Seq(end)))
+    Some(FirstSteps(coreLabelForEdge(start,end,edgeLabel),Set(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -80,7 +78,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
   /**
    * Create the subgraph defined by AllPathsFirstSteps
    */
-
   def subgraphEdges(labelGraph:LabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
 
     val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
@@ -90,7 +87,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
       label match {
         case Some(firstSteps) => {
 
-          val innerChoices = firstSteps.choiceSet.map(choice => labelGraph.innerNode(choice).get)
+          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
           val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
 
           val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
@@ -118,7 +115,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps(coreSupport.semiring.I,Seq[Node]()))
+    val I = Some(FirstSteps(coreSupport.semiring.I,Set[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -134,7 +131,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           }
           else if (summ==fromThroughToSteps.weight) fromThroughToLabel
           else if (summ==currentSteps.weight) currentLabel
-          else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.weight+" or proposed "+fromThroughToSteps.weight+" weigt.")
+          else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.weight+" or proposed "+fromThroughToSteps.weight+" weight.")
         }
         else currentLabel
       }
@@ -147,7 +144,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         val fromThroughSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughLabel.get
         val throughToSteps:FirstStepsTrait[Node,CoreLabel] = throughToLabel.get
         //if fromThroughLabel is identity, use throughToSteps. Otherwise the first step is fine
-        val choices:Seq[Node] = if(fromThroughLabel == I) throughToSteps.choices
+        val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
         Some(new FirstSteps(coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
@@ -163,7 +160,6 @@ trait FirstStepsTrait[Node,CoreLabel] {
   def weight:CoreLabel
 
   //todo rename choiceSeq
-  def choices:Seq[Node]
+  def choices:Set[Node]
 
-  def choiceSet:Set[Node]
 }
