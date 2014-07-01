@@ -47,32 +47,39 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     }
   }
 
-  def leastPath(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Option[Seq[Node]] = {
+  def leastPath(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Option[Seq[leastPathDigraph.InnerNodeType]] = {
 
-    //todo store and use indices directly, and return inner nodes
+    def leastPathOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
+                              toInner:Option[leastPathDigraph.InnerNodeType]):Option[Seq[leastPathDigraph.InnerNodeType]] = {
+      (fromInner,toInner) match {
+        case (Some(f),Some(t)) => {
+          val label:Label = leastPathDigraph.label(f,t)
+          label match {
+            case Some(firstStep) => {
+              firstStep.step match {
+                case Some(step) => {
+                  val tailOption:Option[Seq[leastPathDigraph.InnerNodeType]] = leastPathOfInnerNodes(leastPathDigraph.innerNode(step),toInner)
+                  tailOption match {
+                    case Some(tail) => {
+                      val innerStep:leastPathDigraph.InnerNodeType = leastPathDigraph.innerNode(step).get
+                      Some(innerStep +: tail)}
+                    case None => None //Following a broken path. Should never happen.
+                  }
+                }
+                case None => Some(Seq.empty[leastPathDigraph.InnerNodeType]) //No further steps. from should be to and the label should be I
+              }
+            }
+            case None => None //No path from one to the other
+          }
+        }
+        case _ => None //One node or the other isn't in the graph
+      }
+
+    }
+
     val fromInner = leastPathDigraph.innerNode(from)
     val toInner = leastPathDigraph.innerNode(to)
-    (fromInner,toInner) match {
-      case (Some(f),Some(t)) => {
-        val label:Label = leastPathDigraph.label(f,t)
-        label match {
-          case Some(firstStep) => {
-            firstStep.step match {
-              case Some(step) => {
-                val tailOption = leastPath(step,to)(leastPathDigraph)
-                tailOption match {
-                  case Some(tail) => Some(step +: tail)
-                  case None => None //Following a broken path. Should never happen.
-                }
-              }
-              case None => Some(Seq.empty[Node]) //No further steps. from should be to and the label should be I
-            }
-          }
-          case None => None //No path from one to the other
-        }
-      }
-      case _ => None //One node or the other isn't in the graph
-    }
+    leastPathOfInnerNodes(fromInner,toInner)
   }
 
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
