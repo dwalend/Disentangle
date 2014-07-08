@@ -56,52 +56,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
 
-  /*
-  //branching to figure this out
-  //todo use a Stream ?
-  def allPaths(labelGraph:Digraph[Node,Label],from:Node,to:Node):Seq[(Node,Seq[(Label,Node)])] = {
-
-    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
-    val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
-
-    val label:Label = labelGraph.label(innerFrom,innerTo)
-    label match {
-      case Some(firstSteps) => {
-        firstSteps.choices.map(step => allPaths(labelGraph,step,to))
-
-
-      }
-      case None => Seq.empty
-    }
-  }
-  */
-  /**
-   * Create the subgraph defined by AllPathsFirstSteps
-   */
-  def subgraphEdges(labelGraph:LabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
-
-    val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
-    //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
-    def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
-      val label:Label = labelGraph.label(innerFrom,innerTo)
-      label match {
-        case Some(firstSteps) => {
-
-          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
-          val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
-
-          val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
-
-          closeEdges ++ farEdges
-        }
-        case None => Set.empty
-      }
-    }
-    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
-
-    recurse(innerFrom,innerTo)
-  }
-
   object AllPathsSemiring extends Semiring {
 
 // todo report bug that I can't do this here
@@ -152,7 +106,76 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
       }
       else O
     }
-  } 
+  }
+
+  //todo all paths instead of just one
+
+  def allLeastPaths(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Seq[Seq[leastPathDigraph.InnerNodeType]] = {
+
+    type Path = Seq[leastPathDigraph.InnerNodeType]
+
+    def leastPathsOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
+                              toInner:Option[leastPathDigraph.InnerNodeType]):Seq[Path] = {
+      (fromInner,toInner) match {
+        case (Some(f),Some(t)) => {
+          val label:Label = leastPathDigraph.label(f,t)
+          label match {
+            case Some(firstStep) => {
+              if(firstStep.choices == Set.empty) Seq(Seq.empty[leastPathDigraph.InnerNodeType]) //No further steps. from should be to and the label should be I
+              else {
+                //todo change to choice -> sequence of tails
+
+                for (choice <- firstStep.choices.to[Seq]) yield {
+                  val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
+                  println(tails)
+
+                  for (tail <- tails) yield {
+                    val innerStep: leastPathDigraph.InnerNodeType = leastPathDigraph.innerNode(choice).get
+                    Seq(innerStep +: tail)
+                  }
+                }.flatten
+              }.flatten
+            }
+            case None => Seq() //No path from one to the other
+          }
+        }
+        case _ => Seq() //One node or the other isn't in the graph
+      }
+    }
+
+    val fromInner = leastPathDigraph.innerNode(from)
+    val toInner = leastPathDigraph.innerNode(to)
+
+    //prepend fromInner to all?
+    leastPathsOfInnerNodes(fromInner,toInner)
+  }
+  /**
+   * Create the acyclic subgraph defined by AllPathsFirstSteps
+   */
+  //todo another spot for an insert-ordered set
+  def subgraphEdges(labelGraph:LabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+
+    val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
+    //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
+    def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+      val label:Label = labelGraph.label(innerFrom,innerTo)
+      label match {
+        case Some(firstSteps) => {
+
+          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
+          val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
+
+          val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+
+          closeEdges ++ farEdges
+        }
+        case None => Set.empty
+      }
+    }
+    val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
+
+    recurse(innerFrom,innerTo)
+  }
 }
 
 trait FirstStepsTrait[Node,CoreLabel] {

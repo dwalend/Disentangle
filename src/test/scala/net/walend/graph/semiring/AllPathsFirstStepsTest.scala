@@ -70,7 +70,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
     arcs.to[Set] should be (expectedArcs)
   }
 
-  "AllPathsFirstSteps and the Floyd-Warshall algorithm" should "produce the correct subgraphs for minimal paths" in {
+  "AllPathsFirstSteps and the Floyd-Warshall algorithm" should "produce the correct subgraphs for minimal paths and the correct minimal paths" in {
 
     val expectedSubgraphs = Map(
       (A,A) -> Set(),
@@ -119,6 +119,12 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
     val subgraphs = labelGraph.edges.map(edge => ((edge._1,edge._2),support.subgraphEdges(labelGraph,edge._1,edge._2).map(edge => (edge._1.value,edge._2.value)))).toMap
 
     subgraphs should be (expectedSubgraphs)
+
+    val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(labelGraph)))
+
+    println(shortestPaths)
+
+    for(shortestPathsBetweenNodes <- shortestPaths) {println(shortestPathsBetweenNodes)}
 
   }
 }
