@@ -108,8 +108,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     }
   }
 
-  //todo all paths instead of just one
-
   def allLeastPaths(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Seq[Seq[leastPathDigraph.InnerNodeType]] = {
 
     type Path = Seq[leastPathDigraph.InnerNodeType]
@@ -121,17 +119,12 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           val label:Label = leastPathDigraph.label(f,t)
           label match {
             case Some(firstStep) => {
-              if(firstStep.choices == Set.empty) Seq(Seq.empty[leastPathDigraph.InnerNodeType]) //No further steps. from should be to and the label should be I
+              if(firstStep.choices == Set.empty) Seq(Seq(t)) //No further steps. from should be to and the label should be I
               else {
-                //todo change to choice -> sequence of tails
-
                 for (choice <- firstStep.choices.to[Seq]) yield {
                   val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
-                  println(tails)
-
                   for (tail <- tails) yield {
-                    val innerStep: leastPathDigraph.InnerNodeType = leastPathDigraph.innerNode(choice).get
-                    Seq(innerStep +: tail)
+                    Seq(f +: tail)
                   }
                 }.flatten
               }.flatten

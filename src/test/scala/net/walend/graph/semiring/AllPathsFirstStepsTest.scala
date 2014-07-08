@@ -3,6 +3,8 @@ package net.walend.graph.semiring
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.graph.SomeGraph._
 
+import scala.collection.GenTraversable
+
 /**
  *
  *
@@ -114,6 +116,48 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
       (H,H) -> Set()
     )
     
+    val expectedShortPaths = Map(
+      ((A,A) -> Seq(Seq(A))),
+      ((A,B) -> Seq(Seq(A, B))),
+      ((A,C) -> Seq(Seq(A, B, C))),
+      ((A,D) -> Seq(Seq(A, B, C, D))),
+      ((A,E) -> Seq(Seq(A, B, C, D, E))),
+      ((A,F) -> Seq(Seq(A, B, C, D, E, F))),
+      ((A,H) -> Seq(Seq(A, B, C, D, E, H))),
+      ((B,B) -> Seq(Seq(B))),
+      ((B,C) -> Seq(Seq(B, C))),
+      ((B,D) -> Seq(Seq(B, C, D))),
+      ((B,E) -> Seq(Seq(B, C, D, E))),
+      ((B,F) -> Seq(Seq(B, C, D, E, F))),
+      ((B,H) -> Seq(Seq(B, C, D, E, H))),
+      ((C,B) -> Seq(Seq(C, D, E, B))),
+      ((C,C) -> Seq(Seq(C))),
+      ((C,D) -> Seq(Seq(C, D))),
+      ((C,E) -> Seq(Seq(C, D, E))),
+      ((C,F) -> Seq(Seq(C, D, E, F))),
+      ((C,H) -> Seq(Seq(C, D, E, H))),
+      ((D,B) -> Seq(Seq(D, E, B))),
+      ((D,C) -> Seq(Seq(D, E, B, C), Seq(D, E, H, C))),
+      ((D,D) -> Seq(Seq(D))),
+      ((D,E) -> Seq(Seq(D, E))),
+      ((D,F) -> Seq(Seq(D, E, F))),
+      ((D,H) -> Seq(Seq(D, E, H))),
+      ((E,B) -> Seq(Seq(E, B))),
+      ((E,C) -> Seq(Seq(E, B, C), Seq(E, H, C))),
+      ((E,D) -> Seq(Seq(E, B, C, D), Seq(E, H, C, D))),
+      ((E,E) -> Seq(Seq(E))),
+      ((E,F) -> Seq(Seq(E, F))),
+      ((E,H) -> Seq(Seq(E, H))),
+      ((F,F) -> Seq(Seq(F))),
+      ((G,G) -> Seq(Seq(G))),
+      ((H,B) -> Seq(Seq(H, C, D, E, B))),
+      ((H,C) -> Seq(Seq(H, C))),
+      ((H,D) -> Seq(Seq(H, C, D))),
+      ((H,E) -> Seq(Seq(H, C, D, E))),
+      ((H,F) -> Seq(Seq(H, C, D, E, F))),
+      ((H,H) -> Seq(Seq(H)))
+    )
+    
     val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodesSeq,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     val subgraphs = labelGraph.edges.map(edge => ((edge._1,edge._2),support.subgraphEdges(labelGraph,edge._1,edge._2).map(edge => (edge._1.value,edge._2.value)))).toMap
@@ -122,9 +166,14 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(labelGraph)))
 
-    println(shortestPaths)
+    val shortestOuterPaths:GenTraversable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
+      val shortOuterPaths = for(shortPath <- shortestPathsBetweenNodes._2) yield {
+        shortPath.map(node => node.value)
+      }
+      (shortestPathsBetweenNodes._1,shortOuterPaths)
+    }
+    val pairsToShortestOuter = shortestOuterPaths.seq.toMap
 
-    for(shortestPathsBetweenNodes <- shortestPaths) {println(shortestPathsBetweenNodes)}
-
+    pairsToShortestOuter should be (expectedShortPaths)
   }
 }
