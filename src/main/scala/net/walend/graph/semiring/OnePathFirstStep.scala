@@ -18,6 +18,9 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
   def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
+  //todo use a fold
+  //    label.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
+
   def heapKeyForLabel = {
     case Some(nextStep) => coreSupport.heapKeyForLabel(nextStep.weight)
     case None => coreSupport.heapOrdering.AlwaysBottom
@@ -99,6 +102,12 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
       }
       else O
     }
+  }
+
+  def leastPath(from:Node,to:Node,edges:Seq[(Node,Node,Label)]):Option[Seq[Node]] = {
+    import net.walend.graph.AdjacencyLabelDigraph
+    val leastPathDigraph = AdjacencyLabelDigraph(edges = edges,noEdgeExistsValue = semiring.O)
+    leastPath(from,to)(leastPathDigraph).map(_.map(node => node.value))
   }
 
   def leastPath(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Option[Seq[leastPathDigraph.InnerNodeType]] = {

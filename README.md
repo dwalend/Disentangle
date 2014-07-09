@@ -43,10 +43,10 @@ You'll need to
 * choose or create a SemiringSupport implementation, like FewestNodes.
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
-* choose an algorithm to perform the minimization. (You probably want to use Dijkstra's algorithm.)
+* choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
 * arrange for your code to run the algorithm on your graph
 
-Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that plus a Map[Node,Double] that holds each node's betweenness.
+Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that Seq plus a Map[Node,Double] that holds each node's betweenness.
 
     import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
@@ -61,25 +61,25 @@ Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that co
     //this will be used to convert from the arc tuples to labels
     val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
 
-    //finds a shortest path for each pair of nodes if that path exists
-    val shortestPaths:Seq[(String,String,Option[FirstStep[String,Int]])] = 
+    //find the first step in a shortest path for a pair of nodes if that path exists
+    val firstSteps:Seq[(String,String,Option[FirstStep[String,Int]])] = 
       Dijkstra.allPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
 
+    //Find the shortest paths between any pair of nodes
+    val shortestPath:Option[Seq[String]] = support.leastPath(start,end)
 
 ### Algorithms
 
 For the second release, ScalaGraphMinimizer supplies
 
+* FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
 * The Floyd-Warshall algorithm
 * Dijkstra's algorithm with a Fibonacci Heap
 * Brandes' algorithm for betweenness
 
-Peter Empen optimized scala-graph's internal representation in scala-graph to ensure that the graph algorithms scaled at their theoretical limits. I've tested with graphs with up to 1024 nodes. I've tested just the internal representation (todo size)
-
-* FibonacciHeap is a generic heap that supports an efficient changeKey operation.
-
+I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've tested performance up to 2048 nodes.
 
 ### Semirings
 
@@ -106,25 +106,17 @@ FloydWarshall, Dijkstra, and Brandes each include a method that take sequences o
 
 These are typically very straightforward to create. The decorator semirings listed above each include helper functions that require a similar function to convert the tuple to the core semiring's Label.
 
-    labelForArc:(Node,Node,ArcLabel)=>Label
+    convertEdgeToLabelFunc:(Node,Node,ArcLabel)=>Label
 
-These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and has some influence over the ordering of the algorithm's output.
+These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and can control the ordering of the algorithm's output.
 
-FloydWarshall, Dijkstra, and Brandes each also include a method that takes a Digraph implementation. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
+FloydWarshall, Dijkstra, and Brandes each also include a method that takes an IndexedDigraph implementation, mutable for FloydWarshall. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
 
     labelDigraph:IndexedDigraph[Node,Label]
 
-You are very likely to need your own LabelGraphBuilder to create a label graph from your own specialized graph. The easiest way is to extend AbstractLabelGraphBuilder and fill in
-
-    def initialLabelFromGraphEdge[E[X] <: EdgeLikeIn[X]](originalGraph:Graph[N,E])
-                                                        (edgeT:originalGraph.EdgeT):Label
-
-
 ### Creating A Custom Semiring and Other Support Classes
 
-You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the most probable paths:
-
-TODO update this with the latest
+You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra methods for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the most probable paths:
 
     object MostProbable extends SemiringSupport[Double,Double] {
     
@@ -133,12 +125,12 @@ TODO update this with the latest
       def heapOrdering = MostProbableOrdering
     
       def heapKeyForLabel = {label:Label => label}
-    
+
 Sometimes it can be helpful to provide a possible convertArcToLabel function 
+
+      def convertEdgeToLabel[Node, Label](start: Node, end: Node, label: Label): MostProbable.Label = semiring.I
     
-      def convertArcToLabel[Node, ArcLabel](start: Node, end: Node, arc: ArcLabel): MostProbable.Label = semiring.I
-    
-For your Semiring supply identity and annihilator values, and summary and extend operators. Here's an example:
+For your Semiring supply identity and annihilator values, a method to check that a label is in the domain, and summary and extend operators. Here's an example:
 
       object MostProbableSemiring extends Semiring {
     
@@ -165,7 +157,7 @@ For your Semiring supply identity and annihilator values, and summary and extend
         }
       }
     
-The HeapOrdering is actually trickier to get right. The Heap needs a special Key, AlwaysTop, that will always be higher than the highest possible Label and AlwaysBottom, that will only be on the bottom of the heap. The identity and annihilator sometimes work as these special values. Watch out for strange behaviors of floating point infinities and wrap-around with integers.
+The HeapOrdering is actually trickier to get right than the Semiring. The Heap needs a special Key, AlwaysTop, that will always be higher than the highest possible Label and AlwaysBottom, that will only be on the bottom of the heap. The identity and annihilator sometimes work as these special values. Watch out for strange behaviors of floating point infinities and wrap-around with integers. In this example, I want a version that has the highest values on top of the heap. Note that I took a shortcut and made AlwaysTop outside of the Semiring's domain.
 
       /**
        * A heap ordering that puts lower numbers on the top of the heap
@@ -210,8 +202,8 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 
 ### Next release
 
+* Louvain community detection
 * A*
-* MST using a heap and a GraphBuilder
 * Enron test set
 * Timing study with automatically generated graphs (in the test stage) (And comparison with Jung and scala-graph's own)
 
@@ -224,9 +216,8 @@ The HeapOrdering is actually trickier to get right. The Heap needs a special Key
 ### New Algorithms
 
 * Lazy Dijkstra's
-* MST using that Heap
+* MST using a Heap
 * A* and some variations
-* Louvain community detection
 
 
 ### More Semirings
