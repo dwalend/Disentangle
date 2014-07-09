@@ -77,9 +77,9 @@ object MinDoubleHeapOrdering extends HeapOrdering[Double] {
 
    */
   def tryCompare(x: Double, y: Double): Option[Int] = {
-    if(x>y) Some(-1)
-    else if(x==y) Some(0)
-    else if(x<y) Some(1)
+    if(x>y) Option(-1)
+    else if(x==y) Option(0)
+    else if(x<y) Option(1)
     else None
   }
 

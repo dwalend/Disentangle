@@ -6,7 +6,7 @@ sonatypeSettings
 //todo maybe remove release
 releaseSettings
 
-name := "Graph4ScalaSemirings"
+name := "ScalaGraphMinimizer"
 
 organization := "net.walend"
 
@@ -53,7 +53,7 @@ scalacOptions ++= Seq("-feature")
 
 // Your project orgnization (package name)
 organization := "net.walend"
-//todo organization := "net.walend.scalagraph"
+//todo organization := "net.walend.graph"
 
 // Your profile name of the sonatype account. The default is the same with the organization
 profileName := "net.walend"

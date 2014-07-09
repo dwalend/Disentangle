@@ -173,7 +173,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
          */
         //todo look again for a version that handles NaNs and infinities
         def tryCompare(x: Double, y: Double): Option[Int] = {
-          Some(x.compareTo(y))
+          Option(x.compareTo(y))
         }
     
         def keyDomainDescription = "between one and zero (the annihilator)"

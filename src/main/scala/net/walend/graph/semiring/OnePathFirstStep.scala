@@ -46,7 +46,7 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, coreLabel: EdgeLabel):Label = {
-    Some(FirstStep(coreLabelForEdge(start,end,coreLabel),Some(end)))
+    Option(FirstStep(coreLabelForEdge(start,end,coreLabel),Option(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -57,14 +57,11 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     //val coreSemiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
-      label match {
-        case Some(step:FirstStep) => coreSupport.semiring.inDomain(step.weight)
-        case None => true
-      }
+      label.forall(step => coreSupport.semiring.inDomain(step.weight))
     }
 
     //identity and annihilator
-    val I = Some(FirstStep(coreSupport.semiring.I,None))
+    val I = Option(FirstStep(coreSupport.semiring.I,None))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -92,7 +89,7 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
         val step:Option[Node] = if(fromThroughLabel == I) throughToStep.step
         else fromThroughStep.step
 
-        Some(new FirstStep(coreSupport.semiring.extend(fromThroughStep.weight,throughToStep.weight),step))
+        Option(FirstStep(coreSupport.semiring.extend(fromThroughStep.weight,throughToStep.weight),step))
       }
       else O
     }
@@ -108,30 +105,17 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
     def leastPathOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
                               toInner:Option[leastPathDigraph.InnerNodeType]):Option[Seq[leastPathDigraph.InnerNodeType]] = {
-      (fromInner,toInner) match {
-        case (Some(f),Some(t)) => {
-          val label:Label = leastPathDigraph.label(f,t)
-          label match {
-            case Some(firstStep) => {
-              firstStep.step match {
-                case None => Some(Seq.empty[leastPathDigraph.InnerNodeType]) //No further steps. from should be to and the label should be I
-                case Some(step) => {
-                  val tailOption:Option[Seq[leastPathDigraph.InnerNodeType]] = leastPathOfInnerNodes(leastPathDigraph.innerNode(step),toInner)
-                  tailOption match {
-                    case Some(tail) => {
-                      val innerStep:leastPathDigraph.InnerNodeType = leastPathDigraph.innerNode(step).get
-                      Some(innerStep +: tail)}
-                    case None => None //Following a broken path. Should never happen.
-                  }
-                }
-              }
-            }
-            case None => None //No path from one to the other
-          }
-        }
-        case _ => None //One node or the other isn't in the graph
-      }
-
+      val fromToOption: Option[(leastPathDigraph.InnerNodeType, leastPathDigraph.InnerNodeType)] = for (f <- fromInner; t <- toInner) yield (f, t)
+      fromToOption.flatMap(fromTo => {
+        val label:Label = leastPathDigraph.label(fromTo._1,fromTo._2)
+        label.flatMap(firstStep => {
+          firstStep.step.fold(Option(Seq.empty[leastPathDigraph.InnerNodeType]))(step => {
+            val tailOption:Option[Seq[leastPathDigraph.InnerNodeType]] = leastPathOfInnerNodes(leastPathDigraph.innerNode(step),toInner)
+            tailOption.flatMap(tail => {val iNodeOption = leastPathDigraph.innerNode(step)
+              iNodeOption.map(iNode => iNode +: tail)})
+          })
+        })
+      })
     }
 
     val fromInner = leastPathDigraph.innerNode(from)

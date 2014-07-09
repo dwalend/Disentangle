@@ -48,7 +48,7 @@ object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKe
 
      */
     def tryCompare(x: TransitiveClosureHeapKey, y: TransitiveClosureHeapKey): Option[Int] = {
-      Some(x.state - y.state)
+      Option(x.state - y.state)
     }
 
     /**

@@ -60,26 +60,24 @@ object Brandes {
       val edge = stack.pop() //w
       //figure out the partial betweenness to apply to that step
       val label: Label = edge._2
-      label match {
-        case None => //nothing to do
-        case Some(sourceLabel: BrandesSteps[Node, CoreLabel]) => {
-          val sourceCount: Double = sourceLabel.pathCount
-          val partialFromSource: Double = partialBetweenness(edge._1.index)
-          for (choiceIndex <- sourceLabel.choiceIndexes) {
-            //only calculate betweenness for the between nodes, not arriving at the sink
-            if (choiceIndex != sink.index) {
-              val oldPartial: Double = partialBetweenness(choiceIndex)
-              val choiceLabel: Label = shortestPathsToSink(choiceIndex)._3
-              if (choiceLabel != None) {
-                val choiceCount: Double = choiceLabel.get.pathCount
-                //new value is the old value plus (value for coming through the source, plus the source)/number of choices
-                val newPartial: Double = oldPartial + ((1.0 + partialFromSource) * (choiceCount / sourceCount))
-                partialBetweenness(choiceIndex) = newPartial
-              }
+
+      label.foreach(sourceLabel => {
+        val sourceCount: Double = sourceLabel.pathCount
+        val partialFromSource: Double = partialBetweenness(edge._1.index)
+        for (choiceIndex <- sourceLabel.choiceIndexes) {
+          //only calculate betweenness for the between nodes, not arriving at the sink
+          if (choiceIndex != sink.index) {
+            val oldPartial: Double = partialBetweenness(choiceIndex)
+            val choiceLabel: Label = shortestPathsToSink(choiceIndex)._3
+            if (choiceLabel != None) {
+              val choiceCount: Double = choiceLabel.get.pathCount
+              //new value is the old value plus (value for coming through the source, plus the source)/number of choices
+              val newPartial: Double = oldPartial + ((1.0 + partialFromSource) * (choiceCount / sourceCount))
+              partialBetweenness(choiceIndex) = newPartial
             }
           }
         }
-      }
+      })
     }
 
     partialBetweenness
@@ -174,14 +172,11 @@ object Brandes {
 
     def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
-    def heapKeyForLabel = {
-      case Some(nextStep) => coreSupport.heapKeyForLabel(nextStep.weight)
-      case None => coreSupport.heapOrdering.AlwaysBottom
-    }
+    def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
     def convertCoreLabelToLabel(labelDigraph:IndexedLabelDigraph[Node,CoreLabel])
                          (edge:labelDigraph.InnerEdgeType): Label = {
-      Some(BrandesSteps[Node, CoreLabel](edge._3, 1, Seq(edge._2.index)))
+      Option(BrandesSteps[Node, CoreLabel](edge._3, 1, Seq(edge._2.index)))
     }
 
     /**
@@ -190,14 +185,11 @@ object Brandes {
     object BrandesSemiring extends Semiring {
 
       def inDomain(label: Label): Boolean = {
-        label match {
-          case Some(steps: BrandesSteps[Node, CoreLabel]) => coreSupport.semiring.inDomain(steps.weight)
-          case None => true
-        }
+        label.forall(steps => coreSupport.semiring.inDomain(steps.weight))
       }
 
       //identity and annihilator
-      val I = Some(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Seq.empty))
+      val I = Option(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Seq.empty))
       val O = None
 
       def summary(fromThroughToLabel: Label, currentLabel: Label): Label = {
@@ -208,7 +200,7 @@ object Brandes {
             val fromThroughToSteps: BrandesSteps[Node, CoreLabel] = fromThroughToLabel.get
             val summ = coreSupport.semiring.summary(fromThroughToSteps.weight, currentSteps.weight)
             if ((summ == fromThroughToSteps.weight) && (summ == currentSteps.weight)) {
-              Some(new BrandesSteps[Node, CoreLabel](currentSteps.weight,
+              Option(BrandesSteps[Node, CoreLabel](currentSteps.weight,
                 currentSteps.pathCount + fromThroughToSteps.pathCount,
                 currentSteps.choiceIndexes ++ fromThroughToSteps.choiceIndexes))
             }
@@ -230,7 +222,7 @@ object Brandes {
           val choiceIndexes: Seq[Int] = if (fromThroughLabel == I) throughToSteps.choiceIndexes
                                         else fromThroughSteps.choiceIndexes
 
-          Some(new BrandesSteps[Node, CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight, throughToSteps.weight),
+          Option(BrandesSteps[Node, CoreLabel](coreSupport.semiring.extend(fromThroughSteps.weight, throughToSteps.weight),
             fromThroughSteps.pathCount * throughToSteps.pathCount,
             choiceIndexes
             ))

@@ -17,10 +17,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
-  def heapKeyForLabel = {
-    case Some(nextStep) => coreSupport.heapKeyForLabel(nextStep.weight)
-    case None => coreSupport.heapOrdering.AlwaysBottom
-  }
+  def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
   //todo could be a Seq instead if just used in Dijkstra's algorithm
   case class FirstSteps(weight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
@@ -51,7 +48,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def convertEdgeToLabel[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel)
                               (start: Node, end: Node, edgeLabel: EdgeLabel):Label = {
-    Some(FirstSteps(coreLabelForEdge(start,end,edgeLabel),Set(end)))
+    Option(FirstSteps(coreLabelForEdge(start,end,edgeLabel),Set(end)))
   }
 
   def convertEdgeToLabelFunc[EdgeLabel](coreLabelForEdge:(Node,Node,EdgeLabel)=>CoreLabel):((Node,Node,EdgeLabel) => Label) = convertEdgeToLabel(coreLabelForEdge)
@@ -62,14 +59,11 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 // val coreSemiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
-      label match {
-        case Some(steps:FirstSteps) => coreSupport.semiring.inDomain(steps.weight)
-        case None => true
-      } 
+      label.forall(steps => coreSupport.semiring.inDomain(steps.weight))
     }
     
     //identity and annihilator
-    val I = Some(FirstSteps(coreSupport.semiring.I,Set[Node]()))
+    val I = Option(FirstSteps(coreSupport.semiring.I,Set[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -80,7 +74,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
           val fromThroughToSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughToLabel.get
           val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
-            Some(new FirstSteps(currentSteps.weight,
+            Option(FirstSteps(currentSteps.weight,
                                 currentSteps.choices ++ fromThroughToSteps.choices))
           }
           else if (summ==fromThroughToSteps.weight) fromThroughToLabel
@@ -101,8 +95,8 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
-        Some(new FirstSteps(coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
-                                            choices))
+        Option(FirstSteps(coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
+                              choices))
       }
       else O
     }
@@ -114,26 +108,21 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
     def leastPathsOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
                               toInner:Option[leastPathDigraph.InnerNodeType]):Seq[Path] = {
-      (fromInner,toInner) match {
-        case (Some(f),Some(t)) => {
-          val label:Label = leastPathDigraph.label(f,t)
-          label match {
-            case Some(firstStep) => {
-              if(firstStep.choices == Set.empty) Seq(Seq(t)) //No further steps. from should be to and the label should be I
-              else {
-                for (choice <- firstStep.choices.to[Seq]) yield {
-                  val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
-                  for (tail <- tails) yield {
-                    Seq(f +: tail)
-                  }
-                }.flatten
-              }.flatten
-            }
-            case None => Seq() //No path from one to the other
-          }
-        }
-        case _ => Seq() //One node or the other isn't in the graph
-      }
+      val fromToOption: Option[(leastPathDigraph.InnerNodeType, leastPathDigraph.InnerNodeType)] = for (f <- fromInner; t <- toInner) yield (f, t)
+      fromToOption.fold(Seq.empty[Path])(fromTo => {
+        val label: Label = leastPathDigraph.label(fromTo._1, fromTo._2)
+        label.fold(Seq.empty[Path])(firstSteps => {
+          if (firstSteps.choices == Set.empty) Seq(Seq(fromTo._2)) //No further steps. from should be to and the label should be I
+          else {
+            for (choice <- firstSteps.choices.to[Seq]) yield {
+              val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
+              for (tail <- tails) yield {
+                Seq(fromTo._1 +: tail)
+              }
+            }.flatten
+          }.flatten
+        })
+      })
     }
 
     val fromInner = leastPathDigraph.innerNode(from)
@@ -152,18 +141,15 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
     def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
       val label:Label = labelGraph.label(innerFrom,innerTo)
-      label match {
-        case Some(firstSteps) => {
 
-          val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
-          val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
+      label.fold(Set.empty[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)])(firstSteps => {
+        val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
+        val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
 
-          val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+        val farEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
 
-          closeEdges ++ farEdges
-        }
-        case None => Set.empty
-      }
+        closeEdges ++ farEdges
+      })
     }
     val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
 

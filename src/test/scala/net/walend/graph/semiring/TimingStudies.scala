@@ -38,8 +38,6 @@ object TimingStudies {
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
     brandesResults.map(x => println(x))
-
-
   }
 
   def timeFloyd(nodeCount:Int):Long = {

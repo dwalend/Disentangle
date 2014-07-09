@@ -60,25 +60,19 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
 
   private def changeKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
-    comparator.tryCompare(fibNode.key,key) match {
-      case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
-      case Some(x) if x == 0 => // the key hasn't changed
-      case Some(x) if x > 0 => {
-        remove(fibNode)
-        reinsert(key,fibNode)
-      }
-      case None => throw new IllegalArgumentException("Can not compare "+fibNode.key+" and "+key)
+
+    if(comparator.lt(fibNode.key,key)) raiseKeyInternal(key,fibNode)
+    else if (comparator.gt(fibNode.key,key)) {
+      remove(fibNode)
+      reinsert(key,fibNode)
     }
+    //if they are equal then the key hasn't changed. Do nothing.
   }
 
   private def raiseKey(key:K,fibNode:FibonacciHeapMember):Unit = {
     comparator.checkKey(key)
-    comparator.tryCompare(fibNode.key,key) match {
-      case Some(x) if x < 0 => raiseKeyInternal(key,fibNode)
-      case Some(x) if x == 0 => // the key hasn't changed
-      case Some(x) if x > 0 => // do nothing because the existing key is higher
-      case None => throw new IllegalArgumentException("Can not compare "+fibNode.key+" and "+key)
-    }
+    if(comparator.lt(fibNode.key,key)) raiseKeyInternal(key,fibNode)
+    //otherwise do nothing. The key is either unchanged or lower
   }
 
   private def remove(fibNode:FibonacciHeapMember):Unit = {

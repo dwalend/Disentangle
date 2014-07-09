@@ -58,7 +58,7 @@ object FewestNodes extends SemiringSupport[Int,Int] {
      * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
      */
     def tryCompare(x: Int, y: Int): Option[Int] = {
-      Some(y-x)
+      Option(y-x)
     }
 
     def keyDomainDescription = "between zero and Int.MaxValue (the annihilator)"
