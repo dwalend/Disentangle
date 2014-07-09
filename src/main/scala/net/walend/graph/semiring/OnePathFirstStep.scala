@@ -18,13 +18,7 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
 
   def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
-  //todo use a fold
-  //    label.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
-
-  def heapKeyForLabel = {
-    case Some(nextStep) => coreSupport.heapKeyForLabel(nextStep.weight)
-    case None => coreSupport.heapOrdering.AlwaysBottom
-  }
+  def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
   case class FirstStep(weight:CoreLabel,step:Option[Node]) extends FirstStepTrait[Node,CoreLabel] {
     /**
