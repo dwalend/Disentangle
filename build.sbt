@@ -31,7 +31,7 @@ resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositorie
 
 //no 2.10 support
 
-libraryDependencies += "com.github.verbalexpressions" %% "ScalaVerbalExpression" % "1.0.1" % "test" //for loading the Enron graph
+//libraryDependencies += "com.github.verbalexpressions" %% "ScalaVerbalExpression" % "1.0.1" % "test" //for loading the Enron graph
 
 fork in test := true
 

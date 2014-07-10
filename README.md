@@ -9,11 +9,11 @@ I am seeking feedback on just what the API should look like. Please let me know 
 better.
 
 
-## Getting ScalaGraphMinimizer (When Available)
+## Getting ScalaGraphMinimizer
 
-The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository. In a few days it will be available via
+The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository. 
 
-    libraryDependencies += "net.walend" % "graph4scalasemirings_2.11" % "0.1.0"
+    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.0"
 
 ### The Latest Snapshot (When Available)
 
@@ -21,7 +21,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend" % "graph4scalasemirings_2.11" % "0.1.0-SNAPSHOT"
+    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.1-SNAPSHOT"
 
 ### clone the code repository
 
@@ -30,7 +30,7 @@ If you want to change ScalaGraphMinimizer to meet your every whim, share your ch
     git clone https://github.com/dwalend/ScalaGraphMinimizer.git
     cd ScalaGraphMinimizer
     sbt test package
-    cp target/scala-2.10/graph4scalasemirings_2.11-0.1.0-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.10/scalagraphminimizer_2.11-0.1.0-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using ScalaGraphMinimizer
