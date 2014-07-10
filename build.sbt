@@ -11,7 +11,7 @@ name := "ScalaGraphMinimizer"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 
 scalaVersion := "2.11.1"
 
