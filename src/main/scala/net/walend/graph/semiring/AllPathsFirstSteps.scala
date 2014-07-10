@@ -109,11 +109,14 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     def leastPathsOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
                               toInner:Option[leastPathDigraph.InnerNodeType]):Seq[Path] = {
       val fromToOption: Option[(leastPathDigraph.InnerNodeType, leastPathDigraph.InnerNodeType)] = for (f <- fromInner; t <- toInner) yield (f, t)
+      //If fromToOption is None, then one node or the other isn't in the graph. Return no Path
       fromToOption.fold(Seq.empty[Path])(fromTo => {
         val label: Label = leastPathDigraph.label(fromTo._1, fromTo._2)
+        //If label is None, then there's no path from one node to the other. Return no Path
         label.fold(Seq.empty[Path])(firstSteps => {
           if (firstSteps.choices == Set.empty) Seq(Seq(fromTo._2)) //No further steps. from should be to and the label should be I
           else {
+            //Follow each choice and prepend the node this starts from
             for (choice <- firstSteps.choices.to[Seq]) yield {
               val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
               for (tail <- tails) yield {
@@ -128,7 +131,6 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     val fromInner = leastPathDigraph.innerNode(from)
     val toInner = leastPathDigraph.innerNode(to)
 
-    //prepend fromInner to all?
     leastPathsOfInnerNodes(fromInner,toInner)
   }
   /**
@@ -142,6 +144,8 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
     def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
       val label:Label = labelGraph.label(innerFrom,innerTo)
 
+      //if the label is None then return an empty set
+      //otherwise, follow the choices
       label.fold(Set.empty[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)])(firstSteps => {
         val innerChoices = firstSteps.choices.map(choice => labelGraph.innerNode(choice).get)
         val closeEdges:Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))

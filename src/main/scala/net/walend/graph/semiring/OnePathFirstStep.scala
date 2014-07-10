@@ -106,9 +106,13 @@ class OnePathFirstStep[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel
     def leastPathOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
                               toInner:Option[leastPathDigraph.InnerNodeType]):Option[Seq[leastPathDigraph.InnerNodeType]] = {
       val fromToOption: Option[(leastPathDigraph.InnerNodeType, leastPathDigraph.InnerNodeType)] = for (f <- fromInner; t <- toInner) yield (f, t)
+      //If from or to is not in the digraph, return None
       fromToOption.flatMap(fromTo => {
         val label:Label = leastPathDigraph.label(fromTo._1,fromTo._2)
+        //If label is None then no Path exists, return None
         label.flatMap(firstStep => {
+          //If there's no step then from == to, return an empty path
+          //Else follow the path
           firstStep.step.fold(Option(Seq.empty[leastPathDigraph.InnerNodeType]))(step => {
             val tailOption:Option[Seq[leastPathDigraph.InnerNodeType]] = leastPathOfInnerNodes(leastPathDigraph.innerNode(step),toInner)
             tailOption.flatMap(tail => {val iNodeOption = leastPathDigraph.innerNode(step)
