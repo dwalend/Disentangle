@@ -126,7 +126,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
   }
 
   override def toString:String = {
-    s"$inNodes $edges"
+    s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes,noEdgeExistsValue = $noEdgeExistsLabel)"
   }
 }
 
@@ -136,10 +136,10 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
 object AdjacencyLabelDigraph{
 
   def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
-                       extraNodes:GenSeq[Node] = Seq.empty,
+                       nodes:GenSeq[Node] = Seq.empty,
                        noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
 
     val successorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._1)
     val predecessorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._2)

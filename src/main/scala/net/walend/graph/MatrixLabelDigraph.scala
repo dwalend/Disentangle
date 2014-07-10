@@ -61,7 +61,6 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
         case _ => false
       }
     }
-
   }
 
   /**
@@ -142,6 +141,9 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
    */
   override def label(i: Int, j: Int): Label = edgeMatrix(i)(j)
 
+  override def toString:String = {
+    s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes,noEdgeExistsValue = $noEdgeExistsLabel)"
+  }
 }
 
 object MatrixLabelDigraph{
@@ -150,10 +152,10 @@ object MatrixLabelDigraph{
    * O(n ln(n) + en)
    */
   def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
-                       extraNodes:GenSeq[Node] = Seq.empty,
+                       nodes:GenSeq[Node] = Seq.empty,
                        noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
 
     val size = nodeValues.size
 

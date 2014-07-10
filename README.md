@@ -108,7 +108,7 @@ These are typically very straightforward to create. The decorator semirings list
 
     convertEdgeToLabelFunc:(Node,Node,ArcLabel)=>Label
 
-These methods also allow for an optional extraNodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and can control the ordering of the algorithm's output.
+These methods also allow for an optional nodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and can control the ordering of the algorithm's output.
 
 FloydWarshall, Dijkstra, and Brandes each also include a method that takes an IndexedDigraph implementation, mutable for FloydWarshall. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
 
