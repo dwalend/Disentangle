@@ -35,7 +35,7 @@ object Dijkstra {
   /**
    * Dijkstra's algorithm.
    *
-   * O(n ln(n) + a)
+   * O(n ln(n) + e)
    */
   def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
@@ -68,6 +68,7 @@ object Dijkstra {
       }
     }
 
+    //put everything back together
     labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
   }
 

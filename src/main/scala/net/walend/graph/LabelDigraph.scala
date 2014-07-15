@@ -18,7 +18,7 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
   def noEdgeExistsLabel:Label
 
   /**
-   * @return the Edge between start and end or noEdgeExistsValue
+   * @return the Edge between start and end or noEdgeExistsValue if no edge connects start to end
    */
   def label(start:InnerNodeType,end:InnerNodeType):Label
 }
