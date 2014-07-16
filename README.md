@@ -11,7 +11,7 @@ better.
 
 ## Getting ScalaGraphMinimizer
 
-The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository. 
+The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
     libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.0"
 
@@ -35,11 +35,13 @@ If you want to change ScalaGraphMinimizer to meet your every whim, share your ch
 
 ## Using ScalaGraphMinimizer
 
+See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.0/#net.walend.graph.package)
+
 ### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
 
 You'll need to
 
-* bring a graph of your own, or at least a Seq[(Node,Node,MaybeAnEdge)]. 
+* bring a graph of your own, or at least a Seq[(Node,Node,MaybeAnEdge)].
 * choose or create a SemiringSupport implementation, like FewestNodes.
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
