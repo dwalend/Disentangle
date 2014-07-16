@@ -1,0 +1,413 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>semiring - net.walend.graph.semiring</title>
+          <meta name="description" content="semiring - net.walend.graph.semiring" />
+          <meta name="keywords" content="semiring net.walend.graph.semiring" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'net.walend.graph.semiring.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="net">net</a>.<a href="../../package.html" class="extype" name="net.walend">walend</a>.<a href="../package.html" class="extype" name="net.walend.graph">graph</a></p>
+        <h1>semiring</h1> <span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">semiring</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Semirings and semiring-based graph minimizing algorithms.</p><p>SemiringSupport is the primary trait. Algorithms in this package -- Floyd-Warshall, Dijkstra's, and Brandes'
+algorithms -- use your choice of SemiringSupport to determine just what they are minimizing. The package also
+includes some common SemiringSupport implementations.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="net.walend.graph.semiring"><span>semiring</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="net.walend.graph.semiring.AllPathsFirstSteps" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="AllPathsFirstSteps[Node,CoreLabel,Key]extendsSemiringSupport[Option[net.walend.graph.semiring.FirstStepsTrait[Node,CoreLabel]],Key]"></a>
+      <a id="AllPathsFirstSteps[Node,CoreLabel,Key]:AllPathsFirstSteps[Node,CoreLabel,Key]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AllPathsFirstSteps.html"><span class="name">AllPathsFirstSteps</span></a><span class="tparams">[<span name="Node">Node</span>, <span name="CoreLabel">CoreLabel</span>, <span name="Key">Key</span>]</span><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Option">Option</span>[<a href="FirstStepsTrait.html" class="extype" name="net.walend.graph.semiring.FirstStepsTrait">FirstStepsTrait</a>[<span class="extype" name="net.walend.graph.semiring.AllPathsFirstSteps.Node">Node</span>, <span class="extype" name="net.walend.graph.semiring.AllPathsFirstSteps.CoreLabel">CoreLabel</span>]], <span class="extype" name="net.walend.graph.semiring.AllPathsFirstSteps.Key">Key</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@AllPathsFirstSteps[Node,CoreLabel,Key]extendsSemiringSupport[Option[net.walend.graph.semiring.FirstStepsTrait[Node,CoreLabel]],Key]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finds all minimal paths that use the core semiring.</p><div class="fullcomment"><div class="comment cmt"><p>Finds all minimal paths that use the core semiring.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.FirstStepTrait" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FirstStepTrait[Node,CoreLabel]extendsAnyRef"></a>
+      <a id="FirstStepTrait[Node,CoreLabel]:FirstStepTrait[Node,CoreLabel]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FirstStepTrait.html"><span class="name">FirstStepTrait</span></a><span class="tparams">[<span name="Node">Node</span>, <span name="CoreLabel">CoreLabel</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@FirstStepTrait[Node,CoreLabel]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.graph.semiring.FirstStepsTrait" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FirstStepsTrait[Node,CoreLabel]extendsAnyRef"></a>
+      <a id="FirstStepsTrait[Node,CoreLabel]:FirstStepsTrait[Node,CoreLabel]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FirstStepsTrait.html"><span class="name">FirstStepsTrait</span></a><span class="tparams">[<span name="Node">Node</span>, <span name="CoreLabel">CoreLabel</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@FirstStepsTrait[Node,CoreLabel]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.graph.semiring.OnePathFirstStep" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="OnePathFirstStep[Node,CoreLabel,Key]extendsSemiringSupport[Option[net.walend.graph.semiring.FirstStepTrait[Node,CoreLabel]],Key]"></a>
+      <a id="OnePathFirstStep[Node,CoreLabel,Key]:OnePathFirstStep[Node,CoreLabel,Key]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="OnePathFirstStep.html"><span class="name">OnePathFirstStep</span></a><span class="tparams">[<span name="Node">Node</span>, <span name="CoreLabel">CoreLabel</span>, <span name="Key">Key</span>]</span><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Option">Option</span>[<a href="FirstStepTrait.html" class="extype" name="net.walend.graph.semiring.FirstStepTrait">FirstStepTrait</a>[<span class="extype" name="net.walend.graph.semiring.OnePathFirstStep.Node">Node</span>, <span class="extype" name="net.walend.graph.semiring.OnePathFirstStep.CoreLabel">CoreLabel</span>]], <span class="extype" name="net.walend.graph.semiring.OnePathFirstStep.Key">Key</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@OnePathFirstStep[Node,CoreLabel,Key]extendsSemiringSupport[Option[net.walend.graph.semiring.FirstStepTrait[Node,CoreLabel]],Key]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finds one minimal path that use the core semiring.</p><div class="fullcomment"><div class="comment cmt"><p>Finds one minimal path that use the core semiring.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.SemiringSupport" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="SemiringSupport[L,Key]extendsAnyRef"></a>
+      <a id="SemiringSupport[L,Key]:SemiringSupport[L,Key]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SemiringSupport.html"><span class="name">SemiringSupport</span></a><span class="tparams">[<span name="L">L</span>, <span name="Key">Key</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@SemiringSupport[L,Key]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Parts for semiring-based graph minimizing algorithms.</p><div class="fullcomment"><div class="comment cmt"><p>Parts for semiring-based graph minimizing algorithms.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.TransitiveClosureHeapKey" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TransitiveClosureHeapKeyextendsProductwithSerializable"></a>
+      <a id="TransitiveClosureHeapKey:TransitiveClosureHeapKey"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TransitiveClosureHeapKey.html"><span class="name">TransitiveClosureHeapKey</span></a><span class="params">(<span name="label">label: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="state">state: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@TransitiveClosureHeapKeyextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="net.walend.graph.semiring.Brandes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Brandes"></a>
+      <a id="Brandes:Brandes"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Brandes$.html"><span class="name">Brandes</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@Brandes" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Brandes' algorithm for betweenness and minimal paths.</p><div class="fullcomment"><div class="comment cmt"><p>Brandes' algorithm for betweenness and minimal paths.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.Dijkstra" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Dijkstra"></a>
+      <a id="Dijkstra:Dijkstra"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Dijkstra$.html"><span class="name">Dijkstra</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@Dijkstra" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.</p><div class="fullcomment"><div class="comment cmt"><p>An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.FewestNodes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FewestNodes"></a>
+      <a id="FewestNodes:FewestNodes"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FewestNodes$.html"><span class="name">FewestNodes</span></a><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@FewestNodes" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finds the length of a path that traverses the fewest edges.</p><div class="fullcomment"><div class="comment cmt"><p>Finds the length of a path that traverses the fewest edges.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.FloydWarshall" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FloydWarshall"></a>
+      <a id="FloydWarshall:FloydWarshall"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FloydWarshall$.html"><span class="name">FloydWarshall</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@FloydWarshall" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An implementation of the Floyd Warshall algorithm for general graph minimization.</p><div class="fullcomment"><div class="comment cmt"><p>An implementation of the Floyd Warshall algorithm for general graph minimization.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.LeastWeights" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="LeastWeights"></a>
+      <a id="LeastWeights:LeastWeights"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LeastWeights$.html"><span class="name">LeastWeights</span></a><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@LeastWeights" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finds paths that traverse from start to end nodes with the least Double-valued weight.</p><div class="fullcomment"><div class="comment cmt"><p>Finds paths that traverse from start to end nodes with the least Double-valued weight.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.MostProbable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="MostProbable"></a>
+      <a id="MostProbable:MostProbable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MostProbable$.html"><span class="name">MostProbable</span></a><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Double">Double</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@MostProbable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Finds most probable paths that traverse from start to end nodes with the on double-weight edge (weights between zero and one).</p><div class="fullcomment"><div class="comment cmt"><p>Finds most probable paths that traverse from start to end nodes with the on double-weight edge (weights between zero and one).
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.Prim" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Prim"></a>
+      <a id="Prim:Prim"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Prim$.html"><span class="name">Prim</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@Prim" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An implementation of Prim's algorithm for minimum spanning trees
+</p><div class="fullcomment"><div class="comment cmt"><p>An implementation of Prim's algorithm for minimum spanning trees
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.0.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.TransitiveClosure" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TransitiveClosure"></a>
+      <a id="TransitiveClosure:TransitiveClosure"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TransitiveClosure$.html"><span class="name">TransitiveClosure</span></a><span class="result"> extends <a href="SemiringSupport.html" class="extype" name="net.walend.graph.semiring.SemiringSupport">SemiringSupport</a>[<span class="extype" name="scala.Boolean">Boolean</span>, <a href="TransitiveClosureHeapKey.html" class="extype" name="net.walend.graph.semiring.TransitiveClosureHeapKey">TransitiveClosureHeapKey</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@TransitiveClosure" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Labels are true if the sink can be reached from the source, false if not.</p><div class="fullcomment"><div class="comment cmt"><p>Labels are true if the sink can be reached from the source, false if not.
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.0
+</p></dd></dl></div>
+    </li><li name="net.walend.graph.semiring.TransitiveClosureHeapKey" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TransitiveClosureHeapKey"></a>
+      <a id="TransitiveClosureHeapKey:TransitiveClosureHeapKey"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TransitiveClosureHeapKey$.html"><span class="name">TransitiveClosureHeapKey</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.graph.semiring.package@TransitiveClosureHeapKey" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
