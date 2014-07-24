@@ -47,11 +47,11 @@ object Brandes {
    * O(a)
    */
   def partialBetweenness[Node,
-  CoreLabel,
-  Label <: Option[BrandesSteps[Node, CoreLabel]],
-  Key]
-  (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
-  (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): IndexedSeq[Double] = {
+                          CoreLabel,
+                          Label <: Option[BrandesSteps[Node, CoreLabel]],
+                          Key]
+                        (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
+                        (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): IndexedSeq[Double] = {
     import scala.collection.mutable.ArrayBuffer
     val partialBetweenness: ArrayBuffer[Double] = ArrayBuffer.fill(labelGraph.nodeCount)(0.0)
 
@@ -95,7 +95,7 @@ object Brandes {
 
     type Label = support.Label
 
-    val edgesAndPartialBetweennesses: IndexedSet[(Seq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes) yield {
+    val edgesAndPartialBetweennesses: IndexedSeq[(Seq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
       val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
       (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
@@ -106,7 +106,7 @@ object Brandes {
     }
     val betweennessMap: Map[Node, Double] = initialGraph.innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
 
-    val edges: IndexedSet[(Node, Node, Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten
+    val edges: IndexedSet[(Node, Node, Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten.to[IndexedSet]
 
     (edges, betweennessMap)
   }
