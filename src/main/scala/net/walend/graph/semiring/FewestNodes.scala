@@ -16,7 +16,9 @@ object FewestNodes extends SemiringSupport[Int,Int] {
 
   def heapKeyForLabel = {label:Label => label}
 
-  def convertEdgeToLabel[Node, EdgeLabel](start: Node, end: Node, label: EdgeLabel): FewestNodes.Label = 1
+  def convertEdgeToLabel(start: Any, end: Any, label: Any): FewestNodes.Label = 1
+
+  val edgeToLabelConverter:(Any,Any,Any) => Int = convertEdgeToLabel
 
   object FewestNodesSemiring extends Semiring {
 
