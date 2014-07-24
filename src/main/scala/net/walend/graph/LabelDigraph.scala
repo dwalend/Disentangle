@@ -43,14 +43,20 @@ trait MutableLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
 trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
 
   /**
+   * All the nodes in the graph, in an indexed set
+   */
+  def nodes:IndexedSet[Node]
+
+  /**
    * @return All the nodes in the graph in an indexed seq
    */
+  @deprecated("replace with nodes")
   def nodesSeq:IndexedSeq[Node]
 
   /**
    * @return internal representation of all of the nodes in the graph.
    */
-  def innerNodes:IndexedSeq[InnerNodeType]
+  def innerNodes:IndexedSet[InnerNodeType]
 
   /**
    * An internal representation of nodes within the graph

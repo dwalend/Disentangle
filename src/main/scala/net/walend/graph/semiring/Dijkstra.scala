@@ -2,7 +2,7 @@ package net.walend.graph.semiring
 
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.graph.IndexedLabelDigraph
+import net.walend.graph.{IndexedSet, IndexedLabelDigraph}
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
@@ -45,7 +45,7 @@ object Dijkstra {
 
     val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
 
-    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    val heapMembers:IndexedSet[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
     
     //Raise sourceInnerNode's to I
     labels(source.index) = support.semiring.I
@@ -75,7 +75,7 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedSet[(Node,Node,Label)] = {
 
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
@@ -107,7 +107,7 @@ object Dijkstra {
   def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                                     extraNodes:GenSeq[Node] = Seq.empty,
                                                     support:SemiringSupport[Label,Key],
-                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):Seq[(Node,Node,Label)] = {
+                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedSet[(Node,Node,Label)] = {
     val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
     labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
@@ -143,7 +143,7 @@ object Dijkstra {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
-    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    val heapMembers:IndexedSet[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
 
     //Raise sourceInnerNode's to I
     labels(sink.index) = support.semiring.I

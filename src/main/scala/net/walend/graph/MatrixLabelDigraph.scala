@@ -12,12 +12,12 @@ import scala.collection.{GenSeq, GenTraversable}
  * @since v0.1.0
  */
 //TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
-class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
+class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                    edgeMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
                                    val noEdgeExistsLabel:Label //value for no edge
                                     ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
-  val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   /**
@@ -25,9 +25,10 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
    *
    * @return All the nodes in the graph in an indexed seq
    */
-  override def nodesSeq: IndexedSeq[Node] = outNodes
+  //todo remove when possible
+  override def nodesSeq: IndexedSeq[Node] = outNodes.asSeq
 
-  override def nodes = outNodes.to[Set]
+  override def nodes = outNodes
 
   /**
    * O(1)
@@ -42,7 +43,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
      * O(n&#94;2)
      */
     override def successors: Seq[(InNode,InNode,Label)] = {
-      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsLabel)
+      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsLabel).to[Seq]
     }
 
     /**
@@ -50,7 +51,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
      */
     override def predecessors: Seq[(InNode,InNode,Label)] = {
       val edgeColumn:Seq[Label] = edgeMatrix.map(_(index))
-      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsLabel)
+      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsLabel).to[Seq]
     }
 
     override def hashCode(): Int = index
@@ -74,7 +75,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the maste
    * O(n)
    * @return InnerNode representation of all of the nodes in the graph.
    */
-  override def innerNodes: IndexedSeq[InNode] = {
+  override def innerNodes: IndexedSet[InNode] = {
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   }
 
@@ -155,11 +156,11 @@ object MatrixLabelDigraph{
                        nodes:GenSeq[Node] = Seq.empty,
                        noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues:IndexedSet[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[IndexedSet]
 
     val size = nodeValues.size
 
-    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
+    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.asSeq.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
 
     for (edgeTriple <- edges) {
       val row = nodeValues.indexOf(edgeTriple._1)

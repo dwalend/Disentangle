@@ -10,13 +10,13 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
  * @author dwalend
  * @since v0.1.0
  */
-class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the master index values for each node.
+class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                         outSuccessors:Vector[Vector[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
                                        outPredecessors:Vector[Vector[(Node,Node,Label)]],
                                        val noEdgeExistsLabel:Label //value for no edge
                                             ) extends IndexedLabelDigraph[Node,Label] {
 
-  val inNodes:Vector[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   def neighborVector(vector:Vector[(Node,Node,Label)]):Vector[(InNode,InNode,Label)] = {
@@ -26,9 +26,10 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
   val inSuccessors:Vector[Vector[(InNode,InNode,Label)]] = outSuccessors.map(neighborVector)
   val inPredecessors:Vector[Vector[(InNode,InNode,Label)]] = outPredecessors.map(neighborVector)
 
-  def nodes = outNodes.to[Set]
+  def nodes = outNodes
 
-  def nodesSeq = outNodes
+  //todo remove when you can
+  def nodesSeq = outNodes.asSeq
 
   override def nodeCount: Int = outNodes.size
 
@@ -69,7 +70,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:Vector[Node], //provides the ma
    *
    * @return InnerNode representation of all of the nodes in the graph.
    */
-  override def innerNodes: IndexedSeq[InNode] = inNodes
+  override def innerNodes: IndexedSet[InNode] = inNodes
 
   override type InnerEdgeType = (InNode,InNode,Label)
 
@@ -147,7 +148,7 @@ object AdjacencyLabelDigraph{
     val successorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
     val predecessorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
 
-    new AdjacencyLabelDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
+    new AdjacencyLabelDigraph(nodeValues.to[IndexedSet],successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
   }
 
 }

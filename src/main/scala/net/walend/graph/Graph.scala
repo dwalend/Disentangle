@@ -14,8 +14,14 @@ import scala.collection.{GenSet, GenTraversable}
  */
 trait Graph[Node] {
 
+  /**
+   * All the nodes in the graph
+   */
   def nodes:GenSet[Node]
 
+  /**
+   * @return number of nodes in the graph
+   */
   def nodeCount:Int
 
   /**
@@ -34,7 +40,7 @@ trait Graph[Node] {
   /**
    * @return InnerNode representation of all of the nodes in the graph.
    */
-  def innerNodes:Seq[InnerNodeType]
+  def innerNodes:GenSet[InnerNodeType]
 
   /**
    * @param value a node that might be in this digraph
@@ -68,8 +74,10 @@ trait Digraph[Node] extends Graph[Node] {
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
     def value:Node
 
+    //todo return a Set?
     def successors:Seq[InnerEdgeType]
 
+    //todo return a Set?
     def predecessors:Seq[InnerEdgeType]
   }
 
