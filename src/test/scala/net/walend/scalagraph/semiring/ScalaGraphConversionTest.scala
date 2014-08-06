@@ -6,7 +6,7 @@ import net.walend.graph.semiring.Dijkstra
 import net.walend.graph.semiring.FewestNodes
 import net.walend.graph.semiring.FloydWarshall
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.graph.{AdjacencyLabelDigraph, LabelDigraph}
+import net.walend.graph.{IndexedSet, AdjacencyLabelDigraph, LabelDigraph}
 
 import scalax.collection.immutable.Graph
 import scalax.collection.GraphPredef._
@@ -149,7 +149,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     val graphParts:(Seq[(String,String,Double)],Seq[String],Double) = ConvertToLabelDigraph.convert(testGraph,LeastWeights)(edgeToDoubleLabel)
 
-    val shortestPaths:Seq[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
+    val shortestPaths:IndexedSet[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
 
     //todo check the result
 //    arcs.size should be (expectedArcs.size)
