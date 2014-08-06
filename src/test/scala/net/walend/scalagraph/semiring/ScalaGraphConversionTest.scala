@@ -92,9 +92,9 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
   )
 
   import scala.language.higherKinds
-  def labelForEdge[E[X] <: EdgeLikeIn[X]](edge:E[String]):(String,String,Int) = (edge._1,edge._2,1)
+  def edgeToLabel[E[X] <: EdgeLikeIn[X]](edge:E[String]):(String,String,Int) = (edge._1,edge._2,1)
 
-  val graphParts:(Seq[(String,String,Int)],Seq[String],Int) = ConvertToLabelDigraph.convert(testGraph,FewestNodes)(labelForEdge)
+  val graphParts:(Seq[(String,String,Int)],Seq[String],Int) = ConvertToLabelDigraph.convert(testGraph,FewestNodes)(edgeToLabel)
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
@@ -128,4 +128,32 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
+
+  "Dijkstra's algorithm" should "produce the correct all paths first step graph for Somegraph" in {
+
+    val labels = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
+
+    labels.size should be (expectedEdges.size)
+    labels.to[Set] should be (expectedEdges)
+  }
+
+  "Dijkstra's algorithm" should "produce the correct label graph for AllPathsFirstSteps" in {
+
+    import net.walend.graph.semiring.LeastWeights
+
+    def edgeToDoubleLabel[E[X] <: EdgeLikeIn[X]](edge:E[String]):(String,String,Double) = (edge._1,edge._2,edge.label.asInstanceOf[String].getBytes.map(_.asInstanceOf[Int]).sum)
+
+    def convertEdgeToLabel[String, Label](start: String, end: String, inLabel: Double): Double = inLabel
+
+    val support = new AllPathsFirstSteps[String,Double,Double](LeastWeights)
+
+    val graphParts:(Seq[(String,String,Double)],Seq[String],Double) = ConvertToLabelDigraph.convert(testGraph,LeastWeights)(edgeToDoubleLabel)
+
+    val shortestPaths:Seq[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
+
+    //todo check the result
+//    arcs.size should be (expectedArcs.size)
+//    arcs.to[Set] should be (expectedArcs)
+  }
+
 }
