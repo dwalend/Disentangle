@@ -50,7 +50,7 @@ trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
   /**
    * @return All the nodes in the graph in an indexed seq
    */
-  @deprecated("replace with nodes")
+  @deprecated("replace with nodes","0.1.1")
   def nodesSeq:IndexedSeq[Node]
 
   /**

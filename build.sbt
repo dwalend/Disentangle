@@ -13,7 +13,7 @@ organization := "net.walend"
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
 version := "0.1.0"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.2"
 
 crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
@@ -49,7 +49,7 @@ javaOptions in run += "-Xms3G" //prevents big GC
 
 javaOptions in run += "-server" //does hotspot optimizations earlier
 
-scalacOptions ++= Seq("-feature")
+scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
 // Your project orgnization (package name)
 organization := "net.walend"

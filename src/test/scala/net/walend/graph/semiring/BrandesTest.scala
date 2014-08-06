@@ -69,7 +69,7 @@ class BrandesTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for SomeGraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodesSeq,support,FewestNodes.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
 
     (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
 

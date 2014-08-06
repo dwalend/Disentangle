@@ -25,7 +25,7 @@ class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the m
    *
    * @return All the nodes in the graph in an indexed seq
    */
-  //todo remove when possible
+  //todo remove after 0.1.1
   override def nodesSeq: IndexedSeq[Node] = outNodes.asSeq
 
   override def nodes = outNodes

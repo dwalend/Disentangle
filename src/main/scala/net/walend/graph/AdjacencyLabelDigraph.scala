@@ -28,7 +28,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   def nodes = outNodes
 
-  //todo remove when you can
+  //todo remove after 0.1.1
   def nodesSeq = outNodes.asSeq
 
   override def nodeCount: Int = outNodes.size

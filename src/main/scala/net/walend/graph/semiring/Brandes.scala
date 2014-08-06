@@ -127,7 +127,8 @@ object Brandes {
     //Use that to create the Brandes labels
     val brandesEdges = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
 
-    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
+//    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
+    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes.to[Seq],support.semiring.O)
   }
 
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],

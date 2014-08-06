@@ -57,7 +57,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodesSeq,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labelGraph.edges.to[Set] -- expectedArcs should be (Set.empty)
     labelGraph.edges.to[Set] should be (expectedArcs)
@@ -67,7 +67,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
     val labelTuples:Set[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsShortestPaths(
                                                 edges = testGraph.edges,
-                                                extraNodes = testGraph.nodesSeq,
+                                                extraNodes = testGraph.nodes.to[Seq],
                                                 support = support,
                                                 labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
@@ -119,7 +119,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
       (H,H) -> Some(List())
     )
     
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodesSeq,support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     val pairsToPathsOfInnerNodes = labelGraph.edges.map(edge => ((edge._1,edge._2),support.leastPath(edge._1,edge._2)(labelGraph)))
 

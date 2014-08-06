@@ -1,6 +1,6 @@
 package net.walend.graph.semiring
 
-import net.walend.graph.MutableLabelDigraph
+import net.walend.graph.{MatrixLabelDigraph, MutableLabelDigraph, IndexedLabelDigraph}
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
@@ -30,7 +30,7 @@ object FloydWarshall {
   /**
    * O(n&#94;3)
    */
-  def floydWarshall[Node,Label,Key](labelDigraph:MutableLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableLabelDigraph[Node,Label] = {
+  def floydWarshall[Node,Label,Key](labelDigraph:MatrixLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedLabelDigraph[Node,Label] = {
     val innerNodes = labelDigraph.innerNodes
     for (k <- innerNodes; i <- innerNodes; j <- innerNodes) {
       val summaryLabel = relax(labelDigraph,support.semiring)(i,k,j)
@@ -42,7 +42,7 @@ object FloydWarshall {
   /**
    * O(n&#94;3)
    */
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:MutableLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):MutableLabelDigraph[Node,Label] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:MatrixLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedLabelDigraph[Node,Label] = {
 
     floydWarshall(labelDigraph,support)
   }
@@ -57,13 +57,12 @@ object FloydWarshall {
   def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                               extraNodes:GenSeq[Node] = Seq.empty,
                                               support:SemiringSupport[Label,Key],
-                                              labelForEdge:(Node,Node,EdgeLabel)=>Label):MutableLabelDigraph[Node,Label] = {
+                                              labelForEdge:(Node,Node,EdgeLabel)=>Label):MatrixLabelDigraph[Node,Label] = {
     val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
     val nonSelfEdges = edges.filter(x => x._1 != x._2)
     val labelEdges = nodes.map(x => (x,x,support.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
-    import net.walend.graph.MatrixLabelDigraph
     MatrixLabelDigraph(labelEdges,nodes,support.semiring.O)
   }
 
@@ -73,7 +72,7 @@ object FloydWarshall {
   def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                                  extraNodes:GenSeq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],
-                                                 labelForEdge:(Node,Node,EdgeLabel)=>Label):MutableLabelDigraph[Node,Label] = {
+                                                 labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
     val initialDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
     floydWarshall(initialDigraph,support)
   }
