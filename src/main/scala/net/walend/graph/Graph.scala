@@ -74,10 +74,10 @@ trait Digraph[Node] extends Graph[Node] {
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
     def value:Node
 
-    //todo return a Set?
+    //todo return Set?
     def successors:Seq[InnerEdgeType]
 
-    //todo return a Set?
+    //todo return Set?
     def predecessors:Seq[InnerEdgeType]
   }
 

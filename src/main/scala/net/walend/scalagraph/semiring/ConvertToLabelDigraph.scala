@@ -35,5 +35,4 @@ object ConvertToLabelDigraph {
     (edges,nodes,support.semiring.O)
   }
 
-  //todo labelForEdge for all of the different scala-graph edges
 }

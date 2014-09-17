@@ -8,6 +8,7 @@ import net.walend.graph.semiring.FloydWarshall
 import org.scalatest.{Matchers, FlatSpec}
 import net.walend.graph.{IndexedSet, AdjacencyLabelDigraph, LabelDigraph}
 
+import scala.collection.GenTraversable
 import scalax.collection.immutable.Graph
 import scalax.collection.GraphPredef._
 import scalax.collection.GraphEdge.DiEdge
@@ -141,6 +142,90 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     import net.walend.graph.semiring.LeastWeights
 
+    val expectedWeights = Set(
+      (A,A,Some(0.0)),
+      (A,B,Some(195.0)),
+      (A,C,Some(392.0)),
+      (A,D,Some(591.0)),
+      (A,E,Some(792.0)),
+      (A,F,Some(995.0)),
+      (A,H,Some(997.0)),
+      (B,B,Some(0.0)),
+      (B,C,Some(197.0)),
+      (B,D,Some(396.0)),
+      (B,E,Some(597.0)),
+      (B,F,Some(800.0)),
+      (B,H,Some(802.0)),
+      (C,B,Some(599.0)),
+      (C,C,Some(0.0)),
+      (C,D,Some(199.0)),
+      (C,E,Some(400.0)),
+      (C,F,Some(603.0)),
+      (C,H,Some(605.0)),
+      (D,B,Some(400.0)),
+      (D,C,Some(597.0)),
+      (D,D,Some(0.0)),
+      (D,E,Some(201.0)),
+      (D,F,Some(404.0)),
+      (D,H,Some(406.0)),
+      (E,B,Some(199.0)),
+      (E,C,Some(396.0)),
+      (E,D,Some(595.0)),
+      (E,E,Some(0.0)),
+      (E,F,Some(203.0)),
+      (E,H,Some(205.0)),
+      (F,F,Some(0.0)),
+      (G,G,Some(0.0)),
+      (H,B,Some(802.0)),
+      (H,C,Some(203.0)),
+      (H,D,Some(402.0)),
+      (H,E,Some(603.0)),
+      (H,F,Some(806.0)),
+      (H,H,Some(0.0))
+    )
+
+    val expectedPairsToShortestOuterNodes = Map(
+      (A,A) -> List(List(A)),
+      (A,B) -> Vector(List(A, B)),
+      (A,C) -> Vector(List(A, B, C)),
+      (A,D) -> Vector(List(A, B, C, D)),
+      (A,E) -> Vector(List(A, B, C, D, E)),
+      (A,F) -> Vector(List(A, B, C, D, E, F)),
+      (A,H) -> Vector(List(A, B, C, D, E, H)),
+      (B,B) -> List(List(B)),
+      (B,C) -> Vector(List(B, C)),
+      (B,D) -> Vector(List(B, C, D)),
+      (B,E) -> Vector(List(B, C, D, E)),
+      (B,F) -> Vector(List(B, C, D, E, F)),
+      (B,H) -> Vector(List(B, C, D, E, H)),
+      (C,B) -> Vector(List(C, D, E, B)),
+      (C,C) -> List(List(C)),
+      (C,D) -> Vector(List(C, D)),
+      (C,E) -> Vector(List(C, D, E)),
+      (C,F) -> Vector(List(C, D, E, F)),
+      (C,H) -> Vector(List(C, D, E, H)),
+      (D,B) -> Vector(List(D, E, B)),
+      (D,C) -> Vector(List(D, E, B, C)),
+      (D,D) -> List(List(D)),
+      (D,E) -> Vector(List(D, E)),
+      (D,F) -> Vector(List(D, E, F)),
+      (D,H) -> Vector(List(D, E, H)),
+      (E,B) -> Vector(List(E, B)),
+      (E,C) -> Vector(List(E, B, C)),
+      (E,D) -> Vector(List(E, B, C, D)),
+      (E,E) -> List(List(E)),
+      (E,F) -> Vector(List(E, F)),
+      (E,H) -> Vector(List(E, H)),
+      (F,F) -> List(List(F)),
+      (G,G) -> List(List(G)),
+      (H,B) -> Vector(List(H, C, D, E, B)),
+      (H,C) -> Vector(List(H, C)),
+      (H,D) -> Vector(List(H, C, D)),
+      (H,E) -> Vector(List(H, C, D, E)),
+      (H,F) -> Vector(List(H, C, D, E, F)),
+      (H,H) -> List(List(H))
+    )
+    
     def edgeToDoubleLabel[E[X] <: EdgeLikeIn[X]](edge:E[String]):(String,String,Double) = (edge._1,edge._2,edge.label.asInstanceOf[String].getBytes.map(_.asInstanceOf[Int]).sum)
 
     def convertEdgeToLabel[String, Label](start: String, end: String, inLabel: Double): Double = inLabel
@@ -149,11 +234,23 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     val graphParts:(Seq[(String,String,Double)],Seq[String],Double) = ConvertToLabelDigraph.convert(testGraph,LeastWeights)(edgeToDoubleLabel)
 
-    val shortestPaths:IndexedSet[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
+    val firstSteps:IndexedSet[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
 
-    //todo check the result
-//    arcs.size should be (expectedArcs.size)
-//    arcs.to[Set] should be (expectedArcs)
+    val weights = firstSteps.map(x => (x._1,x._2,x._3.map(_.weight)))
+    weights should be (expectedWeights)
+
+    val firstStepsDigraph = AdjacencyLabelDigraph(firstSteps)
+    val shortestPaths = firstSteps.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(firstStepsDigraph)))
+
+    val shortestOuterPaths:GenTraversable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
+      val shortOuterPaths = for(shortPath <- shortestPathsBetweenNodes._2) yield {
+        shortPath.map(node => node.value)
+      }
+      (shortestPathsBetweenNodes._1,shortOuterPaths)
+    }
+    val pairsToShortestOuter = shortestOuterPaths.seq.toMap
+    pairsToShortestOuter should be (expectedPairsToShortestOuterNodes)
+
   }
 
 }
