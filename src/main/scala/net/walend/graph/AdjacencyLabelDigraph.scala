@@ -38,16 +38,6 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    //todo remove
-    override def successorsAsSeq: Seq[(InNode,InNode,Label)] = {
-      inSuccessors(index).asSeq
-    }
-
-    //todo remove
-    override def predecessorsAsSeq: Seq[(InNode,InNode,Label)] = {
-      inPredecessors(index).asSeq
-    }
-
     override def successors: IndexedSet[(InNode,InNode,Label)] = {
       inSuccessors(index)
     }
@@ -58,8 +48,8 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
     override def hashCode(): Int = index
 
-    override def equals(obj: Any): Boolean = {
-      obj match {
+    override def equals(thing: Any): Boolean = {
+      thing match {
         case inNode:InNode => inNode.index == index
         case _ => false
       }
