@@ -74,11 +74,17 @@ trait Digraph[Node] extends Graph[Node] {
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
     def value:Node
 
-    //todo return Set?
-    def successors:Seq[InnerEdgeType]
+    //todo remove
+    def successorsAsSeq:Seq[InnerEdgeType]
+
+    //todo remove
+    def predecessorsAsSeq:Seq[InnerEdgeType]
 
     //todo return Set?
-    def predecessors:Seq[InnerEdgeType]
+    def successors:Set[InnerEdgeType]
+
+    //todo return Set?
+    def predecessors:Set[InnerEdgeType]
   }
 
   /**

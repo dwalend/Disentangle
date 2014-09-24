@@ -11,25 +11,25 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
  * @since v0.1.0
  */
 class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                                        outSuccessors:Vector[Vector[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
-                                       outPredecessors:Vector[Vector[(Node,Node,Label)]],
+                                        outSuccessors:Vector[IndexedSet[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
+                                       outPredecessors:Vector[IndexedSet[(Node,Node,Label)]],
                                        val noEdgeExistsLabel:Label //value for no edge
                                             ) extends IndexedLabelDigraph[Node,Label] {
 
   val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborVector(vector:Vector[(Node,Node,Label)]):Vector[(InNode,InNode,Label)] = {
-    vector.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
+  def neighborSet(indexedSet:IndexedSet[(Node,Node,Label)]):IndexedSet[(InNode,InNode,Label)] = {
+    indexedSet.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
   }
 
-  val inSuccessors:Vector[Vector[(InNode,InNode,Label)]] = outSuccessors.map(neighborVector)
-  val inPredecessors:Vector[Vector[(InNode,InNode,Label)]] = outPredecessors.map(neighborVector)
+  val inSuccessors:Vector[IndexedSet[(InNode,InNode,Label)]] = outSuccessors.map(neighborSet)
+  val inPredecessors:Vector[IndexedSet[(InNode,InNode,Label)]] = outPredecessors.map(neighborSet)
 
   def nodes = outNodes
 
   //todo remove after 0.1.1
-  @deprecated("Will be removed after 0.1.1")
+  @deprecated("Will be removed after 0.1.1","0.1.1")
   def nodesSeq: IndexedSeq[Node] = outNodes.asSeq
 
   override def nodeCount: Int = outNodes.size
@@ -38,11 +38,21 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    override def successors: Seq[(InNode,InNode,Label)] = {
+    //todo remove
+    override def successorsAsSeq: Seq[(InNode,InNode,Label)] = {
+      inSuccessors(index).asSeq
+    }
+
+    //todo remove
+    override def predecessorsAsSeq: Seq[(InNode,InNode,Label)] = {
+      inPredecessors(index).asSeq
+    }
+
+    override def successors: IndexedSet[(InNode,InNode,Label)] = {
       inSuccessors(index)
     }
 
-    override def predecessors: Seq[(InNode,InNode,Label)] = {
+    override def predecessors: IndexedSet[(InNode,InNode,Label)] = {
       inPredecessors(index)
     }
 
@@ -93,10 +103,11 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return the edge between start and end or noEdgeExistsValue
    */
   override def label(from: InNode, to: InNode):Label = {
-    inSuccessors(from.index).filter(x => x._2 == to) match {
-      case Vector() => noEdgeExistsLabel
-      case Vector(nodeAndEdge) => nodeAndEdge._3
-      case x => throw new IllegalStateException(s"Multiple edges from $from to $to: "+x)
+    val indexedSet = inSuccessors(from.index).filter(x => x._2 == to)
+    indexedSet.size match {
+      case 0 => noEdgeExistsLabel
+      case 1 => indexedSet.iterator.next()._3
+      case _ => throw new IllegalStateException(s"Multiple edges from $from to $to: "+indexedSet)
     }
   }
 
@@ -120,10 +131,11 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return
    */
   override def label(i: Int, j: Int): Label = {
-    inSuccessors(i).filter(x => x._2 == inNodes(j)) match {
-      case Vector() => noEdgeExistsLabel
-      case Vector(nodeAndEdge) => nodeAndEdge._3
-      case x => throw new IllegalStateException(s"Multiple edges from ${inSuccessors(i)} to ${inNodes(j)}: "+x)
+    val indexedSet = inSuccessors(i).filter(x => x._2 == inNodes(j))
+    indexedSet.size match {
+      case 0 => noEdgeExistsLabel
+      case 1 => indexedSet.iterator.next()._3
+      case _ => throw new IllegalStateException(s"Multiple edges from ${node(i)} to ${node(j)}: "+indexedSet)
     }
   }
 
@@ -146,8 +158,8 @@ object AdjacencyLabelDigraph{
     val successorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._1)
     val predecessorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._2)
 
-    val successorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
-    val predecessorAdjacencies:Vector[Vector[(Node,Node,Label)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[Vector])
+    val successorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[IndexedSet])
+    val predecessorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[IndexedSet])
 
     new AdjacencyLabelDigraph(nodeValues.to[IndexedSet],successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
   }

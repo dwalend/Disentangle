@@ -46,17 +46,18 @@ class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] w
 }
 
 object IndexedSet extends ImmutableSetFactory[IndexedSet] with Serializable {
-//  def apply[A](traversable:Traversable[A]) = IndexedSeq(traversable.to[Seq].distinct)
+  //  def apply[A](traversable:Traversable[A]) = IndexedSeq(traversable.to[Seq].distinct)
 
   lazy val emptyInstance = new IndexedSet[Any](IndexedSeq.empty)
 
-  override def newBuilder[A]:mutable.Builder[A,IndexedSet[A]] = {
-    new mutable.SetBuilder[A,IndexedSet[A]](IndexedSet.empty[A])
+  override def newBuilder[A]: mutable.Builder[A, IndexedSet[A]] = {
+    new mutable.SetBuilder[A, IndexedSet[A]](IndexedSet.empty[A])
   }
 
   implicit def canBuildFrom[T]: CanBuildFrom[IndexedSet[_], T, IndexedSet[T]] =
     new CanBuildFrom[IndexedSet[_], T, IndexedSet[T]] {
       def apply(from: IndexedSet[_]) = newBuilder[T]
+
       def apply() = newBuilder[T]
     }
 }

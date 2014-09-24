@@ -42,14 +42,24 @@ class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the m
     /**
      * O(n&#94;2)
      */
-    override def successors: Seq[(InNode,InNode,Label)] = {
+    override def successors: IndexedSet[(InNode, InNode, Label)] = successorsAsSeq.to[IndexedSet]
+
+    /**
+     * O(n&#94;2)
+     */
+    override def predecessors: IndexedSet[(InNode, InNode, Label)] = predecessorsAsSeq.to[IndexedSet]
+
+    /**
+     * O(n&#94;2)
+     */
+    override def successorsAsSeq: Seq[(InNode,InNode,Label)] = {
       inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsLabel).to[Seq]
     }
 
     /**
      * O(n&#94;2)
      */
-    override def predecessors: Seq[(InNode,InNode,Label)] = {
+    override def predecessorsAsSeq: Seq[(InNode,InNode,Label)] = {
       val edgeColumn:Seq[Label] = edgeMatrix.map(_(index))
       inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsLabel).to[Seq]
     }
