@@ -3,7 +3,7 @@ ScalaGraphMinimizer
 
 ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-The current version is 0.1.0, the second release. In the first release I got feedback suggesting major rework to improve performance, and a request make the algorithms independent of scala-graph. To get there, I reworked almost all of the API so I incremented the middle revision number.
+The current version is 0.1.1, the third release. In the first release I got feedback suggesting major rework to improve performance, and a request make the algorithms independent of scala-graph. To get there, I reworked almost all of the API so I incremented the middle revision number.
 
 I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
 better.
@@ -13,7 +13,7 @@ better.
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.0"
+    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.1"
 
 ### The Latest Snapshot (When Available)
 
@@ -21,7 +21,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.1-SNAPSHOT"
+    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2-SNAPSHOT"
 
 ### clone the code repository
 
@@ -30,18 +30,18 @@ If you want to change ScalaGraphMinimizer to meet your every whim, share your ch
     git clone https://github.com/dwalend/ScalaGraphMinimizer.git
     cd ScalaGraphMinimizer
     sbt test package
-    cp target/scala-2.10/scalagraphminimizer_2.11-0.1.0-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.1.1-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using ScalaGraphMinimizer
 
-See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.0/#net.walend.graph.package)
+See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.1/#net.walend.graph.package)
 
 ### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
 
 You'll need to
 
-* bring a graph of your own, or at least a Seq[(Node,Node,MaybeAnEdge)].
+* bring a graph of your own, or at least a Seq[(Node,Node,MaybeALabel)].
 * choose or create a SemiringSupport implementation, like FewestNodes.
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.

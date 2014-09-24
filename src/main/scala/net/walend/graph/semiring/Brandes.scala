@@ -22,7 +22,7 @@ object Brandes {
    */
   def dijkstraSingleSinkForBrandes[Node, Label, Key](labelDigraph: IndexedLabelDigraph[Node, Label],
                                                      support: SemiringSupport[Label, Key])
-                                                    (sink: labelDigraph.InnerNodeType): (IndexedSeq[(Node, Node, Label)],
+                                                    (sink: labelDigraph.InnerNodeType): (IndexedSet[(Node, Node, Label)],
     Stack[(labelDigraph.InnerNodeType, Label)]) = {
     val stack = Stack[labelDigraph.InnerNodeType]()
 
@@ -51,7 +51,7 @@ object Brandes {
                           Label <: Option[BrandesSteps[Node, CoreLabel]],
                           Key]
                         (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
-                        (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): IndexedSeq[Double] = {
+                        (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSet[(Node, Node, Label)]): IndexedSeq[Double] = {
     import scala.collection.mutable.ArrayBuffer
     val partialBetweenness: ArrayBuffer[Double] = ArrayBuffer.fill(labelGraph.nodeCount)(0.0)
 
@@ -95,8 +95,8 @@ object Brandes {
 
     type Label = support.Label
 
-    val edgesAndPartialBetweennesses: IndexedSeq[(Seq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
-      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
+    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSet[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
+      val edgeAndNodeStack: (IndexedSet[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
       (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
     }

@@ -39,7 +39,7 @@ object Dijkstra {
    */
   def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
-                                          (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
+                                          (source:initialGraph.InnerNodeType):IndexedSet[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
@@ -69,7 +69,7 @@ object Dijkstra {
     }
 
     //put everything back together
-    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
+    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O).to[IndexedSet]
   }
 
   /**
@@ -135,11 +135,11 @@ object Dijkstra {
    *
    * O(n ln(n) + a)
    */
-  //todo could not use default argument for the heap. Report that as a possible bug.
+  //todo could not use a default argument for the heap. Report that as a possible bug.
   private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                                    support:SemiringSupport[Label,Key])
                                                   (sink:initialGraph.InnerNodeType,
-                                                   heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSeq[(Node,Node,Label)] = {
+                                                   heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSet[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
@@ -168,7 +168,7 @@ object Dijkstra {
     }
 
     //don't filter out where labels == semiring.O. Need the indexes intact
-    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
+    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1)).to[IndexedSet]
   }
 
   /**
@@ -178,7 +178,7 @@ object Dijkstra {
    */
   def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
-                                        (sink:initialDigraph.InnerNodeType):Seq[(Node,Node,Label)] = {
+                                        (sink:initialDigraph.InnerNodeType):IndexedSet[(Node,Node,Label)] = {
     val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)
     dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
   }
