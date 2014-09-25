@@ -12,15 +12,15 @@ object TimingStudies {
   def main (args:Array[String]) {
 
     //Time the Floyd Warshall algorithm with AllShortestPaths
-    val floydResults = study(8,timeFloyd,expectedTimeFloyd)
-    floydResults.map(x => println(x))
+//    val floydResults = study(10,timeFloyd,expectedTimeFloyd)
+//    floydResults.map(x => println(x))
 
     //Time Dijkstra's algorithm with AllShortestPaths
-//    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
-//    dijkstraResults.map(x => println(x))
+    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
+    dijkstraResults.map(x => println(x))
 
-//    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
-//    scalaGraphConvertDijstraResults.map(x => println(x))
+    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
+    scalaGraphConvertDijstraResults.map(x => println(x))
 
     /*
         val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)

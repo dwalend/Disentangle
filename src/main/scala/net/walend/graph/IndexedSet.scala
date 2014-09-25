@@ -1,9 +1,10 @@
 package net.walend.graph
 
-import scala.collection.generic._
+import scala.collection.generic.{GenericSetTemplate,ImmutableSetFactory,CanBuildFrom,GenericParTemplate,ParSetFactory}
 import scala.collection.parallel.{ParSetLike, IterableSplitter, Combiner}
 import scala.collection.parallel.immutable.ParSet
-import scala.collection.{mutable, CustomParallelizable, SetLike, AbstractSet}
+import scala.collection.{CustomParallelizable, SetLike, AbstractSet}
+import scala.collection.mutable.{Builder,SetBuilder}
 
 /**
  *
@@ -14,6 +15,7 @@ import scala.collection.{mutable, CustomParallelizable, SetLike, AbstractSet}
 class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] with GenericSetTemplate[A, IndexedSet] with SetLike[A, IndexedSet[A]] with CustomParallelizable[A, ParIndexedSet[A]] with Serializable  {
 
   lazy val asSet:Set[A] = outerSeq.to[Set]
+//  private lazy val asSet:Set[A] = outerSeq.to[Set]
 
   import scala.collection.mutable.ArrayBuffer
   if(outerSeq.size != asSet.size) throw new IllegalStateException(s"seq has duplicate members: ${outerSeq.to[ArrayBuffer] -- asSet}")
@@ -43,6 +45,13 @@ class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] w
 
   //GenericSetTemplate
   override def companion = IndexedSet
+
+  //profiling says ++ is slow, and slams asSeq
+  /*
+  def ++[B >: A](that : GenTraversableOnce[B]):IndexedSet[B] = {
+    new IndexedSet((outerSeq ++ that).distinct)
+  }
+  */
 }
 
 object IndexedSet extends ImmutableSetFactory[IndexedSet] with Serializable {
@@ -50,8 +59,8 @@ object IndexedSet extends ImmutableSetFactory[IndexedSet] with Serializable {
 
   lazy val emptyInstance = new IndexedSet[Any](IndexedSeq.empty)
 
-  override def newBuilder[A]: mutable.Builder[A, IndexedSet[A]] = {
-    new mutable.SetBuilder[A, IndexedSet[A]](IndexedSet.empty[A])
+  override def newBuilder[A]: Builder[A, IndexedSet[A]] = {
+    new SetBuilder[A, IndexedSet[A]](IndexedSet.empty[A])
   }
 
   implicit def canBuildFrom[T]: CanBuildFrom[IndexedSet[_], T, IndexedSet[T]] =
