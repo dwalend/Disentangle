@@ -48,7 +48,7 @@ You'll need to
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
 * arrange for your code to run the algorithm on your graph
 
-Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that Seq plus a Map[Node,Double] that holds each node's betweenness.
+Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides an IndexedSet[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that IndexedSet plus a Map[Node,Double] that holds each node's betweenness.
 
     import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
@@ -64,7 +64,7 @@ Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that co
     val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
 
     //find the first step in a shortest path for a pair of nodes if that path exists
-    val firstSteps:Seq[(String,String,Option[FirstStep[String,Int]])] = 
+    val firstSteps:Set[(String,String,Option[FirstStep[String,Int]])] = 
       Dijkstra.allPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
@@ -74,7 +74,7 @@ Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that co
 
 ### Algorithms
 
-For the second release, ScalaGraphMinimizer supplies
+ScalaGraphMinimizer supplies
 
 * FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
 * The Floyd-Warshall algorithm
@@ -202,7 +202,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## Roadmap for Future Work
 
-### Next release
+### Next Big Release
 
 * Louvain community detection
 * A*
