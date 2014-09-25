@@ -12,8 +12,8 @@ object TimingStudies {
   def main (args:Array[String]) {
 
     //Time the Floyd Warshall algorithm with AllShortestPaths
-//    val floydResults = study(8,timeFloyd,expectedTimeFloyd)
-//    floydResults.map(x => println(x))
+    val floydResults = study(8,timeFloyd,expectedTimeFloyd)
+    floydResults.map(x => println(x))
 
     //Time Dijkstra's algorithm with AllShortestPaths
 //    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
@@ -36,8 +36,8 @@ object TimingStudies {
     */
 
     //Time Brandes' algorithm with AllShortestPaths
-    val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
-    brandesResults.map(x => println(x))
+//    val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
+//    brandesResults.map(x => println(x))
   }
 
   def timeFloyd(nodeCount:Int):Long = {

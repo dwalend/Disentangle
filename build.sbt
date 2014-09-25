@@ -11,7 +11,7 @@ name := "ScalaGraphMinimizer"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.1.0"
+version := "0.1.1"
 
 scalaVersion := "2.11.2"
 
@@ -21,7 +21,7 @@ libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.9.0"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test"
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.2" % "test"
 
 libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test" //for timing comparisons
 
