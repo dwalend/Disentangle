@@ -234,10 +234,10 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     val graphParts:(Seq[(String,String,Double)],Seq[String],Double) = ConvertToLabelDigraph.convert(testGraph,LeastWeights)(edgeToDoubleLabel)
 
-    val firstSteps:IndexedSet[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
+    val firstSteps:Seq[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
 
     val weights = firstSteps.map(x => (x._1,x._2,x._3.map(_.weight)))
-    weights should be (expectedWeights)
+    weights.to[Set] should be (expectedWeights)
 
     val firstStepsDigraph = AdjacencyLabelDigraph(firstSteps)
     val shortestPaths = firstSteps.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(firstStepsDigraph)))

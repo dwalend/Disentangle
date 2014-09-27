@@ -3,7 +3,7 @@ package net.walend.graph
 import scala.collection.generic.{GenericSetTemplate,ImmutableSetFactory,CanBuildFrom,GenericParTemplate,ParSetFactory}
 import scala.collection.parallel.{ParSetLike, IterableSplitter, Combiner}
 import scala.collection.parallel.immutable.ParSet
-import scala.collection.{CustomParallelizable, SetLike, AbstractSet}
+import scala.collection.{CustomParallelizable, SetLike, AbstractSet,GenTraversableOnce}
 import scala.collection.mutable.{Builder,SetBuilder}
 
 /**
@@ -47,8 +47,15 @@ class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] w
   override def companion = IndexedSet
 
   //profiling says ++ is slow, and slams asSeq
-  /*
   def ++[B >: A](that : GenTraversableOnce[B]):IndexedSet[B] = {
+    new IndexedSet((outerSeq ++ that).distinct)
+  }
+  /* todo revisit ++ and flatten
+  def ++[B >: A](that : TraversableOnce[B]):IndexedSet[B] = {
+    new IndexedSet((outerSeq ++ that).distinct)
+  }
+
+  def ++[B >: A](that : Traversable[B]):IndexedSet[B] = {
     new IndexedSet((outerSeq ++ that).distinct)
   }
   */

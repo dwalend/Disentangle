@@ -19,10 +19,10 @@ object TimingStudies {
     val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
     dijkstraResults.map(x => println(x))
 
+    /*
     val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
     scalaGraphConvertDijstraResults.map(x => println(x))
 
-    /*
         val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
         jungDijkstraResults.map(x => println(x))
 

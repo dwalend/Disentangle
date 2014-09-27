@@ -39,13 +39,14 @@ object Dijkstra {
    */
   def dijkstraSingleSource[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                            support:SemiringSupport[Label,Key])
-                                          (source:initialGraph.InnerNodeType):IndexedSet[(Node,Node,Label)] = {
+                                          (source:initialGraph.InnerNodeType):Seq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
     val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
 
-    val heapMembers:IndexedSet[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    //profiler said this was trouble
+    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.asSeq.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
     
     //Raise sourceInnerNode's to I
     labels(source.index) = support.semiring.I
@@ -69,15 +70,16 @@ object Dijkstra {
     }
 
     //put everything back together
-    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O).to[IndexedSet]
+    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
   }
 
   /**
    * O(n&#94;2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedSet[(Node,Node,Label)] = {
+  def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
-    labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
+    //The profiler pointed to both flatten and fold(IndexedSet.empty)((a,b) => a ++ b) as trouble.
+    labelDigraph.innerNodes.to[Seq].map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 
   /**
@@ -107,9 +109,11 @@ object Dijkstra {
   def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                                     extraNodes:GenSeq[Node] = Seq.empty,
                                                     support:SemiringSupport[Label,Key],
-                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedSet[(Node,Node,Label)] = {
+                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):Seq[(Node,Node,Label)] = {
     val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
-    labelDigraph.innerNodes.map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
+
+    //profiler blamed both flatten and fold of IndexedSets as trouble
+    labelDigraph.innerNodes.to[Seq].map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
   }
 
   /**
@@ -139,11 +143,11 @@ object Dijkstra {
   private[semiring] def dijkstraSingleSinkCustomHeap[Node,Label,Key](initialGraph:IndexedLabelDigraph[Node,Label],
                                                    support:SemiringSupport[Label,Key])
                                                   (sink:initialGraph.InnerNodeType,
-                                                   heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSet[(Node,Node,Label)] = {
+                                                   heap:Heap[Key,initialGraph.InnerNodeType]):IndexedSeq[(Node,Node,Label)] = {
     //Set up the map of Nodes to HeapKeys
     val labels:ArrayBuffer[Label] = ArrayBuffer.fill(initialGraph.nodeCount)(support.semiring.O)
 
-    val heapMembers:IndexedSet[heap.HeapMember] = initialGraph.innerNodes.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
+    val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.asSeq.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
 
     //Raise sourceInnerNode's to I
     labels(sink.index) = support.semiring.I
@@ -168,7 +172,7 @@ object Dijkstra {
     }
 
     //don't filter out where labels == semiring.O. Need the indexes intact
-    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1)).to[IndexedSet]
+    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
   }
 
   /**
@@ -178,7 +182,7 @@ object Dijkstra {
    */
   def dijkstraSingleSink[Node,Label,Key](initialDigraph:IndexedLabelDigraph[Node,Label],
                                          support:SemiringSupport[Label,Key])
-                                        (sink:initialDigraph.InnerNodeType):IndexedSet[(Node,Node,Label)] = {
+                                        (sink:initialDigraph.InnerNodeType):IndexedSeq[(Node,Node,Label)] = {
     val heap:Heap[Key,initialDigraph.InnerNodeType] = new FibonacciHeap[Key,initialDigraph.InnerNodeType](support.heapOrdering)
     dijkstraSingleSinkCustomHeap(initialDigraph,support)(sink,heap).filter(x => x._3 != support.semiring.O)
   }

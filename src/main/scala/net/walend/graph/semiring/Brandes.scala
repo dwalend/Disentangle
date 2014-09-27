@@ -1,7 +1,7 @@
 package net.walend.graph.semiring
 
 import net.walend.heap.{HeapOrdering, FibonacciHeap, Heap}
-import net.walend.graph.{IndexedSet, AdjacencyLabelDigraph, IndexedLabelDigraph}
+import net.walend.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
@@ -22,7 +22,7 @@ object Brandes {
    */
   def dijkstraSingleSinkForBrandes[Node, Label, Key](labelDigraph: IndexedLabelDigraph[Node, Label],
                                                      support: SemiringSupport[Label, Key])
-                                                    (sink: labelDigraph.InnerNodeType): (IndexedSet[(Node, Node, Label)],
+                                                    (sink: labelDigraph.InnerNodeType): (IndexedSeq[(Node, Node, Label)],
     Stack[(labelDigraph.InnerNodeType, Label)]) = {
     val stack = Stack[labelDigraph.InnerNodeType]()
 
@@ -51,7 +51,7 @@ object Brandes {
                           Label <: Option[BrandesSteps[Node, CoreLabel]],
                           Key]
                         (support: BrandesSupport[Node, CoreLabel, Key], labelGraph: IndexedLabelDigraph[Node, Label])
-                        (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSet[(Node, Node, Label)]): IndexedSeq[Double] = {
+                        (sink: labelGraph.InnerNodeType, stack: Stack[(labelGraph.InnerNodeType, Label)], shortestPathsToSink: IndexedSeq[(Node, Node, Label)]): IndexedSeq[Double] = {
     import scala.collection.mutable.ArrayBuffer
     val partialBetweenness: ArrayBuffer[Double] = ArrayBuffer.fill(labelGraph.nodeCount)(0.0)
 
@@ -91,12 +91,12 @@ object Brandes {
                                   CoreLabel,
                                   Key]
                                   (initialGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]],
-                                   support: BrandesSupport[Node, CoreLabel, Key]): (IndexedSet[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+                                   support: BrandesSupport[Node, CoreLabel, Key]): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
 
     type Label = support.Label
 
-    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSet[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
-      val edgeAndNodeStack: (IndexedSet[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
+    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
+      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
       (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
     }
@@ -106,7 +106,7 @@ object Brandes {
     }
     val betweennessMap: Map[Node, Double] = initialGraph.innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
 
-    val edges: IndexedSet[(Node, Node, Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten.to[IndexedSet]
+    val edges: IndexedSeq[(Node, Node, Label)] = edgesAndPartialBetweennesses.map(x => x._1).flatten
 
     (edges, betweennessMap)
   }
@@ -134,7 +134,7 @@ object Brandes {
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
                                                                   extraNodes: GenSeq[Node] = Seq.empty,
                                                                   coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
-                                                                  labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSet[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+                                                                  labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
     val labelGraph = createLabelDigraph(edges, extraNodes, support, labelForEdge)
     allLeastPathsAndBetweenness(labelGraph, support)
