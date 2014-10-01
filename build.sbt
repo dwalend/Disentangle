@@ -13,6 +13,8 @@ organization := "net.walend"
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
 version := "0.1.1"
 
+isSnapshot := false
+
 scalaVersion := "2.11.2"
 
 crossScalaVersions := Seq("2.10.4",scalaVersion.value)
