@@ -48,7 +48,7 @@ You'll need to
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
 * arrange for your code to run the algorithm on your graph
 
-Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides an IndexedSet[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that IndexedSet plus a Map[Node,Double] that holds each node's betweenness.
+Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that Seq plus a Map[Node,Double] that holds each node's betweenness.
 
     import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
@@ -64,7 +64,7 @@ Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that co
     val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
 
     //find the first step in a shortest path for a pair of nodes if that path exists
-    val firstSteps:Set[(String,String,Option[FirstStep[String,Int]])] = 
+    val firstSteps:Seq[(String,String,Option[FirstStep[String,Int]])] = 
       Dijkstra.allPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
@@ -76,7 +76,7 @@ Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that co
 
 ScalaGraphMinimizer supplies
 
-* FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
+* A FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
 * The Floyd-Warshall algorithm
 * Dijkstra's algorithm with a Fibonacci Heap
 * Brandes' algorithm for betweenness
@@ -95,7 +95,7 @@ ScalaGraphMinimizer supplies some basic semirings and associated support classes
 Semirings can be composed. ScalaGraphMinimizer takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
 
 * OnePathFirstStep which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
-* AllPathsFirstSteps which finds all minimal paths between start and end nodes by supplying a set of possible next nodes within an Option[FirstSteps]
+* AllPathsFirstSteps which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]
 
 
 ## Customizing ScalaGraphMinimizer
