@@ -35,6 +35,8 @@ resolvers += "Sonatype releases" at "http://oss.sonatype.org/content/repositorie
 
 libraryDependencies += "com.github.verbalexpressions" %% "ScalaVerbalExpression" % "1.0.1" % "test" //for loading the Enron graph
 
+libraryDependencies += "org.scala-lang" %% "scala-pickling" % "0.9.0" % "test" //for loading the Enron graph
+
 fork in test := true
 
 javaOptions in test += "-Xmx3G" //prevents big GC

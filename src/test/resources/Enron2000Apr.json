@@ -1,4 +1,4 @@
-JSONPickle({
+{
   "tpe": "scala.collection.Seq[scala.Tuple3[java.lang.String,java.lang.String,scala.Int]]",
   "elems": [
     {
@@ -18206,4 +18206,4 @@ JSONPickle({
     "_3": 1
   }
   ]
-})
+}
