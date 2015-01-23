@@ -189,4 +189,18 @@ AL TN
       assert(abs(betweennesses(node) - jungB(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match jung's ${jungB(node)}")
     }
   }
+
+  "Betweenness for Enron data" should "be calculatable" in {
+
+    import scala.io.Source
+    import scala.pickling._
+    import scala.pickling.json._
+
+    val support = FewestNodes
+
+    val fileContents = Source.fromURL(getClass.getResource("/Enron2000Apr.json")).mkString
+    val edges = JSONPickle(fileContents).unpickle[Seq[(String,String,Int)]]
+
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(edges,Seq.empty,support,FewestNodes.convertEdgeToLabel)
+  }
 }

@@ -2,9 +2,6 @@ package net.walend.graph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
 
-import scala.io.Source
-import scala.pickling._
-import scala.pickling.json._
 
 /**
  * Test some algorithms vs the Enron metadata for April 2000.
@@ -15,6 +12,11 @@ import scala.pickling.json._
 class EnronTest extends FlatSpec with Matchers {
 
   "Betweenness for Enron data" should "be calculatable" in {
+
+    import scala.io.Source
+    import scala.pickling._
+    import scala.pickling.json._
+
     val support = FewestNodes
 
     val fileContents = Source.fromURL(getClass.getResource("/Enron2000Apr.json")).mkString
