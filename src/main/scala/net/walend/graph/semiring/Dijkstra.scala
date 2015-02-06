@@ -45,7 +45,7 @@ object Dijkstra {
 
     val heap:Heap[Key,initialGraph.InnerNodeType] = new FibonacciHeap(support.heapOrdering)
 
-    //profiler said this was trouble
+    //profiler said map was trouble without asSeq
     val heapMembers:IndexedSeq[heap.HeapMember] = initialGraph.innerNodes.asSeq.map(node => heap.insert(support.heapKeyForLabel(support.semiring.O),node))
     
     //Raise sourceInnerNode's to I
