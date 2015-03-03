@@ -190,7 +190,7 @@ AL TN
     }
   }
 
-  "Betweenness for Enron data" should "be calculatable" in {
+  "Betweenness for Enron data" should "be calculated" in {
 
     import scala.io.Source
     import scala.pickling._

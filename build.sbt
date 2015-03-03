@@ -15,7 +15,7 @@ version := "0.1.1"
 
 isSnapshot := false
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.4"
 
 crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
