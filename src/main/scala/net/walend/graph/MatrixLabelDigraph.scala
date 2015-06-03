@@ -11,7 +11,6 @@ import scala.collection.{GenSeq, GenTraversable}
  * @author dwalend
  * @since v0.1.0
  */
-//TODO for the Atomic version, make edgeMatrix a Vector of AtomicReferences
 class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                    edgeMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
                                    val noEdgeExistsLabel:Label //value for no edge

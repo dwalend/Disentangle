@@ -9,7 +9,7 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
-class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
+class AllPathsFirstSteps[Node,CoreLabel,Key](val coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
   
   override type Label = Option[FirstStepsTrait[Node, CoreLabel]]
 
@@ -19,7 +19,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
-  //todo could be a Seq instead if just used in Dijkstra's algorithm
+  //todo could be a Seq instead if just used in Dijkstra's algorithm -- faster
   case class FirstSteps(weight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
 
     /**
@@ -55,15 +55,14 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
 
   object AllPathsSemiring extends Semiring {
 
-// todo report bug that I can't do this here
-// val coreSemiring = coreSupport.semiring
+    val coreSemiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
-      label.forall(steps => coreSupport.semiring.inDomain(steps.weight))
+      label.forall(steps => coreSemiring.inDomain(steps.weight))
     }
     
     //identity and annihilator
-    val I = Option(FirstSteps(coreSupport.semiring.I,Set[Node]()))
+    val I = Option(FirstSteps(coreSemiring.I,Set[Node]()))
     val O = None
 
     def summary(fromThroughToLabel:Label,currentLabel:Label):Label = {
@@ -72,7 +71,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         if(fromThroughToLabel != O){
           val currentSteps:FirstStepsTrait[Node,CoreLabel] = currentLabel.get
           val fromThroughToSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughToLabel.get
-          val summ = coreSupport.semiring.summary(fromThroughToSteps.weight,currentSteps.weight)
+          val summ = coreSemiring.summary(fromThroughToSteps.weight,currentSteps.weight)
           if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
             Option(FirstSteps(currentSteps.weight,
                                 currentSteps.choices ++ fromThroughToSteps.choices))
@@ -95,7 +94,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
         val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
-        Option(FirstSteps(coreSupport.semiring.extend(fromThroughSteps.weight,throughToSteps.weight),
+        Option(FirstSteps(coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight),
                               choices))
       }
       else O
