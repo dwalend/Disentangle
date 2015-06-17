@@ -135,7 +135,9 @@ object Dijkstra {
   }
 
   /**
-   * Dijkstra's algorithm for a single sink. This supports a heap argument to enable Brandes' algorithm. private to the semiring package to keep people out of trouble.
+   * Dijkstra's algorithm for a single sink.
+   * This supports a heap argument to enable Brandes' algorithm.
+   * private to the semiring package to keep people out of trouble.
    *
    * O(n ln(n) + a)
    */

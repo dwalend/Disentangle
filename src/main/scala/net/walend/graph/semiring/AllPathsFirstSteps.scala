@@ -20,6 +20,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLab
   def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
   //todo could be a Seq instead if just used in Dijkstra's algorithm -- faster
+  //todo or another place to use the IndexedSet.
   case class FirstSteps(weight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
 
     /**
@@ -164,7 +165,6 @@ trait FirstStepsTrait[Node,CoreLabel] {
 
   def weight:CoreLabel
 
-  //todo rename choiceSeq
   def choices:Set[Node]
 
 }
