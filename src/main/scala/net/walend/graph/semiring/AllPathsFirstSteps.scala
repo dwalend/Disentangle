@@ -9,7 +9,7 @@ import net.walend.graph.LabelDigraph
  * @author dwalend
  * @since v0.1.0
  */
-class AllPathsFirstSteps[Node,CoreLabel,Key](val coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
+class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
   
   override type Label = Option[FirstStepsTrait[Node, CoreLabel]]
 
@@ -55,7 +55,7 @@ class AllPathsFirstSteps[Node,CoreLabel,Key](val coreSupport:SemiringSupport[Cor
 
   object AllPathsSemiring extends Semiring {
 
-    val coreSemiring = coreSupport.semiring
+    val coreSemiring:SemiringSupport[CoreLabel,Key]#Semiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
       label.forall(steps => coreSemiring.inDomain(steps.weight))
