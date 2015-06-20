@@ -14,17 +14,17 @@ import scala.collection.mutable.{Builder,SetBuilder}
  */
 class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] with GenericSetTemplate[A, IndexedSet] with SetLike[A, IndexedSet[A]] with CustomParallelizable[A, ParIndexedSet[A]] with Serializable  {
 
-  lazy val asSet:Set[A] = outerSeq.to[Set]
-//  private lazy val asSet:Set[A] = outerSeq.to[Set]
+  private val asSet:Set[A] = outerSeq.to[Set]
 
   import scala.collection.mutable.ArrayBuffer
-  if(outerSeq.size != asSet.size) throw new IllegalStateException(s"seq has duplicate members: ${outerSeq.to[ArrayBuffer] -- asSet}")
+  if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.to[ArrayBuffer] -- asSet}")
 
   //Indexed access
-  def apply(index:Int) = outerSeq(index)
+  def get(index:Int) = outerSeq(index)
 
   def indexOf(a:A) = outerSeq.indexOf(a)
 
+  //todo how do I override to[Seq] ?
   def asSeq = outerSeq
   
   //AbstractSet contract
