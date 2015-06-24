@@ -1,30 +1,24 @@
 In this release
 
-* built translator from scala-graph to net.walend.graph.Digraph and (maybe) back
-* top-level graph representation
-* optimized digraph representation for algorithms
-** Now adapt any graph to use the algorithms, not just scala-graph
-* a test of scala-graph translated
-* 2.10 and 2.11 versions
-
-
-For this release
-
-
-For next release
-
-* subgraph representation for net.walend.graph
-* Probabilty semiring, and non-selecting marker for Semirings
-* Paths and subgraphs with original edges for AllPathsFirstSteps and OnePathFirstStep semirings
-
-
+* Activator
+* Timing data on EC2 c3 machine
+* Cleaned up IndexedSet
 * automatically plot the results of the timing studies (and comparison with Jung)
-* publicize on twitter
-* blog
-* Enron
+* scala-graph in a separate subproject
+
+Next release
+
+* IndexedSubSet backed by BitSet
+* Louvain algorithm
+
+* Subgraph representation ?
+
+Later
+
+* More Enron
 * path representation for net.walend.graph
 * translator from net.walend.graph.path to scala-graph's paths
-
+* Prim's MST algorithm
 
 
 Pulblicize
