@@ -14,7 +14,7 @@ import scala.collection.mutable.{Builder,SetBuilder}
  */
 
 //todo investigate backing this with a BitSet.
-class IndexedSet[A](outerSeq:IndexedSeq[A]) extends AbstractSet[A] with Set[A] with GenericSetTemplate[A, IndexedSet] with SetLike[A, IndexedSet[A]] with CustomParallelizable[A, ParIndexedSet[A]] with Serializable  {
+class IndexedSet[A](outerSeq:IndexedSeq[A]) extends Set[A] with GenericSetTemplate[A, IndexedSet] with SetLike[A, IndexedSet[A]] with CustomParallelizable[A, ParIndexedSet[A]] with Serializable  {
 
   private val asSet:Set[A] = outerSeq.to[Set]
 

@@ -11,13 +11,23 @@ name := "ScalaGraphMinimizer"
 organization := "net.walend"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.1.1"
+version := "0.1.2-SNAPSHOT"
 
-isSnapshot := false
+isSnapshot := true
 
 scalaVersion := "2.11.6"
 
-crossScalaVersions := Seq("2.10.4",scalaVersion.value)
+//todo remove crossScalaVersions := Seq("2.10.4",scalaVersion.value)
+
+lazy val root = (project in file(".")).
+  aggregate(graph, toScalaGraph, benchmark)
+
+lazy val graph = project
+
+lazy val toScalaGraph = project.dependsOn(graph)
+
+lazy val benchmark = project.dependsOn(graph,
+                                        toScalaGraph % "test->test;compile->compile")
 
 //todo move to a separate project and .jar
 libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.9.0"

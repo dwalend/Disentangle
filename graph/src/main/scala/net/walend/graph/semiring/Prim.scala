@@ -1,7 +1,4 @@
-package net.walend.graph.semiring
-
-import scalax.collection.mutable.{Graph => MutableGraph}
-import net.walend.heap.Heap
+//package net.walend.graph.semiring
 
 /**
  * An implementation of Prim's algorithm for minimum spanning trees
@@ -10,7 +7,7 @@ import net.walend.heap.Heap
  * @since v0.0.0
  */
 //todo do this with a subgraph
-object Prim {
+//object Prim {
 
   /**
    * Prim's algorithm.
@@ -133,5 +130,5 @@ object Prim {
     labelGraph
   }
   */
-}
+//}
 
