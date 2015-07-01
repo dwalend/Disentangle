@@ -7,7 +7,7 @@ import scalax.collection.GraphPredef.EdgeLikeIn
  * @author dwalend
  * @since v0.0.1
  */
-object TimingStudies {
+object TimingStudiesTest {
 
   def main (args:Array[String]) {
 
