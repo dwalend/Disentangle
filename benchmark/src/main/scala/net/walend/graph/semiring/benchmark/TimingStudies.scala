@@ -9,6 +9,12 @@ import net.walend.graph.semiring.FloydWarshall
  * @since v0.0.1
  */
 object TimingStudies {
+
+  def main(args:Array[String]): Unit = {
+    val floydResults = FloydWarshallTiming.createFloydResults(7)
+    floydResults.map(x => println(x))
+  }
+
 /*
   def main (args:Array[String]) {
 

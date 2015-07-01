@@ -16,8 +16,12 @@ object FloydWarshallTiming {
                       else java.lang.Integer.parseInt(args(1))
 
     //Time the Floyd Warshall algorithm with AllShortestPaths
-    val floydResults = study(maxExponent,timeFloyd,expectedTimeFloyd)
+    val floydResults = createFloydResults(maxExponent)
     floydResults.map(x => println(x))
+  }
+
+  def createFloydResults(maxExponent:Int) = {
+    study(maxExponent,timeFloyd,expectedTimeFloyd)
   }
 
   def timeFloyd(nodeCount:Int):Long = {
