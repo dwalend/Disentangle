@@ -1,17 +1,13 @@
 package net.walend.graph.semiring.benchmark
 
-import scalax.collection.GraphPredef.EdgeLikeIn
-
-import net.walend.graph.semiring.FloydWarshall
-
 /**
  * @author dwalend
- * @since v0.0.1
+ * @since v0.1.2
  */
 object TimingStudies {
 
   def main(args:Array[String]): Unit = {
-    val floydResults = FloydWarshallTiming.createFloydResults(7)
+    val floydResults = FloydWarshallTiming.createResults(7)
     floydResults.map(x => println(x))
   }
 
