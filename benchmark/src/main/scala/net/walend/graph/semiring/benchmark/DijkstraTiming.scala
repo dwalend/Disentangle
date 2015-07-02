@@ -13,10 +13,12 @@ object DijkstraTiming {
 
     //Time the algorithm with AllShortestPaths
     val results = createResults(maxExponent)
-    results.map(x => println(x))
+
+    println("nodes,measured (ns),expected (ns)")
+    results.map(x => println(s"${x._1},${x._2},${x._3}"))
   }
 
-  def createResults(maxExponent:Int) = {
+  def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
     TimingStudy.study(maxExponent,timeDijkstra,expectedTimeDijkstra)
   }
 
