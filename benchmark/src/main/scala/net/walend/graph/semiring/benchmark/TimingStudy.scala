@@ -13,6 +13,9 @@ object TimingStudy {
     warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
     warmUp(16,{timeF(128)})
+    warmUp(16,{timeF(32)})
+    warmUp(16,{timeF(64)})
+    warmUp(16,{timeF(128)})
     val nodeCountAndTime:Seq[(Int,Long)] = nodeCountsFrom32(maxExponent).map(x=>(x,timeF(x)))
 
     val calibration = nodeCountAndTime.head

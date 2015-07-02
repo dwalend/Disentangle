@@ -1,8 +1,8 @@
 scalaVersion := "2.11.6"
 
-libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test" //for timing comparisons
+libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"  //for timing comparisons
 
-libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
+libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1"  //for timing comparisons
 
 scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
