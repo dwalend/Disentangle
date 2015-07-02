@@ -15,9 +15,9 @@ object FloydWarshallTiming {
     val maxExponent = if (args.size == 0) 7
                       else java.lang.Integer.parseInt(args(1))
 
-    //Time the Floyd Warshall algorithm with AllShortestPaths
-    val floydResults = createResults(maxExponent)
-    floydResults.map(x => println(x))
+    //Time the algorithm with AllShortestPaths
+    val results = createResults(maxExponent)
+    results.map(x => println(x))
   }
 
   def createResults(maxExponent:Int) = {

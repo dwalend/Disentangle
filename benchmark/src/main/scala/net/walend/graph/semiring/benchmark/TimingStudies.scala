@@ -9,6 +9,13 @@ object TimingStudies {
   def main(args:Array[String]): Unit = {
     val floydResults = FloydWarshallTiming.createResults(7)
     floydResults.map(x => println(x))
+
+    val dijkstraResults = DijkstraTiming.createResults(7)
+    dijkstraResults.map(x => println(x))
+
+    val brandesResults = BrandesTiming.createResults(7)
+    brandesResults.map(x => println(x))
+
   }
 
 /*
