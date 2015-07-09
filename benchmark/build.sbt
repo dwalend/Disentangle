@@ -4,6 +4,8 @@ libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"  //for timing
 
 libraryDependencies += "net.sf.jung" % "jung-algorithms" % "2.0.1"  //for timing comparisons
 
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0" //command line parser
+
 scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
 fork in run := true
