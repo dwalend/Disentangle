@@ -12,10 +12,14 @@ object DijkstraTiming {
     else java.lang.Integer.parseInt(args(1))
 
     //Time the algorithm with AllShortestPaths
-    val results = createResults(maxExponent)
+    val results:Seq[(Int, Long, Long, Double)] = createResults(maxExponent)
 
-    println("nodes,measured (ns),expected (ns)")
-    results.map(x => println(s"${x._1},${x._2},${x._3}"))
+    val header:String = "nodes,measured (ns),expected (ns)"
+    val columns:Seq[String] = results.map(x => s"${x._1},${x._2},${x._3}")
+
+    val lines:Seq[String] = header +: columns
+    val output = lines.mkString("\n")
+    println(output)
   }
 
   def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
