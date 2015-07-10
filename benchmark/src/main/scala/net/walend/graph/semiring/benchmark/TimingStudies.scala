@@ -16,8 +16,12 @@ object TimingStudies {
 
     val argsParser = new OptionParser[ArgsConfig]("Disentangler Timing Studies"){
       head("sbt \"benchmark/runMain net.walend.graph.semiring.benchmark.TimingStudies\"")
+
       opt[Int]('n', "nodeExponent") action { (x, c) =>
-        c.copy(nodeExponent = x) } text("nodeExponent defines the maximum number of nodes in the study via 2^nodeExponent.")
+        c.copy(nodeExponent = x) } validate { x =>
+        if (x >= 5) success else failure("Option --nodeExponent must be >= 5")
+      } text ("nodeExponent defines the maximum number of nodes in the study via 2^nodeExponent.")
+
       opt[File]('o', "out") valueName("<file>") action { (x, c) =>
         c.copy(out = Some(x)) } text("out is the path to the output file")
     }
