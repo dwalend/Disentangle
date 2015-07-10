@@ -9,7 +9,7 @@ import net.walend.graph.DigraphFactory
  * @author dwalend
  * @since v0.0.1
  */
-object JungDijkstraTiming {
+object JungDijkstraTiming extends TimingStudy {
 
   def main (args:Array[String]) {
 

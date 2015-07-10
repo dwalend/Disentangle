@@ -4,7 +4,7 @@ package net.walend.graph.semiring.benchmark
  * @author dwalend
  * @since v0.0.1
  */
-object DijkstraTiming {
+object DijkstraTiming extends TimingStudy {
 
   def main (args:Array[String]) {
 

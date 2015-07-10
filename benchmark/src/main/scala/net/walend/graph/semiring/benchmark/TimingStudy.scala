@@ -41,3 +41,11 @@ object TimingStudy {
   }
 
 }
+
+trait TimingStudy {
+  /**
+   * @param maxExponent Use 2^^maxExponent nodes as the largest graph in the study
+   * @return a Seq(nodes,measuredTime(ns),expectedTime(ns),measuredTime/expectedTime)
+   */
+  def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)]
+}

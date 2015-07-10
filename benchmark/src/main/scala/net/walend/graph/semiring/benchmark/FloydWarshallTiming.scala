@@ -8,7 +8,7 @@ import net.walend.graph.semiring.{AllPathsFirstSteps, FewestNodes => FFewestNode
  * @author dwalend
  * @since v0.0.1
  */
-object FloydWarshallTiming {
+object FloydWarshallTiming extends TimingStudy {
 
   def main (args:Array[String]) {
 

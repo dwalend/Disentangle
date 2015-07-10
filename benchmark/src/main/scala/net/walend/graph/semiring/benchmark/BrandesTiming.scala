@@ -6,7 +6,7 @@ import net.walend.graph.semiring.{Brandes, FewestNodes}
  * @author dwalend
  * @since v0.0.1
  */
-object BrandesTiming {
+object BrandesTiming extends TimingStudy {
 
   def main (args:Array[String]) {
 

@@ -10,16 +10,25 @@ import scopt.OptionParser
  */
 object TimingStudies {
 
-  case class ArgsConfig(nodeExponent:Int = 5, out:Option[File] = None)
+  val studies: Map[String, TimingStudy] = Map("dijkstra"->DijkstraTiming,
+                                              "jungDijkstra" -> JungDijkstraTiming,
+                                              "floydWarshall" -> FloydWarshallTiming,
+                                              "brandes" -> BrandesTiming)
+  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,nodeExponent:Int = 5, out:Option[File] = None)
 
   def main(args:Array[String]): Unit = {
 
     val argsParser = new OptionParser[ArgsConfig]("Disentangler Timing Studies"){
       head("sbt \"benchmark/runMain net.walend.graph.semiring.benchmark.TimingStudies\"")
 
+      opt[String]('a',"algorithm") action {(x,c) =>
+        c.copy(algorithm = studies(x))} validate { x =>
+          if(studies.contains(x)) success else failure(s"--algorithm must be one of ${studies.keySet.mkString(", ")}")
+      } text (s"algorithm determines what algorithm to measure, one of ${studies.keySet.mkString(", ")}")
+
       opt[Int]('n', "nodeExponent") action { (x, c) =>
         c.copy(nodeExponent = x) } validate { x =>
-        if (x >= 5) success else failure("Option --nodeExponent must be >= 5")
+          if (x >= 5) success else failure("--nodeExponent must be >= 5")
       } text ("nodeExponent defines the maximum number of nodes in the study via 2^nodeExponent.")
 
       opt[File]('o', "out") valueName("<file>") action { (x, c) =>
@@ -29,20 +38,13 @@ object TimingStudies {
     val argsConfig: Option[ArgsConfig] = argsParser.parse(args,ArgsConfig())
 
     argsConfig.fold(){ argsConfig =>
-      val dijkstraResults = DijkstraTiming.createResults(argsConfig.nodeExponent)
+      val results = argsConfig.algorithm.createResults(argsConfig.nodeExponent)
       val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
 
-      output.println(formatOutput(dijkstraResults))
+      output.println(formatOutput(results))
 
       output.flush()
     }
-
-//    val floydResults = FloydWarshallTiming.createResults(7)
-
-
-//    val brandesResults = BrandesTiming.createResults(7)
-//    println(formatOutput(brandesResults))
-
   }
 
   def formatOutput(results:Seq[(Int, Long, Long, Double)]):String = {
