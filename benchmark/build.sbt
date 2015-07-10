@@ -1,4 +1,4 @@
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 libraryDependencies += "net.sf.jung" % "jung-graph-impl" % "2.0.1"  //for timing comparisons
 
