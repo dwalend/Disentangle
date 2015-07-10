@@ -32,7 +32,7 @@ var margin = {top: 30, right: 20, bottom: 30, left: 50},
     height = 270 - margin.top - margin.bottom;
 
 // Set the ranges
-var x = d3.time.scale().range([0, width]);
+var x = d3.scale.linear().range([0, width]);
 var y = d3.scale.linear().range([height, 0]);
 
 // Define the axes
@@ -44,8 +44,8 @@ var yAxis = d3.svg.axis().scale(y)
 
 // Define the line
 var valueline = d3.svg.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.close); });
+    .x(function(d) { return x(d.nodes); })
+    .y(function(d) { return y(d.measured); });
 
 // Adds the svg canvas
 var svg = d3.select("body")
@@ -57,15 +57,11 @@ var svg = d3.select("body")
               "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.csv("data.csv", function(error, data) {
-    data.forEach(function(d) {
-        d.date = parseDate(d.date);
-        d.close = +d.close;
-    });
+d3.csv("results.txt", function(error, data) {
 
     // Scale the range of the data
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain([0, d3.max(data, function(d) { return d.close; })]);
+    x.domain([0, d3.max(data, function(d) { return d.nodes; })]);
+    y.domain([0, d3.max(data, function(d) { return d.measured; })]);
 
     // Add the valueline path.
     svg.append("path")
@@ -77,8 +73,8 @@ d3.csv("data.csv", function(error, data) {
         .data(data)
       .enter().append("circle")
         .attr("r", 3.5)
-        .attr("cx", function(d) { return x(d.date); })
-        .attr("cy", function(d) { return y(d.close); });
+        .attr("cx", function(d) { return x(d.nodes); })
+        .attr("cy", function(d) { return y(d.measured); });
 
     // Add the X Axis
     svg.append("g")
