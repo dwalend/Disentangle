@@ -7,28 +7,38 @@ package net.walend.graph.semiring.benchmark
 object TimingStudies {
 
   def main(args:Array[String]): Unit = {
+
     val floydResults = FloydWarshallTiming.createResults(7)
-    floydResults.map(x => println(x))
 
     val dijkstraResults = DijkstraTiming.createResults(7)
-    dijkstraResults.map(x => println(x))
+    println(formatOutput(dijkstraResults))
 
     val brandesResults = BrandesTiming.createResults(7)
-    brandesResults.map(x => println(x))
+    println(formatOutput(brandesResults))
 
   }
 
-/*
-  def expectedTimeSingleDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
+  val header:String = "nodes,measured (ns),expected (ns)"
 
-    //O(|V| ln|V|)
-    def bigO(nodeCount:Int):Double = {
-      nodeCount * Math.log(nodeCount)
+  def formatOutput(results:Seq[(Int, Long, Long, Double)]):String = {
+
+    val columns:Seq[String] = results.map(x => s"${x._1},${x._2},${x._3}")
+
+    val lines:Seq[String] = header +: columns
+    lines.mkString("\n")
+  }
+
+  /*
+    def expectedTimeSingleDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
+
+      //O(|V| ln|V|)
+      def bigO(nodeCount:Int):Double = {
+        nodeCount * Math.log(nodeCount)
+      }
+
+      ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
     }
 
-    ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
-  }
 
-
-  */
+    */
 }
