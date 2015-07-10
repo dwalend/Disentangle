@@ -6,26 +6,9 @@ package net.walend.graph.semiring.benchmark
  */
 object DijkstraTiming extends TimingStudy {
 
-  def main (args:Array[String]) {
-
-    val maxExponent = if (args.size == 0) 7
-    else java.lang.Integer.parseInt(args(1))
-
-    //Time the algorithm with AllShortestPaths
-    val results:Seq[(Int, Long, Long, Double)] = createResults(maxExponent)
-
-    val header:String = "nodes,measured (ns),expected (ns)"
-    val columns:Seq[String] = results.map(x => s"${x._1},${x._2},${x._3}")
-
-    val lines:Seq[String] = header +: columns
-    val output = lines.mkString("\n")
-    println(output)
-  }
-
   def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
     TimingStudy.study(maxExponent,timeDijkstra,expectedTimeDijkstra)
   }
-
 
   def timeDijkstra(nodeCount:Int):Long = {
 
@@ -41,31 +24,8 @@ object DijkstraTiming extends TimingStudy {
 
       result._2
     }
- /*
-    def timeJungDijkstra(nodeCount:Int):Long = {
 
-      val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
-
-      val jungGraph = new DirectedSparseGraph[Int,Any]()
-      for(node <- graph.nodes) {
-        jungGraph.addVertex(node)
-      }
-
-      var i=0
-      for(edge <- graph.edges) {
-        jungGraph.addEdge(i,edge._1,edge._2)
-        i = i + 1
-      }
-
-      val dijkstraShortestPath = new DijkstraShortestPath(jungGraph)
-      val result = timeFunction{for(node <- jungGraph.getVertices){
-        dijkstraShortestPath.getIncomingEdgeMap(node)
-      }}
-
-      result._2
-    }
-*/
-    def expectedTimeDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
+  def expectedTimeDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
 
       //O(|V|^2 ln|V|)
       def bigO(nodeCount:Int):Double = {

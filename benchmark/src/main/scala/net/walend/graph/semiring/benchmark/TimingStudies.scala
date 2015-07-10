@@ -19,7 +19,7 @@ object TimingStudies {
   def main(args:Array[String]): Unit = {
 
     val argsParser = new OptionParser[ArgsConfig]("Disentangler Timing Studies"){
-      head("sbt \"benchmark/runMain net.walend.graph.semiring.benchmark.TimingStudies\"")
+      head("sbt \"benchmark/run ...\"")
 
       opt[String]('a',"algorithm") action {(x,c) =>
         c.copy(algorithm = studies(x))} validate { x =>

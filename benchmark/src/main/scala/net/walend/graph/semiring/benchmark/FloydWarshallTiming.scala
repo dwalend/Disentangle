@@ -10,16 +10,6 @@ import net.walend.graph.semiring.{AllPathsFirstSteps, FewestNodes => FFewestNode
  */
 object FloydWarshallTiming extends TimingStudy {
 
-  def main (args:Array[String]) {
-
-    val maxExponent = if (args.size == 0) 7
-                      else java.lang.Integer.parseInt(args(1))
-
-    //Time the algorithm with AllShortestPaths
-    val results = createResults(maxExponent)
-    results.map(x => println(x))
-  }
-
   def createResults(maxExponent:Int) = {
     TimingStudy.study(maxExponent,timeFloyd,expectedTimeFloyd)
   }
