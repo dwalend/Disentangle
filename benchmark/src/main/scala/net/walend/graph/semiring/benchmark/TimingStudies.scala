@@ -49,8 +49,9 @@ object TimingStudies {
 
   def formatOutput(results:Seq[(Int, Long, Long, Double)]):String = {
 
-    val header:String = "nodes,measured (ns),expected (ns)"
-    val columns:Seq[String] = results.map(x => s"${x._1},${x._2},${x._3}")
+    //values are in microseconds
+    val header:String = "nodes,measured,expected"
+    val columns:Seq[String] = results.map(x => s"${x._1},${x._2/1000},${x._3/1000}")
 
     val lines:Seq[String] = header +: columns
     lines.mkString("\n")

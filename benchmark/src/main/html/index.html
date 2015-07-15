@@ -57,7 +57,7 @@ var svg = d3.select("body")
               "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.csv("results.txt", function(error, data) {
+d3.csv("dijkstra.csv", function(error, data) {
 
     // Scale the range of the data
     x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
@@ -68,13 +68,21 @@ d3.csv("results.txt", function(error, data) {
         .attr("class", "line")
         .attr("d", valueline(data));
 
-    // Add the scatterplot
+    // Add the scatterplot of the measurements
     svg.selectAll("dot")
         .data(data)
       .enter().append("circle")
         .attr("r", 3.5)
         .attr("cx", function(d) { return x(d.nodes); })
         .attr("cy", function(d) { return y(d.measured); });
+
+    // Add the scatterplot of expected values
+    svg.selectAll("dot")
+        .data(data)
+      .enter().append("circle")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(d.nodes); })
+        .attr("cy", function(d) { return y(d.expected); });
 
     // Add the X Axis
     svg.append("g")
