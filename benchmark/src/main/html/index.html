@@ -60,8 +60,8 @@ var svg = d3.select("body")
 d3.csv("results.txt", function(error, data) {
 
     // Scale the range of the data
-    x.domain([0, d3.max(data, function(d) { return d.nodes; })]);
-    y.domain([0, d3.max(data, function(d) { return d.measured; })]);
+    x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
+    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
 
     // Add the valueline path.
     svg.append("path")
