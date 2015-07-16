@@ -5,17 +5,17 @@
     body { font: 12px Arial;}
 
     path {
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
+        stroke: steelblue;
+        stroke-width: 2;
+        fill: none;
     }
 
     .axis path,
     .axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
     }
 
 </style>
@@ -24,11 +24,11 @@
 <!-- load the d3.js library -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
-<script src="algorithmTime.js"></script>
+<script src="../js/algorithmTime.js"></script>
 
 <script>
     console.log("about to plotIt")
-    plotIt("dijkstra.csv")
+    plotIt("../../../results/v0.1.2/dijkstra.csv")
     console.log("bakc from plotIt")
 </script>
 
