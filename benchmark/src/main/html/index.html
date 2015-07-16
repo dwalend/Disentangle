@@ -61,18 +61,20 @@ d3.csv("dijkstra.csv", function(error, data) {
 
     // Scale the range of the data
     x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
-    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
+//    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
+    y.domain([0, d3.max(data, function(d) { return Number(d.expected); })]);
 
     // Add the valueline path.
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data));
+//    svg.append("path")
+//        .attr("class", "line")
+//        .attr("d", valueline(data));
 
     // Add the scatterplot of the measurements
     svg.selectAll("dot")
         .data(data)
       .enter().append("circle")
         .attr("r", 3.5)
+        .attr("fill","blue")
         .attr("cx", function(d) { return x(d.nodes); })
         .attr("cy", function(d) { return y(d.measured); });
 
@@ -81,6 +83,7 @@ d3.csv("dijkstra.csv", function(error, data) {
         .data(data)
       .enter().append("circle")
         .attr("r", 3.5)
+        .attr("fill","red")
         .attr("cx", function(d) { return x(d.nodes); })
         .attr("cy", function(d) { return y(d.expected); });
 
