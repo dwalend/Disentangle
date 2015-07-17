@@ -92,7 +92,9 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 <script src="benchmarks/src/main/js/algorithmTime.js"></script>
 
 <script>
+    console.log("about to plotIt")
     plotIt("benchmarks/results/v0.1.2/dijkstra.csv")
+    console.log("back from plotIt")
 </script>
 
 #### Brandes
