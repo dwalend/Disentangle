@@ -89,7 +89,7 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
-<script src="../js/algorithmTime.js"></script>
+<script src="benchmarks/src/main/js/algorithmTime.js"></script>
 
 <script>
     plotIt("benchmarks/results/v0.1.2/dijkstra.csv")
