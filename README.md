@@ -1,9 +1,9 @@
 ScalaGraphMinimizer
 ===================
 
-ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-The current version is 0.1.1, the third release. In the first release I got feedback suggesting major rework to improve performance, and a request make the algorithms independent of scala-graph. To get there, I reworked almost all of the API so I incremented the middle revision number.
+The current version is 0.1.2, the forth release. I have restructured the project into subprojects, separating the core graph library from the translator to scala-graph, and creating new subprojects for benchmarks, examples, and presentations.
 
 I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
 better.
@@ -23,14 +23,14 @@ To get the latest snapshot in your build.sbt, add
 
     libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2-SNAPSHOT"
 
-### clone the code repository
+### Clone the Code
 
 If you want to change ScalaGraphMinimizer to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
 
     git clone https://github.com/dwalend/ScalaGraphMinimizer.git
     cd ScalaGraphMinimizer
     sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.1.1-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.1.2-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using ScalaGraphMinimizer
@@ -48,7 +48,7 @@ You'll need to
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
 * arrange for your code to run the algorithm on your graph
 
-Floyd-Warshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides that Seq plus a Map[Node,Double] that holds each node's betweenness.
+FloydWarshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides the same Seq as Dijkstra's algorithm plus a Map[Node,Double] that holds each node's betweenness.
 
     import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
@@ -81,7 +81,27 @@ ScalaGraphMinimizer supplies
 * Dijkstra's algorithm with a Fibonacci Heap
 * Brandes' algorithm for betweenness
 
+### Performance
+
 I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've tested performance up to 2048 nodes.
+
+#### Dijkstra
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script src="../js/algorithmTime.js"></script>
+
+<script>
+    plotIt("benchmarks/results/v0.1.2/dijkstra.csv")
+</script>
+
+#### Brandes
+
+TODO fill in
+
+#### Floyd-Warshall
+
+TODO fill in
 
 ### Semirings
 
