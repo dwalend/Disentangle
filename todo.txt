@@ -1,0 +1,73 @@
+In this release
+
+* Cleaned up IndexedSet
+* scala-graph in a separate subproject
+
+* Rename project  -- Scala Untangled ? Disentangler
+
+* automatically plot the results of the timing studies (and comparison with Jung)
+* Timing data on EC2 c3 machine
+* Activator ?
+
+Next release
+
+* IndexedSubSet backed by BitSet
+* Louvain algorithm
+
+* Subgraph representation ?
+
+Later
+
+* More Enron
+* path representation for net.walend.graph
+* translator from net.walend.graph.path to scala-graph's paths
+* Prim's MST algorithm
+
+
+Pulblicize
+
+* Blog a bit
+
+Overall
+* Add more to the package doc.
+
+Structures
+
+* MultiPath representation (Probably a subgraph via having)
+* Concurrent Graph (Or at least Graph-With-Concurrently-Modifiable-Edges)
+
+Algorithms
+
+* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps] (currently can only use one Semiring)
+* MST with Fibonacci heap
+* Lazy Label Graph. (Single-Source graph with Dijkstra's algorithm)
+* A* algorithm
+* Parallel queued graph minimization (will need a concurrent mutable edge graph)
+
+
+Semirings
+
+* More Semirings
+
+Figure out
+
+* path representations on the original graph with hyperedges and multiple edges.
+
+
+---
+
+Prim's MST algorithm
+
+Put all the verticies in a priority queue with variable key values
+Initialize all the keys to O.
+Pick the root and set its key to I.
+While the queue is not empty
+    extract the minimum edge and node
+        if the node isn't in the MST
+            for each node reachable from it not currently in the MST
+                if some node is closer by using this node
+                    replace the key with the closer value
+
+---
+
+
