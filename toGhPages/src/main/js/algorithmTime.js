@@ -73,7 +73,24 @@ function plotIt(filename)
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis);
-
     });
+}
+
+//todo next call from scala.js and get it to a file. (Think it'll be a blank white box?)
+function plotToPng() {
+/*
+  var canvas = d3.select('body').append('canvas').node();
+  canvas.width = 100;
+  canvas.height = 100;
+  var ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+*/
+  var canvas = d3.select('body').append('canvas').node();
+  //var ctx = body.getContext('2d');
+  var canvasUrl = canvas.toDataURL("image/png");
+
+  console.log(canvasUrl)
+
+  return canvasUrl
 
 }
