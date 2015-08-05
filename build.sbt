@@ -23,6 +23,8 @@ lazy val toScalaGraph = project.dependsOn(graph)
 lazy val benchmark = project.dependsOn(graph,
                                         toScalaGraph % "test->test;compile->compile")
 
+lazy val toGhPages = project.enablePlugins(ScalaJSPlugin)
+
 publishMavenStyle := true
 
 publishTo := {
