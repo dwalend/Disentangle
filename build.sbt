@@ -14,7 +14,7 @@ sbtVersion := "0.13.8"
 //todo remove crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
 lazy val root = (project in file(".")).
-  aggregate(graph, toScalaGraph, benchmark)
+  aggregate(graph, toScalaGraph, benchmark, toGhPages)
 
 lazy val graph = project
 

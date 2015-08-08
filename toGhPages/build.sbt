@@ -18,3 +18,6 @@ libraryDependencies ++= Seq(
 )
 
 jsDependencies += RuntimeDOM
+
+jsDependencies += ProvidedJS / "algorithmTime.js"
+

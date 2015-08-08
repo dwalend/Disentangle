@@ -1,8 +1,7 @@
 package net.walend.graph.results
 
 import scala.scalajs.js
-import js.annotation.JSExport
-import org.scalajs.dom
+import scala.scalajs.js.Dynamic.global
 
 /**
  * Plot xy results and write the image to a file
@@ -14,13 +13,15 @@ import org.scalajs.dom
 object PlotTime extends js.JSApp {
 
   def main(): Unit = {
-    val paragraph = dom.document.createElement("p")
-    paragraph.innerHTML = "<strong>It works!</strong>"
-    dom.document.getElementById("playground").appendChild(paragraph)
+    val png = global.dataToPng("benchmark/results/v0.1.2/dijkstra.csv")
+
+    println(png)
   }
 
-  /** Computes the square of an integer.
-    *  This demonstrates unit testing.
-    */
-  def square(x: Int): Int = x*x
+}
+
+object AlgorithmTime extends js.Any {
+
+ def dataToPng(filename:String):String = js.native
+
 }

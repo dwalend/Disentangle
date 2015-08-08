@@ -94,3 +94,8 @@ function plotToPng() {
   return canvasUrl
 
 }
+
+function dataToPng(filename) {
+    plotIt(filename)
+    return plotToPng
+}
