@@ -19,5 +19,9 @@ libraryDependencies ++= Seq(
 
 jsDependencies += RuntimeDOM
 
+jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js"
+
+//jsDependencies += "org.webjars" % "d3js" % "3.5.5" / "d3.js"
+
 jsDependencies += ProvidedJS / "algorithmTime.js"
 
