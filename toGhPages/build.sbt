@@ -17,11 +17,16 @@ libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "utest" % "0.3.0" % "test"
 )
 
-jsDependencies += RuntimeDOM
+//don't need phantomjs . //jsDependencies += RuntimeDOM
 
 jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js"
 
 //jsDependencies += "org.webjars" % "d3js" % "3.5.5" / "d3.js"
 
-jsDependencies += ProvidedJS / "algorithmTime.js"
+jsDependencies += ProvidedJS / "algorithmTime.js" //commonJSName "algorithmTime"
 
+scalaJSStage in Global := FastOptStage
+
+persistLauncher := true
+
+//skip in packageJSDependencies := false

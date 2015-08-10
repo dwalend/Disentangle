@@ -99,3 +99,7 @@ function dataToPng(filename) {
     plotIt(filename)
     return plotToPng
 }
+
+function hello() {
+    console.log("hello from js")
+}
