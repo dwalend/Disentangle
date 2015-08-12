@@ -1,5 +1,7 @@
 package net.walend.graph.results
 
+import java.io.File
+
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
@@ -17,16 +19,9 @@ object PlotTime extends js.JSApp {
     println("Hello from scala")
     global.hello()
 
-    val png = global.dataToPng("benchmark/results/v0.1.2/dijkstra.csv")
+    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimize/benchmark/results/v0.1.2/dijkstra.csv")
 
-    println(png)
+//    println(png)
   }
 
 }
-/*
-object AlgorithmTime extends js.Any {
-
- def dataToPng(filename:String):String = js.native
-
-}
-*/

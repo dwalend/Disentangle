@@ -2,7 +2,6 @@
 
 function plotIt(filename)
 {
-
     var margin = {top: 30, right: 20, bottom: 30, left: 100},
         width = 600 - margin.left - margin.right,
         height = 270 - margin.top - margin.bottom;
@@ -33,9 +32,11 @@ function plotIt(filename)
                   "translate(" + margin.left + "," + margin.top + ")");
 
     // Get the data
+    console.log(filename)
+
     d3.csv(filename, function(error, data) {
 
-        log.console(data)
+        console.log("data is "+data)
 
         // Scale the range of the data
         x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
@@ -91,7 +92,7 @@ function plotToPng() {
   //var ctx = body.getContext('2d');
   var canvasUrl = canvas.toDataURL("image/png");
 
-  console.log(canvasUrl)
+//  console.log(canvasUrl)
 
   return canvasUrl
 
@@ -99,7 +100,7 @@ function plotToPng() {
 
 dataToPng = function(filename) {
     plotIt(filename)
-    return plotToPng
+    return plotToPng()
 }
 
 hello = function() {
