@@ -35,6 +35,8 @@ function plotIt(filename)
     // Get the data
     d3.csv(filename, function(error, data) {
 
+        log.console(data)
+
         // Scale the range of the data
         x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
     //    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
@@ -95,11 +97,11 @@ function plotToPng() {
 
 }
 
-function dataToPng(filename) {
+dataToPng = function(filename) {
     plotIt(filename)
     return plotToPng
 }
 
-function hello() {
+hello = function() {
     console.log("hello from js")
 }
