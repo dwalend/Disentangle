@@ -146,7 +146,7 @@ jsdom.env({
 				.html(clientScript)
 
 		// save result in an html file, we could also keep it in memory, or export the interesting fragment into a database for later use
-		var svgsrc = window.document.innerHTML
+        var svgsrc = window.document.documentElement.innerHTML
 		fs.writeFile('index.html', svgsrc, function(err) {
 			if(err) {
 				console.log('error saving document', err)
