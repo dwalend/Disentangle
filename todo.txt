@@ -5,7 +5,7 @@ In this release
 
 * Rename project  -- Scala Untangled ? Disentangler
 
-* automatically plot the results of the timing studies (and comparison with Jung)
+* automatically plot the results of the timing studies (and comparison with Jung) - Stalled on producing files from javascript code
 * Timing data on EC2 c3 machine
 * Activator ?
 
