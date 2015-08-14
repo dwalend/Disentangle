@@ -19,6 +19,8 @@ object PlotTime extends js.JSApp {
     println("Hello from scala")
     global.hello()
 
+    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
+
 //    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
 
 //    println(png)
