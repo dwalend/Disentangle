@@ -145,6 +145,15 @@ jsdom.env({
 			.append('script')
 				.html(clientScript)
 
+	// Get the d3js SVG element
+//	var tmp = document.getElementById("ex1");
+	var svg = body.getElementsByTagName("svg")[0];
+	// Extract the data as SVG text string
+	var xmldom = require('xmldom');
+	var svg_xml = (new xmldom.XMLSerializer).serializeToString(svg);
+
+    console.log(svg_xml)
+
 		// save result in an html file, we could also keep it in memory, or export the interesting fragment into a database for later use
         var svgsrc = window.document.documentElement.innerHTML
 		fs.writeFile('index.html', svgsrc, function(err) {
