@@ -6,6 +6,8 @@ libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "0.8.1"//,
 )
 
+libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0" //command line parser
+
 jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js"
 
 jsDependencies += ProvidedJS / "algorithmTime.js" //commonJSName "algorithmTime"

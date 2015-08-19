@@ -19,6 +19,11 @@ function plotToPng() {
 }
 
 dataToPng = function(filename) {
+
+    process.argv.forEach(function(val, index, array) {
+      console.log(index + ': ' + val);
+    });
+
     plotIt(filename)
 
     var pngPlot = plotToPng();
