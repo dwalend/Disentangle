@@ -6,6 +6,11 @@ In this release
 * Rename project  -- Scala Untangled ? Disentangler
 
 * automatically plot the results of the timing studies (and comparison with Jung)
+** Benchmark writes a file of things to compare, automatically read from plotBenchmarks - a plot and runAndPlot target
+** File also determines if plot is svg segment or html page
+** Automatically open a browser to show the page at the end of the benchmark -- create a new target to chain them all together.
+** Scala.js/node.js command line as a separate project.
+
 * Timing data on EC2 c3 machine
 * Activator ?
 * Parallel Dijkstra, Brandes

@@ -1,21 +1,8 @@
-// Set the dimensions of the canvas / graph
-
-//todo next call from scala.js and get it to a file. (Think it'll be a blank white box?)
 function plotToPng() {
-/*
-  var canvas = d3.select('body').append('canvas').node();
-  canvas.width = 100;
-  canvas.height = 100;
-  var ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-*/
   var canvas = d3.select('body').append('canvas').node();
   var canvasUrl = canvas.toDataURL("image/png");
 
-//  console.log(canvasUrl)
-
   return canvasUrl
-
 }
 
 dataToPng = function(filename) {
@@ -36,7 +23,6 @@ dataToPng = function(filename) {
 plotIt = function(filename) {
 //see https://gist.github.com/mef/7044786 and http://mango-is.com/blog/engineering/pre-render-d3-js-charts-at-server-side.html
 
-// pre-render d3 charts at server side
     var d3 = require('d3')
         , jsdom = require('jsdom')
         , fs = require('fs')
@@ -87,11 +73,12 @@ plotIt = function(filename) {
                 var data = d3.csv.parse(filling);
 
                 // Scale the range of the data
+                // todo use the max of all numbers that may be plotted
                 x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
             //    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
                 y.domain([0, d3.max(data, function(d) { return Number(d.expected); })]);
 
-                // Add the valueline path.
+                // todo Add the valueline path.
             //    svg.append("path")
             //        .attr("class", "line")
             //        .attr("d", valueline(data));

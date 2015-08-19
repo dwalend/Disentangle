@@ -87,8 +87,7 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 
 #### Dijkstra
 
-
-<iframe src="http://dwalend.github.io/ScalaGraphMinimizer/toGhPages/src/main/html/index.html"></iframe>
+TODO fill in with svg
 
 #### Brandes
 
