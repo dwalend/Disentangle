@@ -10,8 +10,8 @@ import net.walend.graph.semiring.{AllPathsFirstSteps, FewestNodes => FFewestNode
  */
 object FloydWarshallTiming extends TimingStudy {
 
-  def createResults(maxExponent:Int) = {
-    TimingStudy.study(maxExponent,timeFloyd,expectedTimeFloyd)
+  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
+    TimingStudy.study(minExponent,maxExponent,timeFloyd,expectedTimeFloyd)
   }
 
   def timeFloyd(nodeCount:Int):Long = {

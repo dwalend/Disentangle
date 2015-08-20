@@ -8,8 +8,8 @@ import net.walend.graph.semiring.{Brandes, FewestNodes}
  */
 object BrandesTiming extends TimingStudy {
 
-  def createResults(maxExponent:Int) = {
-    TimingStudy.study(maxExponent,timeBrandes,DijkstraTiming.expectedTimeDijkstra)
+  def createResults(minExponent:Int,maxExponent:Int) = {
+    TimingStudy.study(minExponent,maxExponent,timeBrandes,DijkstraTiming.expectedTimeDijkstra)
   }
 
   def timeBrandes(nodeCount:Int):Long = {

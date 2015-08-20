@@ -14,7 +14,7 @@ object TimingStudies {
                                               "jungDijkstra" -> JungDijkstraTiming,
                                               "floydWarshall" -> FloydWarshallTiming,
                                               "brandes" -> BrandesTiming)
-  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,nodeExponent:Int = 5, out:Option[File] = None)
+  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None)
 
   def main(args:Array[String]): Unit = {
 
@@ -26,19 +26,24 @@ object TimingStudies {
           if(studies.contains(x)) success else failure(s"--algorithm must be one of ${studies.keySet.mkString(", ")}")
       } text (s"algorithm determines what algorithm to measure, one of ${studies.keySet.mkString(", ")}")
 
-      opt[Int]('n', "nodeExponent") action { (x, c) =>
-        c.copy(nodeExponent = x) } validate { x =>
-          if (x >= 5) success else failure("--nodeExponent must be >= 5")
-      } text ("nodeExponent defines the maximum number of nodes in the study via 2^nodeExponent.")
+      opt[Int]('l', "lowExponent") action { (x, c) =>
+        c.copy(lowExponent = x) } text ("lowExponent defines the lower number of nodes in the study via 2^lowExponent.")
+
+      opt[Int]('h', "highExponent") action { (x, c) =>
+        c.copy(highExponent = x) //} validate { x =>
+//        if (x >= lowExponent) success else failure("--highExponent must be >= --lowExponent")
+      } text ("highExponent defines the maximum number of nodes in the study via 2^highExponent.")
 
       opt[File]('o', "out") valueName("<file>") action { (x, c) =>
         c.copy(out = Some(x)) } text("out is the path to the output file")
+
+
     }
 
     val argsConfig: Option[ArgsConfig] = argsParser.parse(args,ArgsConfig())
 
     argsConfig.fold(){ argsConfig =>
-      val results = argsConfig.algorithm.createResults(argsConfig.nodeExponent)
+      val results = argsConfig.algorithm.createResults(argsConfig.lowExponent,argsConfig.highExponent)
       val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
 
       output.println(formatOutput(results))

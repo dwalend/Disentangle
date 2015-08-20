@@ -11,8 +11,8 @@ import net.walend.graph.DigraphFactory
  */
 object JungDijkstraTiming extends TimingStudy {
 
-  def createResults(maxExponent:Int) = {
-    TimingStudy.study(maxExponent,timeJungDijkstra,DijkstraTiming.expectedTimeDijkstra)
+  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
+    TimingStudy.study(minExponent,maxExponent,timeJungDijkstra,DijkstraTiming.expectedTimeDijkstra)
   }
 
 

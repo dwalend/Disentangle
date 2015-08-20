@@ -8,7 +8,7 @@ package net.walend.graph.semiring.benchmark
  */
 object TimingStudy {
 
-  def study(maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
+  def study(minExponent:Int,maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
 
     warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
@@ -16,7 +16,7 @@ object TimingStudy {
     warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
     warmUp(16,{timeF(128)})
-    val nodeCountAndTime:Seq[(Int,Long)] = nodeCountsFrom32(maxExponent).map(x=>(x,timeF(x)))
+    val nodeCountAndTime:Seq[(Int,Long)] = nodeCounts(minExponent,maxExponent).map(x=>(x,timeF(x)))
 
     val calibration = nodeCountAndTime.head
     val expected = nodeCountAndTime.map(x => x._1 -> expectedF(calibration,x._1)).toMap
@@ -25,8 +25,8 @@ object TimingStudy {
     nodeCountAndTime.map(x => (x._1,x._2,expected(x._1),ratio(x._1)))
   }
 
-  def nodeCountsFrom32(exponent:Int):Seq[Int] = {
-    (5.0.to(exponent.toDouble,0.25)).map(x => Math.pow(2,x).toInt)
+  def nodeCounts(minExponent:Int,maxExponent:Int):Seq[Int] = {
+    (minExponent.toDouble.to(maxExponent.toDouble,0.25)).map(x => Math.pow(2,x).toInt)
   }
 
   def warmUp[T](number:Int,body: ⇒ T) = {
@@ -44,8 +44,9 @@ object TimingStudy {
 
 trait TimingStudy {
   /**
+   * @param minExponent Use 2^^minExponent nodes as the smallest graph in the study
    * @param maxExponent Use 2^^maxExponent nodes as the largest graph in the study
    * @return a Seq(nodes,measuredTime(ns),expectedTime(ns),measuredTime/expectedTime)
    */
-  def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)]
+  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)]
 }

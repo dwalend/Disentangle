@@ -6,8 +6,8 @@ package net.walend.graph.semiring.benchmark
  */
 object DijkstraTiming extends TimingStudy {
 
-  def createResults(maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
-    TimingStudy.study(maxExponent,timeDijkstra,expectedTimeDijkstra)
+  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
+    TimingStudy.study(minExponent,maxExponent,timeDijkstra,expectedTimeDijkstra)
   }
 
   def timeDijkstra(nodeCount:Int):Long = {
