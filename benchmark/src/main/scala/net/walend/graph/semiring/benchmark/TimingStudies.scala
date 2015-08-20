@@ -27,7 +27,9 @@ object TimingStudies {
       } text (s"algorithm determines what algorithm to measure, one of ${studies.keySet.mkString(", ")}")
 
       opt[Int]('l', "lowExponent") action { (x, c) =>
-        c.copy(lowExponent = x) } text ("lowExponent defines the lower number of nodes in the study via 2^lowExponent.")
+        c.copy(lowExponent = x) } validate { x =>
+          if (x >= 5) success else failure("--lowExponent must be >= 5 for 32 nodes in the test.")
+      } text ("lowExponent defines the lower number of nodes in the study via 2^lowExponent.")
 
       opt[Int]('h', "highExponent") action { (x, c) =>
         c.copy(highExponent = x) //} validate { x =>
