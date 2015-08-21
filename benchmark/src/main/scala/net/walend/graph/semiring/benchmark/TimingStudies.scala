@@ -14,7 +14,9 @@ object TimingStudies {
                                               "jungDijkstra" -> JungDijkstraTiming,
                                               "floydWarshall" -> FloydWarshallTiming,
                                               "brandes" -> BrandesTiming)
-  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None)
+  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
+    require(lowExponent <= highExponent,s"--highExponent $highExponent must be greater than or equal to --lowExponent $lowExponent")
+  }
 
   def main(args:Array[String]): Unit = {
 
@@ -32,8 +34,7 @@ object TimingStudies {
       } text ("lowExponent defines the lower number of nodes in the study via 2^lowExponent.")
 
       opt[Int]('h', "highExponent") action { (x, c) =>
-        c.copy(highExponent = x) //} validate { x =>
-//        if (x >= lowExponent) success else failure("--highExponent must be >= --lowExponent")
+        c.copy(highExponent = x)
       } text ("highExponent defines the maximum number of nodes in the study via 2^highExponent.")
 
       opt[File]('o', "out") valueName("<file>") action { (x, c) =>
