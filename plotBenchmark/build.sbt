@@ -3,10 +3,10 @@ scalaVersion := "2.11.7"
 scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
 libraryDependencies ++= Seq(
-  "org.scala-js" %%% "scalajs-dom" % "0.8.1"//,
+  "org.scala-js" %%% "scalajs-dom" % "0.8.1",
+  "org.scala-js" %%% "scalajs-tools" % "0.6.4",
+  "be.doeraene" %%% "scalajs-pickling" % "0.4.0"
 )
-
-libraryDependencies += "com.github.scopt" %% "scopt" % "3.3.0" //command line parser
 
 jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js"
 

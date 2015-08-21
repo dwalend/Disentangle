@@ -1,3 +1,5 @@
+
+
 function plotToPng() {
   var canvas = d3.select('body').append('canvas').node();
   var canvasUrl = canvas.toDataURL("image/png");
@@ -21,7 +23,11 @@ dataToPng = function(filename) {
 }
 
 plotIt = function(filename) {
-//see https://gist.github.com/mef/7044786 and http://mango-is.com/blog/engineering/pre-render-d3-js-charts-at-server-side.html
+//see https://gist.github.com/mef/7044786
+//and http://mango-is.com/blog/engineering/pre-render-d3-js-charts-at-server-side.html
+//and http://d3export.housegordon.org
+//and http://bl.ocks.org/vicapow/758fce6aa4c5195d24be
+//and http://robballou.com/2013/creating-an-svg-file-with-d3-and-node-js/
 
     var d3 = require('d3')
         , jsdom = require('jsdom')
@@ -69,7 +75,6 @@ plotIt = function(filename) {
 
             fs.readFile(filename, 'utf8', function (err, filling) {
 
-                console.log("data is "+filling)
                 var data = d3.csv.parse(filling);
 
                 // Scale the range of the data
