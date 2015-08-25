@@ -1,7 +1,5 @@
 package net.walend.graph.results
 
-import java.io.File
-
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
@@ -24,9 +22,13 @@ object PlotTime extends js.JSApp {
     val line = lineSource.loadLine
     println(line)
 
-//    val fileContents: js.Dynamic = global.readFile("benchmark/results/v0.1.2/dijkstra.csv")
+    val plot = Plot.loadPlot("plotBenchmark/src/main/resources/plotThis.json")
 
-//    println(fileContents)
+    println(plot)
+
+    val lines = plot.lineSources.map(x => (x.name,x.loadLine))
+
+    println(lines)
 
 //    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
 
@@ -44,9 +46,13 @@ object PlotTime extends js.JSApp {
 case class Plot(lineSources:Seq[LineSource],xAxis:Axis,yAxis:Axis)
 
 object Plot {
+  import org.scalajs.core.tools.io.NodeVirtualTextFile
+  import upickle.default._
 
-  def apply(fileName:String) = {
-
+  def loadPlot(fileName:String) = {
+    val file = new NodeVirtualTextFile(fileName)
+    val json = file.content
+    read[Plot](json)
   }
 
 }
