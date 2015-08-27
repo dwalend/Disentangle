@@ -55,7 +55,7 @@ object TimingStudies {
 
       val formatOutput:(Seq[(Int, Long, Long, Double)] => String) = fileType match {
         case s if s == "csv" => formatOutputCsv
-//todo        case s if s == "json" => formatOutputCsv._
+        case s if s == "json" => formatOutputJson
         case _ => formatOutputCsv
       }
 
@@ -73,6 +73,18 @@ object TimingStudies {
 
     val lines:Seq[String] = header +: columns
     lines.mkString("\n")
+  }
+
+  def formatOutputJson(results:Seq[(Int, Long, Long, Double)]):String = {
+
+    val nodes = ("nodes",results.map(x => x._1))
+    //values are in nanoseconds
+    val measured = ("mesaured",results.map(x => x._2))
+    val expected = ("expected",results.map(x => x._3))
+
+    import upickle.default._
+
+    write((nodes,measured,expected))
   }
 
   /*

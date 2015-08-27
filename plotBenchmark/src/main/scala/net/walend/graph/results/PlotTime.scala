@@ -36,9 +36,8 @@ object PlotTime extends js.JSApp {
 
     println(lines)
 
-    val window = dom.window
 
-    val el = window.document//.querySelector("#dataviz-container")
+
 //    val svg = svgTag
 
 //    println(svg(1.0).render)
