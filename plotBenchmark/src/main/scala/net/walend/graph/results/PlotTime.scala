@@ -1,6 +1,12 @@
 package net.walend.graph.results
 
 import scala.scalajs.js
+
+import goggles.d3.all._
+import goggles.svg._
+
+import org.scalajs.dom
+
 import scala.scalajs.js.Dynamic.global
 
 import scala.scalajs.js.annotation.JSExport
@@ -29,6 +35,13 @@ object PlotTime extends js.JSApp {
     val lines = plot.lineSources.map(x => (x.name,x.loadLine))
 
     println(lines)
+
+    val window = dom.window
+
+    val el = window.document//.querySelector("#dataviz-container")
+//    val svg = svgTag
+
+//    println(svg(1.0).render)
 
 //    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
 
@@ -62,6 +75,7 @@ case class LineSource(fileName:String,xColumn:String,yColumn:String,name:String)
   import org.scalajs.core.tools.io.NodeVirtualTextFile
 
   def loadLine:Line = {
+
 
     val file = new NodeVirtualTextFile(fileName)
 

@@ -22,6 +22,9 @@ dataToPng = function(filename) {
     return pngPlot;
 }
 
+
+
+
 plotIt = function(filename) {
 //see https://gist.github.com/mef/7044786
 //and http://mango-is.com/blog/engineering/pre-render-d3-js-charts-at-server-side.html

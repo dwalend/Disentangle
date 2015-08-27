@@ -46,8 +46,18 @@ object TimingStudies {
     val argsConfig: Option[ArgsConfig] = argsParser.parse(args,ArgsConfig())
 
     argsConfig.fold(){ argsConfig =>
+      val fileType = argsConfig.out.fold("csv")(file => file.getName.split('.').lastOption.fold("csv")(end => end))
+
       val results = argsConfig.algorithm.createResults(argsConfig.lowExponent,argsConfig.highExponent)
       val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
+
+
+
+      val formatOutput:(Seq[(Int, Long, Long, Double)] => String) = fileType match {
+        case s if s == "csv" => formatOutputCsv
+//todo        case s if s == "json" => formatOutputCsv._
+        case _ => formatOutputCsv
+      }
 
       output.println(formatOutput(results))
 
@@ -55,11 +65,11 @@ object TimingStudies {
     }
   }
 
-  def formatOutput(results:Seq[(Int, Long, Long, Double)]):String = {
+  def formatOutputCsv(results:Seq[(Int, Long, Long, Double)]):String = {
 
-    //values are in microseconds
+    //values are in nanoseconds
     val header:String = "nodes,measured,expected"
-    val columns:Seq[String] = results.map(x => s"${x._1},${x._2/1000},${x._3/1000}")
+    val columns:Seq[String] = results.map(x => s"${x._1},${x._2},${x._3}")
 
     val lines:Seq[String] = header +: columns
     lines.mkString("\n")
