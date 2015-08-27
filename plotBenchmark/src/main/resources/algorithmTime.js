@@ -15,11 +15,11 @@ dataToPng = function(filename) {
 
     plotIt(filename)
 
-    var pngPlot = plotToPng();
+//    var pngPlot = plotToPng();
 //    var fs = require('fs');
 //    fs.write("dijkstra.png",plotToPng(),'w') ;
 
-    return pngPlot;
+//    return pngPlot;
 }
 
 
@@ -132,6 +132,10 @@ plotIt = function(filename) {
             });
 
     }})
+
+    var result = net.walend.graph.results.PlotTime().callBack("Hello from javascript!")
+
+    console.log(result)
 }
 
 greenCircle = function() {

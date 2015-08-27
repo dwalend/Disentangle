@@ -11,28 +11,21 @@ libraryDependencies ++= Seq(
   "com.yakticus" %%% "goggles" % "0.1-SNAPSHOT"
 )
 
-//jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js"
+jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js" //todo maybe you don't need this
 
-//jsDependencies += ProvidedJS / "algorithmTime.js" //commonJSName "algorithmTime"
+jsDependencies += ProvidedJS / "algorithmTime.js" //commonJSName "algorithmTime"
 
 scalaJSStage in Global := FastOptStage //nodejs
+
+//jsDependencies += "org.webjars.npm" % "jsdom" % "5.4.3" / "jsdom.js"
 
 //jsDependencies += RuntimeDOM  //phantomjs .
 
 //libraryDependencies += "be.doeraene" %%% "scalajs-jquery" % "0.8.0"
 
-//jsDependencies += "org.webjars.npm" % "jsdom" % "5.4.3" / "jsdom.js"
 
 //persistLauncher := true
 
 //skip in packageJSDependencies := false
-
-//fork in run := true
-
-//javaOptions in run += "-Xmx3G" //prevents big GC
-
-//javaOptions in run += "-Xms3G" //prevents big GC
-
-//javaOptions in run += "-server" //does hotspot optimizations earlier
 
 //testFrameworks += new TestFramework("utest.runner.Framework")

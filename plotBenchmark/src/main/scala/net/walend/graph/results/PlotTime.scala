@@ -20,6 +20,8 @@ import scala.scalajs.js.annotation.JSExport
  * @author dwalend
  * @since v0.1.2
  */
+
+@JSExport
 object PlotTime extends js.JSApp {
 
   def main(): Unit = {
@@ -36,13 +38,7 @@ object PlotTime extends js.JSApp {
 
     println(lines)
 
-
-
-//    val svg = svgTag
-
-//    println(svg(1.0).render)
-
-//    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
+    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
 
 //    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
 
@@ -51,6 +47,14 @@ object PlotTime extends js.JSApp {
 
   def fileContentsToSomething(fileContents:String) = {
     println(fileContents)
+  }
+
+  @JSExport
+  def callBack(message:String):String = {
+
+    println(message + " in the callback!")
+
+    message + " from the callback!"
   }
 
 }
