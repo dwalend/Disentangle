@@ -62,12 +62,14 @@ plotIt = function(filename) {
                 .x(function(d) { return x(d.nodes); })
                 .y(function(d) { return y(d.measured); });
 
-            var el = window.document.querySelector('#dataviz-container')
+            var div1 = window.document.querySelector('#dataviz-container')
                 , body = window.document.querySelector('body')
                 , circleId = 'a2324'  // say, this value was dynamically retrieved from some database
 
+            net.walend.graph.results.PlotTime().plotD3(div1)
+
             // Adds the svg canvas
-            var svg = d3.select(el)
+            var svg = d3.select(div1)
                 .append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)

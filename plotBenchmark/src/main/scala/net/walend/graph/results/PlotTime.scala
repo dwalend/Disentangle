@@ -11,6 +11,8 @@ import scala.scalajs.js.Dynamic.global
 
 import scala.scalajs.js.annotation.JSExport
 
+import org.scalajs.dom.html.Div
+
 /**
  * Plot xy results and write the image to a file.
  *
@@ -55,6 +57,17 @@ object PlotTime extends js.JSApp {
     println(message + " in the callback!")
 
     message + " from the callback!"
+  }
+
+  @JSExport
+  def plotD3(container: Div):Unit = {
+
+    println(s"container is $container")
+
+    val aspectRatio = 16.0/9.0
+    val (width, height) = goggles.api.dimensions(aspectRatio)
+
+    println(width)
   }
 
 }
