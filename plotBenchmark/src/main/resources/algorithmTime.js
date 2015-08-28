@@ -35,7 +35,7 @@ plotIt = function(filename) {
     var d3 = require('d3')
         , jsdom = require('jsdom')
         , fs = require('fs')
-	    , htmlStub = '<html><head></head><body><div id="dataviz-container"></div><script src="js/d3.v3.min.js"></script></body></html>'
+	    , htmlStub = '<html><head></head><body><div id="div1"></div><div id="div2"></div><script src="js/d3.v3.min.js"></script></body></html>'
 
     jsdom.env({
         features : { QuerySelector : true }
@@ -62,11 +62,12 @@ plotIt = function(filename) {
                 .x(function(d) { return x(d.nodes); })
                 .y(function(d) { return y(d.measured); });
 
-            var div1 = window.document.querySelector('#dataviz-container')
+            var div1 = window.document.querySelector('#div1')
+                , div2 = window.document.querySelector('#div2')
                 , body = window.document.querySelector('body')
                 , circleId = 'a2324'  // say, this value was dynamically retrieved from some database
 
-            net.walend.graph.results.PlotTime().plotD3(div1)
+            net.walend.graph.results.PlotTime().plotD3(div2)
 
             // Adds the svg canvas
             var svg = d3.select(div1)

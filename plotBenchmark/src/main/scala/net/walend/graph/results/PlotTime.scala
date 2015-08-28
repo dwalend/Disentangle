@@ -2,8 +2,8 @@ package net.walend.graph.results
 
 import scala.scalajs.js
 
-import goggles.d3.all._
-import goggles.svg._
+//import goggles.d3.all._
+//import goggles.svg._
 
 import org.scalajs.dom
 
@@ -60,14 +60,26 @@ object PlotTime extends js.JSApp {
   }
 
   @JSExport
-  def plotD3(container: Div):Unit = {
+  def plotD3(div2: Div):Unit = {
 
-    println(s"container is $container")
+    val d3 = js.Dynamic.global.d3
 
-    val aspectRatio = 16.0/9.0
-    val (width, height) = goggles.api.dimensions(aspectRatio)
+    println(s"div2 is $div2")
 
-    println(width)
+  //    val aspectRatio = 16.0/9.0
+  //    val (width, height) = goggles.api.dimensions(aspectRatio)
+
+    val svg = d3.select(div2).append("svg")
+
+    svg.attr("width", 600)
+    svg.attr("height", 300)
+    val circle = svg.append("circle")
+    circle.attr("cx", 300)
+    circle.attr("cy", 150)
+    circle.attr("r", 30)
+    circle.attr("fill", "#26963c")
+    circle.attr("id", "123")
+
   }
 
 }
