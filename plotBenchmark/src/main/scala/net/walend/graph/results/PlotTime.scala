@@ -40,7 +40,7 @@ object PlotTime extends js.JSApp {
 
     println(lines)
 
-    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv")
+    global.plotIt("plotBenchmark/src/main/resources/plotThis.json")
 
 //    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
 
@@ -60,7 +60,86 @@ object PlotTime extends js.JSApp {
   }
 
   @JSExport
-  def plotD3(div2: Div):Unit = {
+  def plotD3(div2: Div,fileName:String):Unit  = {
+
+    val plot = Plot.loadPlot(fileName)
+
+    val points: Seq[(LineSource, Line)] = plot.lineSources.map(x => (x,x.loadLine))
+
+    val d3 = js.Dynamic.global.d3
+
+    val margin = Map("top" -> 30, "right" -> 20, "bottom" -> 30, "left" -> 100)
+    val width = 600 - (margin("left") + margin("right"))
+    val height = 270 - (margin("top") + margin("bottom"))
+
+    // Set the ranges
+    val x = d3.scale.linear().range(0, width)
+    val y = d3.scale.linear().range(height, 0)
+
+    // Define the axes
+    val xAxis = d3.svg.axis().scale(x)
+      .orient("bottom").ticks(5)
+
+    val yAxis = d3.svg.axis().scale(y)
+      .orient("left").ticks(5)
+
+    // Define the line
+    /*
+    val valueline = d3.svg.line()
+      .x(function(d) { return x(d.nodes); })
+      .y(function(d) { return y(d.measured); });
+          */
+
+    // Adds the svg canvas
+    val svg = d3.select(div2).append("svg")
+
+    svg.attr("width", (width + margin("left") + margin("right")))
+    svg.attr("height", height + margin("top") + margin("bottom"))
+
+    val g = svg.append("g")
+    g.attr("transform",
+        "translate(" + margin("left") + "," + margin("top") + ")")
+/*
+    var data = d3.csv.parse(filling);
+
+    // Scale the range of the data
+    // todo use the max of all numbers that may be plotted
+    x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
+    //    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
+    y.domain([0, d3.max(data, function(d) { return Number(d.expected); })]);
+
+    svg.selectAll("dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("r", 3.5)
+      .attr("fill","blue")
+      .attr("cx", function(d) { return x(d.nodes); })
+      .attr("cy", function(d) { return y(d.measured); });
+
+    // Add the scatterplot of expected values
+    svg.selectAll("dot")
+      .data(data)
+      .enter().append("circle")
+      .attr("r", 3.5)
+      .attr("fill","red")
+      .attr("cx", function(d) { return x(d.nodes); })
+      .attr("cy", function(d) { return y(d.expected); });
+  */
+
+    // Add the X Axis
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+
+    // Add the Y Axis
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+  }
+
+  @JSExport
+  def greenCircle(div2: Div):Unit = {
 
     val d3 = js.Dynamic.global.d3
 

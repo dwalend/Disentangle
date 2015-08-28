@@ -67,7 +67,7 @@ plotIt = function(filename) {
                 , body = window.document.querySelector('body')
                 , circleId = 'a2324'  // say, this value was dynamically retrieved from some database
 
-            net.walend.graph.results.PlotTime().plotD3(div2)
+            net.walend.graph.results.PlotTime().plotD3(div2,filename)
 
             // Adds the svg canvas
             var svg = d3.select(div1)
