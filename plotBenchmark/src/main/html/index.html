@@ -22,10 +22,16 @@
 <body>
 
 <!-- load the d3.js library -->
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
 
-<script src="../js/algorithmTime.js"></script>
+<!--<script src="../js/algorithmTime.js"></script>-->
 
+<script type="text/javascript" src="../../../../plotBenchmark/target/scala-2.11/plotbenchmark-fastopt.js"></script>
+<!-- Run tutorial.webapp.TutorialApp -->
+<script type="text/javascript">
+      net.walend.graph.results.PlotTime().main();
+</script>
+<!--
 <script>
     console.log("about to plotIt")
     plotIt("../../../../benchmark/results/v0.1.2/dijkstra.csv")
@@ -34,4 +40,12 @@
     console.log(png)
 </script>
 
+<script>
+    console.log("about to plotIt")
+    plotIt("../../../../benchmark/results/v0.1.2/dijkstra.csv")
+    console.log("back from plotIt")
+    png = plotToPng()
+    console.log(png)
+</script>
+-->
 </body>

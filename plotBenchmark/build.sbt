@@ -9,7 +9,8 @@ libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-tools" % "0.6.4",
   "com.lihaoyi" %%% "upickle" % "0.3.4",
   "com.yakticus" %%% "goggles" % "0.1-SNAPSHOT",
-  "com.lihaoyi" %%% "scalatags" % "0.5.2"
+  "com.lihaoyi" %%% "scalatags" % "0.5.2",
+  "com.lihaoyi" %%% "scalarx" % "0.2.8"
 )
 
 jsDependencies += "org.webjars" % "d3js" % "3.5.5-1" / "d3.min.js" //todo maybe you don't need this

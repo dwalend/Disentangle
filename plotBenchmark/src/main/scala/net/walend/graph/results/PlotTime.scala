@@ -27,7 +27,9 @@ import org.scalajs.dom.html.Div
 object PlotTime extends js.JSApp {
 
   def main(): Unit = {
+    println("hello")
 
+/*
     val lineSource = LineSource("benchmark/results/v0.1.2/dijkstra.csv","nodes","expected","Expected")
     val line = lineSource.loadLine
     println(line)
@@ -42,7 +44,7 @@ object PlotTime extends js.JSApp {
 
     global.plotIt("benchmark/results/v0.1.2/dijkstra.csv",
       "plotBenchmark/src/main/resources/plotThis.json")
-
+*/
 //    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
 
 //    println(png)
@@ -173,7 +175,7 @@ object PlotTime extends js.JSApp {
 
   @JSExport
   def greenCircle2(div2: Div):Unit = {
-     /*
+
     val d3 = js.Dynamic.global.d3
 
     println(s"div2 is $div2")
@@ -198,7 +200,7 @@ object PlotTime extends js.JSApp {
  //todo     .bindOption(svgAttrs.x = )
 
     div2.appendChild(Svg(600.0/300)(circle).render)
-    */
+
     /*
     val svg = d3.select(div2).append("svg")
 
