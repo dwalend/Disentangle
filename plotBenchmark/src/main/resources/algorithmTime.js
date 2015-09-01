@@ -25,7 +25,7 @@ dataToPng = function(filename) {
 
 
 
-plotIt = function(filename) {
+plotIt = function(dataFileName,plotFileName) {
 //see https://gist.github.com/mef/7044786
 //and http://mango-is.com/blog/engineering/pre-render-d3-js-charts-at-server-side.html
 //and http://d3export.housegordon.org
@@ -67,7 +67,8 @@ plotIt = function(filename) {
                 , body = window.document.querySelector('body')
                 , circleId = 'a2324'  // say, this value was dynamically retrieved from some database
 
-            net.walend.graph.results.PlotTime().plotD3(div2,filename)
+//            net.walend.graph.results.PlotTime().plotD3(div2,dataFileName,plotFileName)
+            net.walend.graph.results.PlotTime().greenCircle2(div2,dataFileName,plotFileName)
 
             // Adds the svg canvas
             var svg = d3.select(div1)
@@ -79,7 +80,7 @@ plotIt = function(filename) {
                           "translate(" + margin.left + "," + margin.top + ")");
 
 
-            fs.readFile(filename, 'utf8', function (err, filling) {
+            fs.readFile(dataFileName, 'utf8', function (err, filling) {
 
                 var data = d3.csv.parse(filling);
 

@@ -2,8 +2,8 @@ package net.walend.graph.results
 
 import scala.scalajs.js
 
-//import goggles.d3.all._
-//import goggles.svg._
+import goggles.d3.all._
+import goggles.svg._
 
 import org.scalajs.dom
 
@@ -40,7 +40,8 @@ object PlotTime extends js.JSApp {
 
     println(lines)
 
-    global.plotIt("plotBenchmark/src/main/resources/plotThis.json")
+    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv",
+      "plotBenchmark/src/main/resources/plotThis.json")
 
 //    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
 
@@ -60,9 +61,9 @@ object PlotTime extends js.JSApp {
   }
 
   @JSExport
-  def plotD3(div2: Div,fileName:String):Unit  = {
+  def plotD3(div2: Div,dataFileName:String,plotFileName:String):Unit  = {
 
-    val plot = Plot.loadPlot(fileName)
+    val plot = Plot.loadPlot(plotFileName)
 
     val points: Seq[(LineSource, Line)] = plot.lineSources.map(x => (x,x.loadLine))
 
@@ -91,51 +92,60 @@ object PlotTime extends js.JSApp {
           */
 
     // Adds the svg canvas
-    val svg = d3.select(div2).append("svg")
+//    val svg = d3.select(div2).append("svg")
 
+
+    /*
     svg.attr("width", (width + margin("left") + margin("right")))
     svg.attr("height", height + margin("top") + margin("bottom"))
 
     val g = svg.append("g")
     g.attr("transform",
         "translate(" + margin("left") + "," + margin("top") + ")")
-/*
-    var data = d3.csv.parse(filling);
 
     // Scale the range of the data
     // todo use the max of all numbers that may be plotted
-    x.domain([0, d3.max(data, function(d) { return Number(d.nodes); })]);
-    //    y.domain([0, d3.max(data, function(d) { return Number(d.measured); })]);
-    y.domain([0, d3.max(data, function(d) { return Number(d.expected); })]);
+    import js.JSConverters._
 
-    svg.selectAll("dot")
-      .data(data)
-      .enter().append("circle")
-      .attr("r", 3.5)
-      .attr("fill","blue")
-      .attr("cx", function(d) { return x(d.nodes); })
-      .attr("cy", function(d) { return y(d.measured); });
+    val maxX = points.map(_._2.points.map(p => p._1).max).max
+    val maxY = points.map(_._2.points.map(p => p._2).max).max
+    x.domain(Seq(0,maxX).toJSArray)
+    y.domain(Seq(0,maxY).toJSArray)
+     */
+    /*
+        svg.selectAll("dot")
+          .data(data)
+          .enter().append("circle")
+          .attr("r", 3.5)
+          .attr("fill","blue")
+          .attr("cx", function(d) { return x(d.nodes); })
+          .attr("cy", function(d) { return y(d.measured); });
 
-    // Add the scatterplot of expected values
-    svg.selectAll("dot")
-      .data(data)
-      .enter().append("circle")
-      .attr("r", 3.5)
-      .attr("fill","red")
-      .attr("cx", function(d) { return x(d.nodes); })
-      .attr("cy", function(d) { return y(d.expected); });
-  */
+        // Add the scatterplot of expected values
+        svg.selectAll("dot")
+          .data(data)
+          .enter().append("circle")
+          .attr("r", 3.5)
+          .attr("fill","red")
+          .attr("cx", function(d) { return x(d.nodes); })
+          .attr("cy", function(d) { return y(d.expected); });
+    */
 
     // Add the X Axis
+    /*
     svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", s"translate(0,$height)")
       .call(xAxis)
 
     // Add the Y Axis
     svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
+             */
+    val aspectRatio = height.toDouble/width
+
+//    div2.appendChild(svgTag(aspectRatio))
   }
 
   @JSExport
@@ -161,7 +171,50 @@ object PlotTime extends js.JSApp {
 
   }
 
+  @JSExport
+  def greenCircle2(div2: Div):Unit = {
+     /*
+    val d3 = js.Dynamic.global.d3
+
+    println(s"div2 is $div2")
+
+    //    val aspectRatio = 16.0/9.0
+    //    val (width, height) = goggles.api.dimensions(aspectRatio)
+
+    import scalatags.JsDom.svgTags
+    import scalatags.JsDom.svgAttrs
+    import scalatags.JsDom.all._
+    import goggles.d3.all._
+    import org.scalajs.dom.html
+    import goggles.svg.Svg
+
+    val circle = svgTags.circle(cls:="circle",
+      svgAttrs.r:="30",
+      svgAttrs.fill:="green",
+      svgAttrs.x:="300",
+      svgAttrs.y:="150",
+      id:="greenCircle"
+    ).render
+ //todo     .bindOption(svgAttrs.x = )
+
+    div2.appendChild(Svg(600.0/300)(circle).render)
+    */
+    /*
+    val svg = d3.select(div2).append("svg")
+
+    svg.attr("width", 600)
+    svg.attr("height", 300)
+    val circle = svg.append("circle")
+    circle.attr("cx", 300)
+    circle.attr("cy", 150)
+    circle.attr("r", 30)
+    circle.attr("fill", "#26963c")
+    circle.attr("id", "123")
+     */
+  }
 }
+
+
 
 case class Plot(lineSources:Seq[LineSource],xAxis:Axis,yAxis:Axis)
 
