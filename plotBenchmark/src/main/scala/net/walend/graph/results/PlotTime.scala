@@ -1,6 +1,7 @@
 package net.walend.graph.results
 
 import scala.scalajs.js
+import scalatags.JsDom.{TypedTag, svgTags, svgAttrs}
 
 import goggles.d3.all._
 import goggles.svg._
@@ -12,6 +13,7 @@ import scala.scalajs.js.Dynamic.global
 import scala.scalajs.js.annotation.JSExport
 
 import org.scalajs.dom.html.Div
+import org.scalajs.dom.svg.G
 
 /**
  * Plot xy results and write the image to a file.
@@ -26,33 +28,7 @@ import org.scalajs.dom.html.Div
 @JSExport
 object PlotTime extends js.JSApp {
 
-  def main(): Unit = {
-    println("hello")
-
-/*
-    val lineSource = LineSource("benchmark/results/v0.1.2/dijkstra.csv","nodes","expected","Expected")
-    val line = lineSource.loadLine
-    println(line)
-
-    val plot = Plot.loadPlot("plotBenchmark/src/main/resources/plotThis.json")
-
-    println(plot)
-
-    val lines = plot.lineSources.map(x => (x.name,x.loadLine))
-
-    println(lines)
-
-    global.plotIt("benchmark/results/v0.1.2/dijkstra.csv",
-      "plotBenchmark/src/main/resources/plotThis.json")
-*/
-//    val png = global.dataToPng("file:///Users/dwalend/projects/ScalaGraphMinimizer/benchmark/results/v0.1.2/dijkstra.csv")
-
-//    println(png)
-  }
-
-  def fileContentsToSomething(fileContents:String) = {
-    println(fileContents)
-  }
+  def main():Unit = {}
 
   @JSExport
   def callBack(message:String):String = {
@@ -63,11 +39,14 @@ object PlotTime extends js.JSApp {
   }
 
   @JSExport
-  def plotD3(div2: Div,dataFileName:String,plotFileName:String):Unit  = {
+  def plotD3(div2: Div//,
+//             dataFileName:String,
+//             plotFileName:String
+              ):Unit  = {
 
-    val plot = Plot.loadPlot(plotFileName)
+//    val plot = Plot.loadPlot(plotFileName)
 
-    val points: Seq[(LineSource, Line)] = plot.lineSources.map(x => (x,x.loadLine))
+//    val points: Seq[(LineSource, Line)] = plot.lineSources.map(x => (x,x.loadLine))
 
     val d3 = js.Dynamic.global.d3
 
@@ -94,26 +73,28 @@ object PlotTime extends js.JSApp {
           */
 
     // Adds the svg canvas
-//    val svg = d3.select(div2).append("svg")
+    val svg = d3.select(div2).append("svg")
 
-
-    /*
+//    svg.attr("width", 600)
+//    svg.attr("height", 270)
     svg.attr("width", (width + margin("left") + margin("right")))
     svg.attr("height", height + margin("top") + margin("bottom"))
 
-    val g = svg.append("g")
-    g.attr("transform",
+    svg.append("g").attr("transform",
         "translate(" + margin("left") + "," + margin("top") + ")")
+    import js.JSConverters._
 
     // Scale the range of the data
     // todo use the max of all numbers that may be plotted
-    import js.JSConverters._
+/*
 
     val maxX = points.map(_._2.points.map(p => p._1).max).max
     val maxY = points.map(_._2.points.map(p => p._2).max).max
     x.domain(Seq(0,maxX).toJSArray)
     y.domain(Seq(0,maxY).toJSArray)
      */
+    x.domain(Seq(0,3260000).toJSArray)
+    y.domain(Seq(0,1024).toJSArray)
     /*
         svg.selectAll("dot")
           .data(data)
@@ -134,7 +115,7 @@ object PlotTime extends js.JSApp {
     */
 
     // Add the X Axis
-    /*
+
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", s"translate(0,$height)")
@@ -144,18 +125,13 @@ object PlotTime extends js.JSApp {
     svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-             */
-    val aspectRatio = height.toDouble/width
 
-//    div2.appendChild(svgTag(aspectRatio))
   }
 
   @JSExport
   def greenCircle(div2: Div):Unit = {
 
     val d3 = js.Dynamic.global.d3
-
-    println(s"div2 is $div2")
 
   //    val aspectRatio = 16.0/9.0
   //    val (width, height) = goggles.api.dimensions(aspectRatio)
@@ -172,7 +148,7 @@ object PlotTime extends js.JSApp {
     circle.attr("id", "123")
 
   }
-
+/*
   @JSExport
   def greenCircle2(div2: Div):Unit = {
 
@@ -186,8 +162,6 @@ object PlotTime extends js.JSApp {
     import scalatags.JsDom.svgTags
     import scalatags.JsDom.svgAttrs
     import scalatags.JsDom.all._
-    import goggles.d3.all._
-    import org.scalajs.dom.html
     import goggles.svg.Svg
 
     val circle = svgTags.circle(cls:="circle",
@@ -200,20 +174,8 @@ object PlotTime extends js.JSApp {
  //todo     .bindOption(svgAttrs.x = )
 
     div2.appendChild(Svg(600.0/300)(circle).render)
-
-    /*
-    val svg = d3.select(div2).append("svg")
-
-    svg.attr("width", 600)
-    svg.attr("height", 300)
-    val circle = svg.append("circle")
-    circle.attr("cx", 300)
-    circle.attr("cy", 150)
-    circle.attr("r", 30)
-    circle.attr("fill", "#26963c")
-    circle.attr("id", "123")
-     */
   }
+*/
 }
 
 

@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<!-- to reload the page every 30 seconds
+<meta http-equiv="refresh" content="30" >
+-->
 <style> /* set the CSS */
 
     body { font: 12px Arial;}
@@ -21,16 +24,28 @@
 </style>
 <body>
 
+<div id="divGreenCircle">
+</div>
+<div id="divPlot">
+</div>
+
+
 <!-- load the d3.js library -->
-<!--<script src="http://d3js.org/d3.v3.min.js"></script>-->
+<script src="http://d3js.org/d3.v3.js"></script>
 
 <!--<script src="../js/algorithmTime.js"></script>-->
 
 <script type="text/javascript" src="../../../../plotBenchmark/target/scala-2.11/plotbenchmark-fastopt.js"></script>
 <!-- Run tutorial.webapp.TutorialApp -->
 <script type="text/javascript">
-      net.walend.graph.results.PlotTime().main();
+    var divGreenCircle = document.getElementById('divGreenCircle')
+    net.walend.graph.results.PlotTime().greenCircle(divGreenCircle);
+
+    var divPlot = document.getElementById('divPlot')
+    net.walend.graph.results.PlotTime().plotD3(divPlot);
 </script>
+
+
 <!--
 <script>
     console.log("about to plotIt")
