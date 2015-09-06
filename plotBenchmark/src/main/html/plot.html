@@ -7,6 +7,12 @@
     <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
     <style type="text/css">
 
+        path {
+        stroke: red;
+        stroke-width: 2;
+        fill: none;
+        }
+
         .axis path,
         .axis line {
         fill: none;
@@ -87,6 +93,14 @@
 			   })
 			   .attr("r", 4)
 			   .attr("fill", "red");
+
+            var valueline = d3.svg.line()
+                .x(function(d) { return xScale(d.nodes); })
+                .y(function(d) { return yScale(d.expected); });
+            svg.append("path")
+                .attr("class", "expectedLine")
+                .attr("d", valueline(dataset))
+                .attr("stroke", "red");
 
 			//Create X axis
 			svg.append("g")
