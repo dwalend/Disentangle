@@ -30,11 +30,15 @@
     d3.csv("../../../../benchmark/results/v0.1.2/dijkstra.csv", function(dataset) {
 
  			//Create scale functions
-			var xScale = d3.scale.linear()
-								 .domain([0, d3.max(dataset, function(d) { return Number(d.nodes); })])
+			var xScale = d3.scale.log().base(2)
+								 .domain([d3.min(dataset, function(d) { return Number(d.nodes); }),
+                                            d3.max(dataset, function(d) { return Number(d.nodes); })])
 								 .range([padding, w - padding * 2]);
-			var yScale = d3.scale.linear()
-								 .domain([0, d3.max(dataset, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
+
+			var yScale = d3.scale.linear() //log().base(2)
+								 .domain([d3.min(dataset, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
+								                                            else return Number(d.expected)}),
+                                        d3.max(dataset, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
 								                                            else return Number(d.expected)
 								  })])
 								 .range([h - padding, padding]);
@@ -42,12 +46,16 @@
 			var xAxis = d3.svg.axis()
 							  .scale(xScale)
 							  .orient("bottom")
-							  .ticks(5)
+							  .tickFormat(function (d) {
+                                return xScale.tickFormat(4,d3.format(",d"))(d)
+                                })
 			//Define Y axis
 			var yAxis = d3.svg.axis()
 							  .scale(yScale)
 							  .orient("left")
-							  .ticks(5)
+							  .tickFormat(function (d) {
+                                return yScale.tickFormat(4,d3.format(",d"))(d)
+                                })
 			//Create SVG element
 			var svg = d3.select("body")
 						.append("svg")
