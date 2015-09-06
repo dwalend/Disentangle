@@ -14,7 +14,7 @@ sbtVersion := "0.13.8"
 //todo remove crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
 lazy val root = (project in file(".")).
-  aggregate(graph, toScalaGraph, benchmark, plotBenchmark)
+  aggregate(graph, toScalaGraph, benchmark)
 
 lazy val graph = project
 
@@ -22,8 +22,6 @@ lazy val toScalaGraph = project.dependsOn(graph)
 
 lazy val benchmark = project.dependsOn(graph,
                                         toScalaGraph % "test->test;compile->compile")
-
-lazy val plotBenchmark = project.enablePlugins(ScalaJSPlugin)
 
 publishMavenStyle := true
 

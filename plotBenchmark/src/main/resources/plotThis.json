@@ -1,7 +1,0 @@
-{"lineSources":[
-    {"fileName":"benchmark/results/v0.1.2/dijkstra.csv","xColumn":"nodes","yColumn":"expected","name":"Expected"},
-    {"fileName":"benchmark/results/v0.1.2/dijkstra.csv","xColumn":"nodes","yColumn":"measured","name":"Measured"}
-  ],
-  "xAxis":{"title":"Nodes"},
-  "yAxis":{"title":"Picoseconds"}
-}
