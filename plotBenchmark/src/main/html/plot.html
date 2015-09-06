@@ -35,7 +35,7 @@
                                             d3.max(dataset, function(d) { return Number(d.nodes); })])
 								 .range([padding, w - padding * 2]);
 
-			var yScale = d3.scale.linear() //log().base(2)
+			var yScale = d3.scale.log().base(2)
 								 .domain([d3.min(dataset, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
 								                                            else return Number(d.expected)}),
                                         d3.max(dataset, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
@@ -54,7 +54,7 @@
 							  .scale(yScale)
 							  .orient("left")
 							  .tickFormat(function (d) {
-                                return yScale.tickFormat(4,d3.format(",d"))(d)
+                                return xScale.tickFormat(4,d3.format(",d"))(d)
                                 })
 			//Create SVG element
 			var svg = d3.select("body")
