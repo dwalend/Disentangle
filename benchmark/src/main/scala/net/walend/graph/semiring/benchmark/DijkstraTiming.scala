@@ -4,13 +4,9 @@ package net.walend.graph.semiring.benchmark
  * @author dwalend
  * @since v0.0.1
  */
-object DijkstraTiming extends TimingStudy {
+object DijkstraTiming extends Timeable {
 
-  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
-    TimingStudy.study(minExponent,maxExponent,timeDijkstra,expectedTimeDijkstra)
-  }
-
-  def timeDijkstra(nodeCount:Int):Long = {
+  def measureTime(nodeCount:Int):Long = {
 
       import net.walend.graph.DigraphFactory
       import net.walend.graph.semiring.{AllPathsFirstSteps, Dijkstra => DDijkstra, FewestNodes => FFewestNodes}
@@ -25,7 +21,7 @@ object DijkstraTiming extends TimingStudy {
       result._2
     }
 
-  def expectedTimeDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
+  def expectedTime(calibration:(Int,Long),nodeCount:Int):Long = {
 
       //O(|V|^2 ln|V|)
       def bigO(nodeCount:Int):Double = {

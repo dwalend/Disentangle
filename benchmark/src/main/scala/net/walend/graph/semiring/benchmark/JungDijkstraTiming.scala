@@ -9,14 +9,9 @@ import net.walend.graph.DigraphFactory
  * @author dwalend
  * @since v0.0.1
  */
-object JungDijkstraTiming extends TimingStudy {
+object JungDijkstraTiming extends Timeable {
 
-  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
-    TimingStudy.study(minExponent,maxExponent,timeJungDijkstra,DijkstraTiming.expectedTimeDijkstra)
-  }
-
-
-  def timeJungDijkstra(nodeCount: Int): Long = {
+  def measureTime(nodeCount: Int): Long = {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount, 16)
 
@@ -40,5 +35,9 @@ object JungDijkstraTiming extends TimingStudy {
     }
 
     result._2
+  }
+
+  def expectedTime(calibration:(Int,Long),nodeCount:Int):Long = {
+    DijkstraTiming.expectedTime(calibration,nodeCount)
   }
 }

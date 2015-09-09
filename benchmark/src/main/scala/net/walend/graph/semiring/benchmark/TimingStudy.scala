@@ -1,5 +1,7 @@
 package net.walend.graph.semiring.benchmark
 
+import java.io.{PrintStream, FileOutputStream, File}
+
 /**
  *
  *
@@ -8,7 +10,24 @@ package net.walend.graph.semiring.benchmark
  */
 object TimingStudy {
 
-  def study(minExponent:Int,maxExponent:Int,timeF:Int => Long,expectedF:((Int,Long),Int) => Long):Seq[(Int,Long,Long,Double)] = {
+  def timeFunction[T](body: ⇒ T):(T,Long) = {
+    val startTime:Long = System.nanoTime()
+    val result = body
+    val endTime:Long = System.nanoTime()
+    (result,endTime-startTime)
+  }
+}
+
+/**
+ * @param timeF Runs the timing study.
+ * @param expectedF Predicted time based on early, calibration results
+ * @param minExponent Use 2^^minExponent nodes as the smallest graph in the study
+ * @param maxExponent Use 2^^maxExponent nodes as the largest graph in the study
+ * @param outFile File to write output, will use std out for None
+ */
+case class TimingStudy(timeF:Int => Long,expectedF:((Int,Long),Int) => Long,minExponent:Int,maxExponent:Int,outFile:Option[File]) {
+
+  def study():Seq[(Int,Long,Long)] = {
 
     warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
@@ -16,16 +35,20 @@ object TimingStudy {
     warmUp(16,{timeF(32)})
     warmUp(16,{timeF(64)})
     warmUp(16,{timeF(128)})
-    val nodeCountAndTime:Seq[(Int,Long)] = nodeCounts(minExponent,maxExponent).map(x=>(x,timeF(x)))
 
-    val calibration = nodeCountAndTime.head
-    val expected = nodeCountAndTime.map(x => x._1 -> expectedF(calibration,x._1)).toMap
-    val ratio = nodeCountAndTime.map(x => x._1 -> x._2.toDouble/expected.get(x._1).get).toMap
+    writeHeader()
 
-    nodeCountAndTime.map(x => (x._1,x._2,expected(x._1),ratio(x._1)))
+    val nodeCounts: Seq[Int] = nodeCountSeq(minExponent,maxExponent)
+
+    val headNodeCount = nodeCounts.head
+    val calibration: (Int, Long) = (headNodeCount,timeF(headNodeCount))
+    val headExpected = expectedF(calibration,headNodeCount)
+    writeResult(calibration._1,calibration._2,headExpected)
+
+    nodeCounts.tail.map(x => writeResult(x,timeF(x),expectedF(calibration,x)))
   }
 
-  def nodeCounts(minExponent:Int,maxExponent:Int):Seq[Int] = {
+  def nodeCountSeq(minExponent:Int,maxExponent:Int):Seq[Int] = {
     (minExponent.toDouble.to(maxExponent.toDouble,0.25)).map(x => Math.pow(2,x).toInt)
   }
 
@@ -33,20 +56,31 @@ object TimingStudy {
     for(i <- 0 until number) body
   }
 
-  def timeFunction[T](body: ⇒ T):(T,Long) = {
-    val startTime:Long = System.nanoTime()
-    val result = body
-    val endTime:Long = System.nanoTime()
-    (result,endTime-startTime)
+  def writeHeader():Unit = {
+    val header:String = "nodes,measured,expected"
+    withOut(false) { out =>
+      out.println(header)
+    }
   }
 
+  def writeResult(nodeCount:Int,result:Long,expected:Long):(Int,Long,Long) = {
+    withOut(true) { out =>
+      out.println(s"${nodeCount},${result},${expected}")
+    }
+    (nodeCount,result,expected)
+  }
+
+  def withOut[T](append:Boolean)(block:(PrintStream => T)): T = {
+    val out = outFile.fold(System.out)(file => new PrintStream(new FileOutputStream(file,append)))
+    val result = block(out)
+    if(out != System.out) out.close()
+    result
+  }
 }
 
-trait TimingStudy {
-  /**
-   * @param minExponent Use 2^^minExponent nodes as the smallest graph in the study
-   * @param maxExponent Use 2^^maxExponent nodes as the largest graph in the study
-   * @return a Seq(nodes,measuredTime(ns),expectedTime(ns),measuredTime/expectedTime)
-   */
-  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)]
+trait Timeable {
+
+  def measureTime(nodeCount:Int):Long
+
+  def expectedTime(calibration:(Int,Long),nodeCount:Int):Long
 }

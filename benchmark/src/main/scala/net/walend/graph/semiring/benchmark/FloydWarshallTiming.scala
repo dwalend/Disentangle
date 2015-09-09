@@ -8,13 +8,9 @@ import net.walend.graph.semiring.{AllPathsFirstSteps, FewestNodes => FFewestNode
  * @author dwalend
  * @since v0.0.1
  */
-object FloydWarshallTiming extends TimingStudy {
+object FloydWarshallTiming extends Timeable {
 
-  def createResults(minExponent:Int,maxExponent:Int):Seq[(Int,Long,Long,Double)] = {
-    TimingStudy.study(minExponent,maxExponent,timeFloyd,expectedTimeFloyd)
-  }
-
-  def timeFloyd(nodeCount:Int):Long = {
+  def measureTime(nodeCount:Int):Long = {
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 
@@ -25,7 +21,7 @@ object FloydWarshallTiming extends TimingStudy {
     result._2
   }
 
-  def expectedTimeFloyd(calibration:(Int,Long),nodeCount:Int):Long = {
+  def expectedTime(calibration:(Int,Long),nodeCount:Int):Long = {
     (Math.pow(nodeCount.toDouble/calibration._1,3) * calibration._2).toLong
   }
 }

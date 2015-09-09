@@ -12,8 +12,8 @@ scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
 fork in run := true
 
-javaOptions in run += "-Xmx3G" //prevents big GC
+javaOptions in run += "-Xmx4G" //prevents big GC
 
-javaOptions in run += "-Xms3G" //prevents big GC
+javaOptions in run += "-Xms4G" //prevents big GC
 
 javaOptions in run += "-server" //does hotspot optimizations earlier

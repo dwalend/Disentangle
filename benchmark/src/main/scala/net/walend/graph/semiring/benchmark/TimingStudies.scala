@@ -10,11 +10,11 @@ import scopt.OptionParser
  */
 object TimingStudies {
 
-  val studies: Map[String, TimingStudy] = Map("dijkstra"->DijkstraTiming,
+  val studies: Map[String, Timeable ] = Map("dijkstra"->DijkstraTiming,
                                               "jungDijkstra" -> JungDijkstraTiming,
                                               "floydWarshall" -> FloydWarshallTiming,
                                               "brandes" -> BrandesTiming)
-  case class ArgsConfig(algorithm:TimingStudy = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
+  case class ArgsConfig(algorithm:Timeable = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
     require(lowExponent <= highExponent,s"--highExponent $highExponent must be greater than or equal to --lowExponent $lowExponent")
   }
 
@@ -46,25 +46,32 @@ object TimingStudies {
     val argsConfig: Option[ArgsConfig] = argsParser.parse(args,ArgsConfig())
 
     argsConfig.fold(){ argsConfig =>
-      val fileType = argsConfig.out.fold("csv")(file => file.getName.split('.').lastOption.fold("csv")(end => end))
+//      val fileType = argsConfig.out.fold("csv")(file => file.getName.split('.').lastOption.fold("csv")(end => end))
 
-      val results = argsConfig.algorithm.createResults(argsConfig.lowExponent,argsConfig.highExponent)
-      val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
+      val timingStudy = TimingStudy(argsConfig.algorithm.measureTime,
+                                    argsConfig.algorithm.expectedTime,
+                                    argsConfig.lowExponent,
+                                    argsConfig.highExponent,
+                                    argsConfig.out
+                                  )
 
+      val results = timingStudy.study()
 
-
+//      val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
+/*
       val formatOutput:(Seq[(Int, Long, Long, Double)] => String) = fileType match {
         case s if s == "csv" => formatOutputCsv
         case s if s == "json" => formatOutputJson
         case _ => formatOutputCsv
       }
+*/
+//      output.println(formatOutput(results))
 
-      output.println(formatOutput(results))
-
-      output.flush()
+//      output.flush()
     }
   }
 
+  /*
   def formatOutputCsv(results:Seq[(Int, Long, Long, Double)]):String = {
 
     //values are in nanoseconds
@@ -74,7 +81,8 @@ object TimingStudies {
     val lines:Seq[String] = header +: columns
     lines.mkString("\n")
   }
-
+  */
+/*
   def formatOutputJson(results:Seq[(Int, Long, Long, Double)]):String = {
 
     val nodes = ("nodes",results.map(x => x._1))
@@ -86,7 +94,7 @@ object TimingStudies {
 
     write((nodes,measured,expected))
   }
-
+*/
   /*
     def expectedTimeSingleDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
 

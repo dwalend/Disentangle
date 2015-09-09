@@ -6,13 +6,9 @@ import net.walend.graph.semiring.{Brandes, FewestNodes}
  * @author dwalend
  * @since v0.0.1
  */
-object BrandesTiming extends TimingStudy {
+object BrandesTiming extends Timeable {
 
-  def createResults(minExponent:Int,maxExponent:Int) = {
-    TimingStudy.study(minExponent,maxExponent,timeBrandes,DijkstraTiming.expectedTimeDijkstra)
-  }
-
-  def timeBrandes(nodeCount:Int):Long = {
+  def measureTime(nodeCount:Int):Long = {
 
     import net.walend.graph.DigraphFactory
 
@@ -23,5 +19,9 @@ object BrandesTiming extends TimingStudy {
     val result = TimingStudy.timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,graph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)}
 
     result._2
+  }
+
+  def expectedTime(calibration:(Int,Long),nodeCount:Int):Long = {
+    DijkstraTiming.expectedTime(calibration,nodeCount)
   }
 }
