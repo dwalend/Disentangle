@@ -31,7 +31,7 @@
 			//Width and height
     var w = 1600;
     var h = 900;
-    var padding = 90;
+    var padding = 120;
 
     d3.csv("../../../../benchmark/results/v0.1.2/dijkstra.csv", function(dataset) {
 
@@ -39,7 +39,7 @@
 			var xScale = d3.scale.log().base(2)
 								 .domain([d3.min(dataset, function(d) { return Number(d.nodes); }),
                                             d3.max(dataset, function(d) { return Number(d.nodes); })])
-								 .range([padding, w - padding * 2]);
+								 .range([padding, w - padding * 2])
 
 			var yScale = d3.scale.log().base(2)
 								 .domain([d3.min(dataset, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
@@ -47,7 +47,8 @@
                                         d3.max(dataset, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
 								                                            else return Number(d.expected)
 								  })])
-								 .range([h - padding, padding]);
+								 .range([h - padding, padding])
+
 			//Define X axis
 			var xAxis = d3.svg.axis()
 							  .scale(xScale)
