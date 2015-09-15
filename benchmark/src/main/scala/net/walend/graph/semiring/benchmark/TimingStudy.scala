@@ -16,6 +16,14 @@ object TimingStudy {
     val endTime:Long = System.nanoTime()
     (result,endTime-startTime)
   }
+
+  def timeToStdOut[T](name:String)(body: => T) = {
+    val (result,time) = timeFunction(body)
+
+    println(s"$name,${time/1000000000}")
+
+    result
+  }
 }
 
 /**
@@ -29,12 +37,9 @@ case class TimingStudy(timeF:Int => Long,expectedF:((Int,Long),Int) => Long,minE
 
   def study():Seq[(Int,Long,Long)] = {
 
-    warmUp(16,{timeF(32)})
-    warmUp(16,{timeF(64)})
-    warmUp(16,{timeF(128)})
-    warmUp(16,{timeF(32)})
-    warmUp(16,{timeF(64)})
-    warmUp(16,{timeF(128)})
+    warmUp(64,{timeF(32)})
+    warmUp(64,{timeF(64)})
+    warmUp(64,{timeF(128)})
 
     writeHeader()
 

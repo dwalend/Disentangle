@@ -15,7 +15,9 @@ object TimingStudies {
                                               "floydWarshall" -> FloydWarshallTiming,
                                               "brandes" -> BrandesTiming)
   case class ArgsConfig(algorithm:Timeable = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
-    require(lowExponent <= highExponent,s"--highExponent $highExponent must be greater than or equal to --lowExponent $lowExponent")
+    def validate() = {
+      require(lowExponent <= highExponent, s"--highExponent $highExponent must be greater than or equal to --lowExponent $lowExponent")
+    }
   }
 
   def main(args:Array[String]): Unit = {
@@ -47,13 +49,14 @@ object TimingStudies {
 
     argsConfig.fold(){ argsConfig =>
 //      val fileType = argsConfig.out.fold("csv")(file => file.getName.split('.').lastOption.fold("csv")(end => end))
+      argsConfig.validate()
 
       val timingStudy = TimingStudy(argsConfig.algorithm.measureTime,
                                     argsConfig.algorithm.expectedTime,
                                     argsConfig.lowExponent,
                                     argsConfig.highExponent,
                                     argsConfig.out
-                                  )
+                                    )
 
       val results = timingStudy.study()
 
