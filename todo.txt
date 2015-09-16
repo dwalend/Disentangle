@@ -11,9 +11,12 @@ In this release
 ** Automatically open a browser to show the page at the end of the benchmark -- create a new target to chain them all together.
 ** Scala.js/node.js command line as a separate project.
 
-* Timing data on EC2 c3 machine
-* Activator ?
+* Timing data on EC2 big machine
+** Test and script on cheap machine
+** Automate git add, commit, push
+** Run on a big spot instance
 * Parallel Dijkstra, Brandes
+** Run on a big spot instance
 
 Next release
 
