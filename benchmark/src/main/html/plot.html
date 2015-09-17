@@ -33,111 +33,111 @@
 			//Width and height
 	var plotResults = function() {
 
-    var w = 1600;
-    var h = 900;
-    var padding = 120;
+		var w = 1600;
+		var h = 900;
+		var padding = 120;
 
-    d3.csv("../../../../benchmark/results/v0.1.2/jung.csv", function(standardData) {
+		d3.csv("../../../../benchmark/results/v0.1.2/jung.csv", function(standardData) {
 
-        d3.csv("../../../../benchmark/results/v0.1.2/dijkstra.csv", function(latestData) {
+			d3.csv("../../../../benchmark/results/v0.1.2/dijkstra.csv", function(latestData) {
 
- 			//Create scale functions
-			var xScale = d3.scale//.linear()
-								.log().base(2)
-								 .domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
-                                            d3.max(latestData, function(d) { return Number(d.nodes); })])
-								 .range([padding, w - padding * 2])
+				//Create scale functions
+				var xScale = d3.scale//.linear()
+									.log().base(2)
+									 .domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
+												d3.max(latestData, function(d) { return Number(d.nodes); })])
+									 .range([padding, w - padding * 2])
 
-			var yScale = d3.scale//.linear()
-								.log().base(2)
-								 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
-								                                            else return Number(d.expected)}),
-                                        d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
-								                                            else return Number(d.expected)
-								  })])
-								 .range([h - padding, padding])
+				var yScale = d3.scale//.linear()
+									.log().base(2)
+									 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
+																				else return Number(d.expected)}),
+											d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
+																				else return Number(d.expected)
+									  })])
+									 .range([h - padding, padding])
 
-			//Define X axis
-			var xAxis = d3.svg.axis()
-							  .scale(xScale)
-							  .orient("bottom")
-							  .tickFormat(function (d) {
-                                return xScale.tickFormat(4,d3.format(",d"))(d)
-                                })
-			//Define Y axis
-			var yAxis = d3.svg.axis()
-							  .scale(yScale)
-							  .orient("left")
-							 // .tickFormat(function (d) {
-                             //   return yScale.tickFormat(4,d3.format(",d"))(d)
-                             //   })
-			//Create SVG element
-			var svg = d3.select("body").select("#chart1")
-						.append("svg")
-						.attr("width", w)
-						.attr("height", h);
+				//Define X axis
+				var xAxis = d3.svg.axis()
+								  .scale(xScale)
+								  .orient("bottom")
+								  .tickFormat(function (d) {
+									return xScale.tickFormat(4,d3.format(",d"))(d)
+									})
+				//Define Y axis
+				var yAxis = d3.svg.axis()
+								  .scale(yScale)
+								  .orient("left")
+								 // .tickFormat(function (d) {
+								 //   return yScale.tickFormat(4,d3.format(",d"))(d)
+								 //   })
+				//Create SVG element
+				var svg = d3.select("body").select("#chart1")
+							.append("svg")
+							.attr("width", w)
+							.attr("height", h);
 
-			//Create circles
-			svg.selectAll("measured")
-			   .data(latestData)
-			   .enter()
-			   .append("circle")
-			   .attr("cx", function(d) {
-			   		return xScale(Number(d.nodes));
-			   })
-			   .attr("cy", function(d) {
-			   		return yScale(Number(d.measured));
-			   })
-			   .attr("r", 4)
-			   .attr("fill", "blue");
+				//Create circles
+				svg.selectAll("measured")
+				   .data(latestData)
+				   .enter()
+				   .append("circle")
+				   .attr("cx", function(d) {
+						return xScale(Number(d.nodes));
+				   })
+				   .attr("cy", function(d) {
+						return yScale(Number(d.measured));
+				   })
+				   .attr("r", 4)
+				   .attr("fill", "blue");
 
-			svg.selectAll("expected")
-			   .data(latestData)
-			   .enter()
-			   .append("circle")
-			   .attr("cx", function(d) {
-			   		return xScale(Number(d.nodes));
-			   })
-			   .attr("cy", function(d) {
-			   		return yScale(Number(d.expected));
-			   })
-			   .attr("r", 4)
-			   .attr("fill", "red");
+				svg.selectAll("expected")
+				   .data(latestData)
+				   .enter()
+				   .append("circle")
+				   .attr("cx", function(d) {
+						return xScale(Number(d.nodes));
+				   })
+				   .attr("cy", function(d) {
+						return yScale(Number(d.expected));
+				   })
+				   .attr("r", 4)
+				   .attr("fill", "red");
 
-			svg.selectAll("jung")
-			   .data(standardData)
-			   .enter()
-			   .append("circle")
-			   .attr("cx", function(d) {
-			   		return xScale(Number(d.nodes));
-			   })
-			   .attr("cy", function(d) {
-			   		return yScale(Number(d.measured));
-			   })
-			   .attr("r", 4)
-			   .attr("fill", "green");
+				svg.selectAll("jung")
+				   .data(standardData)
+				   .enter()
+				   .append("circle")
+				   .attr("cx", function(d) {
+						return xScale(Number(d.nodes));
+				   })
+				   .attr("cy", function(d) {
+						return yScale(Number(d.measured));
+				   })
+				   .attr("r", 4)
+				   .attr("fill", "green");
 
-            var valueline = d3.svg.line()
-                .x(function(d) { return xScale(d.nodes); })
-                .y(function(d) { return yScale(d.expected); });
-            svg.append("path")
-                .attr("class", "expectedLine")
-                .attr("d", valueline(latestData))
-                .attr("stroke", "red");
+				var valueline = d3.svg.line()
+					.x(function(d) { return xScale(d.nodes); })
+					.y(function(d) { return yScale(d.expected); });
+				svg.append("path")
+					.attr("class", "expectedLine")
+					.attr("d", valueline(latestData))
+					.attr("stroke", "red");
 
-			//Create X axis
-			svg.append("g")
-				.attr("class", "axis")
-				.attr("transform", "translate(0," + (h - padding) + ")")
-				.call(xAxis);
+				//Create X axis
+				svg.append("g")
+					.attr("class", "axis")
+					.attr("transform", "translate(0," + (h - padding) + ")")
+					.call(xAxis);
 
-			//Create Y axis
-			svg.append("g")
-				.attr("class", "axis")
-				.attr("transform", "translate(" + padding + ",0)")
-				.call(yAxis);
-        } )
-    })
+				//Create Y axis
+				svg.append("g")
+					.attr("class", "axis")
+					.attr("transform", "translate(" + padding + ",0)")
+					.call(yAxis);
+			} )
+		})
     }
     plotResults()
 		</script>
