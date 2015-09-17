@@ -31,7 +31,7 @@
 <div id ="chart2"/>
 <script type="text/javascript">
 
-	var createXScale = function(w,h,latestData) {
+	var createXScale = function(w,h,padding,latestData) {
 		return d3.scale//.linear()
 				.log().base(2)
 				.domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
@@ -39,16 +39,34 @@
 				.range([padding, w - padding * 2])
 	}
 
-	var createYScale = function(w,h,latestData) {
+	var createYScale = function(w,h,padding,latestData) {
 		return d3.scale//.linear()
-									.log().base(2)
-									 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
-																				else return Number(d.expected)}),
-											d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
-																				else return Number(d.expected)
-									  })])
-									 .range([h - padding, padding])
+				.log().base(2)
+				 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
+															else return Number(d.expected)}),
+						d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
+															else return Number(d.expected)
+				  })])
+				 .range([h - padding, padding])
 	}
+
+	var createXAxis = function(xScale) {
+	    return d3.svg.axis()
+                  .scale(xScale)
+                  .orient("bottom")
+                  .tickFormat(function (d) {
+                    return xScale.tickFormat(4,d3.format(",d"))(d)
+                    })
+	}
+
+    var createYAxis = function(yScale) {
+        return d3.svg.axis()
+                  .scale(yScale)
+                  .orient("left")
+                 // .tickFormat(function (d) {
+                 //   return yScale.tickFormat(4,d3.format(",d"))(d)
+                 //   })
+    }
 
 	var plotResults = function(primaryFile,otherFile) {
 
@@ -60,35 +78,14 @@
 			d3.csv(otherFile, function(standardData) {
 
 				//Create scale functions
-				var xScale = d3.scale//.linear()
-									.log().base(2)
-									 .domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
-												d3.max(latestData, function(d) { return Number(d.nodes); })])
-									 .range([padding, w - padding * 2])
+				var xScale = createXScale(w,h,padding,latestData)
 
-				var yScale = d3.scale//.linear()
-									.log().base(2)
-									 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
-																				else return Number(d.expected)}),
-											d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
-																				else return Number(d.expected)
-									  })])
-									 .range([h - padding, padding])
+				var yScale = createYScale(w,h,padding,latestData)
 
 				//Define X axis
-				var xAxis = d3.svg.axis()
-								  .scale(xScale)
-								  .orient("bottom")
-								  .tickFormat(function (d) {
-									return xScale.tickFormat(4,d3.format(",d"))(d)
-									})
+				var xAxis = createXAxis(xScale)
 				//Define Y axis
-				var yAxis = d3.svg.axis()
-								  .scale(yScale)
-								  .orient("left")
-								 // .tickFormat(function (d) {
-								 //   return yScale.tickFormat(4,d3.format(",d"))(d)
-								 //   })
+				var yAxis = createYAxis(yScale)
 				//Create SVG element
 				var svg = d3.select("body").select("#chart1")
 							.append("svg")
