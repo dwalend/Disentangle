@@ -50,22 +50,39 @@
 				 .range([h - padding, padding])
 	}
 
-	var createXAxis = function(xScale) {
-	    return d3.svg.axis()
+	var createXAxis = function(w,h,padding,xScale,svg) {
+	    var xAxis= d3.svg.axis()
                   .scale(xScale)
                   .orient("bottom")
                   .tickFormat(function (d) {
                     return xScale.tickFormat(4,d3.format(",d"))(d)
                     })
+        svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(0," + (h - padding) + ")")
+                .call(xAxis);
+
+        return xAxis
 	}
 
-    var createYAxis = function(yScale) {
-        return d3.svg.axis()
+    var createYAxis = function(w,h,padding,yScale,svg) {
+        var yAxis = d3.svg.axis()
                   .scale(yScale)
                   .orient("left")
                  // .tickFormat(function (d) {
                  //   return yScale.tickFormat(4,d3.format(",d"))(d)
                  //   })
+
+        svg.append("g")
+					.attr("class", "axis")
+					.attr("transform", "translate(" + padding + ",0)")
+					.call(yAxis);
+
+        return yAxis
+    }
+
+    var createDots = function() {
+
     }
 
 	var plotResults = function(containerId,primaryFile,otherFile) {
@@ -82,15 +99,19 @@
 
 				var yScale = createYScale(w,h,padding,latestData)
 
-				//Define X axis
-				var xAxis = createXAxis(xScale)
-				//Define Y axis
-				var yAxis = createYAxis(yScale)
 				//Create SVG element
 				var svg = d3.select("body").select(containerId)
 							.append("svg")
 							.attr("width", w)
 							.attr("height", h);
+
+				//Define X axis
+				var xAxis = createXAxis(w,h,padding,xScale,svg)
+				//Define Y axis
+				var yAxis = createYAxis(w,h,padding,yScale,svg)
+
+                console.log(latestData[0])
+                console.log(latestData[0]["nodes"])
 
 				//Create circles
 				svg.selectAll("measured")
@@ -139,18 +160,6 @@
 					.attr("class", "expectedLine")
 					.attr("d", valueline(latestData))
 					.attr("stroke", "red");
-
-				//Create X axis
-				svg.append("g")
-					.attr("class", "axis")
-					.attr("transform", "translate(0," + (h - padding) + ")")
-					.call(xAxis);
-
-				//Create Y axis
-				svg.append("g")
-					.attr("class", "axis")
-					.attr("transform", "translate(" + padding + ",0)")
-					.call(yAxis);
 			} )
 		})
     }
