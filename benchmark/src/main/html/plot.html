@@ -68,7 +68,7 @@
                  //   })
     }
 
-	var plotResults = function(primaryFile,otherFile) {
+	var plotResults = function(containerId,primaryFile,otherFile) {
 
 		var w = 1600;
 		var h = 900;
@@ -87,7 +87,7 @@
 				//Define Y axis
 				var yAxis = createYAxis(yScale)
 				//Create SVG element
-				var svg = d3.select("body").select("#chart1")
+				var svg = d3.select("body").select(containerId)
 							.append("svg")
 							.attr("width", w)
 							.attr("height", h);
@@ -154,7 +154,7 @@
 			} )
 		})
     }
-    plotResults("../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/jung.csv")
+    plotResults("#chart1","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/jung.csv")
 		</script>
 </body>
 </html>
