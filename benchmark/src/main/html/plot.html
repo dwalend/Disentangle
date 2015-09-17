@@ -30,16 +30,34 @@
 <div id="chart1"/>
 <div id ="chart2"/>
 <script type="text/javascript">
-			//Width and height
-	var plotResults = function() {
+
+	var createXScale = function(w,h,latestData) {
+		return d3.scale//.linear()
+				.log().base(2)
+				.domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
+							d3.max(latestData, function(d) { return Number(d.nodes); })])
+				.range([padding, w - padding * 2])
+	}
+
+	var createYScale = function(w,h,latestData) {
+		return d3.scale//.linear()
+									.log().base(2)
+									 .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
+																				else return Number(d.expected)}),
+											d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
+																				else return Number(d.expected)
+									  })])
+									 .range([h - padding, padding])
+	}
+
+	var plotResults = function(primaryFile,otherFile) {
 
 		var w = 1600;
 		var h = 900;
 		var padding = 120;
 
-		d3.csv("../../../../benchmark/results/v0.1.2/jung.csv", function(standardData) {
-
-			d3.csv("../../../../benchmark/results/v0.1.2/dijkstra.csv", function(latestData) {
+		d3.csv(primaryFile, function(latestData) {
+			d3.csv(otherFile, function(standardData) {
 
 				//Create scale functions
 				var xScale = d3.scale//.linear()
@@ -139,7 +157,7 @@
 			} )
 		})
     }
-    plotResults()
+    plotResults("../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/jung.csv")
 		</script>
 </body>
 </html>
