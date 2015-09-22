@@ -1,6 +1,6 @@
 package net.walend.graph.semiring.benchmark
 
-import java.io.{PrintStream, FileOutputStream, File}
+import java.io.File
 
 import scopt.OptionParser
 
@@ -10,10 +10,14 @@ import scopt.OptionParser
  */
 object TimingStudies {
 
-  val studies: Map[String, Timeable ] = Map("dijkstra"->DijkstraTiming,
-                                              "jungDijkstra" -> JungDijkstraTiming,
-                                              "floydWarshall" -> FloydWarshallTiming,
-                                              "brandes" -> BrandesTiming)
+  val studies: Map[String, Timeable ] = Map(
+    "dijkstra"->DijkstraTiming,
+    "jungDijkstra" -> JungDijkstraTiming,
+    "floydWarshall" -> FloydWarshallTiming,
+    "brandes" -> BrandesTiming,
+    "parDijkstra" -> ParDijkstraTiming
+  )
+
   case class ArgsConfig(algorithm:Timeable = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
     def validate() = {
       require(lowExponent <= highExponent, s"--highExponent $highExponent must be greater than or equal to --lowExponent $lowExponent")
