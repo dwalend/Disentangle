@@ -81,8 +81,19 @@
         return yAxis
     }
 
-    var createDots = function() {
-
+    var createDots = function(dotSetName,xName,yName,color,dataSet,xScale,yScale,svg) {
+		svg.selectAll(dotSetName)
+		   .data(dataSet)
+		   .enter()
+		   .append("circle")
+		   .attr("cx", function(d) {
+				return xScale(Number(d[xName]));
+		   })
+		   .attr("cy", function(d) {
+				return yScale(Number(d[yName]));
+		   })
+		   .attr("r", 4)
+		   .attr("fill", color);
     }
 
 	var plotResults = function(containerId,primaryFile,otherFile) {
@@ -103,55 +114,16 @@
 				var svg = d3.select("body").select(containerId)
 							.append("svg")
 							.attr("width", w)
-							.attr("height", h);
+							.attr("height", h)
 
 				//Define X axis
 				var xAxis = createXAxis(w,h,padding,xScale,svg)
 				//Define Y axis
 				var yAxis = createYAxis(w,h,padding,yScale,svg)
 
-                console.log(latestData[0])
-                console.log(latestData[0]["nodes"])
-
-				//Create circles
-				svg.selectAll("measured")
-				   .data(latestData)
-				   .enter()
-				   .append("circle")
-				   .attr("cx", function(d) {
-						return xScale(Number(d.nodes));
-				   })
-				   .attr("cy", function(d) {
-						return yScale(Number(d.measured));
-				   })
-				   .attr("r", 4)
-				   .attr("fill", "blue");
-
-				svg.selectAll("expected")
-				   .data(latestData)
-				   .enter()
-				   .append("circle")
-				   .attr("cx", function(d) {
-						return xScale(Number(d.nodes));
-				   })
-				   .attr("cy", function(d) {
-						return yScale(Number(d.expected));
-				   })
-				   .attr("r", 4)
-				   .attr("fill", "red");
-
-				svg.selectAll("jung")
-				   .data(standardData)
-				   .enter()
-				   .append("circle")
-				   .attr("cx", function(d) {
-						return xScale(Number(d.nodes));
-				   })
-				   .attr("cy", function(d) {
-						return yScale(Number(d.measured));
-				   })
-				   .attr("r", 4)
-				   .attr("fill", "green");
+				createDots("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
+				createDots("expected","nodes","expected","red",latestData,xScale,yScale,svg)
+				createDots("jung","nodes","measured","green",standardData,xScale,yScale,svg)
 
 				var valueline = d3.svg.line()
 					.x(function(d) { return xScale(d.nodes); })
