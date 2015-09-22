@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>D3: Test of formatted axis values</title>
+    <title>Disentangled vs Jung Performance</title>
 <!--    <script type="text/javascript" src="../d3/d3.v3.js"></script> -->
     <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
     <style type="text/css">
@@ -21,7 +21,7 @@
 
         .axis text {
         font-family: sans-serif;
-        font-size: 11px;
+        font-size: 10px;
         }
     </style>
 </head>
@@ -134,7 +134,6 @@
 				//Define Y axis
 				var yAxis = createYAxis(w,h,padding,yScale,svg)
 
-				createLine("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
 				createLine("expectedLine","nodes","expected","red",latestData,xScale,yScale,svg)
 
 				createDots("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
