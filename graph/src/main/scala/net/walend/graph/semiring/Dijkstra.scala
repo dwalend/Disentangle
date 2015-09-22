@@ -1,8 +1,10 @@
 package net.walend.graph.semiring
 
+import scala.collection.parallel.immutable.ParSeq
+
 import net.walend.heap.{FibonacciHeap, Heap}
 import scala.collection.mutable.ArrayBuffer
-import net.walend.graph.{IndexedSet, IndexedLabelDigraph}
+import net.walend.graph.{IndexedLabelDigraph}
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
@@ -79,7 +81,7 @@ object Dijkstra {
   def allPairsShortestPaths[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
     //The profiler pointed to both flatten and fold(IndexedSet.empty)((a,b) => a ++ b) as trouble.
-    labelDigraph.innerNodes.to[Seq].map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
+    labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
   /**
@@ -106,14 +108,31 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na)
    */
-  def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
-                                                    extraNodes:GenSeq[Node] = Seq.empty,
-                                                    support:SemiringSupport[Label,Key],
-                                                    labelForEdge:(Node,Node,EdgeLabel)=>Label):Seq[(Node,Node,Label)] = {
+  def allPairsShortestPaths[Node,EdgeLabel,Label,Key](
+                                                      edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                      extraNodes:GenSeq[Node] = Seq.empty,
+                                                      support:SemiringSupport[Label,Key],
+                                                      labelForEdge:(Node,Node,EdgeLabel)=>Label
+                                                     ):Seq[(Node,Node,Label)] = {
     val labelDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
-    labelDigraph.innerNodes.to[Seq].map(source => dijkstraSingleSource(labelDigraph,support)(source)).flatten
+    labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
+  }
+
+  /**
+   * O(n&#94;2 ln(n) + na) / cores
+   */
+  def parAllPairsShortestPaths[Node,EdgeLabel,Label,Key](
+                                                       edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                       extraNodes:GenSeq[Node] = Seq.empty,
+                                                       support:SemiringSupport[Label,Key],
+                                                       labelForEdge:(Node,Node,EdgeLabel)=>Label
+                                                       ):ParSeq[(Node,Node,Label)] = {
+    val labelDigraph = createLabelDigraph(edges.par,extraNodes.par,support,labelForEdge)
+
+    //profiler blamed both flatten and fold of IndexedSets as trouble
+    labelDigraph.innerNodes.to[ParSeq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
   /**

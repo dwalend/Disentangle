@@ -95,6 +95,14 @@ class FewestNodesTest extends FlatSpec with Matchers {
     labels.to[Set] should be (expectedArcs)
   }
 
+  "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+
+    val labels = Dijkstra.parAllPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],FewestNodes,FewestNodes.convertEdgeToLabel)
+
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
+  }
+
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,
     B -> 6.5,
@@ -112,4 +120,19 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
+
+  "Parallel Dijkstra for Enron data" should "be calculated" in {
+
+    import scala.io.Source
+    import scala.pickling._
+    import scala.pickling.json._
+
+    val support = FewestNodes
+
+    val fileContents = Source.fromURL(getClass.getResource("/Enron2000Apr.json")).mkString
+    val edges = JSONPickle(fileContents).unpickle[Seq[(String,String,Int)]]
+
+    val labels = Dijkstra.parAllPairsShortestPaths(edges,Seq.empty,FewestNodes,FewestNodes.convertEdgeToLabel)
+  }
+
 }
