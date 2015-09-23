@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <title>Disentangled vs Jung Performance</title>
-<!--    <script type="text/javascript" src="../d3/d3.v3.js"></script> -->
-    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+   	<script type="text/javascript" src="../js/d3.v3.js"></script>
+	<!--    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script> -->
     <style type="text/css">
 
         path {
@@ -144,8 +144,8 @@
 			})
 		})
     }
-    plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/jung.csv")
-    plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/jung.csv")
+    plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/parDijkstra.csv")
+    plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/parDijkstra.csv")
 		</script>
 </body>
 </html>
