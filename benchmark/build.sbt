@@ -17,3 +17,5 @@ javaOptions in run += "-Xmx4G" //prevents big GC
 javaOptions in run += "-Xms4G" //prevents big GC
 
 javaOptions in run += "-server" //does hotspot optimizations earlier
+
+//javaOptions in run += "-Dscala.concurrent.context.numThreads=4"

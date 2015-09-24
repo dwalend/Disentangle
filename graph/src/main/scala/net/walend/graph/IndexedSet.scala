@@ -3,7 +3,7 @@ package net.walend.graph
 import scala.collection.generic.{GenericSetTemplate,ImmutableSetFactory,CanBuildFrom,GenericParTemplate,ParSetFactory}
 import scala.collection.parallel.{ParSetLike, IterableSplitter, Combiner}
 import scala.collection.parallel.immutable.ParSet
-import scala.collection.{CustomParallelizable, SetLike, AbstractSet,GenTraversableOnce}
+import scala.collection.{CustomParallelizable, SetLike,GenTraversableOnce}
 import scala.collection.mutable.{Builder,SetBuilder}
 
 /**
