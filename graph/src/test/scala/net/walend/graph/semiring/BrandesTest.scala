@@ -143,24 +143,8 @@ AL TN
     val lines = Source.fromURL(getClass.getResource("/contiguous-usa.dat.txt")).getLines()
     //turn them into arcs
     def arcFromLine(line:String):Option[(String,String,Unit)] = {
-      import com.github.verbalexpressions.VerbalExpression
-      import VerbalExpression._
-
-      val verbalExpression:VerbalExpression = $.startOfLine()
-        .beginCapture.words().endCapture
-        .whitespaces()
-        .beginCapture.words().endCapture
-        .endOfLine()
-
-      val regex:Regex = verbalExpression.regexp.r
-
-      regex.findFirstMatchIn(line) match {
-        case Some(m) => Some((m.group(1),m.group(2),()))
-        case None => {
-          println(s"Couldn't parse $line")
-          None
-        }
-      }
+      val splitLine: Array[String] = line.split(" ")
+      Some((splitLine(0),splitLine(1),()))
     }
 
     val arcs = lines.map(arcFromLine).flatten.to[Seq]
