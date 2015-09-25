@@ -3,13 +3,14 @@ In this release
 * Cleaned up IndexedSet
 * scala-graph in a separate subproject
 
-* Rename project  -- Scala Untangled ? Disentangler
+* Rename project - Disentangle
 
 * Graphs of results from benchmark
 
 * Timing data on EC2 big machine
 ** Test and script on cheap machine
 ** Run on a big instance
+** Graph results
 
 * Parallel Dijkstra,
 
