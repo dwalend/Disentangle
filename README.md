@@ -1,7 +1,7 @@
 Disentangle
 ===================
 
-Disentangle is a kit for customizable graph algorithms in Scala, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+Disentangle is a kit for customizable graph algorithms in Scala, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. Disentangle uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
 ## Changes in 0.1.2, the forth release
 
@@ -17,7 +17,7 @@ I am seeking feedback on just what the API should look like. I think I'm getting
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2" //todo update with new project name
+    libraryDependencies += "net.walend" %% "disentangle" % "0.1.2" //todo update with new project name
 
 ### The Latest Snapshot (When Available)
 
@@ -33,15 +33,15 @@ To get the latest snapshot in your build.sbt, add
 
 If you want to change Disentangle to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
 
-    git clone https://github.com/dwalend/ScalaGraphMinimizer.git  //todo update with new project name
-    cd ScalaGraphMinimizer
+    git clone https://github.com/dwalend/Disentangle.git  
+    cd Disentangle
     sbt test package
     cp target/scala-2.11/scalagraphminimizer_2.11-0.1.2-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using Disentangle
 
-See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.2/#net.walend.disentangle.graph.package)
+See the [scaladoc](http://dwalend.github.io/Disentangle/v0.1.2/#net.walend.disentangle.graph.package)
 
 ### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
 
@@ -113,22 +113,22 @@ TODO fill in
 
 ### Semirings
 
-ScalaGraphMinimizer supplies some basic semirings and associated support classes
+Disentangle supplies some basic semirings and associated support classes
 
 * FewestNodes which helps create paths that include the fewest nodes between start and end nodes
 * LeastWeights which helps create paths that have the least (positive Double) weight sum between start and end nodes
 * MostProbable which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
 * TransitiveClosure which helps create all paths that connect start and end nodes
 
-Semirings can be composed. ScalaGraphMinimizer takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
+Semirings can be composed. Disentangle takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
 
 * OnePathFirstStep which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
 * AllPathsFirstSteps which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]
 
 
-## Customizing ScalaGraphMinimizer
+## Customizing Disentangle
 
-Customize ScalaGraphMinimizer with your own mappings, Semirings and algorithms.
+Customize Disentangle with your own mappings, Semirings and algorithms.
 
 ### Converting Your Graph to a Sequence of (Node,Node,ArcLabel) Tuples
 
@@ -264,7 +264,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## License and Contributions
 
-ScalaGraphMinimizer carries the MIT license and is (c) David Walend 2013,2014,2015
+Disentangle carries the MIT license and is (c) David Walend 2013,2014,2015
 
 Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience.//todo add Aleksandar to thanks.
 

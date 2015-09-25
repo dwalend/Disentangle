@@ -1,4 +1,4 @@
-name := "ScalaGraphMinimizer"
+name := "Disentangler"
 
 organization := "net.walend"
 
@@ -39,7 +39,7 @@ pomIncludeRepository := { _ => false }
 
 // To sync with Maven central, you need to supply the following information:
 pomExtra := (
-  <url>https://github.com/dwalend/ScalaGraphMinimizer</url>
+  <url>https://github.com/dwalend/Disentangle</url>
     <licenses>
       <license>
         <name>MIT License</name>
@@ -48,8 +48,8 @@ pomExtra := (
       </license>
     </licenses>
     <scm>
-      <connection>scm:git:github.com:dwalend/ScalaGraphMinimizer.git</connection>
-      <url>github.com/dwalend/ScalaGraphMinimizer.git</url>
+      <connection>scm:git:github.com:dwalend/Disentangle.git</connection>
+      <url>github.com/dwalend/Disentangle.git</url>
     </scm>
     <developers>
       <developer>
