@@ -1,7 +1,9 @@
-package net.walend.graph.semiring
+package net.walend.graph.semiring.benchmark
 
-import net.walend.scalagraph.semiring.GraphFactory
 import scalax.collection.GraphPredef.EdgeLikeIn
+
+import net.walend.disentangle.scalagraph.semiring.{ConvertToLabelDigraph, GraphFactory}
+import net.walend.graph.semiring.{FirstStepsTrait, Brandes, FewestNodes, FloydWarshall}
 
 /**
  * @author dwalend
@@ -37,14 +39,13 @@ object TimingStudiesTest {
 
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
-    brandesResults.map(x => println(x))
+    brandesResults.foreach(x => println(x))
   }
 
   def timeFloyd(nodeCount:Int):Long = {
 
     import net.walend.graph.DigraphFactory
-    import net.walend.graph.semiring.AllPathsFirstSteps
-    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.graph.semiring.{AllPathsFirstSteps, FewestNodes => FFewestNodes}
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
     //    val support = FFewestNodes
@@ -67,9 +68,7 @@ object TimingStudiesTest {
   def timeDijkstra(nodeCount:Int):Long = {
 
     import net.walend.graph.DigraphFactory
-    import net.walend.graph.semiring.{Dijkstra => DDijkstra}
-    import net.walend.graph.semiring.AllPathsFirstSteps
-    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
+    import net.walend.graph.semiring.{AllPathsFirstSteps, Dijkstra => DDijkstra, FewestNodes => FFewestNodes}
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FFewestNodes)
 //    val support = FFewestNodes
@@ -115,9 +114,10 @@ object TimingStudiesTest {
 
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
 
-    import edu.uci.ics.jung.graph.DirectedSparseGraph
-    import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
     import scala.collection.JavaConversions._
+
+    import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath
+    import edu.uci.ics.jung.graph.DirectedSparseGraph
 
     val jungGraph = new DirectedSparseGraph[Int,Any]()
     for(node <- graph.nodes) {
@@ -160,12 +160,10 @@ object TimingStudiesTest {
 
   def timeScalaGraphConvertDijkstra(nodeCount:Int):Long = {
 
-    import net.walend.graph.semiring.{FewestNodes => FFewestNodes}
-    import net.walend.graph.semiring.{Dijkstra => DDijkstra}
-    import net.walend.graph.semiring.AllPathsFirstSteps
     import scalax.collection.Graph
     import scalax.collection.GraphEdge.DiEdge
-    import net.walend.scalagraph.semiring.ConvertToLabelDigraph
+
+    import net.walend.graph.semiring.{AllPathsFirstSteps, Dijkstra => DDijkstra, FewestNodes => FFewestNodes}
 
     val support:AllPathsFirstSteps[Int,Int,Int] = new AllPathsFirstSteps(FFewestNodes)
 

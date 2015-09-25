@@ -62,7 +62,7 @@ object TimingStudies {
                                     argsConfig.out
                                     )
 
-      val results = timingStudy.study()
+      timingStudy.study()
 
 //      val output = argsConfig.out.fold(System.out)(file => new PrintStream(new FileOutputStream(file)))
 /*

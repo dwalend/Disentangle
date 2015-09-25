@@ -48,7 +48,7 @@ object DijkstraTiming extends Timeable {
       import scalax.collection.GraphEdge.DiEdge
 
       import net.walend.graph.semiring.{AllPathsFirstSteps, Dijkstra => DDijkstra, FewestNodes => FFewestNodes}
-      import net.walend.scalagraph.semiring.ConvertToLabelDigraph
+      import ConvertToLabelDigraph
 
       val support:AllPathsFirstSteps[Int,Int,Int] = new AllPathsFirstSteps(FFewestNodes)
 

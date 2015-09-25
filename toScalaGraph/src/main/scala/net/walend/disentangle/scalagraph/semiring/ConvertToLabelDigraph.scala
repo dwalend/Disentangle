@@ -1,4 +1,4 @@
-package net.walend.scalagraph.semiring
+package net.walend.disentangle.scalagraph.semiring
 
 import net.walend.graph.semiring.SemiringSupport
 
