@@ -1,7 +1,7 @@
 In this release
 
 * Cleaned up IndexedSet
-* scala-graph in a separate subproject
+* scala-graph and benchmark in separate subprojects
 * Rename project - Disentangle
 
 * Graphs of results from benchmark
