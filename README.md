@@ -1,19 +1,23 @@
-ScalaGraphMinimizer
+Disentangle
 ===================
 
-ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+Disentangle is a kit for customizable graph algorithms in Scala, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
 
-The current version is 0.1.2, the forth release. I have restructured the project into subprojects, separating the core graph library from the translator to scala-graph, and creating new subprojects for benchmarks, examples, and presentations.
+## Changes in 0.1.2, the forth release
 
-I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
-better.
+* Project renamed to Disentangle from ScalaGraphMinimizer, which was nearly impossible to say
+* Restructured into subprojects to minimize dependencies on third-party parts in your code
+* Added parallel versions of Dijkstra's and Brandes' algorithms
+
+I am seeking feedback on just what the API should look like. I think I'm getting close. Please let me know what works well and what could be better.
 
 
-## Getting ScalaGraphMinimizer
+
+## Getting Disentangle
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.1"
+    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2" //todo update with new project name
 
 ### The Latest Snapshot (When Available)
 
@@ -23,26 +27,28 @@ To get the latest snapshot in your build.sbt, add
 
     libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2-SNAPSHOT"
 
+//todo add for scalagraph translator
+
 ### Clone the Code
 
-If you want to change ScalaGraphMinimizer to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
+If you want to change Disentangle to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
 
-    git clone https://github.com/dwalend/ScalaGraphMinimizer.git
+    git clone https://github.com/dwalend/ScalaGraphMinimizer.git  //todo update with new project name
     cd ScalaGraphMinimizer
     sbt test package
     cp target/scala-2.11/scalagraphminimizer_2.11-0.1.2-SNAPSHOT.jar /your/projectname/lib
 
 
-## Using ScalaGraphMinimizer
+## Using Disentangle
 
-See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.1/#net.walend.graph.package)
+See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.2/#net.walend.disentangle.graph.package)
 
 ### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
 
 You'll need to
 
 * bring a graph of your own, or at least a Seq[(Node,Node,MaybeALabel)].
-* choose or create a SemiringSupport implementation, like FewestNodes.
+* select or create a SemiringSupport implementation, like FewestNodes.
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.disentangle.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
@@ -50,7 +56,7 @@ You'll need to
 
 FloydWarshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides the same Seq as Dijkstra's algorithm plus a Map[Node,Double] that holds each node's betweenness.
 
-    import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
+    import net.walend.disentangle.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
     
     //You supply the graph
     val yourEdges:Seq[(String,String,String)] = ???
@@ -60,12 +66,12 @@ FloydWarshall provides a Digraph[Node,Label] with your nodes and labels that con
     //create the support class
     val support = new OnePathFirstStep[String,Int,Int](FewestNodes)
 
-    //this will be used to convert from the arc tuples to labels
+    //Dijkstra.allPairsShortestPaths uses this to convert from your edge tuples to labels
     val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
 
     //find the first step in a shortest path for a pair of nodes if that path exists
     val firstSteps:Seq[(String,String,Option[FirstStep[String,Int]])] = 
-      Dijkstra.allPairsShortestPaths(edges = yourEdges,
+      Dijkstra.parAllPairsShortestPaths(edges = yourEdges,
                                     support = support,
                                     labelForArc = labelForArc)
 
@@ -74,20 +80,28 @@ FloydWarshall provides a Digraph[Node,Label] with your nodes and labels that con
 
 ### Algorithms
 
-ScalaGraphMinimizer supplies
+Disentangle supplies
 
 * A FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
 * The Floyd-Warshall algorithm
 * Dijkstra's algorithm with a Fibonacci Heap
 * Brandes' algorithm for betweenness
 
+### Parallel Algorithms
+
+Disentangle supplies
+
+* A parallel version of Dijkstra's algorithm //todo example
+* A parallel version of Brandes' algorithm
+
 ### Performance
 
 I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've tested performance up to 2048 nodes.
+//todo update
 
 #### Dijkstra
 
-TODO fill in with svg
+TODO fill in with graph
 
 #### Brandes
 
@@ -250,7 +264,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## License and Contributions
 
-ScalaGraphMinimizer carries the MIT license and is (c) David Walend 2013,2014
+ScalaGraphMinimizer carries the MIT license and is (c) David Walend 2013,2014,2015
 
-Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience.
+Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience.//todo add Aleksandar to thanks.
 

@@ -1,12 +1,8 @@
 package net.walend.disentangle.scalagraph.semiring
 
-import net.walend.graph.semiring.AllPathsFirstSteps
-import net.walend.graph.semiring.Brandes
-import net.walend.graph.semiring.Dijkstra
-import net.walend.graph.semiring.FewestNodes
-import net.walend.graph.semiring.FloydWarshall
+import net.walend.disentangle.graph.AdjacencyLabelDigraph
+import net.walend.disentangle.graph.semiring.{FloydWarshall, Brandes, FewestNodes, AllPathsFirstSteps, Dijkstra}
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.graph.AdjacencyLabelDigraph
 
 import scala.collection.GenTraversable
 import scalax.collection.immutable.Graph
@@ -138,8 +134,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for AllPathsFirstSteps" in {
-
-    import net.walend.graph.semiring.LeastWeights
+    import net.walend.disentangle.graph.semiring.LeastWeights
 
     val expectedWeights = Set(
       (A,A,Some(0.0)),

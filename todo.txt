@@ -15,11 +15,14 @@ In this release
 
 * Parallel Brandes
 ** Run on a big instance
+* examples subproject (With enron data)
 
 Next release
 
-* IndexedSubSet backed by BitSet
+* Undirected graphs
+** With Brandes' algorithm
 * Louvain algorithm
+* IndexedSubSet backed by BitSet
 
 * Subgraph representation ?
 

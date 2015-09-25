@@ -1,10 +1,10 @@
 package net.walend.disentangle.scalagraph.semiring
 
-import net.walend.graph.semiring.SemiringSupport
-
 import scalax.collection.GraphPredef.EdgeLikeIn
 import scalax.collection.Graph
 import scalax.collection.GraphEdge.DiEdge
+
+import net.walend.disentangle.graph.semiring.SemiringSupport
 
 
 /**
