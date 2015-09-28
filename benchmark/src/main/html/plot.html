@@ -57,7 +57,7 @@
                   .scale(xScale)
                   .orient("bottom")
                   .tickFormat(function (d) {
-                    return xScale.tickFormat(4,d3.format(",d"))(d)
+                    return xScale.tickFormat(6,d3.format(",d"))(d)
                     })
         svg.append("g")
                 .attr("class", "axis")
@@ -72,7 +72,7 @@
                   .scale(yScale)
                   .orient("left")
                  // .tickFormat(function (d) {
-                 //   return yScale.tickFormat(4,d3.format(",d"))(d)
+                 //   return yScale.tickFormat(6,d3.format(",d"))(d)
                  //   })
 
         svg.append("g")
@@ -144,8 +144,8 @@
 			})
 		})
     }
-    plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/parDijkstra.csv")
-    plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/dijkstra.csv","../../../../benchmark/results/v0.1.2/parDijkstra.csv")
+    plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/c4.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/c4.8xlarge/parDijkstra.csv")
+    plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/c4.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/c4.8xlarge/parDijkstra.csv")
 		</script>
 </body>
 </html>

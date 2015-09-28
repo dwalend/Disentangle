@@ -95,7 +95,9 @@ object Brandes {
 
     type Label = support.Label
 
-    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- initialGraph.innerNodes.asSeq) yield {
+    val innerNodes = initialGraph.innerNodes.asSeq
+
+    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
       val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
       (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
@@ -104,7 +106,7 @@ object Brandes {
     def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = {
       edgesAndPartialBetweennesses.map(x => x._2(innerNode.index)).sum
     }
-    val betweennessMap: Map[Node, Double] = initialGraph.innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
+    val betweennessMap: Map[Node, Double] = innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
 
     val edges: IndexedSeq[(Node, Node, Label)] = edgesAndPartialBetweennesses.flatMap(x => x._1)
 

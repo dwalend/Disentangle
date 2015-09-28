@@ -3,6 +3,7 @@ In this release
 * Cleaned up IndexedSet
 * scala-graph and benchmark in separate subprojects
 * Rename project - Disentangle
+* Parallel Dijkstra,
 
 * Graphs of results from benchmark
 
@@ -11,7 +12,6 @@ In this release
 ** Run on a big instance
 ** Graph results
 
-* Parallel Dijkstra,
 
 * Parallel Brandes
 ** Run on a big instance
