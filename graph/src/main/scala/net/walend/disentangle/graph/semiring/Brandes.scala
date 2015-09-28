@@ -10,6 +10,7 @@ import scala.collection.{GenSeq, GenTraversable}
  * @author dwalend
  * @since v0.1.0
  */
+//noinspection ReferenceMustBePrefixed
 
 object Brandes {
 
@@ -20,7 +21,7 @@ object Brandes {
    *
    * O(n ln(n) + a)
    */
-  def dijkstraSingleSinkForBrandes[Node, Label, Key](labelDigraph: IndexedLabelDigraph[Node, Label],
+  def brandesDijkstra[Node, Label, Key](labelDigraph: IndexedLabelDigraph[Node, Label],
                                                      support: SemiringSupport[Label, Key])
                                                     (sink: labelDigraph.InnerNodeType): (IndexedSeq[(Node, Node, Label)],
     Stack[(labelDigraph.InnerNodeType, Label)]) = {
@@ -97,18 +98,19 @@ object Brandes {
 
     val innerNodes = initialGraph.innerNodes.asSeq
 
-    val edgesAndPartialBetweennesses: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
-      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = dijkstraSingleSinkForBrandes(initialGraph, support)(sink)
+    val edgesAndBetweenParts: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
+      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = brandesDijkstra(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
-      (edgeAndNodeStack._1.filter(_._3 != support.semiring.O), partialB)
+      val filteredEdges = edgeAndNodeStack._1.filter(_._3 != support.semiring.O)
+      (filteredEdges, partialB)
     }
 
-    def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = {
-      edgesAndPartialBetweennesses.map(x => x._2(innerNode.index)).sum
-    }
-    val betweennessMap: Map[Node, Double] = innerNodes.map(innerNode => (innerNode.value, betweennessForNode(innerNode))).toMap
+    def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = edgesAndBetweenParts.map(x => x._2(innerNode.index)).sum
 
-    val edges: IndexedSeq[(Node, Node, Label)] = edgesAndPartialBetweennesses.flatMap(x => x._1)
+    //noinspection ScalaUnnecessaryParentheses
+    val betweennessMap: Map[Node, Double] = innerNodes.map(innerNode => (innerNode.value -> betweennessForNode(innerNode))).toMap
+
+    val edges: IndexedSeq[(Node, Node, Label)] = edgesAndBetweenParts.flatMap(x => x._1)
 
     (edges, betweennessMap)
   }
@@ -129,7 +131,6 @@ object Brandes {
     //Use that to create the Brandes labels
     val brandesEdges = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
 
-//    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodesSeq,support.semiring.O)
     AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes.to[Seq],support.semiring.O)
   }
 
@@ -138,7 +139,7 @@ object Brandes {
                                                                   coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                   labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
-    val labelGraph = createLabelDigraph(edges, extraNodes, support, labelForEdge)
+    val labelGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = createLabelDigraph(edges, extraNodes, support, labelForEdge)
     allLeastPathsAndBetweenness(labelGraph, support)
   }
 
