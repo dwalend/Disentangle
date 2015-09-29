@@ -15,7 +15,8 @@ object TimingStudies {
     "jungDijkstra" -> JungDijkstraTiming,
     "floydWarshall" -> FloydWarshallTiming,
     "brandes" -> BrandesTiming,
-    "parDijkstra" -> ParDijkstraTiming
+    "parDijkstra" -> ParDijkstraTiming,
+    "parBrandes" -> BrandesTiming
   )
 
   case class ArgsConfig(algorithm:Timeable = DijkstraTiming,lowExponent:Int = 5,highExponent:Int = 7, out:Option[File] = None) {
