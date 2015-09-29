@@ -94,11 +94,15 @@ object Brandes {
                                                          support: BrandesSupport[Node, CoreLabel, Key],
                                                          labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
+    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nonSelfEdges = edges.filter(x => x._1 != x._2)
+    val labelEdges: GenSeq[(Node, Node, CoreLabel)] = nodes.map(x => (x,x,support.coreSupport.semiring.I)) ++
+      nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
+
     //Create the core label digraph to get everything's index
     val coreLabelDigraph:IndexedLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,EdgeLabel,CoreLabel,Key](edges, extraNodes, support.coreSupport, labelForEdge)
-
     //Use that to create the Brandes labels
-    val brandesEdges = coreLabelDigraph.innerEdges.map(x => (x._1.value,x._2.value,support.convertCoreLabelToLabel(coreLabelDigraph)(x)))
+    val brandesEdges = labelEdges.map(x => (x._1,x._2,support.convertCoreLabelToLabel(x._3,nodes.indexOf(x._2))))
 
     AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes.to[Seq],support.semiring.O)
   }
@@ -118,7 +122,7 @@ object Brandes {
     val innerNodes = initialGraph.innerNodes.asSeq
 
     val edgesAndBetweenParts: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
-      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = brandesDijkstra(initialGraph, support)(sink)
+      val edgeAndNodeStack = brandesDijkstra(initialGraph, support)(sink)
       val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
       val filteredEdges = edgeAndNodeStack._1.filter(_._3 != support.semiring.O)
       (filteredEdges, partialB)
@@ -171,9 +175,8 @@ object Brandes {
 
     def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
 
-    def convertCoreLabelToLabel(labelDigraph:IndexedLabelDigraph[Node,CoreLabel])
-                         (edge:labelDigraph.InnerEdgeType): Label = {
-      Option(BrandesSteps[Node, CoreLabel](edge._3, 1, Seq(edge._2.index)))
+    def convertCoreLabelToLabel(coreLabel:CoreLabel,toIndex:Int): Label = {
+      Option(BrandesSteps[Node, CoreLabel](coreLabel, 1, Seq(toIndex)))
     }
 
     /**
