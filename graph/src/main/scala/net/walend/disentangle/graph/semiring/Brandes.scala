@@ -99,12 +99,10 @@ object Brandes {
     val labelEdges: GenSeq[(Node, Node, CoreLabel)] = nodes.map(x => (x,x,support.coreSupport.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
-    //Create the core label digraph to get everything's index
-    val coreLabelDigraph:IndexedLabelDigraph[Node,CoreLabel] = Dijkstra.createLabelDigraph[Node,EdgeLabel,CoreLabel,Key](edges, extraNodes, support.coreSupport, labelForEdge)
     //Use that to create the Brandes labels
     val brandesEdges = labelEdges.map(x => (x._1,x._2,support.convertCoreLabelToLabel(x._3,nodes.indexOf(x._2))))
 
-    AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes.to[Seq],support.semiring.O)
+    AdjacencyLabelDigraph(brandesEdges,nodes,support.semiring.O)
   }
 
   /**
