@@ -153,7 +153,7 @@ AL TN
     arcs
   }
 
-  "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataSeq" in {
+  "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataSeq, even in parallel" in {
 
     val arcs = usStateEdges
 
@@ -164,6 +164,10 @@ AL TN
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
     val betweennesses:Map[String,Double] = labelGraphAndBetweenness._2.to[Seq].map(bet => (bet._1,(bet._2/2))).toMap
 
+    //find betweenness in parallel
+    val parLabelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
+    val parBetweennesses:Map[String,Double] = parLabelGraphAndBetweenness._2.to[Seq].map(bet => (bet._1,(bet._2/2))).toMap
+
     //find betweenness with Jung
     val jungB:Map[String,Double] = jungBetweenness(arcs).toMap
 
@@ -172,6 +176,8 @@ AL TN
       import scala.math.abs
       val epsilon = 0.000000000000001 * betweennesses(node)
       assert(abs(betweennesses(node) - jungB(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match jung's ${jungB(node)}")
+      assert(abs(betweennesses(node) - parBetweennesses(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match parBetweennesses's ${parBetweennesses(node)}")
+
     }
   }
 
