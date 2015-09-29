@@ -84,37 +84,6 @@ object Brandes {
     partialBetweenness
   }
 
-
-  /**
-   * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
-   */
-  def allLeastPathsAndBetweenness[Node,
-                                  CoreLabel,
-                                  Key]
-                                  (initialGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]],
-                                   support: BrandesSupport[Node, CoreLabel, Key]): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
-
-    type Label = support.Label
-
-    val innerNodes = initialGraph.innerNodes.asSeq
-
-    val edgesAndBetweenParts: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
-      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = brandesDijkstra(initialGraph, support)(sink)
-      val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
-      val filteredEdges = edgeAndNodeStack._1.filter(_._3 != support.semiring.O)
-      (filteredEdges, partialB)
-    }
-
-    def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = edgesAndBetweenParts.map(x => x._2(innerNode.index)).sum
-
-    //noinspection ScalaUnnecessaryParentheses
-    val betweennessMap: Map[Node, Double] = innerNodes.map(innerNode => (innerNode.value -> betweennessForNode(innerNode))).toMap
-
-    val edges: IndexedSeq[(Node, Node, Label)] = edgesAndBetweenParts.flatMap(x => x._1)
-
-    (edges, betweennessMap)
-  }
-
   /**
    * Create a digraph of Labels from an edge list.
    *
@@ -134,13 +103,36 @@ object Brandes {
     AdjacencyLabelDigraph(brandesEdges,coreLabelDigraph.nodes.to[Seq],support.semiring.O)
   }
 
+  /**
+   * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
+   */
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
                                                                   extraNodes: GenSeq[Node] = Seq.empty,
                                                                   coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                   labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
-    val labelGraph: IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = createLabelDigraph(edges, extraNodes, support, labelForEdge)
-    allLeastPathsAndBetweenness(labelGraph, support)
+    type Label = support.Label
+
+    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges, extraNodes, support, labelForEdge)
+
+    val innerNodes = initialGraph.innerNodes.asSeq
+
+    val edgesAndBetweenParts: IndexedSeq[(IndexedSeq[(Node, Node, Label)], IndexedSeq[Double])] = for (sink <- innerNodes) yield {
+      val edgeAndNodeStack: (IndexedSeq[(Node, Node, Label)], Stack[(initialGraph.InnerNodeType, Label)]) = brandesDijkstra(initialGraph, support)(sink)
+      val partialB = partialBetweenness(support, initialGraph)(sink, edgeAndNodeStack._2, edgeAndNodeStack._1)
+      val filteredEdges = edgeAndNodeStack._1.filter(_._3 != support.semiring.O)
+      (filteredEdges, partialB)
+    }
+
+    def betweennessForNode(innerNode: initialGraph.InnerNodeType): Double = edgesAndBetweenParts.map(x => x._2(innerNode.index)).sum
+
+    //noinspection ScalaUnnecessaryParentheses
+    val betweennessMap: Map[Node, Double] = innerNodes.map(innerNode => (innerNode.value -> betweennessForNode(innerNode))).toMap
+
+    val shortPaths: IndexedSeq[(Node, Node, Label)] = edgesAndBetweenParts.flatMap(x => x._1)
+
+    (shortPaths, betweennessMap)
+
   }
 
   case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Seq[Int]) {
