@@ -11,11 +11,20 @@ In this release
 ** Test and script on cheap machine
 ** Run on a big instance
 ** Graph results
-
-
 * Parallel Brandes
-** Run on a big instance
+
+
+** Brandes on a big instance
 * examples subproject (With enron data)
+* Performance graphs in Scaladoc
+* comments abot hotspots
+* Dijkstra and Brandes plots on r3 machines on AWS
+
+* How much faster is the parallel code?
+
+* Blog about rename,
+* Blog about performance and parallel algorithms
+
 
 Next release
 
