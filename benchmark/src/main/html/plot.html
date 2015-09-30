@@ -4,7 +4,11 @@
     <meta charset="utf-8">
     <title>Disentangled vs Jung Performance</title>
    	<script type="text/javascript" src="../js/d3.v3.js"></script>
-	<!--    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script> -->
+	<script type="text/javascript"src="../js/queue.js"></script>
+<!--
+    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.js"></script>
+-->
     <style type="text/css">
 
         path {
@@ -62,7 +66,7 @@
         svg.append("g")
                 .attr("class", "axis")
                 .attr("transform", "translate(0," + (h - padding) + ")")
-                .call(xAxis);
+                .call(xAxis)
 
         return xAxis
 	}
@@ -114,35 +118,48 @@
 		var w = 1600;
 		var h = 900;
 		var padding = 120;
+		var latestData = [];
+		var standardData = [];
+        var nanoSecond = Math.pow(10,-9)
 
-		d3.csv(primaryFile, function(latestData) {
-			d3.csv(otherFile, function(standardData) {
+        queue()
+        	.defer(d3.csv, primaryFile, function(d) {
+        		console.log(d)
+        		latestData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+        		})
+        	.defer(d3.csv, otherFile, function(d) {
+        		standardData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+        		})
+            .await(ready)
 
-				//Create scale functions
-				var xScale = createXScale(useLog,w,h,padding,latestData)
+		function ready(error,other) {
+             if(error) throw error
 
-				var yScale = createYScale(useLog,w,h,padding,latestData)
+			console.log(latestData)
 
-				//Create SVG element
-				var svg = d3.select("body").select(containerId)
-							.append("svg")
-							.attr("width", w)
-							.attr("height", h)
+            //Create scale functions
+            var xScale = createXScale(useLog,w,h,padding,latestData)
 
-				//Define X axis
-				var xAxis = createXAxis(w,h,padding,xScale,svg)
-				//Define Y axis
-				var yAxis = createYAxis(w,h,padding,yScale,svg)
+            var yScale = createYScale(useLog,w,h,padding,latestData)
 
-				createLine("expectedLine","nodes","expected","red",latestData,xScale,yScale,svg)
+            //Create SVG element
+            var svg = d3.select("body").select(containerId)
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h)
 
-				createDots("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
-				createDots("expected","nodes","expected","red",latestData,xScale,yScale,svg)
-				createDots("jung","nodes","measured","green",standardData,xScale,yScale,svg)
+            //Define X axis
+            var xAxis = createXAxis(w,h,padding,xScale,svg)
+            //Define Y axis
+            var yAxis = createYAxis(w,h,padding,yScale,svg)
 
+            createLine("expectedLine","nodes","expected","red",latestData,xScale,yScale,svg)
 
-			})
-		})
+            createDots("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
+            createDots("expected","nodes","expected","red",latestData,xScale,yScale,svg)
+            createDots("jung","nodes","measured","green",standardData,xScale,yScale,svg)
+
+		}
     }
     plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/c4.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/c4.8xlarge/parDijkstra.csv")
     plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/c4.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/c4.8xlarge/parDijkstra.csv")
