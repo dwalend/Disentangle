@@ -68,6 +68,11 @@
                 .attr("transform", "translate(0," + (h - padding) + ")")
                 .call(xAxis)
 
+         svg.append("text")
+            .attr("transform", "translate(" + (w / 2) + " ," + (h - 2*padding/3) + ")")
+            .style("text-anchor", "middle")
+            .text("Nodes")
+
         return xAxis
 	}
 
@@ -75,14 +80,19 @@
         var yAxis = d3.svg.axis()
                   .scale(yScale)
                   .orient("left")
-                 // .tickFormat(function (d) {
-                 //   return yScale.tickFormat(6,d3.format(",d"))(d)
-                 //   })
 
         svg.append("g")
 					.attr("class", "axis")
 					.attr("transform", "translate(" + padding + ",0)")
-					.call(yAxis);
+					.call(yAxis)
+
+         svg.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0 + padding/2)
+            .attr("x", 0 - (h / 2))
+            .attr("dy", "1em")
+            .style("text-anchor", "middle")
+            .text("Seconds")
 
         return yAxis
     }
@@ -124,7 +134,6 @@
 
         queue()
         	.defer(d3.csv, primaryFile, function(d) {
-        		console.log(d)
         		latestData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
         		})
         	.defer(d3.csv, otherFile, function(d) {
@@ -134,8 +143,6 @@
 
 		function ready(error,other) {
              if(error) throw error
-
-			console.log(latestData)
 
             //Create scale functions
             var xScale = createXScale(useLog,w,h,padding,latestData)
