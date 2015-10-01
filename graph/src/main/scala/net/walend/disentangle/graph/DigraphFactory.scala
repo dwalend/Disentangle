@@ -20,28 +20,16 @@ object DigraphFactory {
 //    val nodes:Range = 0 until nodeCount
     val nodes:Set[Int] = (0 until nodeCount).to[Set]
 
-    val seqOfListOfEdges = for(fromNode:Int <- 0 until nodeCount) yield {
-      val toNodes:Seq[Int] = Random.shuffle((nodes - fromNode).to[Seq]).take(Random.nextInt(maxOutEdgesPerNode))
-//      val toNodes:Set[Int] = shuffleAndTake(nodes,Random.nextInt(maxOutEdgesPerNode),fromNode)
-      val someEdges = for(toNode:Int <- toNodes) yield {
-        (fromNode,toNode,true)
-      }
-      someEdges
+    val seqOfListOfEdges = nodes.par.map{fromNode =>
+      shuffleAndTake(nodes,Random.nextInt(maxOutEdgesPerNode),fromNode).map(toNode => (fromNode,toNode,true))
     }
 
-    val edges:Seq[(Int,Int,Boolean)] = seqOfListOfEdges.flatten
+    val edges:Seq[(Int,Int,Boolean)] = seqOfListOfEdges.flatten.to[Seq]
 
     AdjacencyLabelDigraph(edges,nodes.to[Seq],false)
   }
 
-  import scala.collection.mutable.{Set => MutableSet}
-  private def shuffleAndTake[T](items:Seq[T],toTake:Int,never:T):Set[T] = {
-    val result:MutableSet[T] = scala.collection.mutable.Set()
-    while(result.size < toTake) {
-      val toAdd = Random.nextInt(items.size)
-      if(toAdd != never) result.add(items(Random.nextInt(items.size)))
-    }
-    result.to[Set]
+  def shuffleAndTake[T](items:Set[T],toTake:Int,never:T):Seq[T] = {
+    Random.shuffle((items - never).to[Seq]).take(toTake)
   }
-
 }
