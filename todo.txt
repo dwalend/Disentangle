@@ -17,14 +17,14 @@ In this release
 ** Brandes on a big instance
 * examples subproject (With enron data)
 * Performance graphs in Scaladoc
-* comments abot hotspots
+* comments about hotspots
 * Dijkstra and Brandes plots on r3 machines on AWS
 
 * How much faster is the parallel code?
 
 * Blog about rename,
 * Blog about performance and parallel algorithms
-
+* Blog about examples
 
 Next release
 
