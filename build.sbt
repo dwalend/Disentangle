@@ -9,7 +9,7 @@ isSnapshot := true
 
 scalaVersion := "2.11.7"
 
-sbtVersion := "0.13.8"
+sbtVersion := "0.13.9"
 
 //todo remove crossScalaVersions := Seq("2.10.4",scalaVersion.value)
 
@@ -64,7 +64,7 @@ pomExtra := (
 
 // Your project orgnization (package name)
 //organization := "net.walend"
-//todo organization := "net.walend.graph"
+//todo organization := "net.walend.disentangle"
 
 // Your profile name of the sonatype account. The default is the same with the organization
 //profileName := "net.walend"
