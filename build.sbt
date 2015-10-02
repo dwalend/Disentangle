@@ -1,9 +1,9 @@
-name := "Disentangler"
+name := "Disentangle"
 
-organization := "net.walend"
+organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.1.2"
+version := "0.2.0-SNAPSHOT"
 
 isSnapshot := true
 
@@ -11,10 +11,15 @@ scalaVersion := "2.11.7"
 
 sbtVersion := "0.13.9"
 
-//todo remove crossScalaVersions := Seq("2.10.4",scalaVersion.value)
+lazy val root: Project = Project(
+  id        = "root",
+  base      = file("."),
+  aggregate = Seq(graph, toScalaGraph, benchmark, examples),
+  settings  = Project.defaultSettings ++ Seq(
+    packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
+  )
+)
 
-lazy val root = (project in file(".")).
-  aggregate(graph, toScalaGraph, benchmark, examples)
 
 lazy val graph = project
 
@@ -24,9 +29,12 @@ lazy val benchmark = project.dependsOn(graph,toScalaGraph % "test->test;compile-
 
 lazy val examples = project.dependsOn(graph % "test->test;compile->compile")
 
-publishMavenStyle := true
+//git.remoteRepo := "git@github.com:dwalend/disentangle.git"
 
-publishTo := {
+//publishMavenStyle := true
+
+
+publishTo in ThisBuild := {
   val nexus = "https://oss.sonatype.org/"
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
@@ -36,21 +44,28 @@ publishTo := {
 
 publishArtifact in Test := false
 
+//pomIncludeRepository := { _ => false }
+
+// Your profile name of the sonatype account. The default is the same with the organization value
+sonatypeProfileName := "net.walend"
+
 pomIncludeRepository := { _ => false }
 
+homepage := Some(url("https://github.com/dwalend/disentangler"))
+
 // To sync with Maven central, you need to supply the following information:
-pomExtra := (
+pomExtra in Global := {
   <url>https://github.com/dwalend/Disentangle</url>
     <licenses>
       <license>
         <name>MIT License</name>
         <url>http://www.opensource.org/licenses/mit-license.php</url>
-        <distribution>repo</distribution>
       </license>
     </licenses>
     <scm>
       <connection>scm:git:github.com:dwalend/Disentangle.git</connection>
       <url>github.com/dwalend/Disentangle.git</url>
+      <developerConnection>scm:git:git@github.com:dwalend/Disentangle.git</developerConnection>
     </scm>
     <developers>
       <developer>
@@ -58,7 +73,8 @@ pomExtra := (
         <name>David Walend</name>
         <url>https://github.com/dwalend</url>
       </developer>
-    </developers>)
+    </developers>
+}
 
 ///old bits
 

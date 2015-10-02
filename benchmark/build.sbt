@@ -12,10 +12,12 @@ scalacOptions ++= Seq("-unchecked", "-deprecation","-feature")
 
 fork in run := true
 
-javaOptions in run += "-Xmx238G" //prevents big GC
+javaOptions in run += "-Xmx3G" //prevents big GC
 
-javaOptions in run += "-Xms238G" //prevents big GC
+javaOptions in run += "-Xms3G" //prevents big GC
 
 javaOptions in run += "-server" //does hotspot optimizations earlier
 
 //javaOptions in run += "-Dscala.concurrent.context.numThreads=4"
+
+publishArtifact in (Compile, packageBin) := false

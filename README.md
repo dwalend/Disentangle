@@ -7,7 +7,7 @@ Most graph libraries available on the internet provide some way to find shortest
 
 Further, the library provides support for computational stability. The same input will reliably result in the same output. Small changes in input typically result in small changes in output.
 
-## Changes in 0.1.2, the forth release
+## Changes in 0.2.0, the forth release
 
 * Project renamed to Disentangle from ScalaGraphMinimizer, which was nearly impossible to say
 * Restructured into subprojects to minimize dependencies on third-party libraries in your code
@@ -19,7 +19,7 @@ I am seeking feedback on just what the API should look like. I think I'm getting
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.2" //todo update with new project name
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.1" //todo update with new project name
 
 ### The Latest Snapshot (When Available)
 
@@ -27,7 +27,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.2-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.0-SNAPSHOT"
 
 ### Clone the Code
 
@@ -36,12 +36,12 @@ If you want to change Disentangle to meet your every whim, share your changes by
     git clone https://github.com/dwalend/Disentangle.git  
     cd Disentangle
     sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.1.2-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.0-SNAPSHOT.jar /your/projectname/lib
 
 
 ## Using Disentangle
 
-See the [scaladoc](http://dwalend.github.io/Disentangle/v0.1.2/#net.walend.disentangle.graph.package)
+See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package)
 
 ### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
 
@@ -52,7 +52,7 @@ You'll need to
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.disentangle.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.2-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.0-SNAPSHOT"
 
 
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
