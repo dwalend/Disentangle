@@ -1,5 +1,6 @@
 name := "Disentangle"
 
+//organization in ThisBuild := "net.walend.disentangle"
 organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
@@ -47,7 +48,7 @@ publishArtifact in Test := false
 //pomIncludeRepository := { _ => false }
 
 // Your profile name of the sonatype account. The default is the same with the organization value
-sonatypeProfileName := "net.walend"
+sonatypeProfileName in ThisBuild := "net.walend"
 
 pomIncludeRepository := { _ => false }
 

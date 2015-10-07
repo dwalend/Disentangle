@@ -91,8 +91,8 @@ object Dijkstra {
    *
    * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for label edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
-                                                  extraNodes:GenSeq[Node] = Seq.empty,
+  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)],
+                                                  extraNodes:GenSeq[Node],
                                                   support:SemiringSupport[Label,Key],
                                                   labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
     import net.walend.disentangle.graph.AdjacencyLabelDigraph
@@ -107,8 +107,9 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na)
    */
+  //todo default values for algorithm will need all SemiringSupport s to have a labelForEdge function
   def allPairsShortestPaths[Node,EdgeLabel,Label,Key](
-                                                      edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                      edges:GenTraversable[(Node,Node,EdgeLabel)],
                                                       extraNodes:GenSeq[Node] = Seq.empty,
                                                       support:SemiringSupport[Label,Key],
                                                       labelForEdge:(Node,Node,EdgeLabel)=>Label

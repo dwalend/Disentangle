@@ -9,7 +9,7 @@ import net.walend.disentangle.heap.HeapOrdering
  * @author dwalend
  * @since v0.1.0
  */
-class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
+case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[CoreLabel,Key]) extends SemiringSupport[Option[FirstStepsTrait[Node,CoreLabel]],Key]{
   
   override type Label = Option[FirstStepsTrait[Node, CoreLabel]]
 

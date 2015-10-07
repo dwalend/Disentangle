@@ -20,4 +20,4 @@ javaOptions in run += "-server" //does hotspot optimizations earlier
 
 //javaOptions in run += "-Dscala.concurrent.context.numThreads=4"
 
-publishArtifact in (Compile, packageBin) := false
+packagedArtifacts := Map.empty
