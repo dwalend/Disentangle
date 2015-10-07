@@ -110,7 +110,7 @@ object Dijkstra {
   //todo default values for algorithm will need all SemiringSupport s to have a labelForEdge function
   def allPairsShortestPaths[Node,EdgeLabel,Label,Key](
                                                       edges:GenTraversable[(Node,Node,EdgeLabel)],
-                                                      extraNodes:GenSeq[Node] = Seq.empty,
+                                                      extraNodes:GenSeq[Node],
                                                       support:SemiringSupport[Label,Key],
                                                       labelForEdge:(Node,Node,EdgeLabel)=>Label
                                                      ):Seq[(Node,Node,Label)] = {
@@ -120,12 +120,20 @@ object Dijkstra {
     labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
+  def allPairsShortestPaths[Node,EdgeLabel](
+                                              edges:GenTraversable[(Node,Node,EdgeLabel)],
+                                              extraNodes:GenSeq[Node] = Seq.empty
+                                            ):Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
+    val support = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+    allPairsShortestPaths(edges,extraNodes,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
+  }
+
   /**
    * O(n&#94;2 ln(n) + na) / cores
    */
   def parAllPairsShortestPaths[Node,EdgeLabel,Label,Key](
-                                                       edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
-                                                       extraNodes:GenSeq[Node] = Seq.empty,
+                                                       edges:GenTraversable[(Node,Node,EdgeLabel)],
+                                                       extraNodes:GenSeq[Node],
                                                        support:SemiringSupport[Label,Key],
                                                        labelForEdge:(Node,Node,EdgeLabel)=>Label
                                                        ):ParSeq[(Node,Node,Label)] = {
@@ -133,6 +141,14 @@ object Dijkstra {
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
     labelDigraph.innerNodes.to[ParSeq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
+  }
+
+  def parAllPairsShortestPaths[Node,EdgeLabel](
+                                             edges:GenTraversable[(Node,Node,EdgeLabel)],
+                                             extraNodes:GenSeq[Node] = Seq.empty
+                                             ):Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
+    val support = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+    allPairsShortestPaths(edges,extraNodes,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
   }
 
   /**

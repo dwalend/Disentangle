@@ -52,8 +52,8 @@ You'll need to
 * provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
 ** You can use net.walend.disentangle.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
 
+    resolvers += Resolver.sonatypeRepo("snapshots") 
     libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.0-SNAPSHOT"
-
 
 * choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
 * arrange for your code to run the algorithm on your graph
