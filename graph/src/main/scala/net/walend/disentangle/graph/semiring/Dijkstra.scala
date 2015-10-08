@@ -120,11 +120,13 @@ object Dijkstra {
     labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
+  def defaultSupport[Node] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+
   def allPairsShortestPaths[Node,EdgeLabel](
                                               edges:GenTraversable[(Node,Node,EdgeLabel)],
                                               extraNodes:GenSeq[Node] = Seq.empty
                                             ):Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
-    val support = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+    val support = defaultSupport[Node]
     allPairsShortestPaths(edges,extraNodes,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
   }
 
@@ -147,7 +149,7 @@ object Dijkstra {
                                              edges:GenTraversable[(Node,Node,EdgeLabel)],
                                              extraNodes:GenSeq[Node] = Seq.empty
                                              ):Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
-    val support = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+    val support = defaultSupport[Node]
     allPairsShortestPaths(edges,extraNodes,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
   }
 
