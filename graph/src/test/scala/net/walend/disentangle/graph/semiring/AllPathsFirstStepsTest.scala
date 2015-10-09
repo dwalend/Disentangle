@@ -181,7 +181,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
     subgraphs should be (expectedSubgraphs)
 
-    val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(labelGraph)))
+    val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(labelGraph,edge._1,edge._2)))
 
     val shortestOuterPaths:GenTraversable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
       val shortOuterPaths = for(shortPath <- shortestPathsBetweenNodes._2) yield {

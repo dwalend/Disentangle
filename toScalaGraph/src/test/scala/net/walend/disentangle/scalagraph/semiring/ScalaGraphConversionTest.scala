@@ -234,7 +234,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
     weights.to[Set] should be (expectedWeights)
 
     val firstStepsDigraph = AdjacencyLabelDigraph(firstSteps)
-    val shortestPaths = firstSteps.map(edge => ((edge._1,edge._2),support.allLeastPaths(edge._1,edge._2)(firstStepsDigraph)))
+    val shortestPaths = firstSteps.map(edge => ((edge._1,edge._2),support.allLeastPaths(firstStepsDigraph,edge._1,edge._2)))
 
     val shortestOuterPaths:GenTraversable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
       val shortOuterPaths = for(shortPath <- shortestPathsBetweenNodes._2) yield {

@@ -102,7 +102,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
     }
   }
 
-  def allLeastPaths(from:Node,to:Node)(leastPathDigraph:LabelDigraph[Node,Label]):Seq[Seq[leastPathDigraph.InnerNodeType]] = {
+  def allLeastPaths(leastPathDigraph:LabelDigraph[Node,Label],from:Node,to:Node):Seq[Seq[leastPathDigraph.InnerNodeType]] = {
 
     type Path = Seq[leastPathDigraph.InnerNodeType]
 

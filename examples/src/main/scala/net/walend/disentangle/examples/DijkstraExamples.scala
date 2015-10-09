@@ -49,12 +49,12 @@ object DijkstraExamples {
   /**
    * Get a subgraph that holds all the possible shortest paths
    */
-  val subgraph = support.subgraphEdges(labelDigraph,"E","D")
+  val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
 
-//todo start here  val paths =
-  //todo show how to get shortest paths from the results
-
-
+  /**
+   * Or just get the shortest paths
+   */
+  val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
 
   //todo use a semiring - LeastWeights of a hash of the edges? MostProbable? to show the full API
 
