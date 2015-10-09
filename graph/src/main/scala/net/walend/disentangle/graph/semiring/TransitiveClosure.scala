@@ -51,20 +51,17 @@ object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKe
       Option(x.state - y.state)
     }
 
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
     def checkKey(key: TransitiveClosureHeapKey): Unit = {
       //sealed class. Nothing to check.
     }
 
     /**
-     * Minimum value for the DoubleHeap
+     * Top value for the Heap if it is ever present
      */
     def AlwaysTop:TransitiveClosureHeapKey = TransitiveClosureHeapKey.TopKey
 
     /**
-     * A key that will among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
+     * A key that will be among items on the bottom of the heap. Used primarily to add items that will eventually flow higher.
      */
     def AlwaysBottom: TransitiveClosureHeapKey = TransitiveClosureHeapKey.FalseKey
   }

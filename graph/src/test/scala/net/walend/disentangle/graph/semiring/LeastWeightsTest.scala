@@ -78,7 +78,7 @@ class LeastWeightsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val edges = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
+    val edges = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
 
     edges.to[Set] -- expectedArcs should be (Set.empty)
     expectedArcs -- edges.to[Set] should be (Set.empty)

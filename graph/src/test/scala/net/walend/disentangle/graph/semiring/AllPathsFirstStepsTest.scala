@@ -67,7 +67,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val arcs = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val arcs = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -75,7 +75,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the algorithm" in {
 
-    val arcs = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq])
+    val arcs = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq])
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -83,7 +83,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm" in {
 
-    val arcs = Dijkstra.parAllPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq])
+    val arcs = Dijkstra.parAllPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq])
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)

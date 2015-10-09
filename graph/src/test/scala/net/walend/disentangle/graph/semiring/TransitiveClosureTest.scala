@@ -64,7 +64,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val edges = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val edges = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
     edges.size should be (expectedArcs.size)
     edges.to[Set] should be (expectedArcs)

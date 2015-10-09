@@ -101,7 +101,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.allPairsLeastPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
@@ -127,7 +127,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct all paths first step graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.allPairsLeastPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     labels.size should be (expectedEdges.size)
     labels.to[Set] should be (expectedEdges)
@@ -228,7 +228,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
     val graphParts:(Seq[(String,String,Double)],Seq[String],Double) = ConvertToLabelDigraph.convert(testGraph,LeastWeights)(edgeToDoubleLabel)
 
-    val firstSteps:Seq[(String,String,support.Label)] = Dijkstra.allPairsShortestPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
+    val firstSteps:Seq[(String,String,support.Label)] = Dijkstra.allPairsLeastPaths(graphParts._1,graphParts._2,support,support.convertEdgeToLabelFunc[Double](convertEdgeToLabel))
 
     val weights = firstSteps.map(x => (x._1,x._2,x._3.map(_.weight)))
     weights.to[Set] should be (expectedWeights)

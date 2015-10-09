@@ -76,12 +76,3 @@ pomExtra in Global := {
       </developer>
     </developers>
 }
-
-///old bits
-
-// Your project orgnization (package name)
-//organization := "net.walend"
-//todo organization := "net.walend.disentangle"
-
-// Your profile name of the sonatype account. The default is the same with the organization
-//profileName := "net.walend"

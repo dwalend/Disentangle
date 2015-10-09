@@ -78,7 +78,7 @@ class MostProbableTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val edges = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],MostProbable,convertEdgeToLabel)
+    val edges = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],MostProbable,convertEdgeToLabel)
 
     edges.to[Set] -- expectedArcs should be (Set.empty)
     expectedArcs -- edges.to[Set] should be (Set.empty)

@@ -71,7 +71,7 @@ object TimingStudiesTest {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{Dijkstra.allPairsShortestPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
+    val result = timeFunction{Dijkstra.allPairsLeastPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
 /*
     val result = timeFunction{
         val initNode = initialGraph.innerNodes.head
@@ -171,7 +171,7 @@ object TimingStudiesTest {
       val labelGraphParts = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
 
       def labelForLabel[N,E,L](from:N,to:N,edge:E):L = edge.asInstanceOf[L]
-      Dijkstra.allPairsShortestPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
+      Dijkstra.allPairsLeastPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
     }
 
     result._2

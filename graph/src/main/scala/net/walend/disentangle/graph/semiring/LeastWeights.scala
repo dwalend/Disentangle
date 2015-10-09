@@ -60,9 +60,6 @@ object LeastWeights extends SemiringSupport[Double,Double] {
 
     def keyDomainDescription = "between zero and Double.PositiveInfinity (the annihilator)"
 
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
     def checkKey(key: Double): Unit = {
       require((LeastWeights.LeastWeightsSemiring.inDomain(key)||(key == LeastWeights.LeastWeightsSemiring.O)),s"Key must be $keyDomainDescription, not $key")
     }

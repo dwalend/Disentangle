@@ -15,7 +15,7 @@ object ParDijkstraTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Dijkstra.parAllPairsShortestPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
+    val result = TimingStudy.timeFunction{Dijkstra.parAllPairsLeastPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
 
     result._2
   }

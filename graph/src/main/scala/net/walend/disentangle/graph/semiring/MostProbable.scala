@@ -62,9 +62,6 @@ object MostProbable extends SemiringSupport[Double,Double] {
 
     def keyDomainDescription = "between one and zero (the annihilator)"
 
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
     def checkKey(key: Double): Unit = {
       require((MostProbable.MostProbableSemiring.inDomain(key)||(key == MostProbable.MostProbableSemiring.O)),s"Key must be $keyDomainDescription, not $key")
     }

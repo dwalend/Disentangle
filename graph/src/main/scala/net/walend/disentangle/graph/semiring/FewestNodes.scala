@@ -65,9 +65,6 @@ object FewestNodes extends SemiringSupport[Int,Int] {
 
     def keyDomainDescription = "between zero and Int.MaxValue (the annihilator)"
 
-    /**
-     * @throws IllegalArgumentException if the key is unusable
-     */
     def checkKey(key: Int): Unit = {
       require((FewestNodes.FewestNodesSemiring.inDomain(key)||(key == FewestNodes.FewestNodesSemiring.O)),s"Key must be $keyDomainDescription, not $key")
     }
