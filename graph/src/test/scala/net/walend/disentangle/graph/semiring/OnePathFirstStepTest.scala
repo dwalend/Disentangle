@@ -66,11 +66,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(
-                                                edges = testGraph.edges,
-                                                extraNodes = testGraph.nodes.to[Seq],
-                                                support = support,
-                                                labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(edges = testGraph.edges, support = support, labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), nodeOrder = testGraph.nodes.to[Seq])
 
     labelTuples.size should be (expectedArcs.size)
     labelTuples.to[Set] should be (expectedArcs)

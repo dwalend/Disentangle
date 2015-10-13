@@ -90,7 +90,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.allPairsLeastPaths(testGraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, testGraph.nodes.to[Seq])
 
     labels.size should be (expectedArcs.size)
     labels.to[Set] should be (expectedArcs)
@@ -98,7 +98,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
   "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.parAllPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.parAllPairsLeastPaths(testGraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, testGraph.nodes.to[Seq])
 
     labels.size should be (expectedArcs.size)
     labels.to[Set] should be (expectedArcs)
@@ -133,7 +133,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
     val fileContents = Source.fromURL(getClass.getResource("/Enron2000Apr.json")).mkString
     val edges = JSONPickle(fileContents).unpickle[Seq[(String,String,Int)]]
 
-    val labels = Dijkstra.parAllPairsLeastPaths(edges,Seq.empty,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labels = Dijkstra.parAllPairsLeastPaths(edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.empty)
   }
 
 }
