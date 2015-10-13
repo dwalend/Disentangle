@@ -1,7 +1,7 @@
 package net.walend.disentangle.examples
 
-import net.walend.disentangle.graph.AdjacencyLabelDigraph
-import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, FirstStepsTrait, Dijkstra}
+import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
+import net.walend.disentangle.graph.semiring.{FewestNodes, AllPathsFirstSteps, FirstStepsTrait, Dijkstra}
 
 /**
  * Use Dijkstra's algorithms to find either single-source or all-pairs shortest paths using the default semiring.
@@ -56,6 +56,14 @@ object DijkstraExample {
    */
   val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
 
+  /**
+   * To get all shortest paths from a single source (or sink), first create the initial label digraph
+   */
+  val initialLabelDigraph: IndexedLabelDigraph[String, support.Label] = Dijkstra.createLabelDigraph(edges,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
 
-  
+  /**
+   * Use the initialLabelDigraph to create the labels for the shortest paths from the source
+   */
+  val shortPathLabelsFromA: Seq[(String, String, support.Label)] = Dijkstra.dijkstraSingleSource(initialLabelDigraph,support)(initialLabelDigraph.innerNode("A").getOrElse(throw new IllegalStateException("A is not in this graph. How?")))
+
 }
