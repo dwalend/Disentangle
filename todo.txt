@@ -3,9 +3,13 @@ In this release
 * Cleaned up IndexedSet
 * scala-graph and benchmark in separate subprojects
 * Rename project - Disentangle
-* Parallel Dijkstra,
+* Parallel Dijkstra, Brandes
+
+* Examples
 
 * Graphs of results from benchmark
+
+
 
 * Timing data on EC2 big machine
 ** Test and script on cheap machine

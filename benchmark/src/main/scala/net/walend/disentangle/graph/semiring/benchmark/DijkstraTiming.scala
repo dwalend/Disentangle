@@ -63,7 +63,7 @@ object DijkstraTiming extends Timeable {
         val labelGraphParts = ConvertToLabelDigraph.convert(graph,support)(convertToLabel)
 
         def labelForLabel[N,E,L](from:N,to:N,edge:E):L = edge.asInstanceOf[L]
-        DDijkstra.allPairsLeastPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
+        DDijkstra.allPairsShortestPaths(labelGraphParts._1,labelGraphParts._2,support,labelForLabel)
       }
 
       result._2

@@ -1,5 +1,7 @@
 package net.walend.disentangle.examples
 
+import scala.collection.parallel.immutable.ParSeq
+
 import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
 import net.walend.disentangle.graph.semiring.{FewestNodes, AllPathsFirstSteps, FirstStepsTrait, Dijkstra}
 
@@ -14,7 +16,7 @@ object DijkstraExample {
   /**
    * Edges are just a Seq of Tuple3[Node,Node,Edge]
    */
-  val edges: Seq[(String, String, String)] = Seq(
+  lazy val edges: Seq[(String, String, String)] = Seq(
                                                   ("A","B","ab"),
                                                   ("B","C","bc"),
                                                   ("C","D","cd"),
@@ -25,12 +27,10 @@ object DijkstraExample {
                                                   ("H","C","hc")
                                                 )
 
-  //todo single source and single sink
-
   /**
    * Generate all the shortest paths in the graph
    */
-  val simpleShortPathLabels: Seq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.allPairsLeastPaths(edges)
+  lazy val simpleShortPathLabels: Seq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.allPairsShortestPaths(edges)
 
   /**
    * The simplest API call finds paths with the fewest nodes, and supplies possible first steps to follow those paths.
@@ -38,32 +38,39 @@ object DijkstraExample {
    *
    * AllPathsFirstSteps takes a type parameter for Node's type, so you'll need to create a new one for your use.
    */
-  val support: AllPathsFirstSteps[String, Int, Int] = Dijkstra.defaultSupport[String]
+  lazy val support: AllPathsFirstSteps[String, Int, Int] = Dijkstra.defaultSupport[String]
+
+
+  /**
+   * Generate all the shortest paths in the graph
+   */
+  lazy val simpleShortPathLabelsFromPar: ParSeq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.parAllPairsShortestPaths(edges)
 
   /**
    * The helper methods in AllPathsFirstSteps need a directed graph.
    * Use AllPathsFirstSteps.semiring's annihilator - None - for noEdgeExistsValue.
    */
-  val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = simpleShortPathLabels,noEdgeExistsValue = support.semiring.O)
+  lazy val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = simpleShortPathLabels,noEdgeExistsValue = support.semiring.O)
 
   /**
    * Get a subgraph that holds all the possible shortest paths
    */
-  val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
+  lazy val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
 
   /**
    * Or just get the shortest paths
    */
-  val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
+  lazy val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
 
   /**
-   * To get all shortest paths from a single source (or sink), first create the initial label digraph
+   * To get all shortest paths from a single source (or sink), first create the initial label digraph.
+   * You'll want to reuse this graph for different sources and sinks.
    */
-  val initialLabelDigraph: IndexedLabelDigraph[String, support.Label] = Dijkstra.createLabelDigraph(edges,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
+  lazy val initialLabelDigraph: IndexedLabelDigraph[String, support.Label] = Dijkstra.createLabelDigraph(edges,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
 
   /**
-   * Use the initialLabelDigraph to create the labels for the shortest paths from the source
+   * Use the initialLabelDigraph to create the labels for the shortest paths from the source.
    */
-  val shortPathLabelsFromA: Seq[(String, String, support.Label)] = Dijkstra.dijkstraSingleSource(initialLabelDigraph,support)(initialLabelDigraph.innerNode("A").getOrElse(throw new IllegalStateException("A is not in this graph. How?")))
+  lazy val shortPathLabelsFromA: Seq[(String, String, support.Label)] = Dijkstra.dijkstraSingleSource(initialLabelDigraph,support)(initialLabelDigraph.innerNode("A").getOrElse(throw new IllegalStateException("A is not in this graph. How?")))
 
 }
