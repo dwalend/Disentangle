@@ -1,11 +1,6 @@
 package net.walend.disentangle.examples
 
-import scala.collection.parallel.immutable.ParSeq
-
 import org.scalatest.{Matchers, FlatSpec}
-
-import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
-import net.walend.disentangle.graph.semiring.{FewestNodes, AllPathsFirstSteps, Dijkstra, FirstStepsTrait}
 
 /**
  *
@@ -15,18 +10,19 @@ import net.walend.disentangle.graph.semiring.{FewestNodes, AllPathsFirstSteps, D
  */
 class DijkstraExampleTest extends FlatSpec with Matchers {
 
-  val edges = DijkstraExample.edges
+  "The Dijkstra example" should "produce expected results" in {
+    val edges = DijkstraExample.edges
 
-  val simpleShortPathLabels = DijkstraExample.simpleShortPathLabels
+    val simpleShortPathLabels = DijkstraExample.simpleShortPathLabels
 
-  val simpleShortPathLabelsFromPar: ParSeq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.parAllPairsShortestPaths(edges)
+    val simpleShortPathLabelsFromPar = DijkstraExample.simpleShortPathLabelsFromPar
 
-  val labelDigraph = DijkstraExample.labelDigraph
+    val labelDigraph = DijkstraExample.labelDigraph
 
-  val subgraph = DijkstraExample.subgraph
+    val subgraph = DijkstraExample.subgraph
 
-  val paths = DijkstraExample.paths
+    val paths = DijkstraExample.paths
 
-  val shortPathLabelsFromA = DijkstraExample.shortPathLabelsFromA
-
+    val shortPathLabelsFromA = DijkstraExample.shortPathLabelsFromA
+  }
 }

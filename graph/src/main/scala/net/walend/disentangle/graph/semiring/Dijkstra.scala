@@ -132,7 +132,7 @@ object Dijkstra {
   def parAllPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
                                                       support: SemiringSupport[Label, Key],
                                                       labelForEdge: (Node, Node, EdgeLabel) => Label,
-                                                      nodeOrder: GenSeq[Node]):ParSeq[(Node, Node, Label)] = {
+                                                      nodeOrder: GenSeq[Node] = ParSeq.empty):ParSeq[(Node, Node, Label)] = {
     val labelDigraph = createLabelDigraph(edges.par, support, labelForEdge, nodeOrder.par)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
