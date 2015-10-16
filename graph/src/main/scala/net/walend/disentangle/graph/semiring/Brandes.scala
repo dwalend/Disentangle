@@ -93,11 +93,11 @@ object Brandes {
    * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
   def createLabelDigraph[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
-                                                         extraNodes: GenSeq[Node] = Seq.empty,
+                                                         nodeOrder: GenSeq[Node] = Seq.empty,
                                                          support: BrandesSupport[Node, CoreLabel, Key],
                                                          labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
-    val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
+    val nodes = (nodeOrder ++ edges.map(_._1) ++ edges.map(_._2)).distinct
     val nonSelfEdges = edges.filter(x => x._1 != x._2)
     val labelEdges: GenSeq[(Node, Node, CoreLabel)] = nodes.map(x => (x,x,support.coreSupport.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
@@ -112,13 +112,13 @@ object Brandes {
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
   def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
-                                                                  extraNodes: GenSeq[Node] = Seq.empty,
+                                                                  nodeOrder: GenSeq[Node] = Seq.empty,
                                                                   coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                   labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
     type Label = support.Label
 
-    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges, extraNodes, support, labelForEdge)
+    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges, nodeOrder, support, labelForEdge)
 
     val innerNodes = initialGraph.innerNodes.asSeq
 
@@ -143,13 +143,13 @@ object Brandes {
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
   def parAllLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
-                                                                   extraNodes: GenSeq[Node] = Seq.empty,
+                                                                   nodeOrder: GenSeq[Node] = Seq.empty,
                                                                    coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                    labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (ParSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], ParMap[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
     type Label = support.Label
 
-    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges.par, extraNodes.par, support, labelForEdge)
+    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges.par, nodeOrder.par, support, labelForEdge)
 
     val innerNodes = initialGraph.innerNodes.asSeq.par
 
@@ -196,7 +196,7 @@ object Brandes {
     }
   }
 
-  class BrandesSupport[Node, CoreLabel, Key](val coreSupport: SemiringSupport[CoreLabel, Key]) extends SemiringSupport[Option[BrandesSteps[Node, CoreLabel]], Key] {
+  case class BrandesSupport[Node, CoreLabel, Key](coreSupport: SemiringSupport[CoreLabel, Key]) extends SemiringSupport[Option[BrandesSteps[Node, CoreLabel]], Key] {
 
     override type Label = Option[BrandesSteps[Node, CoreLabel]]
 
@@ -262,4 +262,9 @@ object Brandes {
       }
     }
   }
+
+  object BrandesSupport {
+    def apply[Node]():BrandesSupport[Node,Int,Int] = new BrandesSupport[Node,Int,Int](FewestNodes)
+  }
+
 }
