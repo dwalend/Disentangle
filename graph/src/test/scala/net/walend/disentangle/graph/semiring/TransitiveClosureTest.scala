@@ -57,7 +57,7 @@ class TransitiveClosureTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
     labelGraph.edges.to[Set] should be (expectedArcs)
   }

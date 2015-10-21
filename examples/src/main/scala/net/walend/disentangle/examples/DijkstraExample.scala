@@ -42,7 +42,7 @@ object DijkstraExample {
 
 
   /**
-   * Generate all the shortest paths in the graph
+   * Generate all the shortest paths in the graph in parallel
    */
   lazy val simpleShortPathLabelsFromPar: ParSeq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.parAllPairsShortestPaths(edges)
 

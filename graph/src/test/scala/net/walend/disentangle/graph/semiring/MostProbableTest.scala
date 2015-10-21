@@ -71,7 +71,7 @@ class MostProbableTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],MostProbable,convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],MostProbable,convertEdgeToLabel)
 
     labelGraph.edges.to[Set] should be (expectedArcs)
   }

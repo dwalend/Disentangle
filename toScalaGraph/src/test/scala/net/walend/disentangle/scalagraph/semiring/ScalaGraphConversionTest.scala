@@ -94,7 +94,7 @@ class ScalaGraphConversionTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(graphParts._1,graphParts._2,FewestNodes,FewestNodes.convertEdgeToLabel)
 
     labelGraph.edges.to[Set] should be (expectedEdges)
   }

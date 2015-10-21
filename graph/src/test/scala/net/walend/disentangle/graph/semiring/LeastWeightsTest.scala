@@ -71,7 +71,7 @@ class LeastWeightsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
 
     labelGraph.edges.to[Set] should be (expectedArcs)
   }

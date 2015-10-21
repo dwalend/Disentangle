@@ -42,7 +42,7 @@ object FloydWarshall {
   /**
    * O(n&#94;3)
    */
-  def allPairsShortestPaths[Node,Label,Key](labelDigraph:MatrixLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedLabelDigraph[Node,Label] = {
+  def allPairsLeastPaths[Node,Label,Key](labelDigraph:MatrixLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):IndexedLabelDigraph[Node,Label] = {
 
     floydWarshall(labelDigraph,support)
   }
@@ -69,11 +69,21 @@ object FloydWarshall {
   /**
    * O(n&#94;3)
    */
-  def allPairsShortestPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
+  def allPairsLeastPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
                                                  extraNodes:GenSeq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],
                                                  labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
     val initialDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
     floydWarshall(initialDigraph,support)
   }
+
+  def defaultSupport[Node] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+
+  def allPairsShortestPaths[Node,EdgeLabel](edges:GenTraversable[(Node,Node,EdgeLabel)],
+                                            nodeOrder:GenSeq[Node] = Seq.empty
+                                           ):IndexedLabelDigraph[Node,Option[FirstStepsTrait[Node, Int]]] = {
+    val support = defaultSupport[Node]
+    allPairsLeastPaths(edges, nodeOrder, support, support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
+  }
+
 }

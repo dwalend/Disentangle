@@ -50,7 +50,7 @@ object TimingStudiesTest {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{FloydWarshall.allPairsShortestPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
+    val result = timeFunction{FloydWarshall.allPairsLeastPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
     /*
         val result = timeFunction{
             val initNode = initialGraph.innerNodes.head
