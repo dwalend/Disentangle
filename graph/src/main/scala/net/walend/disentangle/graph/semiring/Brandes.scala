@@ -261,6 +261,65 @@ object Brandes {
         else O
       }
     }
+
+    /**
+     * Create the acyclic subgraph defined by BrandesSupport
+     */
+    //todo another spot for an insert-ordered set
+    def subgraphEdges(labelGraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerEdgeType)] = {
+
+      val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
+      //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
+      def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+        val label:Label = labelGraph.label(innerFrom,innerTo)
+
+        //if the label is None then return an empty set
+        //otherwise, follow the choices
+        label.fold(Seq.empty[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)])(firstSteps => {
+          val innerChoices = firstSteps.choiceIndexes.map(choice => labelGraph.innerNodeForIndex(choice))
+          val closeEdges:Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
+
+          val farEdges:Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+
+          closeEdges ++ farEdges
+        })
+      }
+      val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
+
+      recurse(innerFrom,innerTo).to[Set]
+    }
+
+    def allLeastPaths(leastPathDigraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Seq[Seq[leastPathDigraph.InnerNodeType]] = {
+
+      type Path = Seq[leastPathDigraph.InnerNodeType]
+
+      def leastPathsOfInnerNodes(fromInner:Option[leastPathDigraph.InnerNodeType],
+                                 toInner:Option[leastPathDigraph.InnerNodeType]):Seq[Path] = {
+        val fromToOption: Option[(leastPathDigraph.InnerNodeType, leastPathDigraph.InnerNodeType)] = for (f <- fromInner; t <- toInner) yield (f, t)
+        //If fromToOption is None, then one node or the other isn't in the graph. Return no Path
+        fromToOption.fold(Seq.empty[Path])(fromTo => {
+          val label: Label = leastPathDigraph.label(fromTo._1, fromTo._2)
+          //If label is None, then there's no path from one node to the other. Return no Path
+          label.fold(Seq.empty[Path])(firstSteps => {
+            if (firstSteps.choiceIndexes == Seq.empty) Seq(Seq(fromTo._2)) //No further steps. from should be to and the label should be I
+            else {
+              //Follow each choice and prepend the node this starts from
+              for (choiceIndex <- firstSteps.choiceIndexes) yield {
+                val tails: Seq[Path] = leastPathsOfInnerNodes(Some(leastPathDigraph.innerNodeForIndex(choiceIndex)), toInner)
+                for (tail <- tails) yield {
+                  Seq(fromTo._1 +: tail)
+                }
+              }.flatten
+            }.flatten
+          })
+        })
+      }
+
+      val fromInner = leastPathDigraph.innerNode(from)
+      val toInner = leastPathDigraph.innerNode(to)
+
+      leastPathsOfInnerNodes(fromInner,toInner)
+    }
   }
 
   object BrandesSupport {

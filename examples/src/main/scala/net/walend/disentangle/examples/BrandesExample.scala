@@ -42,7 +42,12 @@ class BrandesExample {
   /**
    * Find shortest paths and betweenness for the graph in parallel
    */
-  lazy val shortestPathsAndBetweennessFromPar: (parallel.ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges)
+  lazy val shortestPathsAndBetweennessFromPar: (parallel.ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
+
+  /**
+   * The first item in the tuple holds edges labels.
+   */
+  lazy val shortPathLabels: IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])] = shortestPathsAndBetweenness._1
 
   /**
    * The second item in the tuple holds the betweenness for the graph.
@@ -50,37 +55,25 @@ class BrandesExample {
   lazy val betweennesses: Map[String, Double] = shortestPathsAndBetweenness._2
 
   /**
-   * BrandesSupport also has some helper methods to generate the shortest paths.
+   * BrandesSupport has some helper methods to generate the shortest paths.
    */
   lazy val support: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
-
- /*
 
   /**
    * The helper methods in AllPathsFirstSteps need a directed graph.
    * Use AllPathsFirstSteps.semiring's annihilator - None - for noEdgeExistsValue.
    */
-  lazy val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = simpleShortPathLabels,noEdgeExistsValue = support.semiring.O)
+  lazy val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = shortPathLabels,
+                                                                                              nodes = nodeOrder,
+                                                                                              noEdgeExistsValue = support.semiring.O)
 
-  /**
-   * Get a subgraph that holds all the possible shortest paths
-   */
-  lazy val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
+   /**
+    * Get a subgraph that holds all the possible shortest paths
+    */
+   lazy val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
 
-  /**
-   * Or just get the shortest paths
-   */
-  lazy val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
-
-  /**
-   * To get all shortest paths from a single source (or sink), first create the initial label digraph.
-   * You'll want to reuse this graph for different sources and sinks.
-   */
-  lazy val initialLabelDigraph: IndexedLabelDigraph[String, support.Label] = Dijkstra.createLabelDigraph(edges,support,support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))
-
-  /**
-   * Use the initialLabelDigraph to create the labels for the shortest paths from the source.
-   */
-  lazy val shortPathLabelsFromA: Seq[(String, String, support.Label)] = Dijkstra.dijkstraSingleSource(initialLabelDigraph,support)(initialLabelDigraph.innerNode("A").getOrElse(throw new IllegalStateException("A is not in this graph. How?")))
-          */
+   /**
+    * Or just get the shortest paths
+    */
+   lazy val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
 }

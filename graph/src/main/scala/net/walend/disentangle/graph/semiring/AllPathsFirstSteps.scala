@@ -133,6 +133,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
 
     leastPathsOfInnerNodes(fromInner,toInner)
   }
+
   /**
    * Create the acyclic subgraph defined by AllPathsFirstSteps
    */

@@ -77,6 +77,8 @@ class BrandesTest extends FlatSpec with Matchers {
     labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
+
+
   }
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for a figure-8 graph" in {
