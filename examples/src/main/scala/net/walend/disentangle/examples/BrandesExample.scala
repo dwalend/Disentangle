@@ -13,7 +13,7 @@ import net.walend.disentangle.graph.semiring.{FirstStepsTrait, Dijkstra, AllPath
  * @author dwalend
  * @since v0.2.0
  */
-class BrandesExample {
+object BrandesExample {
 
   /**
    * Edges are just a Seq of Tuple3[Node,Node,Edge]

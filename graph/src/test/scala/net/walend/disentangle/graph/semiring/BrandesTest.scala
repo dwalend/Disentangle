@@ -1,7 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
 import org.scalatest.{Matchers, FlatSpec}
-import net.walend.disentangle.graph.SomeGraph
+import net.walend.disentangle.graph.{AdjacencyLabelDigraph, SomeGraph}
 import SomeGraph._
 import Brandes.BrandesSteps
 
@@ -78,7 +78,33 @@ class BrandesTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
 
+    val brandesSupport: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
 
+    val labelDigraph: AdjacencyLabelDigraph[String, brandesSupport.Label] = AdjacencyLabelDigraph(edges = labelGraphAndBetweenness._1,
+                                                                                                  nodes = testGraph.nodes.to[Seq],
+                                                                                                  noEdgeExistsValue = brandesSupport.semiring.O)
+
+    labelDigraph.innerNode(H).get
+
+    val expectedSubgraphEdges = Set(
+      (labelDigraph.innerNode(H).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(2,1,List(2)))),
+      (labelDigraph.innerNode(C).get,labelDigraph.innerNode(D).get,Some(BrandesSteps(1,1,List(3)))),
+      (labelDigraph.innerNode(E).get,labelDigraph.innerNode(B).get,Some(BrandesSteps(3,2,List(1, 7)))),
+      (labelDigraph.innerNode(E).get,labelDigraph.innerNode(H).get,Some(BrandesSteps(3,2,List(1, 7)))),
+      (labelDigraph.innerNode(B).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(2,1,List(2))))
+    )
+
+    val subgraphEdges: Set[labelDigraph.InnerEdgeType] = brandesSupport.subgraphEdges(labelDigraph,"E","D")
+    subgraphEdges should be (expectedSubgraphEdges)
+
+    val expectedPaths = List(
+      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),
+      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(H).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get)
+    )
+
+    val paths: Seq[Seq[labelDigraph.InnerNodeType]] = brandesSupport.allLeastPaths(labelDigraph,"E","D")
+
+    paths should be (expectedPaths)
   }
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for a figure-8 graph" in {
