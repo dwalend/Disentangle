@@ -24,20 +24,6 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
 }
 
 /**
- * A graph where edges can be upserted.
- * 
- */
-trait MutableLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
-
-  /**
-   * Set the edge that spans from start to end
-   *
-   */
-  def upsertEdge(from:InnerNodeType,to:InnerNodeType,label:Label):Unit
-
-}
-
-/**
  * A digraph that exposes the indices of stored nodes.
  */
 trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {

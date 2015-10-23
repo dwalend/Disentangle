@@ -1,7 +1,9 @@
-package net.walend.disentangle.graph
+package net.walend.disentangle.graph.mutable
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{GenSeq, GenTraversable}
+
+import net.walend.disentangle.graph.{IndexedLabelDigraph, IndexedSet}
 
 /**
  * Provides constant-time access and mutator for edges. Stores Nodes in a Vector and Labels in a Vector of ArrayBuffers.
@@ -11,10 +13,10 @@ import scala.collection.{GenSeq, GenTraversable}
  * @author dwalend
  * @since v0.1.0
  */
-class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                                   edgeMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
-                                   val noEdgeExistsLabel:Label //value for no edge
-                                    ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
+case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
+                                           edgeMatrix:Vector[ArrayBuffer[Label]], // (row,column) is (start,end), indexed by node.
+                                           noEdgeExistsLabel:Label //value for no edge
+                                          ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
   val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap

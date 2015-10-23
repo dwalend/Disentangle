@@ -13,30 +13,6 @@ object TimingStudiesTest {
 
   def main (args:Array[String]) {
 
-    //Time the Floyd Warshall algorithm with AllShortestPaths
-//    val floydResults = study(10,timeFloyd,expectedTimeFloyd)
-//    floydResults.map(x => println(x))
-
-    //Time Dijkstra's algorithm with AllShortestPaths
-//    val dijkstraResults = study(11,timeDijkstra,expectedTimeDijkstra)
-//    dijkstraResults.map(x => println(x))
-
-    /*
-    val scalaGraphConvertDijstraResults = study(10,timeScalaGraphConvertDijkstra,expectedTimeDijkstra)
-    scalaGraphConvertDijstraResults.map(x => println(x))
-
-        val jungDijkstraResults = study(10,timeJungDijkstra,expectedTimeDijkstra)
-        jungDijkstraResults.map(x => println(x))
-
-        val scalaGraphDijkstraMap = scalaGraphDijstraResults.map(x => (x._1,(x._2,x._3))).toMap
-        val jungDijkstraMap = jungDijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
-        val dijkstraMap = dijkstraResults.map(x => (x._1,(x._2,x._3))).toMap
-        val compareResults = dijkstraMap.keys.map(x => (x,(scalaGraphDijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1),(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
-    //    val compareResults = dijkstraMap.keys.map(x => (x,(dijkstraMap(x)._1.toDouble / jungDijkstraMap(x)._1))).toSeq.sortBy(_._1)
-
-        compareResults.map(x => println(x))
-    */
-
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
     brandesResults.foreach(x => println(x))
@@ -46,19 +22,10 @@ object TimingStudiesTest {
     import net.walend.disentangle.graph.DigraphFactory
 
     val support = new AllPathsFirstSteps[Int,Int,Int](FewestNodes)
-    //    val support = FFewestNodes
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
     val result = timeFunction{FloydWarshall.allPairsLeastPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
-    /*
-        val result = timeFunction{
-            val initNode = initialGraph.innerNodes.head
-            DDijkstra.dijkstraSingleSource(initialGraph, support)(initNode)
-        }
-    */
-
-    //    println(s"$nodeCount ${result._2}")
 
     result._2
   }

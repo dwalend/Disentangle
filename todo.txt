@@ -4,7 +4,6 @@ In this release
 * scala-graph and benchmark in separate subprojects
 * Rename project - Disentangle
 * Parallel Dijkstra, Brandes
-
 * Examples
 
 * Graphs of results from benchmark
@@ -19,7 +18,7 @@ In this release
 
 
 ** Brandes on a big instance
-* examples subproject (With enron data)
+* Brandes example with enron data
 * Performance graphs in Scaladoc
 * comments about hotspots
 * Dijkstra and Brandes plots on r3 machines on AWS

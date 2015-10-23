@@ -1,6 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
-import net.walend.disentangle.graph.{IndexedLabelDigraph, MutableLabelDigraph, MatrixLabelDigraph}
+import net.walend.disentangle.graph.mutable.{MutableLabelDigraph, MatrixLabelDigraph}
+import net.walend.disentangle.graph.IndexedLabelDigraph
 import scala.collection.{GenSeq, GenTraversable}
 
 /**
