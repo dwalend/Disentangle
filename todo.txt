@@ -6,8 +6,11 @@ In this release
 * Parallel Dijkstra, Brandes
 * Examples
 
+* Brandes example with enron data
+
 * Graphs of results from benchmark
 
+* Blog about rename,
 
 
 * Timing data on EC2 big machine
@@ -18,14 +21,12 @@ In this release
 
 
 ** Brandes on a big instance
-* Brandes example with enron data
 * Performance graphs in Scaladoc
 * comments about hotspots
 * Dijkstra and Brandes plots on r3 machines on AWS
 
 * How much faster is the parallel code?
 
-* Blog about rename,
 * Blog about performance and parallel algorithms
 * Blog about examples
 

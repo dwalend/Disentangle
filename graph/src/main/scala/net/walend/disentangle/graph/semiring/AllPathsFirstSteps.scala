@@ -17,11 +17,11 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
 
   def heapOrdering: HeapOrdering[Key] = coreSupport.heapOrdering
 
-  def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.weight))
+  def heapKeyForLabel:Label=>Key = _.fold(coreSupport.heapOrdering.AlwaysBottom)(x => coreSupport.heapKeyForLabel(x.pathWeight))
 
   //todo could be a Seq instead if just used in Dijkstra's algorithm -- faster
   //todo or another place to use the IndexedSet.
-  case class FirstSteps(weight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
+  case class FirstSteps(pathWeight:CoreLabel,choices:Set[Node]) extends FirstStepsTrait[Node, CoreLabel] {
 
     /**
      * Overriding equals to speed up.
@@ -31,7 +31,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
         val other: FirstSteps = any.asInstanceOf[FirstSteps]
         if (this eq other) true //if they share a memory address, no need to compare
         else {
-          if (weight == other.weight) {
+          if (pathWeight == other.pathWeight) {
             choices == other.choices
           } else false
         }
@@ -42,7 +42,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
      * Overriding hashCode because I overrode equals.
      */
     override def hashCode():Int = {
-      weight.hashCode() ^ choices.hashCode()
+      pathWeight.hashCode() ^ choices.hashCode()
     }
   }
 
@@ -59,7 +59,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
     val coreSemiring:SemiringSupport[CoreLabel,Key]#Semiring = coreSupport.semiring
 
     def inDomain(label: Label): Boolean = {
-      label.forall(steps => coreSemiring.inDomain(steps.weight))
+      label.forall(steps => coreSemiring.inDomain(steps.pathWeight))
     }
     
     //identity and annihilator
@@ -72,14 +72,14 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
         if(fromThroughToLabel != O){
           val currentSteps:FirstStepsTrait[Node,CoreLabel] = currentLabel.get
           val fromThroughToSteps:FirstStepsTrait[Node,CoreLabel] = fromThroughToLabel.get
-          val summ = coreSemiring.summary(fromThroughToSteps.weight,currentSteps.weight)
-          if((summ==fromThroughToSteps.weight)&&(summ==currentSteps.weight)) {
-            Option(FirstSteps(currentSteps.weight,
+          val summ = coreSemiring.summary(fromThroughToSteps.pathWeight,currentSteps.pathWeight)
+          if((summ==fromThroughToSteps.pathWeight)&&(summ==currentSteps.pathWeight)) {
+            Option(FirstSteps(currentSteps.pathWeight,
                                 currentSteps.choices ++ fromThroughToSteps.choices))
           }
-          else if (summ==fromThroughToSteps.weight) fromThroughToLabel
-          else if (summ==currentSteps.weight) currentLabel
-          else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.weight+" or proposed "+fromThroughToSteps.weight+" weight.")
+          else if (summ==fromThroughToSteps.pathWeight) fromThroughToLabel
+          else if (summ==currentSteps.pathWeight) currentLabel
+          else throw new IllegalStateException("Core semiring's summary "+summ+" did not return either current "+currentSteps.pathWeight+" or proposed "+fromThroughToSteps.pathWeight+" weight.")
         }
         else currentLabel
       }
@@ -95,7 +95,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
         val choices:Set[Node] = if(fromThroughLabel == I) throughToSteps.choices
                                 else fromThroughSteps.choices
 
-        Option(FirstSteps(coreSemiring.extend(fromThroughSteps.weight,throughToSteps.weight),
+        Option(FirstSteps(coreSemiring.extend(fromThroughSteps.pathWeight,throughToSteps.pathWeight),
                               choices))
       }
       else O
@@ -164,7 +164,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
 
 trait FirstStepsTrait[Node,CoreLabel] {
 
-  def weight:CoreLabel
+  def pathWeight:CoreLabel
 
   def choices:Set[Node]
 
