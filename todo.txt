@@ -38,6 +38,8 @@ Next release
 * IndexedSubSet backed by BitSet
 
 * Subgraph representation ?
+* Semiring algorithm create label graph methods for label-less directed graphs, undirected graphs.
+
 
 Later
 
