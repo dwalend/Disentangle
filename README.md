@@ -19,7 +19,7 @@ I am seeking feedback on just what the API should look like. I think I'm getting
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.1" //todo update with new project name
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.1.1" //todo update with new version
 
 ### The Latest Snapshot (When Available)
 
