@@ -3,18 +3,18 @@ var useLogOrLinear = function(useLog) {
     else return d3.scale.linear()
 }
 
-var createXScale = function(useLog,w,h,padding,latestData) {
+var createXScale = function(useLog,w,h,padding,firstData) {
     return useLogOrLinear(useLog)
-            .domain([d3.min(latestData, function(d) { return Number(d.nodes); }),
-                        d3.max(latestData, function(d) { return Number(d.nodes); })])
+            .domain([d3.min(firstData, function(d) { return Number(d.nodes); }),
+                        d3.max(firstData, function(d) { return Number(d.nodes); })])
             .range([padding, w - padding * 2])
 }
 
-var createYScale = function(useLog,w,h,padding,latestData) {
+var createYScale = function(useLog,w,h,padding,firstData) {
     return useLogOrLinear(useLog)
-             .domain([d3.min(latestData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
+             .domain([d3.min(firstData, function(d) { if(Number(d.measured) < Number(d.expected)) return Number(d.measured)
                                                         else return Number(d.expected)}),
-                    d3.max(latestData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
+                    d3.max(firstData, function(d) { if(Number(d.measured) > Number(d.expected)) return Number(d.measured)
                                                         else return Number(d.expected)
               })])
              .range([h - padding, padding])
@@ -27,6 +27,7 @@ var createXAxis = function(w,h,padding,xScale,svg) {
               .tickFormat(function (d) {
                 return xScale.tickFormat(6,d3.format(",d"))(d)
                 })
+
     svg.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + (h - padding) + ")")
@@ -44,6 +45,9 @@ var createYAxis = function(w,h,padding,yScale,svg) {
     var yAxis = d3.svg.axis()
               .scale(yScale)
               .orient("left")
+              .tickFormat(function (d) {
+                return yScale.tickFormat(6,d3.format(",d"))(d)
+                })
 
     svg.append("g")
                 .attr("class", "axis")
@@ -87,21 +91,25 @@ var createLine = function(lineName,xName,yName,color,dataSet,xScale,yScale,svg) 
                 .attr("stroke", color);
 }
 
-var plotResults = function(useLog,containerId,primaryFile,otherFile) {
+var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) {
 
     var w = 1600;
     var h = 900;
-    var padding = 120;
-    var latestData = [];
-    var standardData = [];
+    var padding = 150;
+    var firstData = [];
+    var secondData = [];
+    var thirdData = [];
     var nanoSecond = Math.pow(10,-9)
 
     queue()
         .defer(d3.csv, primaryFile, function(d) {
-            latestData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+            firstData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
             })
-        .defer(d3.csv, otherFile, function(d) {
-            standardData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+        .defer(d3.csv, secondFile, function(d) {
+            secondData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+            })
+        .defer(d3.csv, thirdFile, function(d) {
+            thirdData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
             })
         .await(ready)
 
@@ -109,9 +117,9 @@ var plotResults = function(useLog,containerId,primaryFile,otherFile) {
          if(error) throw error
 
         //Create scale functions
-        var xScale = createXScale(useLog,w,h,padding,latestData)
+        var xScale = createXScale(useLog,w,h,padding,firstData)
 
-        var yScale = createYScale(useLog,w,h,padding,latestData)
+        var yScale = createYScale(useLog,w,h,padding,firstData)
 
         //Create SVG element
         var svg = d3.select("body").select(containerId)
@@ -124,11 +132,11 @@ var plotResults = function(useLog,containerId,primaryFile,otherFile) {
         //Define Y axis
         var yAxis = createYAxis(w,h,padding,yScale,svg)
 
-        createLine("expectedLine","nodes","expected","red",latestData,xScale,yScale,svg)
+        createLine("expectedLine","nodes","expected","red",firstData,xScale,yScale,svg)
 
-        createDots("measured","nodes","measured","blue",latestData,xScale,yScale,svg)
-        createDots("expected","nodes","expected","red",latestData,xScale,yScale,svg)
-        createDots("jung","nodes","measured","green",standardData,xScale,yScale,svg)
-
+        createDots("expected","nodes","expected","red",firstData,xScale,yScale,svg)
+        createDots("fwMeasured","nodes","measured","purple",thirdData,xScale,yScale,svg)
+        createDots("measured","nodes","measured","blue",firstData,xScale,yScale,svg)
+        createDots("parMeasured","nodes","measured","green",secondData,xScale,yScale,svg)
     }
 }
