@@ -45,9 +45,10 @@ var createYAxis = function(w,h,padding,yScale,svg) {
     var yAxis = d3.svg.axis()
               .scale(yScale)
               .orient("left")
-                 .tickFormat(function (d) {
-                    return yScale.tickFormat(6,d3.format(",d"))(d)
-                 })
+              .ticks(12)
+//              .tickFormat(function (d) {
+//                return yScale.tickFormat(6,d3.format(",d"))(d)
+//               })
 
     svg.append("g")
                 .attr("class", "axis")
