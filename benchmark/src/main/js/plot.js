@@ -45,9 +45,9 @@ var createYAxis = function(w,h,padding,yScale,svg) {
     var yAxis = d3.svg.axis()
               .scale(yScale)
               .orient("left")
-              .tickFormat(function (d) {
-                return yScale.tickFormat(6,d3.format(",d"))(d)
-                })
+                 .tickFormat(function (d) {
+                    return yScale.tickFormat(6,d3.format(",d"))(d)
+                 })
 
     svg.append("g")
                 .attr("class", "axis")
@@ -56,7 +56,7 @@ var createYAxis = function(w,h,padding,yScale,svg) {
 
      svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 + padding/2)
+        .attr("y", 0 + padding/3)
         .attr("x", 0 - (h / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
@@ -64,6 +64,35 @@ var createYAxis = function(w,h,padding,yScale,svg) {
 
     return yAxis
 }
+
+var createMoneyYAxis = function(w,h,padding,yScale,svg) {
+                           var yAxis = d3.svg.axis()
+                                     .scale(yScale)
+                                     .orient("right")
+                                     .tickValues([0,3600])
+                                     .tickFormat(function (d) {
+                                       var mapper = {
+                                         "0": "$2.80",
+                                         "3600": "$5.60",
+                                       }
+                                       return mapper[d]
+                                     })
+
+                           svg.append("g")
+                                       .attr("class", "axis")
+                                       .attr("transform", "translate(" + (w - 2*padding) + ",0)")
+                                       .call(yAxis)
+
+                            svg.append("text")
+                               .attr("transform", "rotate(90)")
+                               .attr("y", - (w - (1.66*padding)))
+                               .attr("x", + h/2)
+                               .attr("dy", "1em")
+                               .style("text-anchor", "middle")
+                               .text("r3.8xlarge Cost")
+
+                           return yAxis
+                       }
 
 var createDots = function(dotSetName,xName,yName,color,dataSet,xScale,yScale,svg) {
     svg.selectAll(dotSetName)
@@ -95,7 +124,7 @@ var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) 
 
     var w = 1600;
     var h = 900;
-    var padding = 150;
+    var padding = 120;
     var firstData = [];
     var secondData = [];
     var thirdData = [];
@@ -131,6 +160,7 @@ var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) 
         var xAxis = createXAxis(w,h,padding,xScale,svg)
         //Define Y axis
         var yAxis = createYAxis(w,h,padding,yScale,svg)
+        var yMoneyAxis = createMoneyYAxis(w,h,padding,yScale,svg)
 
         createLine("expectedLine","nodes","expected","red",firstData,xScale,yScale,svg)
 
