@@ -73,11 +73,12 @@ var createMoneyYAxis = function(w,h,padding,yScale,svg) {
                                      .tickValues([0,3600])
                                      .tickFormat(function (d) {
                                        var mapper = {
-                                         "0": "$2.80",
-                                         "3600": "$5.60",
+                                         "3600": "$2.80",
+                                         "7200": "$5.60",
                                        }
                                        return mapper[d]
                                      })
+                                     .innerTickSize(3*padding-w)
 
                            svg.append("g")
                                        .attr("class", "axis")
@@ -165,9 +166,9 @@ var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) 
 
         createLine("expectedLine","nodes","expected","red",firstData,xScale,yScale,svg)
 
-        createDots("expected","nodes","expected","red",firstData,xScale,yScale,svg)
-        createDots("fwMeasured","nodes","measured","purple",thirdData,xScale,yScale,svg)
-        createDots("measured","nodes","measured","blue",firstData,xScale,yScale,svg)
-        createDots("parMeasured","nodes","measured","green",secondData,xScale,yScale,svg)
+        createDots("Dijkstra Expected","nodes","expected","red",firstData,xScale,yScale,svg)
+        createDots("Floyd Warshall","nodes","measured","purple",thirdData,xScale,yScale,svg)
+        createDots("Dijkstra","nodes","measured","blue",firstData,xScale,yScale,svg)
+        createDots("Parallel Dijkstra","nodes","measured","green",secondData,xScale,yScale,svg)
     }
 }
