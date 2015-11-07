@@ -91,7 +91,7 @@ var createMoneyYAxis = function(w,h,padding,yScale,svg) {
                                .attr("x", + h/2)
                                .attr("dy", "1em")
                                .style("text-anchor", "middle")
-                               .text("r3.8xlarge Cost")
+//                               .text("r3.8xlarge Cost")
 
                            return yAxis
                        }
@@ -109,6 +109,16 @@ var createDots = function(dotSetName,xName,yName,color,dataSet,xScale,yScale,svg
        })
        .attr("r", 4)
        .attr("fill", color);
+
+    var last = dataSet[dataSet.length - 1]
+
+    svg.append("text")
+        .attr("x", xScale(Number(last[xName])))
+        .attr("y", yScale(Number(last[yName])))
+//        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(dotSetName)
+
 }
 
 var createLine = function(lineName,xName,yName,color,dataSet,xScale,yScale,svg) {
