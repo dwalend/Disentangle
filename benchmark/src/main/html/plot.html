@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Disentangled vs Jung Performance</title>
+    <title>Performance Graphs</title>
    	<script type="text/javascript" src="../js/d3.v3.js"></script>
     <script type="text/javascript"src="../js/queue.js"></script>
     <script type="text/javascript"src="../js/plot.js"></script>
@@ -34,8 +34,14 @@
 <div id="chart1"></div>
 <div id="chart2"></div>
 <script type="text/javascript">
-    plotResults(false,"#chart1","../../../../benchmark/results/v0.1.2/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/floydWarshall.csv")
-    plotResults(true,"#chart2","../../../../benchmark/results/v0.1.2/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/floydWarshall.csv")
+    plot3Results(false,"#chart1","../../../../benchmark/results/v0.1.2/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/floydWarshall.csv")
+    plot3Results(true,"#chart2","../../../../benchmark/results/v0.1.2/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/floydWarshall.csv")
+</script>
+<div id="chart3"></div>
+<div id="chart4"></div>
+<script type="text/javascript">
+    plot2Results(false,"#chart3","../../../../benchmark/results/v0.1.2/r3.8xlarge/brandes.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parBrandes.csv")
+    plot2Results(true,"#chart4","../../../../benchmark/results/v0.1.2/r3.8xlarge/brandes.csv","../../../../benchmark/results/v0.1.2/r3.8xlarge/parBrandes.csv")
 </script>
 </body>
 </html>

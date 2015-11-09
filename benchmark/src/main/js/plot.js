@@ -132,7 +132,7 @@ var createLine = function(lineName,xName,yName,color,dataSet,xScale,yScale,svg) 
                 .attr("stroke", color);
 }
 
-var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) {
+var plot3Results = function(useLog,containerId,primaryFile,secondFile,thirdFile) {
 
     var w = 1600;
     var h = 900;
@@ -180,5 +180,52 @@ var plotResults = function(useLog,containerId,primaryFile,secondFile,thirdFile) 
         createDots("Floyd Warshall","nodes","measured","purple",thirdData,xScale,yScale,svg)
         createDots("Dijkstra","nodes","measured","blue",firstData,xScale,yScale,svg)
         createDots("Parallel Dijkstra","nodes","measured","green",secondData,xScale,yScale,svg)
+    }
+}
+
+var plot2Results = function(useLog,containerId,primaryFile,secondFile) {
+
+    var w = 1600;
+    var h = 900;
+    var padding = 120;
+    var firstData = [];
+    var secondData = [];
+    var thirdData = [];
+    var nanoSecond = Math.pow(10,-9)
+
+    queue()
+        .defer(d3.csv, primaryFile, function(d) {
+            firstData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+            })
+        .defer(d3.csv, secondFile, function(d) {
+            secondData.push({"nodes":+d.nodes, "measured":+d.measured*nanoSecond, "expected":+d.expected*nanoSecond})
+            })
+        .await(ready)
+
+    function ready(error,other) {
+         if(error) throw error
+
+        //Create scale functions
+        var xScale = createXScale(useLog,w,h,padding,firstData)
+
+        var yScale = createYScale(useLog,w,h,padding,firstData)
+
+        //Create SVG element
+        var svg = d3.select("body").select(containerId)
+                    .append("svg")
+                    .attr("width", w)
+                    .attr("height", h)
+
+        //Define X axis
+        var xAxis = createXAxis(w,h,padding,xScale,svg)
+        //Define Y axis
+        var yAxis = createYAxis(w,h,padding,yScale,svg)
+        var yMoneyAxis = createMoneyYAxis(w,h,padding,yScale,svg)
+
+        createLine("expectedLine","nodes","expected","red",firstData,xScale,yScale,svg)
+
+        createDots("Brandes Expected","nodes","expected","red",firstData,xScale,yScale,svg)
+        createDots("Brandes","nodes","measured","blue",firstData,xScale,yScale,svg)
+        createDots("Parallel Brandes","nodes","measured","green",secondData,xScale,yScale,svg)
     }
 }
