@@ -70,7 +70,7 @@ var createMoneyYAxis = function(w,h,padding,yScale,svg) {
                            var yAxis = d3.svg.axis()
                                      .scale(yScale)
                                      .orient("right")
-                                     .tickValues([0,3600])
+                                     .tickValues([3600])
                                      .tickFormat(function (d) {
                                        var mapper = {
                                          "3600": "$2.80",
