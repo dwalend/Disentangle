@@ -134,9 +134,11 @@ var createLine = function(lineName,xName,yName,color,dataSet,xScale,yScale,svg) 
 
 var plot3Results = function(useLog,containerId,primaryFile,secondFile,thirdFile) {
 
-    var w = 1600;
-    var h = 900;
-    var padding = 120;
+    var sss = 100
+
+    var w = 16*sss;
+    var h = 9*sss;
+    var padding = 100;
     var firstData = [];
     var secondData = [];
     var thirdData = [];
@@ -185,9 +187,11 @@ var plot3Results = function(useLog,containerId,primaryFile,secondFile,thirdFile)
 
 var plot2Results = function(useLog,containerId,primaryFile,secondFile) {
 
-    var w = 1600;
-    var h = 900;
-    var padding = 120;
+    var sss = 100
+
+    var w = 16*sss;
+    var h = 9*sss;
+    var padding = 100;
     var firstData = [];
     var secondData = [];
     var thirdData = [];
