@@ -12,9 +12,9 @@ Further, the library provides support for computational stability. The same inpu
 * [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).
 * Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
 * Restructured into subprojects to minimize dependencies on third-party libraries in your code
-** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https:/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https:/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
-* Started tracking [performance](TODO)
-* Added [helper methods](TODO) to some semirings to produce shortest paths.
+** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https://github.com/dwalend/Disentangle/tree/master/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https://github.com/dwalend/Disentangle/tree/master/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
+* Started tracking [performance](TODO) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
+* Added [helper methods](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) to some semirings to produce shortest paths.
 
 
 ## Getting Disentangle
@@ -45,27 +45,27 @@ If you want to change Disentangle to meet your every whim, share your changes by
 
 Disentangle supplies
 
-* A [Fibonacci heap](TODO) -- a generic heap that supports an efficient changeKey operation.
-* The [Floyd-Warshall algorithm ](TODO)
-* [Dijkstra's algorithm](TODO) with a Fibonacci Heap
-* [Brandes' algorithm](TODO) for betweenness
+* A [Fibonacci heap](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/heap/FibonacciHeap.scala) -- a generic heap that supports an efficient changeKey operation.
+* The [Floyd-Warshall algorithm ](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/FloydWarshall.scala)
+* [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala) with a Fibonacci Heap
+* [Brandes' algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala) for betweenness and all shortest paths
 
 ### Parallel Algorithms
 
 Disentangle supplies
 
-* A parallel version of [Dijkstra's algorithm](TODO) 
-* A parallel version of [Brandes' algorithm ](TODO)
+* A parallel version of [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala#L129-148) 
+* A parallel version of [Brandes' algorithm ](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala#L142-171)
 
 ### Performance
 
-I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've [measured performance](TODO) on graphs with up to 16384 nodes on an ec2 r3.8xlarge. (Don't start a machoflops digression. I just wanted to check the algorithms' time complexity. I'm not that interested in playing.)
+I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've [measured performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) on graphs with up to 16384 nodes on an ec2 r3.8xlarge. (Don't start a machoflops digression. I just wanted to check the algorithms' time complexity. I'm not that interested in playing.)
 
 ## Using Disentangle
 
-See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](TODO).
+See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
 
-### Finding Shortest Paths And Betweenness ([Dijkstra's](TODO) and [Floyd-Warshall](TODO) Algorithms)
+### Finding Shortest Paths And Betweenness ([Dijkstra's](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) and [Floyd-Warshall](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/FloydWarshallExample.scala) Algorithms)
 
 You'll need to bring a GenTraversable[(Node,Node,Edge)] for your graph.
 
