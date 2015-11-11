@@ -12,7 +12,7 @@ Further, the library provides support for computational stability. The same inpu
 * [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).
 * Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
 * Restructured into subprojects to minimize dependencies on third-party libraries in your code
-** Added an [example subproject](https:examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https:/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https:/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
+** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https:/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https:/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
 * Started tracking [performance](TODO)
 * Added [helper methods](TODO) to some semirings to produce shortest paths.
 
