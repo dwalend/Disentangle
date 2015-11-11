@@ -12,7 +12,7 @@ class DijkstraLeastWeightsExampleTest extends FlatSpec with Matchers {
 
   "The Dijkstra with least weights example" should "produce expected results" in {
 
-    val shortPathLabels = DijkstraLeastWeightsExample.leasttPathLabels
+    val shortPathLabels = DijkstraLeastWeightsExample.leastPathLabels
 
     val shortPathLabelsFromPar = DijkstraLeastWeightsExample.leastPathLabelsFromPar
 

@@ -46,7 +46,7 @@ object DijkstraLeastWeightsExample {
   /**
    * Generate the first steps for all paths in the graph
    */
-  lazy val leasttPathLabels: Seq[(String, String, support.Label)] = Dijkstra.allPairsLeastPaths(edges,support,labelForEdge)
+  lazy val leastPathLabels: Seq[(String, String, support.Label)] = Dijkstra.allPairsLeastPaths(edges,support,labelForEdge)
 
   /**
    * Generate the first steps for all paths in the graph in parallel
@@ -57,7 +57,7 @@ object DijkstraLeastWeightsExample {
    * The helper methods in AllPathsFirstSteps need a directed graph.
    * Use AllPathsFirstSteps.semiring's annihilator - None - for noEdgeExistsValue.
    */
-  lazy val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = leasttPathLabels,noEdgeExistsValue = support.semiring.O)
+  lazy val labelDigraph: AdjacencyLabelDigraph[String, support.Label] = AdjacencyLabelDigraph(edges = leastPathLabels,noEdgeExistsValue = support.semiring.O)
 
   /**
    * Get a subgraph that holds all the possible shortest paths

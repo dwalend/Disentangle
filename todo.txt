@@ -5,30 +5,19 @@ In this release
 * Rename project - Disentangle
 * Parallel Dijkstra, Brandes
 * Examples
+* Graphs of results from benchmark
 
 * Brandes example with enron data
 
-* Graphs of results from benchmark
 
-* Blog about rename,
-
-
-* Timing data on EC2 big machine
-** Test and script on cheap machine
-** Run on a big instance
-** Graph results
-* Parallel Brandes
-
-
-** Brandes on a big instance
 * Performance graphs in Scaladoc
 * comments about hotspots
-* Dijkstra and Brandes plots on r3 machines on AWS
 
 * How much faster is the parallel code?
 
-* Blog about performance and parallel algorithms
 * Blog about examples
+
+
 
 Next release
 
@@ -40,9 +29,13 @@ Next release
 * Subgraph representation ?
 * Semiring algorithm create label graph methods for label-less directed graphs, undirected graphs.
 
+* Blog about computational stability
+
 
 Later
 
+* Brandes on an undirected graph
+* Louvain clustering
 * More Enron
 * path representation for net.walend.graph
 * translator from net.walend.graph.path to scala-graph's paths
@@ -63,11 +56,14 @@ Structures
 
 Algorithms
 
-* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps] (currently can only use one Semiring)
 * MST with Fibonacci heap
-* Lazy Label Graph. (Single-Source graph with Dijkstra's algorithm)
+* Lazy Dijkstra. (Single-Source graph with Dijkstra's algorithm)
 * A* algorithm
 * Parallel queued graph minimization (will need a concurrent mutable edge graph)
+
+Graph storage
+
+* DynamoDB clusters
 
 
 Semirings
@@ -76,7 +72,7 @@ Semirings
 
 Figure out
 
-* path representations on the original graph with hyperedges and multiple edges.
+* path representation.
 
 
 ---
