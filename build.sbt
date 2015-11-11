@@ -4,9 +4,9 @@ name := "Disentangle"
 organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.2.0-SNAPSHOT"
+version := "0.2.0"
 
-isSnapshot := true
+isSnapshot := false
 
 scalaVersion := "2.11.7"
 
@@ -32,7 +32,7 @@ lazy val examples = project.dependsOn(graph % "test->test;compile->compile")
 
 //git.remoteRepo := "git@github.com:dwalend/disentangle.git"
 
-//publishMavenStyle := true
+publishMavenStyle := true
 
 
 publishTo in ThisBuild := {
@@ -45,7 +45,7 @@ publishTo in ThisBuild := {
 
 publishArtifact in Test := false
 
-//pomIncludeRepository := { _ => false }
+//pomIncludeRepository := { _ => false }  //only needed if there are dependencies outside Sonatype Nexus
 
 // Your profile name of the sonatype account. The default is the same with the organization value
 sonatypeProfileName in ThisBuild := "net.walend"
