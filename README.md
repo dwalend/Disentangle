@@ -13,7 +13,7 @@ Further, the library provides support for computational stability. The same inpu
 * Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
 * Restructured into subprojects to minimize dependencies on third-party libraries in your code
 ** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https://github.com/dwalend/Disentangle/tree/master/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https://github.com/dwalend/Disentangle/tree/master/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
-* Started tracking [performance](TODO) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
+* Started tracking [performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
 * Added [helper methods](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) to some semirings to produce shortest paths.
 
 
@@ -93,7 +93,7 @@ Or
     val simpleShortPathLabelsFromPar = Dijkstra.parAllPairsShortestPaths(edges)
 
 
-### Finding Betweenness and Shortest Paths with [Brandes'](TOOD) Algorithm 
+### Finding Betweenness and Shortest Paths with [Brandes'](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/BrandesExample.scala) Algorithm 
 
     /**
      * The labels from Brandes use node indexes from a directed graph,
@@ -113,7 +113,9 @@ Or
      */
     val shortestPathsAndBetweennessFromPar = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
 
-### [Changing the Semiring](TODO)
+### [Changing the Semiring](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraLeastWeightsExample.scala)
+
+The methods above use a semiring that finds paths with the fewest number of nodes. You can swap out the semiring or supply your own to find least-weight paths, most-probable paths, or whatever meets your needs. 
 
 Select or create the semiring support object to use:
 
@@ -153,15 +155,15 @@ Or generate them in parallel:
 
 Disentangle supplies some basic semirings and associated support classes
 
-* [FewestNodes](TODO) which helps create paths that include the fewest nodes between start and end nodes
-* [LeastWeights](TODO) which helps create paths that have the least (positive Double) weight sum between start and end nodes
-* [MostProbable](TODO) which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
-* [TransitiveClosure](TODO) which helps create all paths that connect start and end nodes
+* [FewestNodes](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/FewestNodes.scala) which helps create paths that include the fewest nodes between start and end nodes
+* [LeastWeights](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/LeastWeights.scala) which helps create paths that have the least (positive Double) weight sum between start and end nodes
+* [MostProbable](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/MostProbable.scala) which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
+* [TransitiveClosure](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/TransitiveClosure.scala) which helps create all paths that connect start and end nodes
 
 Semirings can be composed. Disentangle takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
 
-* [OnePathFirstStep](TODO) which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
-* [AllPathsFirstSteps](TODO) which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]. This semiring includes some helper methods to convert first steps to paths.
+* [OnePathFirstStep](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/OnePathFirstStep.scala) which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
+* [AllPathsFirstSteps](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/AllPathsFirstSteps.scala) which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]. This semiring includes some helper methods to convert first steps to paths.
 
 
 ## Customizing Disentangle
@@ -182,7 +184,7 @@ FloydWarshall, Dijkstra, and Brandes each include a method that takes an Indexed
 
 ### Creating A Custom Semiring and Other Support Classes
 
-You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra methods for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the [most probable paths](todo):
+You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra methods for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the [most probable paths](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/MostProbable.scala):
 
     object MostProbable extends SemiringSupport[Double,Double] {
     
@@ -237,7 +239,6 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
         /**
          * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
          */
-        //todo look again for a version that handles NaNs and infinities
         def tryCompare(x: Double, y: Double): Option[Int] = {
           Option(x.compareTo(y))
         }
