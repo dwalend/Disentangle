@@ -91,7 +91,7 @@ var createMoneyYAxis = function(w,h,padding,yScale,svg) {
                                .attr("x", + h/2)
                                .attr("dy", "1em")
                                .style("text-anchor", "middle")
-//                               .text("r3.8xlarge Cost")
+                               .text("r3.8xlarge Cost")
 
                            return yAxis
                        }

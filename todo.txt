@@ -1,22 +1,10 @@
-In this release
+Blog
 
-* Cleaned up IndexedSet
-* scala-graph and benchmark in separate subprojects
-* Rename project - Disentangle
-* Parallel Dijkstra, Brandes
-* Examples
-* Graphs of results from benchmark
-
-* Brandes example with enron data
-
-
-* Performance graphs in Scaladoc
-* comments about hotspots
-
-* How much faster is the parallel code?
+* put example annotation in the project list
+* put pure scala config in the project list
 
 * Blog about examples
-
+* Blog about computational stability
 
 
 Next release
@@ -26,28 +14,30 @@ Next release
 * Louvain algorithm
 * IndexedSubSet backed by BitSet
 
-* Subgraph representation ?
-* Semiring algorithm create label graph methods for label-less directed graphs, undirected graphs.
-
-* Blog about computational stability
+* Subgraph representation
+* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
+* Dijkstra's and Brandes - fill heap as nodes become reachable to reduce the heap's average complexity
 
 
 Later
 
-* Brandes on an undirected graph
-* Louvain clustering
 * More Enron
 * path representation for net.walend.graph
-* translator from net.walend.graph.path to scala-graph's paths
 * Prim's MST algorithm
+* Faster transitive closure
+* Dijkstra's algorithm special case speed-ups
+* Dijkstra's algorithms for infinite graphs
+* A* and A* for infinite graphs.
 
 
-Pulblicize
+Publicize
 
 * Blog a bit
+* Simplicity for scala talk
 
 Overall
 * Add more to the package doc.
+* Images in package doc
 
 Structures
 
@@ -57,6 +47,7 @@ Structures
 Algorithms
 
 * MST with Fibonacci heap
+* Variations on Dijkstra's algorithm from wikipedia
 * Lazy Dijkstra. (Single-Source graph with Dijkstra's algorithm)
 * A* algorithm
 * Parallel queued graph minimization (will need a concurrent mutable edge graph)
