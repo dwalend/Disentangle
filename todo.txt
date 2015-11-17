@@ -1,11 +1,7 @@
 Blog
 
-* put example annotation in the project list
-* put pure scala config in the project list
-
 * Blog about examples
 * Blog about computational stability
-
 
 Next release
 
