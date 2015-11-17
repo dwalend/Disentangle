@@ -1,35 +1,39 @@
-In this release
+Blog
 
-* Cleaned up IndexedSet
-* scala-graph in a separate subproject
-
-* Rename project  -- Scala Untangled ? Disentangler
-
-* automatically plot the results of the timing studies (and comparison with Jung)
-* Timing data on EC2 c3 machine
-* Activator ?
+* Blog about examples
+* Blog about computational stability
 
 Next release
 
-* IndexedSubSet backed by BitSet
+* Undirected graphs
+** With Brandes' algorithm
 * Louvain algorithm
+* IndexedSubSet backed by BitSet
 
-* Subgraph representation ?
+* Subgraph representation
+* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
+* Dijkstra's and Brandes - fill heap as nodes become reachable to reduce the heap's average complexity
+
 
 Later
 
 * More Enron
 * path representation for net.walend.graph
-* translator from net.walend.graph.path to scala-graph's paths
 * Prim's MST algorithm
+* Faster transitive closure
+* Dijkstra's algorithm special case speed-ups
+* Dijkstra's algorithms for infinite graphs
+* A* and A* for infinite graphs.
 
 
-Pulblicize
+Publicize
 
 * Blog a bit
+* Simplicity for scala talk
 
 Overall
 * Add more to the package doc.
+* Images in package doc
 
 Structures
 
@@ -38,11 +42,15 @@ Structures
 
 Algorithms
 
-* AllPathsBrandes which finds all minimal paths between start and end nodes by supplying a set of possible previous nodes within an Option[BrandesSteps] (currently can only use one Semiring)
 * MST with Fibonacci heap
-* Lazy Label Graph. (Single-Source graph with Dijkstra's algorithm)
+* Variations on Dijkstra's algorithm from wikipedia
+* Lazy Dijkstra. (Single-Source graph with Dijkstra's algorithm)
 * A* algorithm
 * Parallel queued graph minimization (will need a concurrent mutable edge graph)
+
+Graph storage
+
+* DynamoDB clusters
 
 
 Semirings
@@ -51,7 +59,7 @@ Semirings
 
 Figure out
 
-* path representations on the original graph with hyperedges and multiple edges.
+* path representation.
 
 
 ---

@@ -1,19 +1,27 @@
-ScalaGraphMinimizer
+Disentangle
 ===================
 
-ScalaGraphMinimizer is a kit for customizable graph algorithms, originally built for [scala-graph](http://www.scala-graph.org/). Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and incorrect assumptions. ScalaGraphMinimizer uses exposed data structures based on scala.collection Seqs and tuples. Its semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of code reuse and customization.
+Disentangle is a kit for customizable graph algorithms in Scala. Disentangle's approach differs from other graph libraries by using Scala's existing collections and tuples wherever practical. Disentangle provides only the minimal traits and classes, and does not force you to use them. For example, Dijkstra's parAllPairsShortestPaths() requires only a GenTraversable of Tuple3 edges, and returns a ParSeq of minimal paths between nodes. A trait and class hierarchy for Graphs exist, but is not invasive and requires no type-system yoga on your part to use. Further, I only add new parts to that hierarchy when they have some pragmatic value.
 
-The current version is 0.1.2, the forth release. I have restructured the project into subprojects, separating the core graph library from the translator to scala-graph, and creating new subprojects for benchmarks, examples, and presentations.
+Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and optimistic assumptions. Disentangle's semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of customization.
 
-I am seeking feedback on just what the API should look like. Please let me know what works well and what could be
-better.
+Further, the library provides support for computational stability. The same input will reliably result in the same output. Small changes in input typically result in small changes in output. The semiring-based algorithms offer an optional nodeOrder argument to provide that stability.
+
+## Changes in 0.2.0, the forth release
+
+* [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).
+* Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
+* Restructured into subprojects to minimize dependencies on third-party libraries in your code
+** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https://github.com/dwalend/Disentangle/tree/master/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https://github.com/dwalend/Disentangle/tree/master/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
+* Started tracking [performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
+* Added [helper methods](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) to some semirings to produce shortest paths.
 
 
-## Getting ScalaGraphMinimizer
+## Getting Disentangle
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.1"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.0" 
 
 ### The Latest Snapshot (When Available)
 
@@ -21,126 +29,162 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend" %% "scalagraphminimizer" % "0.1.2-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.1-SNAPSHOT"
 
 ### Clone the Code
 
-If you want to change ScalaGraphMinimizer to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
+If you want to change Disentangle to meet your every whim, share your changes by sending me pull requests, or just mess around, clone the git repo and have at it.
 
-    git clone https://github.com/dwalend/ScalaGraphMinimizer.git
-    cd ScalaGraphMinimizer
+    git clone https://github.com/dwalend/Disentangle.git  
+    cd Disentangle
+    # bend Disentangle to your will
     sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.1.2-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.0-SNAPSHOT.jar /your/projectname/lib
 
+## Algorithms
 
-## Using ScalaGraphMinimizer
+Disentangle supplies
 
-See the [scaladoc](http://dwalend.github.io/ScalaGraphMinimizer/v0.1.1/#net.walend.graph.package)
+* A [Fibonacci heap](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/heap/FibonacciHeap.scala) -- a generic heap that supports an efficient changeKey operation.
+* The [Floyd-Warshall algorithm ](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/FloydWarshall.scala)
+* [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala) with a Fibonacci Heap
+* [Brandes' algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala) for betweenness and all shortest paths
 
-### Using Semiring-based algorithms (Floyd-Warshall, Dijkstra, and Brandes' Algorithms)
+### Parallel Algorithms
 
-You'll need to
+Disentangle supplies
 
-* bring a graph of your own, or at least a Seq[(Node,Node,MaybeALabel)].
-* choose or create a SemiringSupport implementation, like FewestNodes.
-* provide a function to convert from a (Node,Node,MaybeAnEdge) tuple to the Label defined by your SemiringSupport.
-** You can use net.walend.scalagraph.semiring.ConvertToLabelGraph to convert from a [scala-graph](http://www.scala-graph.org/) Graph.
-* choose an algorithm to perform the minimization. You probably want to use Dijkstra's algorithm.
-* arrange for your code to run the algorithm on your graph
-
-FloydWarshall provides a Digraph[Node,Label] with your nodes and labels that contain the results of the minimization. Dijkstra provides a Seq[(Node,Node,Label)] where the labels contain the results of the minimization. Brandes provides the same Seq as Dijkstra's algorithm plus a Map[Node,Double] that holds each node's betweenness.
-
-    import net.walend.graph.semiring.{OnePathFirstStep,FirstStep,FewestNodes,Dijkstra}
-    
-    //You supply the graph
-    val yourEdges:Seq[(String,String,String)] = ???
-    
-    //find one path that traverses the fewest nodes, or None
-    
-    //create the support class
-    val support = new OnePathFirstStep[String,Int,Int](FewestNodes)
-
-    //this will be used to convert from the arc tuples to labels
-    val labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel) 
-
-    //find the first step in a shortest path for a pair of nodes if that path exists
-    val firstSteps:Seq[(String,String,Option[FirstStep[String,Int]])] = 
-      Dijkstra.allPairsShortestPaths(edges = yourEdges,
-                                    support = support,
-                                    labelForArc = labelForArc)
-
-    //Find the shortest paths between any pair of nodes
-    val shortestPath:Option[Seq[String]] = support.leastPath(start,end)
-
-### Algorithms
-
-ScalaGraphMinimizer supplies
-
-* A FibonacciHeap -- a generic heap that supports an efficient changeKey operation.
-* The Floyd-Warshall algorithm
-* Dijkstra's algorithm with a Fibonacci Heap
-* Brandes' algorithm for betweenness
+* A parallel version of [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala#L129-148) 
+* A parallel version of [Brandes' algorithm ](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala#L142-171)
 
 ### Performance
 
-I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've tested performance up to 2048 nodes.
+I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've [measured performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) on graphs with up to 16384 nodes on an ec2 r3.8xlarge. (Don't start a machoflops digression. I just wanted to check the algorithms' time complexity. I'm not that interested in playing.)
 
-#### Dijkstra
+## Using Disentangle
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
+See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
 
-<script src="benchmarks/src/main/js/algorithmTime.js"></script>
+### Finding Shortest Paths And Betweenness ([Dijkstra's](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) and [Floyd-Warshall](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/FloydWarshallExample.scala) Algorithms)
 
-<script>
-    console.log("about to plotIt")
-    plotIt("benchmarks/results/v0.1.2/dijkstra.csv")
-    console.log("back from plotIt")
-</script>
+You'll need to bring a GenTraversable[(Node,Node,Edge)] for your graph.
 
-#### Brandes
+    val edges = Seq(
+                    ("A","B","ab"),
+                    ("B","C","bc"),
+                    ("C","D","cd"),
+                    ("D","E","de"),
+                    ("E","F","ef"),
+                    ("E","B","eb"),
+                    ("E","H","eh"),
+                    ("H","C","hc")
+                   )
 
-TODO fill in
+    /**
+     * Generate all the shortest paths in the graph
+     */
+    val simpleShortPathLabels = Dijkstra.allPairsShortestPaths(edges)
 
-#### Floyd-Warshall
+Or
 
-TODO fill in
+    /**
+     * Generate all the shortest paths in the graph in parallel
+     */
+    val simpleShortPathLabelsFromPar = Dijkstra.parAllPairsShortestPaths(edges)
+
+
+### Finding Betweenness and Shortest Paths with [Brandes'](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/BrandesExample.scala) Algorithm 
+
+    /**
+     * The labels from Brandes use node indexes from a directed graph,
+     * so it's best to control those via the optional nodeOrder parameter
+     */
+    val nodeOrder = Array("A","B","C","D","E","F","H")
+
+    /**
+     * Find shortest paths and betweenness for the graph
+     */
+    val shortestPathsAndBetweenness = Brandes.allLeastPathsAndBetweenness(edges,nodeOrder)
+
+Or
+
+    /**
+     * Find shortest paths and betweenness for the graph in parallel
+     */
+    val shortestPathsAndBetweennessFromPar = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
+
+### [Changing the Semiring](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraLeastWeightsExample.scala)
+
+The methods above use a semiring that finds paths with the fewest number of nodes. You can swap out the semiring or supply your own to find least-weight paths, most-probable paths, or whatever meets your needs. 
+
+Select or create the semiring support object to use:
+
+    /**
+     * A semiring support instance that uses double-valued labels to find the shortest paths.
+     */
+    val support = new AllPathsFirstSteps(LeastWeights)
+
+    /**
+     * Supply a function that can convert from a String to a Double to build up the initial graph
+     * of edges. You'll probably have something more significant than this hack.
+     */
+    def stringToDouble(fromNode:String,toNode:String,edge:String):Double = edge.map(_.hashCode().toDouble).product
+
+And create a function to convert the edges in your graph to edges that match the semiring support:
+
+    /**
+     * Build on AllPathsFirstSteps' convert method
+     */
+    val labelForEdge: (String, String, String) => support.Label = support.convertEdgeToLabel[String](stringToDouble)
+
+Then generate all of the shortest paths:
+
+    /**
+     * Generate the first steps for all paths in the graph
+     */
+    val leastPathLabels: Seq[(String, String, support.Label)] = Dijkstra.allPairsLeastPaths(edges,support,labelForEdge)
+
+Or generate them in parallel:
+
+    /**
+     * Generate the first steps for all paths in the graph in parallel
+     */
+    val leastPathLabelsFromPar: ParSeq[(String, String, support.Label)] = Dijkstra.parAllPairsLeastPaths(edges,support,labelForEdge)
 
 ### Semirings
 
-ScalaGraphMinimizer supplies some basic semirings and associated support classes
+Disentangle supplies some basic semirings and associated support classes
 
-* FewestNodes which helps create paths that include the fewest nodes between start and end nodes
-* LeastWeights which helps create paths that have the least (positive Double) weight sum between start and end nodes
-* MostProbable which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
-* TransitiveClosure which helps create all paths that connect start and end nodes
+* [FewestNodes](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/FewestNodes.scala) which helps create paths that include the fewest nodes between start and end nodes
+* [LeastWeights](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/LeastWeights.scala) which helps create paths that have the least (positive Double) weight sum between start and end nodes
+* [MostProbable](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/MostProbable.scala) which helps create paths that have the most probable (Double between zero and one) path between start and end nodes
+* [TransitiveClosure](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/TransitiveClosure.scala) which helps create all paths that connect start and end nodes
 
-Semirings can be composed. ScalaGraphMinimizer takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
+Semirings can be composed. Disentangle takes advantage of this by supplies some semirings that decorate a core semiring, and harvest additional details about the minimal paths and subgraphs explored.
 
-* OnePathFirstStep which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
-* AllPathsFirstSteps which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]
+* [OnePathFirstStep](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/OnePathFirstStep.scala) which finds one minimal path between start and end nodes by supplying the next node as an Option[FirstStep]
+* [AllPathsFirstSteps](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/AllPathsFirstSteps.scala) which finds all minimal paths between start and end nodes by supplying a Set of possible next nodes within an Option[FirstSteps]. This semiring includes some helper methods to convert first steps to paths.
 
 
-## Customizing ScalaGraphMinimizer
+## Customizing Disentangle
 
-Customize ScalaGraphMinimizer with your own mappings, Semirings and algorithms.
+Customize Disentangle with your own conversions, Semirings, and algorithms.
 
 ### Converting Your Graph to a Sequence of (Node,Node,ArcLabel) Tuples
 
-FloydWarshall, Dijkstra, and Brandes each include a method that take sequences of (Node,Node,ArcLabel) tuples. These methods require you to provide a function that converts a tuple into a label that fits your semiring's Label. 
+FloydWarshall, Dijkstra, and Brandes each include a method that take sequences of (Node,Node,Edge) tuples. These methods require you to provide a function that translates your tuple into a label that fits your semiring's Label type specifier. The decorator semirings listed above each include helper functions that require a similar function to convert the tuple to the core semiring's Label. These functions are typically very straightforward to create. 
 
-These are typically very straightforward to create. The decorator semirings listed above each include helper functions that require a similar function to convert the tuple to the core semiring's Label.
+    convertEdgeToLabelFunc:(Node,Node,Edge)=>Label
 
-    convertEdgeToLabelFunc:(Node,Node,ArcLabel)=>Label
+These algorithms also allow for an optional Seq of nodes. This Seq controls the ordering of the algorithm's internal processing and output and can contain both extra nodes and any nodes that already exist in the edges. Take advantage of this Seq to improve computational stability.
 
-These methods also allow for an optional nodes Seq. This Seq can contain both extra nodes and any nodes that already exist in the edges, and can control the ordering of the algorithm's output.
-
-FloydWarshall, Dijkstra, and Brandes each also include a method that takes an IndexedDigraph implementation, mutable for FloydWarshall. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a future lazy evaluator for Dijkstra's method.  
+FloydWarshall, Dijkstra, and Brandes each include a method that takes an IndexedDigraph implementation, mutable for FloydWarshall. If you use this method then you are responsible for creating the labelDigraph correctly. I included it primarily for computational efficiency, and for a possible future lazy evaluator for Dijkstra's method.  
 
     labelDigraph:IndexedDigraph[Node,Label]
 
 ### Creating A Custom Semiring and Other Support Classes
 
-You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra methods for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the most probable paths:
+You will likely want to create your own Semirings to match the problems you are solving. That will be enough to run the Floyd-Warshall algorithm. However, Dijkstra's and Brandes' algorithms requires some extra methods for the heap. Implement SemiringSupport, which includes a Semiring, a HeapOrdering, and a function to convert from Labels to the heap's Keys. Here is an example that can find the [most probable paths](https://github.com/dwalend/Disentangle/blob/master/graph/src/main/scala/net/walend/disentangle/graph/semiring/MostProbable.scala):
 
     object MostProbable extends SemiringSupport[Double,Double] {
     
@@ -150,7 +194,7 @@ You will likely want to create your own Semirings to match the problems you are 
     
       def heapKeyForLabel = {label:Label => label}
 
-Sometimes it can be helpful to provide a possible convertArcToLabel function 
+Sometimes it can be helpful to provide a possible convertEdgeToLabel function 
 
       def convertEdgeToLabel[Node, Label](start: Node, end: Node, label: Label): MostProbable.Label = semiring.I
     
@@ -195,7 +239,6 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
         /**
          * @return Some negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second, or None if they can't be compared
          */
-        //todo look again for a version that handles NaNs and infinities
         def tryCompare(x: Double, y: Double): Option[Int] = {
           Option(x.compareTo(y))
         }
@@ -226,39 +269,28 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ### Next Big Release
 
+* Brandes' algorithm for an undirected graph
 * Louvain community detection
-* A*
-* Enron test set
-* Timing study with automatically generated graphs (in the test stage) (And comparison with Jung and scala-graph's own)
-
-
-### API Release and Feedback
-
-* Get some feedback on what the API should look like.
-* How should OnePath and AllPaths return a result? Should the basic API provide an Iterable or a Stream? Should AllPaths return a subgraph?
+* Parallel Louvain
 
 ### New Algorithms
 
 * Lazy Dijkstra's
 * MST using a Heap
-* A* and some variations
+* A* 
 
 
 ### More Semirings
-
-
 
 ### Concurrent Graph Minization
 
 * Concurrent Graph structure
 * Parallel queued graph minimization
 * Parallel A* variations
-* Parallel Louvain
-
 
 ## License and Contributions
 
-ScalaGraphMinimizer carries the MIT license and is (c) David Walend 2013,2014
+Disentangle carries the MIT license and is (c) David Walend 2013,2014,2015
 
-Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience.
+Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience. And thanks to Aleksandar Prokopec for some answers about the [parallel collections](http://docs.scala-lang.org/overviews/parallel-collections/overview.html).
 

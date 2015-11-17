@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Performance Graphs</title>
+   	<script type="text/javascript" src="../js/d3.v3.js"></script>
+    <script type="text/javascript"src="../js/queue.js"></script>
+    <script type="text/javascript"src="../js/plot.js"></script>
+<!--
+    <script type="text/javascript" src="http://d3js.org/d3.v3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.js"></script>
+-->
+    <style type="text/css">
+
+        path {
+        stroke-width: 2;
+        fill: none;
+        }
+
+        .axis path,
+        .axis line {
+        fill: none;
+        stroke: black;
+        shape-rendering: crispEdges;
+        }
+
+        .axis text {
+        font-family: sans-serif;
+        font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="chart1"></div>
+<div id="chart2"></div>
+<script type="text/javascript">
+    plot3Results(false,"#chart1","../../../../benchmark/results/v0.2.0/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/floydWarshall.csv")
+    plot3Results(true,"#chart2","../../../../benchmark/results/v0.2.0/r3.8xlarge/dijkstra.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/parDijkstra.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/floydWarshall.csv")
+</script>
+<div id="chart3"></div>
+<div id="chart4"></div>
+<script type="text/javascript">
+    plot2Results(false,"#chart3","../../../../benchmark/results/v0.2.0/r3.8xlarge/brandes.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/parBrandes.csv")
+    plot2Results(true,"#chart4","../../../../benchmark/results/v0.2.0/r3.8xlarge/brandes.csv","../../../../benchmark/results/v0.2.0/r3.8xlarge/parBrandes.csv")
+</script>
+</body>
+</html>
