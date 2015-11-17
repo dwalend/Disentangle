@@ -20,6 +20,7 @@ lazy val root: Project = Project(
     packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
   )
 )
+.settings(unidocSettings: _*)
 
 
 lazy val graph = project
