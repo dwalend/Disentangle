@@ -1,18 +1,22 @@
-Blog
-
-* Blog about examples
-* Blog about computational stability
-
-Next release
+This release
 
 * Undirected graphs
 ** With Brandes' algorithm
+* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
+
+
+Next release
+
 * Louvain algorithm
 * IndexedSubSet backed by BitSet
 
 * Subgraph representation
-* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
 * Dijkstra's and Brandes - fill heap as nodes become reachable to reduce the heap's average complexity
+
+Blog
+
+* Blog about examples
+* Blog about computational stability
 
 
 Later
