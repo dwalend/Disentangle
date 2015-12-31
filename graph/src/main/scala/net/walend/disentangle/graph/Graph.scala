@@ -5,7 +5,7 @@ import scala.collection.{GenSet, GenTraversable}
 /**
  * Ancestor trait for a variety of Graphs.
  *
- * A graph with Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph
+ * A graph with Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph.
  *
  * I've pulled definitions from Wikipedia: http://en.wikipedia.org/wiki/Graph_(mathematics) where possible
  *
@@ -64,15 +64,15 @@ trait Graph[Node] {
 }
 
 /**
- * A graph with directed zero or one edge from any single node to any other single node.
- *
- * @author dwalend
- * @since v0.1.0
- */
+  * A graph with directed zero or one edges from any single node to any other single node.
+  *
+  * @author dwalend
+  * @since v0.1.0
+  */
 trait Digraph[Node] extends Graph[Node] {
 
   trait DigraphInnerNodeTrait extends InnerNodeTrait {
-    def value:Node
+//todo remove    def value:Node
 
     def successors:Set[InnerEdgeType]
 
@@ -80,8 +80,29 @@ trait Digraph[Node] extends Graph[Node] {
   }
 
   /**
-   * The type of InnerNodeTrait for this digraph representation
-   */
+    * The type of InnerNodeTrait for this digraph representation
+    */
   type InnerNodeType <: DigraphInnerNodeTrait
+
+}
+
+/**
+  * A graph with undirected zero or one edges between any pair of nodes.
+  *
+  * @author dwalend
+  * @since v0.2.1
+  */
+trait Undigraph[Node] extends Graph[Node] {
+
+  trait UndigraphInnerNodeTrait extends InnerNodeTrait {
+
+    def edges:Set[InnerEdgeType]
+
+  }
+
+  /**
+    * The type of InnerNodeTrait for this digraph representation
+    */
+  type InnerNodeType <: UndigraphInnerNodeTrait
 
 }

@@ -7,6 +7,11 @@ Most graph libraries available on the internet provide some way to find shortest
 
 Further, the library provides support for computational stability. The same input will reliably result in the same output. Small changes in input typically result in small changes in output. The semiring-based algorithms offer an optional nodeOrder argument to provide that stability.
 
+## Changes in 0.2.1, the fifth release
+
+* Added Undigraph, a trait for undirected graphs
+* Added hierarchy down to AdjacencyLabelUndigraph, an immutable adjacency list labeled undirected digraph.
+
 ## Changes in 0.2.0, the forth release
 
 * [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).

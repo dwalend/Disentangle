@@ -11,7 +11,7 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
  * @since v0.1.0
  */
 class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                                        outSuccessors:Vector[IndexedSet[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,edge pair to reach that second node.
+                                        outSuccessors:Vector[IndexedSet[(Node,Node,Label)]], // (i) is the successors for node i, (j) is the node,node,label tuple to reach that second node.
                                        outPredecessors:Vector[IndexedSet[(Node,Node,Label)]],
                                        val noEdgeExistsLabel:Label //value for no edge
                                             ) extends IndexedLabelDigraph[Node,Label] {

@@ -49,10 +49,11 @@ class IndexedSet[A](outerSeq:IndexedSeq[A]) extends Set[A] with GenericSetTempla
   override def companion = IndexedSet
 
   //profiling says ++ is slow, and slams asSeq
+  /* todo revisit ++ and flatten
   def ++[B >: A](that : GenTraversableOnce[B]):IndexedSet[B] = {
     new IndexedSet((outerSeq ++ that).distinct)
   }
-  /* todo revisit ++ and flatten
+
   def ++[B >: A](that : TraversableOnce[B]):IndexedSet[B] = {
     new IndexedSet((outerSeq ++ that).distinct)
   }
