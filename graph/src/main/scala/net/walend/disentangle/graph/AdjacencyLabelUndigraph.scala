@@ -1,6 +1,5 @@
 package net.walend.disentangle.graph
 
-import scala.collection.immutable.Set.Set2
 import scala.collection.{GenMap, GenSeq, GenTraversable}
 
 /**
@@ -21,9 +20,10 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   //todo really should be a Set, not an IndexedSet
   def neighborSet(indexedSet:IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType] = {
-    indexedSet.map(x => (x._1.map(n => nodeToInNode(n)).asInstanceOf[Set2[InnerNodeType]],x._2))
+    indexedSet.map(e => (Set2(nodeToInNode(e._1._1),nodeToInNode(e._1._2)),e._2))
   }
 
+  //todo really should be a Set, not an IndexedSet
   val inEdges:Vector[IndexedSet[InnerEdgeType]] = outEdges.map(neighborSet)
 
   def nodes = outNodes
@@ -86,16 +86,11 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     */
   override def label(between:Set2[InnerNodeType]):Label = {
 
-    val (from,to) = {
-      val it = between.iterator
-      (it.next(),it.next())
-    }
-
-    val indexedSet = inEdges(from.index).filter(x => x._1.contains(to))
+    val indexedSet = inEdges(between._1.index).filter(x => x._1.contains(between._2))
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
       case 1 => indexedSet.iterator.next()._2
-      case _ => throw new IllegalStateException(s"Multiple edges from $from to $to: "+indexedSet)
+      case _ => throw new IllegalStateException(s"Multiple edges between $between: "+indexedSet)
     }
   }
 
@@ -141,24 +136,16 @@ object AdjacencyLabelUndigraph{
                         nodes:GenSeq[Node] = Seq.empty,
                         noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.flatMap(_._1)).distinct.to[Vector]
+    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1._1) ++ edges.map(_._1._2)).distinct.to[Vector]
 
-    def first(s:Set2[Node]):Node = s.iterator.next()
-
-    def second(s:Set2[Node]):Node = {
-      val it = s.iterator
-      it.next()
-      it.next()
-    }
-
-    val successorMap:GenMap[Node,GenTraversable[(Set2[Node],Label)]] = edges.groupBy(x => first(x._1))
-    val predecessorMap:GenMap[Node,GenTraversable[(Set2[Node],Label)]] = edges.groupBy(x => second(x._1))
+    val successorMap:GenMap[Node,GenTraversable[(Set2[Node],Label)]] = edges.groupBy(x => x._1._1)
+    val predecessorMap:GenMap[Node,GenTraversable[(Set2[Node],Label)]] = edges.groupBy(x => x._1._2)
 
     def getOrEmpty(n:Node,nodeToTrav:GenMap[Node,GenTraversable[(Set2[Node],Label)]]):IndexedSet[(Set2[Node],Label)] = {
       nodeToTrav.getOrElse(n,Vector.empty[(Set2[Node],Label)]).to[IndexedSet]
     }
 
-    val edgeAdjacencies:Vector[IndexedSet[(Set2[Node],Label)]] = nodeValues.map(n => (getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap)) )
+    val edgeAdjacencies:Vector[IndexedSet[(Set2[Node],Label)]] = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
 
     new AdjacencyLabelUndigraph(nodeValues.to[IndexedSet],edgeAdjacencies,noEdgeExistsValue)
   }

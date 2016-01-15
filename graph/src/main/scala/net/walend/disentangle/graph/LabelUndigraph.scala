@@ -1,12 +1,10 @@
 package net.walend.disentangle.graph
 
-import scala.collection.immutable.Set.Set2
-
 /**
   * A directed graph with labeled edges.
   *
   * @author dwalend
-  * @since v0.2.0
+  * @since v0.2.1
   */
 trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
 
@@ -58,4 +56,27 @@ trait IndexedLabelUndigraph[Node,Label] extends LabelUndigraph[Node,Label] {
   def innerNodeForIndex(i:Int):InnerNodeType
 
   def label(i:Int,j:Int):Label
+}
+
+case class Set2[A](_1: A, _2: A) {
+  def contains(elem: A): Boolean =
+    elem == _1 || elem == _2
+
+  override def equals(other: Any): Boolean =
+    other match {
+
+      case that: Set2[_] =>
+        (that canEqual this) &&
+          (((this._1 == that._1) &&
+            (this._2 == that._2)) ||
+          ((this._1 == that._2) &&
+            (this._2 == that._1)))
+
+      case _ => false
+    }
+
+  def canEqual(other: Any): Boolean = other.isInstanceOf[Set2[_]]
+
+  override def hashCode:Int = _1.hashCode + _2.hashCode
+
 }
