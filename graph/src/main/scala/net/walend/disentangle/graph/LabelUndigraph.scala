@@ -75,8 +75,6 @@ case class Set2[A](_1: A, _2: A) {
       case _ => false
     }
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[Set2[_]]
-
   override def hashCode:Int = _1.hashCode + _2.hashCode
 
 }
