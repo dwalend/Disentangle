@@ -12,6 +12,18 @@ package net.walend.disentangle.graph
  */
 package object semiring {
 
+
+  /**
+    * @since v0.2.1
+    *
+    * Helper methods for parsing com.typesafe.config.Config objects
+    */
+  implicit class LabelDigraphDijkstra[Node,Label](self: LabelDigraph[Node,Label]) {
+
+
+
+  }
+
 }
 //todo pathcount as a decorator semiring
 //todo core-and-many-decorator semiring

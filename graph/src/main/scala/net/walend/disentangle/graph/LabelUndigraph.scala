@@ -8,9 +8,9 @@ package net.walend.disentangle.graph
   */
 trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
 
-  type OuterEdgeType = (Set2[Node],Label)
+  type OuterEdgeType = (NodePair[Node],Label)
 
-  type InnerEdgeType = (Set2[InnerNodeType],Label)
+  type InnerEdgeType = (NodePair[InnerNodeType],Label)
 
   /**
     * @return the label to return when no edge exists
@@ -20,7 +20,7 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
   /**
     * @return the Label between a pair of nodes, or noEdgeExistsLabel if no edge exists.
     */
-  def label(between:Set2[InnerNodeType]):Label
+  def label(between:NodePair[InnerNodeType]):Label
 }
 
 /**
@@ -58,14 +58,14 @@ trait IndexedLabelUndigraph[Node,Label] extends LabelUndigraph[Node,Label] {
   def label(i:Int,j:Int):Label
 }
 
-case class Set2[A](_1: A, _2: A) {
+case class NodePair[A](_1: A, _2: A) {
   def contains(elem: A): Boolean =
     elem == _1 || elem == _2
 
   override def equals(other: Any): Boolean =
     other match {
 
-      case that: Set2[_] =>
+      case that: NodePair[_] =>
         (that canEqual this) &&
           (((this._1 == that._1) &&
             (this._2 == that._2)) ||
