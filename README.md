@@ -70,7 +70,7 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 
 See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
 
-### Finding Shortest Paths And Betweenness ([Dijkstra's](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) and [Floyd-Warshall](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/FloydWarshallExample.scala) Algorithms)
+### Finding Shortest Paths with ([Dijkstra's](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) and [Floyd-Warshall](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/FloydWarshallExample.scala) Algorithms)
 
 You'll need to bring a GenTraversable[(Node,Node,Edge)] for your graph.
 

@@ -1,5 +1,8 @@
 package net.walend.disentangle.graph
 
+import scala.collection.{GenSeq, GenTraversable}
+import scala.collection.parallel.immutable.ParSeq
+
 /**
  * Semirings and semiring-based graph minimizing algorithms.
  *
@@ -18,10 +21,33 @@ package object semiring {
     *
     * Helper methods for parsing com.typesafe.config.Config objects
     */
-  implicit class LabelDigraphDijkstra[Node,Label](self: LabelDigraph[Node,Label]) {
+  implicit class LabelDigraphSemiringAlgoritms[Node,Label](self: LabelDigraph[Node,Label]) {
+
+    def allPairsShortestPaths: Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsShortestPaths(indexed.edges,indexed.nodes.asSeq)
+      case _ => Dijkstra.allPairsShortestPaths(self.edges)
+    }
+
+    def parAllPairsShortestPaths: ParSeq[(Node, Node, Option[FirstStepsTrait[Node, Int]])] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsShortestPaths(indexed.edges,indexed.nodes.asSeq)
+      case _ => Dijkstra.parAllPairsShortestPaths(self.edges)
+    }
+
+    def allPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
+                                          labelForEdge: (Node, Node, Label) => SemiringLabel):Seq[(Node, Node, SemiringLabel)] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsLeastPaths(indexed.edges,support,labelForEdge,indexed.nodes.asSeq)
+      case _ => Dijkstra.allPairsLeastPaths(self.edges,support,labelForEdge)
+    }
+
+    def parAllPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
+                                              labelForEdge: (Node, Node, Label) => SemiringLabel):ParSeq[(Node, Node, SemiringLabel)] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsLeastPaths(indexed.edges,support,labelForEdge,indexed.nodes.asSeq)
+      case _ => Dijkstra.parAllPairsLeastPaths(self.edges,support,labelForEdge)
+    }
 
 
 
+    //todo single-source and sink, Brandes , same for Undirected Graphs with a special version of Brandes
   }
 
 }

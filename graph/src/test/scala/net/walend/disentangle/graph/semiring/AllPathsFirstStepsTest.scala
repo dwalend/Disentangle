@@ -81,6 +81,14 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
     arcs.to[Set] should be (expectedArcs)
   }
 
+  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph when used with the implicit extension method" in {
+
+    val labels = testGraph.allPairsShortestPaths
+
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
+  }
+
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm" in {
 
     val arcs = Dijkstra.parAllPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq])
@@ -88,6 +96,15 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
   }
+
+  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm with the implicit extension method" in {
+
+    val arcs = testGraph.parAllPairsShortestPaths
+
+    arcs.size should be (expectedArcs.size)
+    arcs.to[Set] should be (expectedArcs)
+  }
+
 
   "AllPathsFirstSteps and the Floyd-Warshall algorithm" should "produce the correct subgraphs for minimal paths and the correct minimal paths" in {
 

@@ -104,6 +104,24 @@ class FewestNodesTest extends FlatSpec with Matchers {
     labels.to[Set] should be (expectedArcs)
   }
 
+  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testGraph" in {
+
+    val labels = testGraph.allPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
+
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
+  }
+
+  "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testGraph" in {
+
+    val labels = testGraph.parAllPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
+
+    labels.size should be (expectedArcs.size)
+    labels.to[Set] should be (expectedArcs)
+  }
+
+
+
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,
     B -> 6.5,
