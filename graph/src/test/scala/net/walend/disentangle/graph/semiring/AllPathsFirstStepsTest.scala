@@ -60,14 +60,14 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val arcs = Dijkstra.allPairsLeastPaths(testGraph.edges, support, support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), testGraph.nodes.to[Seq])
+    val arcs = Dijkstra.allPairsLeastPaths(testDigraph.edges, support, support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), testDigraph.nodes.to[Seq])
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -75,7 +75,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the algorithm" in {
 
-    val arcs = Dijkstra.allPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq])
+    val arcs = Dijkstra.allPairsShortestPaths(testDigraph.edges,testDigraph.nodes.to[Seq])
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -83,7 +83,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph when used with the implicit extension method" in {
 
-    val labels = testGraph.allPairsShortestPaths
+    val labels = testDigraph.allPairsShortestPaths
 
     labels.size should be (expectedArcs.size)
     labels.to[Set] should be (expectedArcs)
@@ -91,7 +91,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm" in {
 
-    val arcs = Dijkstra.parAllPairsShortestPaths(testGraph.edges,testGraph.nodes.to[Seq])
+    val arcs = Dijkstra.parAllPairsShortestPaths(testDigraph.edges,testDigraph.nodes.to[Seq])
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -99,7 +99,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm with the implicit extension method" in {
 
-    val arcs = testGraph.parAllPairsShortestPaths
+    val arcs = testDigraph.parAllPairsShortestPaths
 
     arcs.size should be (expectedArcs.size)
     arcs.to[Set] should be (expectedArcs)
@@ -192,7 +192,7 @@ class AllPathsFirstStepsTest extends FlatSpec with Matchers {
       ((H,H) -> Seq(Seq(H)))
     )
     
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     val subgraphs = labelGraph.edges.map(edge => ((edge._1,edge._2),support.subgraphEdges(labelGraph,edge._1,edge._2).map(edge => (edge._1.value,edge._2.value)))).toMap
 

@@ -33,10 +33,14 @@ object SomeGraph {
 
   val testEdges = Seq(ab,bc,cd,de,ef,eb,eh,hc)
 
-  val testGraph:IndexedLabelDigraph[String,String] = AdjacencyLabelDigraph(testEdges,testNodes,"")
+  val testDigraph:IndexedLabelDigraph[String,String] = AdjacencyLabelDigraph(testEdges,testNodes,"")
 
   val af = (A,F,"af")
   val be = (B,E,"be")
 
   val brandesTestEdges = Seq(ab,bc,cd,de,ef,af,be)
+
+  val testUndirectedEdges = testEdges.map(x => (NodePair(x._1,x._2),x._3))
+
+  val testUndigraph = AdjacencyLabelUndigraph(testUndirectedEdges,testNodes,"")
 }

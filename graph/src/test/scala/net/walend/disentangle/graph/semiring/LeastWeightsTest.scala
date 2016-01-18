@@ -71,14 +71,14 @@ class LeastWeightsTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
 
     labelGraph.edges.to[Set] should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val edges = Dijkstra.allPairsLeastPaths(testGraph.edges,LeastWeights,convertArcToLabel,testGraph.nodes.to[Seq])
+    val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges,LeastWeights,convertArcToLabel,testDigraph.nodes.to[Seq])
 
     edges.to[Set] -- expectedArcs should be (Set.empty)
     expectedArcs -- edges.to[Set] should be (Set.empty)
@@ -98,7 +98,7 @@ class LeastWeightsTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,testDigraph.nodes.to[Seq],LeastWeights,convertArcToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

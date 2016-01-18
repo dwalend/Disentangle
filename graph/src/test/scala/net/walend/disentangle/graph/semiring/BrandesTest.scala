@@ -88,7 +88,7 @@ class BrandesTest extends FlatSpec with Matchers {
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
 
     val labelDigraph: AdjacencyLabelDigraph[String, brandesSupport.Label] = AdjacencyLabelDigraph(edges = labelGraphAndBetweenness._1,
-      nodes = testGraph.nodes.to[Seq],
+      nodes = testDigraph.nodes.to[Seq],
       noEdgeExistsValue = brandesSupport.semiring.O)
 
     labelDigraph.innerNode(H).get
@@ -108,19 +108,19 @@ class BrandesTest extends FlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for SomeGraph" in {
 
-    val labelGraphAndBetweenness: (IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) = testGraph.allLeastPathsAndBetweenness()
+    val labelGraphAndBetweenness: (IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) = testDigraph.allLeastPathsAndBetweenness()
     checkBrandesResults(labelGraphAndBetweenness)
   }
 
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,testDigraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
     checkBrandesResults(labelGraphAndBetweenness)
   }
 
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph in parallel" in {
 
-    val labelGraphAndBetweenness = Brandes.parAllLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.parAllLeastPathsAndBetweenness(testDigraph.edges,testDigraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
     checkBrandesResults(labelGraphAndBetweenness)
   }
 

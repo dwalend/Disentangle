@@ -58,7 +58,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     labelGraph.edges.to[Set] -- expectedArcs should be (Set.empty)
     labelGraph.edges.to[Set] should be (expectedArcs)
@@ -66,7 +66,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(edges = testGraph.edges, support = support, labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), nodeOrder = testGraph.nodes.to[Seq])
+    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(edges = testDigraph.edges, support = support, labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), nodeOrder = testDigraph.nodes.to[Seq])
 
     labelTuples.size should be (expectedArcs.size)
     labelTuples.to[Set] should be (expectedArcs)
@@ -116,7 +116,7 @@ class OnePathFirstStepTest extends FlatSpec with Matchers {
       (H,H) -> Some(List())
     )
     
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testGraph.edges,testGraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     val pairsToPathsOfInnerNodes = labelGraph.edges.map(edge => ((edge._1,edge._2),support.leastPath(edge._1,edge._2)(labelGraph)))
 
