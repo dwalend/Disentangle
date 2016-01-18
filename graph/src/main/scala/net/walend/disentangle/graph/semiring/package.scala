@@ -2,7 +2,7 @@ package net.walend.disentangle.graph
 
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 
-import scala.collection.{GenSeq, GenTraversable}
+import scala.collection.GenTraversable
 import scala.collection.parallel.immutable.ParSeq
 
 /**
@@ -21,7 +21,7 @@ package object semiring {
   /**
     * @since v0.2.1
     *
-    * Helper methods for parsing com.typesafe.config.Config objects
+    * Helper methods for LabelDigraphs
     */
   implicit class LabelDigraphSemiringAlgoritms[Node,Label](self: LabelDigraph[Node,Label]) {
 
@@ -60,9 +60,68 @@ package object semiring {
       case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
       case _ => Brandes.allLeastPathsAndBetweenness(self.edges,coreSupport = coreSupport,labelForEdge = labelForEdge)
     }
-
-    //todo Brandes test , same for Undirected Graphs with a special version of Brandes
   }
+
+  /**
+    * @since v0.2.1
+    *
+    * Helper methods for LabelUndigraphs
+    */
+  implicit class LabelUndigraphSemiringAlgoritms[Node,Label](self: LabelUndigraph[Node,Label]) {
+
+    def allPairsShortestPaths: Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
+      case indexed:IndexedLabelUndigraph[Node,Label] => Dijkstra.allPairsShortestPaths(diEdges,indexed.nodes.asSeq)
+      case _ => Dijkstra.allPairsShortestPaths(diEdges)
+    }
+
+    def parAllPairsShortestPaths: ParSeq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
+      case indexed:IndexedLabelUndigraph[Node,Label] => Dijkstra.parAllPairsShortestPaths(diEdges,indexed.nodes.asSeq)
+      case _ => Dijkstra.parAllPairsShortestPaths(diEdges)
+    }
+
+    def allPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
+                                              labelForEdge: (Node, Node, Label) => SemiringLabel):Seq[(Node, Node, SemiringLabel)] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsLeastPaths(diEdges,support,labelForEdge,indexed.nodes.asSeq)
+      case _ => Dijkstra.allPairsLeastPaths(diEdges,support,labelForEdge)
+    }
+
+    def parAllPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
+                                              labelForEdge: (Node, Node, Label) => SemiringLabel):ParSeq[(Node, Node, SemiringLabel)] = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsLeastPaths(diEdges,support,labelForEdge,indexed.nodes.asSeq)
+      case _ => Dijkstra.parAllPairsLeastPaths(diEdges,support,labelForEdge)
+    }
+
+    def allLeastPathsAndBetweenness[CoreLabel, Key](
+                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+                                                     labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+      val digraphResult = self match {
+        case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
+        case _ => Brandes.allLeastPathsAndBetweenness(diEdges,coreSupport = coreSupport,labelForEdge = labelForEdge)
+      }
+      correctForUndigraph(digraphResult)
+    }
+
+    def parAllLeastPathsAndBetweenness[CoreLabel, Key](
+                                                        coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+                                                        labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
+      val digraphResult = self match {
+        case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
+        case _ => Brandes.allLeastPathsAndBetweenness(diEdges,coreSupport = coreSupport,labelForEdge = labelForEdge)
+      }
+      correctForUndigraph(digraphResult)
+    }
+
+    def diEdges: GenTraversable[(Node, Node, Label)] = {
+      self.edges.map(e => (e._1._1,e._1._2,e._2)) ++ self.edges.map(e => (e._1._2,e._1._1,e._2))
+    }
+
+    def correctForUndigraph[CoreLabel](digraphResult: (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double])) = {
+      val halfMap = digraphResult._2.map(x => (x._1,x._2/2))
+      (digraphResult._1,halfMap)
+    }
+
+  }
+    //todo test Undirected Graphs with a special version of Brandes
 
 }
 //todo pathcount as a decorator semiring
