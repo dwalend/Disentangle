@@ -1,5 +1,7 @@
 package net.walend.disentangle.graph
 
+import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
+
 import scala.collection.{GenSeq, GenTraversable}
 import scala.collection.parallel.immutable.ParSeq
 
@@ -45,9 +47,21 @@ package object semiring {
       case _ => Dijkstra.parAllPairsLeastPaths(self.edges,support,labelForEdge)
     }
 
+    def allLeastPathsAndBetweenness[CoreLabel, Key](
+                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+                                                     labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
+      case _ => Brandes.allLeastPathsAndBetweenness(self.edges,coreSupport = coreSupport,labelForEdge = labelForEdge)
+    }
 
+    def parAllLeastPathsAndBetweenness[CoreLabel, Key](
+                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+                                                     labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
+      case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
+      case _ => Brandes.allLeastPathsAndBetweenness(self.edges,coreSupport = coreSupport,labelForEdge = labelForEdge)
+    }
 
-    //todo single-source and sink, Brandes , same for Undirected Graphs with a special version of Brandes
+    //todo Brandes test , same for Undirected Graphs with a special version of Brandes
   }
 
 }
