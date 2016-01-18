@@ -91,8 +91,7 @@ package object semiring {
       case _ => Dijkstra.parAllPairsLeastPaths(diEdges,support,labelForEdge)
     }
 
-    def allLeastPathsAndBetweenness[CoreLabel, Key](
-                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+    def allLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                      labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
       val digraphResult = self match {
         case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
@@ -101,8 +100,7 @@ package object semiring {
       correctForUndigraph(digraphResult)
     }
 
-    def parAllLeastPathsAndBetweenness[CoreLabel, Key](
-                                                        coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+    def parAllLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                         labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
       val digraphResult = self match {
         case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)

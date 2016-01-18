@@ -1,6 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.SomeGraph
+import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import org.scalatest.{Matchers, FlatSpec}
 
 /**
@@ -82,4 +83,71 @@ class UndirectedGraphTest extends FlatSpec with Matchers {
     allShortestPaths should be(expectedShortestPaths)
   }
 
+  "Brandes algorithm" should "produce the correct label graph and betweeness values for Somegraph" in {
+
+    val expectedFirstSteps = Vector((A,A,Some(BrandesSteps(0,1,List()))),
+      (B,A,Some(BrandesSteps(1,1,List(0)))),
+      (E,A,Some(BrandesSteps(2,1,List(1)))),
+      (C,A,Some(BrandesSteps(2,1,List(1)))),
+      (H,A,Some(BrandesSteps(3,2,List(2, 3)))),
+      (D,A,Some(BrandesSteps(3,2,List(2, 3)))),
+      (F,A,Some(BrandesSteps(3,1,List(2)))),
+      (A,B,Some(BrandesSteps(1,1,List(1)))),
+      (B,B,Some(BrandesSteps(0,1,List()))),
+      (E,B,Some(BrandesSteps(1,1,List(1)))),
+      (C,B,Some(BrandesSteps(1,1,List(1)))),
+      (H,B,Some(BrandesSteps(2,2,List(2, 3)))),
+      (D,B,Some(BrandesSteps(2,2,List(2, 3)))),
+      (F,B,Some(BrandesSteps(2,1,List(2)))),
+      (A,E,Some(BrandesSteps(2,1,List(1)))),
+      (B,E,Some(BrandesSteps(1,1,List(2)))),
+      (E,E,Some(BrandesSteps(0,1,List()))),
+      (C,E,Some(BrandesSteps(2,3,List(5, 1, 4)))),
+      (H,E,Some(BrandesSteps(1,1,List(2)))),
+      (D,E,Some(BrandesSteps(1,1,List(2)))),
+      (F,E,Some(BrandesSteps(1,1,List(2)))),
+      (A,C,Some(BrandesSteps(2,1,List(1)))),
+      (B,C,Some(BrandesSteps(1,1,List(3)))),
+      (E,C,Some(BrandesSteps(2,3,List(1, 4, 5)))),
+      (C,C,Some(BrandesSteps(0,1,List()))),
+      (H,C,Some(BrandesSteps(1,1,List(3)))),
+      (D,C,Some(BrandesSteps(1,1,List(3)))),
+      (F,C,Some(BrandesSteps(3,3,List(2)))),
+      (A,H,Some(BrandesSteps(3,2,List(1)))),
+      (B,H,Some(BrandesSteps(2,2,List(2, 3)))),
+      (E,H,Some(BrandesSteps(1,1,List(4)))),
+      (C,H,Some(BrandesSteps(1,1,List(4)))),
+      (H,H,Some(BrandesSteps(0,1,List()))),
+      (D,H,Some(BrandesSteps(2,2,List(2, 3)))),
+      (F,H,Some(BrandesSteps(2,1,List(2)))),
+      (A,D,Some(BrandesSteps(3,2,List(1)))),
+      (B,D,Some(BrandesSteps(2,2,List(3, 2)))),
+      (E,D,Some(BrandesSteps(1,1,List(5)))),
+      (C,D,Some(BrandesSteps(1,1,List(5)))),
+      (H,D,Some(BrandesSteps(2,2,List(3, 2)))),
+      (D,D,Some(BrandesSteps(0,1,List()))),
+      (F,D,Some(BrandesSteps(2,1,List(2)))),
+      (A,F,Some(BrandesSteps(3,1,List(1)))),
+      (B,F,Some(BrandesSteps(2,1,List(2)))),
+      (E,F,Some(BrandesSteps(1,1,List(6)))),
+      (C,F,Some(BrandesSteps(3,3,List(5, 1, 4)))),
+      (H,F,Some(BrandesSteps(2,1,List(2)))),
+      (D,F,Some(BrandesSteps(2,1,List(2)))),
+      (F,F,Some(BrandesSteps(0,1,List()))))
+
+    val expectedBetweennesses = Map(
+      A -> 0.0,
+      B -> 5.666666666666667,
+      C -> 2.5,
+      D -> 0.6666666666666666,
+      E -> 7.5,
+      F -> 0.0,
+      H -> 0.6666666666666666
+    )
+
+    val allShortestPathsAndBetweenesses = SomeGraph.testUndigraph.allLeastPathsAndBetweenness()
+
+    allShortestPathsAndBetweenesses._1 should be (expectedFirstSteps)
+    allShortestPathsAndBetweenesses._2 should be (expectedBetweennesses)
+  }
 }
