@@ -5,6 +5,8 @@ import net.walend.disentangle.graph.{LabelDigraph, AdjacencyLabelDigraph, SomeGr
 import SomeGraph._
 import Brandes.BrandesSteps
 
+import scala.collection.{GenSeq, GenMap}
+
 /**
  *
  *
@@ -78,10 +80,7 @@ class BrandesTest extends FlatSpec with Matchers {
     (labelDigraph.innerNode(B).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(2,1,List(2))))
   )
 
-  "Brandes' algorithm" should "produce both the correct label graph and betweenness for SomeGraph" in {
-
-    val labelGraphAndBetweenness = testGraph.allLeastPathsAndBetweenness()
-
+  def checkBrandesResults(labelGraphAndBetweenness:(GenSeq[(String, String, Option[BrandesSteps[String, Int]])], GenMap[String, Double])):Unit = {
     (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
 
     labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
@@ -89,8 +88,8 @@ class BrandesTest extends FlatSpec with Matchers {
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
 
     val labelDigraph: AdjacencyLabelDigraph[String, brandesSupport.Label] = AdjacencyLabelDigraph(edges = labelGraphAndBetweenness._1,
-                                                                                                  nodes = testGraph.nodes.to[Seq],
-                                                                                                  noEdgeExistsValue = brandesSupport.semiring.O)
+      nodes = testGraph.nodes.to[Seq],
+      noEdgeExistsValue = brandesSupport.semiring.O)
 
     labelDigraph.innerNode(H).get
 
@@ -105,64 +104,24 @@ class BrandesTest extends FlatSpec with Matchers {
     val paths: Seq[Seq[labelDigraph.InnerNodeType]] = brandesSupport.allLeastPaths(labelDigraph,"E","D")
 
     paths should be (expectedPaths)
+  }
+
+  "Brandes' algorithm" should "produce both the correct label graph and betweenness for SomeGraph" in {
+
+    val labelGraphAndBetweenness: (IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) = testGraph.allLeastPathsAndBetweenness()
+    checkBrandesResults(labelGraphAndBetweenness)
   }
 
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph" in {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
-
-    (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
-
-    labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
-
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
-
-    val labelDigraph: AdjacencyLabelDigraph[String, brandesSupport.Label] = AdjacencyLabelDigraph(edges = labelGraphAndBetweenness._1,
-      nodes = testGraph.nodes.to[Seq],
-      noEdgeExistsValue = brandesSupport.semiring.O)
-
-    labelDigraph.innerNode(H).get
-
-    val subgraphEdges: Set[labelDigraph.InnerEdgeType] = brandesSupport.subgraphEdges(labelDigraph,"E","D")
-    subgraphEdges should be (expectedSubgraphEdges(labelDigraph))
-
-    val expectedPaths = List(
-      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),
-      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(H).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get)
-    )
-
-    val paths: Seq[Seq[labelDigraph.InnerNodeType]] = brandesSupport.allLeastPaths(labelDigraph,"E","D")
-
-    paths should be (expectedPaths)
+    checkBrandesResults(labelGraphAndBetweenness)
   }
 
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph in parallel" in {
 
     val labelGraphAndBetweenness = Brandes.parAllLeastPathsAndBetweenness(testGraph.edges,testGraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
-
-    (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
-
-    labelGraphAndBetweenness._1.to[Set] should be (expectedArcs)
-
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
-
-    val labelDigraph: AdjacencyLabelDigraph[String, brandesSupport.Label] = AdjacencyLabelDigraph(edges = labelGraphAndBetweenness._1,
-      nodes = testGraph.nodes.to[Seq],
-      noEdgeExistsValue = brandesSupport.semiring.O)
-
-    labelDigraph.innerNode(H).get
-
-    val subgraphEdges: Set[labelDigraph.InnerEdgeType] = brandesSupport.subgraphEdges(labelDigraph,"E","D")
-    subgraphEdges should be (expectedSubgraphEdges(labelDigraph))
-
-    val expectedPaths = List(
-      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),
-      List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(H).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get)
-    )
-
-    val paths: Seq[Seq[labelDigraph.InnerNodeType]] = brandesSupport.allLeastPaths(labelDigraph,"E","D")
-
-    paths should be (expectedPaths)
+    checkBrandesResults(labelGraphAndBetweenness)
   }
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for a figure-8 graph" in {
