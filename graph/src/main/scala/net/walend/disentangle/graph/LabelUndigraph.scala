@@ -58,8 +58,15 @@ trait IndexedLabelUndigraph[Node,Label] extends LabelUndigraph[Node,Label] {
   def label(i:Int,j:Int):Label
 }
 
-case class NodePair[A](_1: A, _2: A) {
-  def contains(elem: A): Boolean =
+case class NodePair[+A](_1: A, _2: A) {
+
+  def other[B >: A](node:B):A = {
+    if(node == _1) _2
+    else if (node == _2) _1
+    else throw new IllegalArgumentException(s"This NodePair contains ${_1} and ${_2}, not node.")
+  }
+
+  def contains[B >: A](elem: B): Boolean =
     elem == _1 || elem == _2
 
   override def equals(other: Any): Boolean =

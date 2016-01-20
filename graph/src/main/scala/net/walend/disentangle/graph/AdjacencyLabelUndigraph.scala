@@ -10,6 +10,7 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @author dwalend
   * @since v0.2.1
   */
+//todo for noEdgeExistsLabel, make it a function => Label, and throw an exception by default. Also in Digraphs.
 class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                           outEdges:Vector[IndexedSet[(NodePair[Node],Label)]], // (i) is the edges for node i, (j) is the NodePair[node,node],edge pair to reach that second node.
                                           val noEdgeExistsLabel:Label //value for no edge
