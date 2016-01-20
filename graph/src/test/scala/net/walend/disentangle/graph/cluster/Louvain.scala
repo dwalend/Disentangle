@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph.cluster
 
-import net.walend.disentangle.graph.{SomeGraph, AdjacencyLabelUndigraph, NodePair, LabelUndigraph, Undigraph}
+import net.walend.disentangle.graph.{IndexedSet, SomeGraph, AdjacencyLabelUndigraph, NodePair, LabelUndigraph, Undigraph}
 
 import scala.collection.GenSet
 
@@ -45,7 +45,7 @@ object Louvain {
 
   val initialCluster:ClusterGraph = {
 
-    val nodesAndNodes = testGraph.nodes.map(n => (n,Leaf(n)))
+    val nodesAndNodes: IndexedSet[(String, Leaf[String])] = testGraph.nodes.map(n => (n,Leaf(n)))
     val nodeMap = nodesAndNodes.toMap
 
 
@@ -55,11 +55,9 @@ object Louvain {
 
     val edges = testGraph.edges.map(edgeFromEdge)
 
-    //todo make Node and Edge types covariant
-    val result:ClusterGraph = AdjacencyLabelUndigraph[Cluster,Int](edges,nodes = nodesAndNodes.map(n => n._2),noEdgeExistsValue = 0)
-
-    result
+    AdjacencyLabelUndigraph[Cluster,Int](edges,nodes = nodesAndNodes.map(n => n._2).asSeq,noEdgeExistsValue = 0)
   }
+
 
   //The core data structure is a Set of (Node -> Map(Node -> Weight)) , an adjacency graph
   //The resulting type of each iteration is the same Set of (Node -> Map(Node -> Weight, but the node type here is a Set of the previous iteration's Nodes. (recursive type). A cluster label will help preserve sanity
