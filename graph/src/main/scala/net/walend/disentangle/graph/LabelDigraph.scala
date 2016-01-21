@@ -15,6 +15,7 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
   /**
    * @return the label to return when no edge exists
    */
+  //todo make this a function () => Label and throw a NoSuchElementException in 0.3 , to match LabelUndigraph
   def noEdgeExistsLabel:Label
 
   /**

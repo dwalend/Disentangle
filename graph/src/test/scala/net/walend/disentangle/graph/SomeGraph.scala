@@ -42,5 +42,5 @@ object SomeGraph {
 
   val testUndirectedEdges = testEdges.map(x => (NodePair(x._1,x._2),x._3))
 
-  val testUndigraph = AdjacencyLabelUndigraph(testUndirectedEdges,testNodes,"")
+  val testUndigraph = AdjacencyLabelUndigraph(testUndirectedEdges,testNodes)
 }

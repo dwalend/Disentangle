@@ -15,7 +15,7 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
   /**
     * @return the label to return when no edge exists
     */
-  def noEdgeExistsLabel:Label
+  def noEdgeExistsLabel:(Node,Node) => Label
 
   /**
     * @return the Label between a pair of nodes, or noEdgeExistsLabel if no edge exists.
