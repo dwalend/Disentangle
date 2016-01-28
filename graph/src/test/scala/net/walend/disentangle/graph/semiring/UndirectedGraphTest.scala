@@ -71,14 +71,14 @@ class UndirectedGraphTest extends FlatSpec with Matchers {
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val allShortestPaths = SomeGraph.testUndigraph.allPairsShortestPaths
+    val allShortestPaths = SomeGraph.testLabelUndigraph.allPairsShortestPaths
 
     allShortestPaths should be(expectedShortestPaths)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph in parallel" in {
 
-    val allShortestPaths = SomeGraph.testUndigraph.parAllPairsShortestPaths
+    val allShortestPaths = SomeGraph.testLabelUndigraph.parAllPairsShortestPaths
 
     allShortestPaths should be(expectedShortestPaths)
   }
@@ -145,7 +145,7 @@ class UndirectedGraphTest extends FlatSpec with Matchers {
       H -> 0.6666666666666666
     )
 
-    val allShortestPathsAndBetweenesses = SomeGraph.testUndigraph.allLeastPathsAndBetweenness()
+    val allShortestPathsAndBetweenesses = SomeGraph.testLabelUndigraph.allLeastPathsAndBetweenness()
 
     allShortestPathsAndBetweenesses._1 should be (expectedFirstSteps)
     allShortestPathsAndBetweenesses._2 should be (expectedBetweennesses)

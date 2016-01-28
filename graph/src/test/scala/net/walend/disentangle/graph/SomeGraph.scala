@@ -40,7 +40,11 @@ object SomeGraph {
 
   val brandesTestEdges = Seq(ab,bc,cd,de,ef,af,be)
 
-  val testUndirectedEdges = testEdges.map(x => (NodePair(x._1,x._2),x._3))
+  val testLabeledUndirectedEdges = testEdges.map(x => (NodePair(x._1,x._2),x._3))
 
-  val testUndigraph = AdjacencyLabelUndigraph(testUndirectedEdges,testNodes)
+  val testLabelUndigraph = AdjacencyLabelUndigraph(testLabeledUndirectedEdges,testNodes)
+
+  val testUndirectedEdges = testLabeledUndirectedEdges.map(_._1)
+
+  val testUndigraph = AdjacencyUndigraph(testUndirectedEdges,testNodes)
 }

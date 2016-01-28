@@ -95,6 +95,18 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     }
   }
 
+
+  /**
+    * @return the Label between a pair of nodes, or noEdgeExistsLable if no edge exists.
+    * @throws IllegalArgumentException if either node is not in the graph
+    */
+  override def edge(between: _root_.net.walend.disentangle.graph.NodePair[Node]): InnerEdgeType = {
+    val a: InNode = innerNode(between._1).getOrElse(throw new IllegalArgumentException(s"${between._1} is not in $this"))
+    val b: InNode = innerNode(between._2).getOrElse(throw new IllegalArgumentException(s"${between._2} is not in $this"))
+    val nodePair = NodePair(a,b)
+    (nodePair,label(nodePair))
+  }
+
   /**
     * O(1)
     *

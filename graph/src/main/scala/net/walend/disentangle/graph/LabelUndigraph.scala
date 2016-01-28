@@ -21,6 +21,13 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
     * @return the Label between a pair of nodes, or noEdgeExistsLabel if no edge exists.
     */
   def label(between:NodePair[InnerNodeType]):Label
+
+  /**
+    * @return the Label between a pair of nodes, or noEdgeExistsLable if no edge exists.
+    * @throws IllegalArgumentException if either node is not in the graph
+    */
+
+  def edge(between:NodePair[Node]):InnerEdgeType
 }
 
 /**
@@ -58,6 +65,7 @@ trait IndexedLabelUndigraph[Node,Label] extends LabelUndigraph[Node,Label] {
   def label(i:Int,j:Int):Label
 }
 
+//todo move to Undigraph
 case class NodePair[+A](_1: A, _2: A) {
 
   def other[B >: A](node:B):A = {
