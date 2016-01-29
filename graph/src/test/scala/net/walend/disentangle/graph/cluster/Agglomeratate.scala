@@ -14,37 +14,6 @@ import scala.collection.{GenTraversable, GenSeq, GenSet}
   */
 
 /*
-Phase 0 - init
-
-For a graph create a Leaf - a cluster of one node in the graph. Build up an initial graph of Clusters (that are leafs)
-Edges in this graph indicate existence of an edge in the original graph.
-
-A Cluster is either a Leaf (contains one node) or a Subgraph (contains a graph of Clusters and edges between them)
-
-Creating the Leafs should be fine in parallel
-
-The initial graph is a Map(Leaf -> Set(Leaf)) of type Map(Cluster -> Set(Cluster))s that it can reach
-
-Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges .
-
-parallel sort should do fine . (In something too big to sort, just sort the neighbors)
-
-Phase 2 - pick most similar Cluster for each Cluster
-
-(can be in parallel)
-For each node
-  From its edges
-    Pick the node with the highest Jaccard index that isn't the node you're considering
-      Break ties using the sort order
-
-Gives a Map(Cluster -> Cluster)
-
-(has to gather, but can be remarked in parallel if this is a bottle neck)
-If two nodes point to each other then all nodes that point to either of those two should be merged. Relabel to whichever comes first in the sort order
-If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
-
-Map(Cluster -> Cluster marker to merge with for next generation)
-
 Phase 3 - merge clusters into a new generation of clusters in a new graph
 
 (I think this can be done in parallel per cluster with the full map of where everything is going)
@@ -96,6 +65,19 @@ object Agglomeratate {
 
 //  val graph = LabelUndigraph()
 
+  /*
+  Phase 0 - init
+
+  For a graph create a Leaf - a cluster of one node in the graph. Build up an initial graph of Clusters (that are leafs)
+  Edges in this graph indicate existence of an edge in the original graph.
+
+    A Cluster is either a Leaf (contains one node) or a Subgraph (contains a graph of Clusters and edges between them)
+
+  Creating the Leafs should be fine in parallel
+
+  The initial graph is a Map(Leaf -> Set(Leaf)) of type Map(Cluster -> Set(Cluster))s that it can reach
+*/
+
   val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
 
   def leafClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
@@ -114,6 +96,41 @@ object Agglomeratate {
   }
 
   val leafCluster: ClusterGraph = leafClusterFromGraph(testGraph)
+
+/*
+  Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges .
+
+  parallel sort should do fine . (In something too big to sort, just sort the neighbors)
+*/
+  def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.edges.size).reverse
+
+  val sortedLeafs = sortNodes(leafCluster)
+
+/*
+Phase 2 - pick most similar Cluster for each Cluster
+
+(can be in parallel)
+For each node
+  From its edges
+    Pick the node with the highest Jaccard index that isn't the node you're considering
+      Break ties using the sort order
+
+Gives a Map(Cluster -> Cluster)
+
+(has to gather, but can be remarked in parallel if this is a bottle neck)
+If two nodes point to each other then all nodes that point to either of those two should be merged. Relabel to whichever comes first in the sort order
+If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
+
+Map(Cluster -> Cluster marker to merge with for next generation)
+
+*/
+  def pickCharacteristicCluster(graph:ClusterGraph):Map[Cluster,Cluster] = {
+
+    graph.innerNodes.map(n => (n.value,n.value)).toMap //start here
+
+  }
+
+
 
   /**
     * Merge all the clustersToMerge Doubleo a new Cluster.
