@@ -64,7 +64,6 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
     */
   override def innerNodes: IndexedSet[InNode] = inNodes
 
-  override type InnerEdgeType = NodePair[InNode]
   /**
     * @return A Traversable of the edges as represented in the graph
     */
@@ -123,7 +122,13 @@ object AdjacencyUndigraph{
   */
 trait IndexedUndigraph[Node] extends Undigraph[Node] {
 
+  /**
+    * The type of InnerNodeTrait for this digraph representation
+    */
+  type InnerNodeType <: InnerIndexedNodeTrait
+
   override type OuterEdgeType = NodePair[Node]
+  override type InnerEdgeType = NodePair[InnerNodeType]
 
   /**
     * All the nodes in the graph, in an indexed set
@@ -142,11 +147,6 @@ trait IndexedUndigraph[Node] extends Undigraph[Node] {
 
     def index:Int
   }
-
-  /**
-    * The type of InnerNodeTrait for this digraph representation
-    */
-  type InnerNodeType <: InnerIndexedNodeTrait
 
   def node(i:Int):Node
 

@@ -14,20 +14,9 @@ import scala.collection.{GenTraversable, GenSeq, GenSet}
   */
 
 /*
-Phase 3 - merge clusters into a new generation of clusters in a new graph
+phase 5 - Try with a smaller graph.
 
-(I think this can be done in parallel per cluster with the full map of where everything is going)
-
-Groupby on that map.
-For each Set of clusters, create a new Cluster that contains those clusters.
-  For every edge completely inside the cluster, keep that edge in the subgraph
-  For every edge that spans from inside the cluster to outside, add an edge from the new cluster to the (new) outside cluster
-
-Create a Graph from these new Clusters and spanning edges. Isolates just pass through.
-
-phase 4 - Try with a smaller graph.
-
-Go to phase 2 with this new graph unless it has no edges.
+Go to phase 2 with this new graph until a pass doesn't reduce the number of nodes. (Then combine them all into one big graph. Might just be down to isolates at that point.)  Likely this will be when there are only isolates.
 
 -----
 
@@ -59,6 +48,8 @@ object Agglomeratate {
   case class Leaf[Node](node:Node) extends Cluster
 
   case class Subgraph(graph:ClusterGraph) extends Cluster  //todo replace Double with something from a Semiring, maybe
+
+  case class Isolates(clusters:Set[Cluster]) extends Cluster
 
 //  type Edge = ClusterGraph.OuterEdgeType
 //  case class Cluster(graph:LabelUndigraph[Cluster,Double],archNode:String)
@@ -112,6 +103,7 @@ Phase 2 - pick most similar Cluster for each Cluster
 (can be in parallel)
 For each node
   From its edges
+    Partition isolates out into their own cluster
     Pick the node with the highest Jaccard index that isn't the node you're considering
       Break ties using the sort order
 
@@ -124,13 +116,98 @@ If a node is an isolate - max Jaccard index is Zero, just point it to itself or 
 Map(Cluster -> Cluster marker to merge with for next generation)
 
 */
-  def pickCharacteristicCluster(graph:ClusterGraph):Map[Cluster,Cluster] = {
+  def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], Isolates) = {
 
-    graph.innerNodes.map(n => (n.value,n.value)).toMap //start here
+  /**
+    * @see https://en.wikipedia.org/wiki/Jaccard_index
+    */
+    def jaccardIndex(node:graph.InnerNodeType,candidate:graph.InnerNodeType): Int = {
+      node.edges.union(candidate.edges).size
+    }
+
+    def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = {
+      //skip self-edges, which will have a maximum jaccard index
+      node.edges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
+    }
+
+    val (connected,isolated) = graph.innerNodes.partition(n => n.edges.size > 0)
+
+    (connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap,
+      Isolates(isolated.map(_.value)))
+  }
+
+  val characteristicClustersForLeafs = pickCharacteristicClusters(leafCluster)
+
+
+  /*
+  Phase 3 - Refine the set of characteristic clusters and deal with corner cases
+
+  Interpret cluster picked as "put A in the same cluster as B" .
+  So long as all local choices result in fewer nodes every time then the algorithm should converge
+
+  Init all clusters to a Singleton (rename Leaf)
+  Find isolated nodes and make Isolates for this generation (above)
+
+  Make a decision for each node as follows (start at the top of the list):
+
+    Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Leaf, maybe attached to its Hub)
+    Nodes that remain picked unique targets. Each target will have one node that selected it.
+    Create a Hub from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
+    Find Digons, Cycles, Caterpillars, and Leafs (all Paths)
+      For Digons, exactly one node selected this node, and this node selected the one that selected it. (Cycle of two nodes.) (Could be anything next time)
+      For the rest, start at a node and follow downstream to detect, building a list of nodes.
+        If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
+        If you hit a node picked by >1 node or a node picked by none, look for a Caterpillar.
+          Follow upstream, building a list of nodes. If greater than one build a Caterpillar. (Likely a Leaf or a Bridge next time)
+            For a list of length 1 make a Leaf (assert no other node picked it) (Likely Siblings or a Diagon next time)
+
+(Expect time-dependent relationships to have a big caterpillar, others to show Cycles and Hubs)
+
+start here
+*/
+
+  def refineCharacteristicClusters(clustersToPicked:Map[Cluster,Cluster]) = {
+    val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
+
+    val pickedClusterToClustersOfOne: Map[Cluster, Set[Cluster]] = pickedClustersToSets.filter(x => x._2.size == 1)
+
+    def reasign(clusterToReassign:Cluster):(Cluster,Cluster) = {
+      val oldPickedCluster = clustersToPicked(clusterToReassign) //clusterToReassign is the only cluster that picked oldPickedCluster
+
+      val newPick:Cluster = if(pickedClustersToSets.get(clusterToReassign).size > 1) clusterToReassign //Did at least two nodes pick clusterToReassign? If so, then clusterToReassign can go with those nodes
+        //Otherwise, either zero or one clusters picked clusterToReassign
+        //todo handle zero case
+        else if(clustersToPicked(oldPickedCluster) == clusterToReassign) {
+          //These two clusters picked each other
+          //Form one cluster by picking one of them to be "it"
+          if(oldPickedCluster.hashCode() > clusterToReassign.hashCode()) clusterToReassign
+          else oldPickedCluster
+      } else {
+        //clusterToReassign picked oldPickedCluster and oldPickedCluster picked something else. Crap. Here's where a long chain can happen. How to solve? Follow the chain, looking for a cluster bigger than one?
+        clustersToPicked(oldPickedCluster)
+      }
+      (clusterToReassign,newPick)
+    }
+
+
+    val reasignments: Map[Cluster, Cluster] = pickedClusterToClustersOfOne.map(pcctoc1 => reasign(pcctoc1._2.find(n => true).get))
 
   }
 
+  /*
+  Phase 4 - merge clusters into a new generation of clusters in a new graph
 
+(I think this can be done in parallel per cluster with the full map of where everything is going)
+
+Groupby on that map.
+For each Set of clusters, create a new Cluster that contains those clusters.
+  For every edge completely inside the cluster, keep that edge in the subgraph
+  For every edge that spans from inside the cluster to outside, add an edge from the new cluster to the (new) outside cluster
+
+Create a Graph from these new Clusters and spanning edges. Isolates just pass through.
+
+
+   */
 
   /**
     * Merge all the clustersToMerge Doubleo a new Cluster.
