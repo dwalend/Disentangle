@@ -25,43 +25,21 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
 }
 
 /**
- * A digraph that exposes the indices of stored nodes.
- */
-trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] {
+  * A digraph that exposes the indices of stored nodes.
+  *
+  * @author dwalend
+  * @since v0.1.0
+  */
+trait IndexedLabelDigraph[Node,Label] extends LabelDigraph[Node,Label] with IndexedGraph[Node] {
+
+  type InnerNodeType <: DigraphInnerNodeTrait with InnerIndexedNodeTrait
 
   /**
-   * All the nodes in the graph, in an indexed set
-   */
-  def nodes:IndexedSet[Node]
-
-  /**
-   * @return All the nodes in the graph in an indexed seq
-   */
-  @deprecated("replace with nodes","0.1.1")
-  def nodesSeq:IndexedSeq[Node]
-
-  /**
-   * @return internal representation of all of the nodes in the graph.
-   */
-  def innerNodes:IndexedSet[InnerNodeType]
-
-  /**
-   * An internal representation of nodes within the graph
-   */
-  trait InnerIndexedNodeTrait extends DigraphInnerNodeTrait {
-
-    def index:Int
-
-  }
-
-  /**
-   * The type of InnerNodeTrait for this digraph representation
-   */
-  type InnerNodeType <: InnerIndexedNodeTrait
-
-  def node(i:Int):Node
-
-  def innerNodeForIndex(i:Int):InnerNodeType
-
+    * @return the label connecting nodes at index i and j, or noEdgeExistsLabel
+    * @throws IndexOutOfBoundsException if either i or j does not correspond with a node
+    */
   def label(i:Int,j:Int):Label
+
+  //todo def edge(i:Int,j:Int):InnerEdgeType when it becomes clear what to do for edges that don't exist, and when the method is needed. (InnerNodeType,InnerNodeType,noEdgeExistsLabel) might be fine.
+
 }

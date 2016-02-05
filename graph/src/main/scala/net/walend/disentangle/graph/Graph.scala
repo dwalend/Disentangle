@@ -64,45 +64,41 @@ trait Graph[Node] {
 }
 
 /**
-  * A graph with directed zero or one edges from any single node to any other single node.
+  * A graph that exposes the indices of stored nodes.
   *
-  * @author dwalend
-  * @since v0.1.0
-  */
-trait Digraph[Node] extends Graph[Node] {
-
-  trait DigraphInnerNodeTrait extends InnerNodeTrait {
-//todo remove    def value:Node
-
-    def successors:Set[InnerEdgeType]
-
-    def predecessors:Set[InnerEdgeType]
-  }
-
-  /**
-    * The type of InnerNodeTrait for this digraph representation
-    */
-  type InnerNodeType <: DigraphInnerNodeTrait
-
-}
-
-/**
-  * A graph with undirected zero or one edges between any pair of nodes.
+  * Implementers should also include some accessor for edges via indexes.
   *
   * @author dwalend
   * @since v0.2.1
   */
-trait Undigraph[Node] extends Graph[Node] {
+trait IndexedGraph[Node] extends Graph[Node] {
 
-  trait UndigraphInnerNodeTrait extends InnerNodeTrait {
+  /**
+    * All the nodes in the graph, in an indexed set
+    */
+  def nodes:IndexedSet[Node]
 
-    def edges:Set[InnerEdgeType]
+  /**
+    * @return internal representation of all of the nodes in the graph.
+    */
+  def innerNodes:IndexedSet[InnerNodeType]
+
+  /**
+    * An internal representation of nodes within the graph
+    */
+  trait InnerIndexedNodeTrait extends InnerNodeTrait {
+
+    def index:Int
 
   }
 
   /**
     * The type of InnerNodeTrait for this digraph representation
     */
-  type InnerNodeType <: UndigraphInnerNodeTrait
+  type InnerNodeType <: InnerIndexedNodeTrait
+
+  def node(i:Int):Node
+
+  def innerNodeForIndex(i:Int):InnerNodeType
 
 }

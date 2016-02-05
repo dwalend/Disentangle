@@ -33,7 +33,7 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   type InnerNodeType = InNode
 
-  case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
+  case class InNode(override val value:Node,override val index:Int) extends this.UndigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def edges: IndexedSet[InnerEdgeType] = {
       inEdges(index)

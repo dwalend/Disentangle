@@ -28,15 +28,11 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   def nodes = outNodes
 
-  //todo remove after 0.1.1
-  @deprecated("Will be removed after 0.1.1","0.1.1")
-  def nodesSeq: IndexedSeq[Node] = outNodes.asSeq
-
   override def nodeCount: Int = outNodes.size
 
   type InnerNodeType = InNode
 
-  case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
+  case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def successors: IndexedSet[(InNode,InNode,Label)] = {
       inSuccessors(index)

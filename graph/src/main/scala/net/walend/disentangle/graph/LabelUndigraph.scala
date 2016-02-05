@@ -33,63 +33,15 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
 /**
   * A digraph that exposes the indices of stored nodes.
   */
-trait IndexedLabelUndigraph[Node,Label] extends LabelUndigraph[Node,Label] {
+trait IndexedLabelUndigraph[Node,Label] extends  IndexedGraph[Node] with LabelUndigraph[Node,Label] {
+
+  type InnerNodeType <: UndigraphInnerNodeTrait with InnerIndexedNodeTrait
 
   /**
-    * All the nodes in the graph, in an indexed set
+    * @return the label connecting edge i to edge j, or noEdgeExists
     */
-  def nodes:IndexedSet[Node]
-
-  /**
-    * @return internal representation of all of the nodes in the graph.
-    */
-  def innerNodes:IndexedSet[InnerNodeType]
-
-  /**
-    * An internal representation of nodes within the graph
-    */
-  trait InnerIndexedNodeTrait extends UndigraphInnerNodeTrait {
-
-    def index:Int
-  }
-
-  /**
-    * The type of InnerNodeTrait for this digraph representation
-    */
-  type InnerNodeType <: InnerIndexedNodeTrait
-
-  def node(i:Int):Node
-
-  def innerNodeForIndex(i:Int):InnerNodeType
-
   def label(i:Int,j:Int):Label
-}
 
-//todo move to Undigraph
-case class NodePair[+A](_1: A, _2: A) {
-
-  def other[B >: A](node:B):A = {
-    if(node == _1) _2
-    else if (node == _2) _1
-    else throw new IllegalArgumentException(s"This NodePair contains ${_1} and ${_2}, not node.")
-  }
-
-  def contains[B >: A](elem: B): Boolean =
-    elem == _1 || elem == _2
-
-  override def equals(other: Any): Boolean =
-    other match {
-
-      case that: NodePair[_] =>
-        (that canEqual this) &&
-          (((this._1 == that._1) &&
-            (this._2 == that._2)) ||
-          ((this._1 == that._2) &&
-            (this._2 == that._1)))
-
-      case _ => false
-    }
-
-  override def hashCode:Int = _1.hashCode + _2.hashCode
+  //todo def edge(i:Int,j:Int):InnerEdgeType when it becomes clear what to do for edges that don't exist, and when the method is needed. (InnerNodeType,InnerNodeType,noEdgeExistsLabel) might be fine.
 
 }

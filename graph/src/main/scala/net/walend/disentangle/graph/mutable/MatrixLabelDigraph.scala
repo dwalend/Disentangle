@@ -22,13 +22,8 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   /**
-   * O(1)
-   *
-   * @return All the nodes in the graph in an indexed seq
-   */
-  //todo remove after 0.1.1
-  override def nodesSeq: IndexedSeq[Node] = outNodes.asSeq
-
+    * O(1)
+    */
   override def nodes = outNodes
 
   /**
@@ -38,7 +33,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   type InnerNodeType = InNode
 
-  case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
+  case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     /**
      * O(n&#94;2)

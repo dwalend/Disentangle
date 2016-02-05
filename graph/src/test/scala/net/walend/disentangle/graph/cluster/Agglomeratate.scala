@@ -45,11 +45,20 @@ object Agglomeratate {
   }
   type ClusterGraph = IndexedUndigraph[Cluster]
 
-  case class Leaf[Node](node:Node) extends Cluster
+  /**
+   * A cluster with just one member
+   */
+  case class Single[Node](node:Node) extends Cluster
 
-  case class Subgraph(graph:ClusterGraph) extends Cluster  //todo replace Double with something from a Semiring, maybe
-
+  /**
+    * A cluster of isolated clusters
+    */
   case class Isolates(clusters:Set[Cluster]) extends Cluster
+
+
+
+  case class Subgraph(graph:ClusterGraph) extends Cluster
+
 
 //  type Edge = ClusterGraph.OuterEdgeType
 //  case class Cluster(graph:LabelUndigraph[Cluster,Double],archNode:String)
@@ -59,25 +68,25 @@ object Agglomeratate {
   /*
   Phase 0 - init
 
-  For a graph create a Leaf - a cluster of one node in the graph. Build up an initial graph of Clusters (that are leafs)
+  For a graph create a Single - a cluster of one node in the graph. Build up an initial graph of Clusters (that are leafs)
   Edges in this graph indicate existence of an edge in the original graph.
 
-    A Cluster is either a Leaf (contains one node) or a Subgraph (contains a graph of Clusters and edges between them)
+    A Cluster is either a Single (contains one node) or a Subgraph (contains a graph of Clusters and edges between them)
 
   Creating the Leafs should be fine in parallel
 
-  The initial graph is a Map(Leaf -> Set(Leaf)) of type Map(Cluster -> Set(Cluster))s that it can reach
+  The initial graph is a Map(Single -> Set(Single)) of type Map(Cluster -> Set(Cluster))s that it can reach
 */
 
   val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
 
   def leafClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
 
-    val nodesAndNodes = graph.nodes.asSeq.map(n => (n,Leaf(n)))
+    val nodesAndNodes = graph.nodes.asSeq.map(n => (n,Single(n)))
     val nodeMap = nodesAndNodes.toMap
 
 
-    def edgeFromEdge(e:graph.OuterEdgeType): NodePair[Leaf[Node]] = {
+    def edgeFromEdge(e:graph.OuterEdgeType): NodePair[Single[Node]] = {
       NodePair(nodeMap(e._1),nodeMap(e._2))    //todo use original weights
     }
 
@@ -139,18 +148,20 @@ Map(Cluster -> Cluster marker to merge with for next generation)
   val characteristicClustersForLeafs = pickCharacteristicClusters(leafCluster)
 
 
+
+
   /*
   Phase 3 - Refine the set of characteristic clusters and deal with corner cases
 
   Interpret cluster picked as "put A in the same cluster as B" .
   So long as all local choices result in fewer nodes every time then the algorithm should converge
 
-  Init all clusters to a Singleton (rename Leaf)
+  Init all clusters to a Singleton (rename Single)
   Find isolated nodes and make Isolates for this generation (above)
 
   Make a decision for each node as follows (start at the top of the list):
 
-    Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Leaf, maybe attached to its Hub)
+    Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Single, maybe attached to its Hub)
     Nodes that remain picked unique targets. Each target will have one node that selected it.
     Create a Hub from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
     Find Digons, Cycles, Caterpillars, and Leafs (all Paths)
@@ -158,8 +169,8 @@ Map(Cluster -> Cluster marker to merge with for next generation)
       For the rest, start at a node and follow downstream to detect, building a list of nodes.
         If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
         If you hit a node picked by >1 node or a node picked by none, look for a Caterpillar.
-          Follow upstream, building a list of nodes. If greater than one build a Caterpillar. (Likely a Leaf or a Bridge next time)
-            For a list of length 1 make a Leaf (assert no other node picked it) (Likely Siblings or a Diagon next time)
+          Follow upstream, building a list of nodes. If greater than one build a Caterpillar. (Likely a Single or a Bridge next time)
+            For a list of length 1 make a Single (assert no other node picked it) (Likely Siblings or a Diagon next time)
 
 (Expect time-dependent relationships to have a big caterpillar, others to show Cycles and Hubs)
 
@@ -249,7 +260,7 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
 
   def totalWeight(cluster:Cluster):Double = cluster match {
     case subgraph:Subgraph => totalWeight(subgraph.graph)
-    case leaf:Leaf => 0
+    case leaf:Single => 0
   }
 
   //use for sigmaTot, k_i
