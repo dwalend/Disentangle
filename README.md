@@ -275,14 +275,15 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 ### Next Big Release
 
 * Brandes' algorithm for an undirected graph
-* Louvain community detection
-* Parallel Louvain
+* Community detection experiment
 
 ### New Algorithms
 
 * Lazy Dijkstra's
 * MST using a Heap
 * A* 
+* SemiLouvain
+* Parallel SemiLouvain
 
 
 ### More Semirings

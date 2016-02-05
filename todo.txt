@@ -1,13 +1,13 @@
 This release
 
-* Undirected graphs
+* Undirected graphs, graphs without labels
 ** With Brandes' algorithm
 * Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
 
 
 Next release
 
-* Louvain algorithm
+* Clustering algorithm
 * IndexedSubSet backed by BitSet
 
 * Subgraph representation

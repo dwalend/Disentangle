@@ -47,16 +47,14 @@ package object semiring {
       case _ => Dijkstra.parAllPairsLeastPaths(self.edges,support,labelForEdge)
     }
 
-    def allLeastPathsAndBetweenness[CoreLabel, Key](
-                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+    def allLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                      labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
       case _ => Brandes.allLeastPathsAndBetweenness(self.edges,coreSupport = coreSupport,labelForEdge = labelForEdge)
     }
 
-    def parAllLeastPathsAndBetweenness[CoreLabel, Key](
-                                                     coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
-                                                     labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
+    def parAllLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
+                                                        labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
       case _ => Brandes.allLeastPathsAndBetweenness(self.edges,coreSupport = coreSupport,labelForEdge = labelForEdge)
     }
@@ -119,8 +117,9 @@ package object semiring {
     }
 
   }
-    //todo test Undirected Graphs with a special version of Brandes
+    //todo test Undirected Label Graphs with a special version of Brandes
 
+  //todo add for Digraphs and Undirected graphs without labels
 }
 //todo pathcount as a decorator semiring
 //todo core-and-many-decorator semiring
