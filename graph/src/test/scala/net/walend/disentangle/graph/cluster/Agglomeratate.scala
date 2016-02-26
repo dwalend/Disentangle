@@ -2,6 +2,7 @@ package net.walend.disentangle.graph.cluster
 
 import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, SomeGraph, NodePair}
 
+import scala.collection.immutable.Iterable
 import scala.collection.{GenTraversable, GenSeq, GenSet}
 
 /**
@@ -73,46 +74,43 @@ object Agglomeratate {
   /*
   Phase 0 - init
 
-  For a graph create a Initial - a cluster of one node in the graph. Build up an initial graph of Clusters (that are leafs)
+  For a graph create an Initial cluster - a cluster of one node in the graph. Build up a graph of Initial Clusters (that are leafs)
   Edges in this graph indicate existence of an edge in the original graph.
 
-    A Cluster is either a Initial (contains one node) or a Subgraph (contains a graph of Clusters and edges between them)
-
-  Creating the Leafs should be fine in parallel
+  Creating the Initial clusters should be fine in parallel
 
   The initial graph is a Map(Initial -> Set(Initial)) of type Map(Cluster -> Set(Cluster))s that it can reach
 */
 
   val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
 
-  def leafClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
+  def initialClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
 
-    val nodesAndNodes = graph.nodes.asSeq.map(n => (n,Initial(n)))
-    val nodeMap = nodesAndNodes.toMap
+    val nodesToInitialClusters = graph.nodes.asSeq.map(n => (n,Initial(n)))
+    val nodeMap = nodesToInitialClusters.toMap
 
-
-    def edgeFromEdge(e:graph.OuterEdgeType): NodePair[Initial[Node]] = {
+    def clusterEdgeFromEdge(e:graph.OuterEdgeType): NodePair[Initial[Node]] = {
       NodePair(nodeMap(e._1),nodeMap(e._2))    //todo use original weights
     }
 
-    val edges = graph.edges.map(edgeFromEdge)
+    val edges = graph.edges.map(clusterEdgeFromEdge)
 
-    AdjacencyUndigraph[Cluster](edges,nodes = nodesAndNodes.map(n => n._2).toSeq)
+    AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2).toSeq)
   }
 
-  val leafCluster: ClusterGraph = leafClusterFromGraph(testGraph)
+  val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
 
 /*
-  Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges .
+  Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
 
   parallel sort should do fine . (In something too big to sort, just sort the neighbors)
 */
   def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.edges.size).reverse
 
-  val sortedLeafs = sortNodes(leafCluster)
+  val sortedInitialNodes = sortNodes(initialCluster)
 
 /*
-Phase 2 - pick most similar Cluster for each Cluster
+Phase 2 - pick most similar Cluster to each Cluster
 
 (can be in parallel)
 For each node
@@ -124,7 +122,6 @@ For each node
 Gives a Map(Cluster -> Cluster)
 
 (has to gather, but can be remarked in parallel if this is a bottle neck)
-If two nodes point to each other then all nodes that point to either of those two should be merged. Relabel to whichever comes first in the sort order
 If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
 
 Map(Cluster -> Cluster marker to merge with for next generation)
@@ -144,32 +141,30 @@ Map(Cluster -> Cluster marker to merge with for next generation)
       node.edges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
     }
 
-    val (connected,isolated) = graph.innerNodes.partition(n => n.edges.size > 0)
+    //separate connected nodes from isolates
+    val (connected,isolated) = graph.innerNodes.partition(n => n.edges.nonEmpty)
 
-    (connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap,
-      Isolates(isolated.map(_.value)))
+    val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
+    val isolates = Isolates(isolated.map(_.value))
+
+    (clustersToMostSimilarNeighbor,isolates)
   }
 
-  val characteristicClustersForLeafs = pickCharacteristicClusters(leafCluster)
-
-
-
+  val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(initialCluster)
 
   /*
   Phase 3 - Refine the set of characteristic clusters and deal with corner cases
 
-  Interpret cluster picked as "put A in the same cluster as B" .
-  So long as all local choices result in fewer nodes every time then the algorithm should converge
-
-  Init all clusters to a Singleton (rename Initial)
-  Find isolated nodes and make Isolates for this generation (above)
+  Join every cluster with at least one other cluster. (Worst case is a binary tree) Process at least n clusters per n units of work.
 
   Make a decision for each node as follows (start at the top of the list):
 
     Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Initial, maybe attached to its Hub)
     Nodes that remain picked unique targets. Each target will have one node that selected it.
-    Create a Hub (Wheel) from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
+    Create a Wheel from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
     Find Digons, Cycles, Caterpillars, and Leafs (all Paths)
+      For chains, the start of a chain won't be in the set of picked clusters. Find all the starts and follow them
+
       For Digons, exactly one node selected this node, and this node selected the one that selected it. (Cycle of two nodes.) (Could be anything next time)
       For the rest, start at a node and follow downstream to detect, building a list of nodes.
         If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
@@ -181,6 +176,58 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
 start here
 */
+  def clustersFromMostSimilar(clustersToPicked:Map[Cluster,Cluster]) = {
+
+    //have to gather to do the groupBy. Dang.
+    val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
+    //Wheels and Siblings first
+    val (wheelsOrSiblings,pathLikeThings) = pickedClustersToSets.partition(x => x._2.size > 1) //Set size is >= 1
+
+    //The hub of a wheel might be in pathLikeThings, or something else's sibling, so it isn't actually part of a wheel.
+    //todo straighten out the above later, or ignore it
+    val (wheels,siblings) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
+
+    val pathLikePicksToClusters: Map[Cluster, Cluster] = pathLikeThings.map(pToCS => pToCS._1 -> pToCS._2.find(x => true).get) //Set size is 1, so the find() is OK.
+
+    val pathLikeClustersToPicks: Map[Cluster, Cluster] = pathLikePicksToClusters.map(_.swap)
+
+    //Find starts of chains
+    val chainStarts: Set[Cluster] = pathLikePicksToClusters.filterNot(x => pathLikePicksToClusters.keySet.contains(x._2)).values.to[Set]  //need this as a Set??
+
+    //follow the chains up
+    def createChain(link:Cluster):List[Cluster] = {
+      pathLikeClustersToPicks.get(link).fold(List.empty[Cluster])(next => next :: createChain(next))
+    }
+
+    val chains: Iterable[List[Cluster]] = chainStarts.map(createChain)
+    //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other)
+
+    val clustersInChains = chains.flatten.to[Set]
+
+    // anything left must be part of a loop
+
+    val clustersInLoops: Map[Cluster, Cluster] = pathLikeClustersToPicks.filterNot(cToP => clustersInChains.contains(cToP._1))
+
+    //unfortunately I don't see a good way to do this in parallel without doing extra work. (building the same loop multiple times, then squashing them into a set. Hopefully there won't be many of these early. It seems unlikely in a typical social hairball
+    def createLoops(loopClustersToPicks:Map[Cluster,Cluster]):List[List[Cluster]] = {
+      def followLoop(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster]):List[Cluster] = {
+        val next = remaining.get(cluster).get
+        if (next == start) List.empty[Cluster]
+        else start :: followLoop(start,next,remaining)
+      }
+      if(loopClustersToPicks.isEmpty) Nil
+      else {
+        val start = loopClustersToPicks.iterator.next()._1
+        val aLoop = followLoop(start, start, loopClustersToPicks)
+        val loopAsSet = aLoop.to[Set]
+        val remainingLessALoop = loopClustersToPicks.filterNot(x => loopAsSet.contains(x._1))
+        aLoop :: createLoops(remainingLessALoop)
+      }
+    }
+    val loops = createLoops(clustersInLoops)
+
+  }
+     //todo start here. Cut stuff you don't use
 
   def refineCharacteristicClusters(clustersToPicked:Map[Cluster,Cluster]) = {
     val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
