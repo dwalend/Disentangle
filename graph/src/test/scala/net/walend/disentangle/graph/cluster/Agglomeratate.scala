@@ -56,7 +56,7 @@ object Agglomeratate {
     */
   case class Isolates(clusters:Set[Cluster]) extends Cluster
 
-  case class Siblings(graph:ClusterGraph, archetype:Cluster) extends Cluster
+  case class Sibling(graph:ClusterGraph, archetype:Cluster) extends Cluster
 
   case class Wheel(graph:ClusterGraph, hub:Cluster) extends Cluster
 
@@ -127,7 +127,7 @@ If a node is an isolate - max Jaccard index is Zero, just point it to itself or 
 Map(Cluster -> Cluster marker to merge with for next generation)
 
 */
-  def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], Isolates) = {
+  def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], FormIsolate) = {
 
   /**
     * @see https://en.wikipedia.org/wiki/Jaccard_index
@@ -145,7 +145,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     val (connected,isolated) = graph.innerNodes.partition(n => n.edges.nonEmpty)
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
-    val isolates = Isolates(isolated.map(_.value))
+    val isolates = FormIsolate(isolated.map(_.value))
 
     (clustersToMostSimilarNeighbor,isolates)
   }
@@ -174,9 +174,28 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
 (Expect time-dependent relationships to have a big caterpillar, others to show Cycles and Hubs)
 
-start here
 */
-  def clustersFromMostSimilar(clustersToPicked:Map[Cluster,Cluster]) = {
+
+
+  trait FormCluster {
+    def members:Set[Cluster]
+  }
+
+  case class FormIsolate(members:Set[Cluster]) extends FormCluster
+
+  case class FormSibling(archType:Cluster, members:Set[Cluster]) extends FormCluster
+
+  case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster
+
+  case class FormChain(memberList:Iterable[Cluster]) extends FormCluster {
+    lazy val members: Set[Cluster] = memberList.to[Set]
+  }
+
+  case class FormLoop(memberList:List[Cluster]) extends FormCluster {
+    lazy val members: Set[Cluster] = memberList.to[Set]
+  }
+
+  def clustersFromMostSimilar(clustersToPicked:Map[Cluster,Cluster]): Iterable[FormCluster] = {
 
     //have to gather to do the groupBy. Dang.
     val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
@@ -185,7 +204,9 @@ start here
 
     //The hub of a wheel might be in pathLikeThings, or something else's sibling, so it isn't actually part of a wheel.
     //todo straighten out the above later, or ignore it
-    val (wheels,siblings) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
+    val (wheelParts,siblingParts) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
+    val siblings: Iterable[FormSibling] = siblingParts.map(x=>FormSibling(x._1,x._2))
+    val wheels: Iterable[FormSibling] = wheelParts.map(x=>FormSibling(x._1,x._2))
 
     val pathLikePicksToClusters: Map[Cluster, Cluster] = pathLikeThings.map(pToCS => pToCS._1 -> pToCS._2.find(x => true).get) //Set size is 1, so the find() is OK.
 
@@ -199,10 +220,10 @@ start here
       pathLikeClustersToPicks.get(link).fold(List.empty[Cluster])(next => next :: createChain(next))
     }
 
-    val chains: Iterable[List[Cluster]] = chainStarts.map(createChain)
+    val chains: Set[FormChain] = chainStarts.map(createChain).map(FormChain)
     //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other)
 
-    val clustersInChains = chains.flatten.to[Set]
+    val clustersInChains: Set[Cluster] = chains.flatMap(_.memberList)
 
     // anything left must be part of a loop
 
@@ -224,38 +245,12 @@ start here
         aLoop :: createLoops(remainingLessALoop)
       }
     }
-    val loops = createLoops(clustersInLoops)
+    val loops: List[FormLoop] = createLoops(clustersInLoops).map(FormLoop)
 
+    wheels ++ siblings ++ chains ++ loops
   }
-     //todo start here. Cut stuff you don't use
 
-  def refineCharacteristicClusters(clustersToPicked:Map[Cluster,Cluster]) = {
-    val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
-
-    val pickedClusterToClustersOfOne: Map[Cluster, Set[Cluster]] = pickedClustersToSets.filter(x => x._2.size == 1)
-
-    def reasign(clusterToReassign:Cluster):(Cluster,Cluster) = {
-      val oldPickedCluster = clustersToPicked(clusterToReassign) //clusterToReassign is the only cluster that picked oldPickedCluster
-
-      val newPick:Cluster = if(pickedClustersToSets.get(clusterToReassign).size > 1) clusterToReassign //Did at least two nodes pick clusterToReassign? If so, then clusterToReassign can go with those nodes
-        //Otherwise, either zero or one clusters picked clusterToReassign
-        //todo handle zero case
-        else if(clustersToPicked(oldPickedCluster) == clusterToReassign) {
-          //These two clusters picked each other
-          //Form one cluster by picking one of them to be "it"
-          if(oldPickedCluster.hashCode() > clusterToReassign.hashCode()) clusterToReassign
-          else oldPickedCluster
-      } else {
-        //clusterToReassign picked oldPickedCluster and oldPickedCluster picked something else. Crap. Here's where a long chain can happen. How to solve? Follow the chain, looking for a cluster bigger than one?
-        clustersToPicked(oldPickedCluster)
-      }
-      (clusterToReassign,newPick)
-    }
-
-
-    val reasignments: Map[Cluster, Cluster] = pickedClusterToClustersOfOne.map(pcctoc1 => reasign(pcctoc1._2.find(n => true).get))
-
-  }
+  val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ Seq(isolates)
 
   /*
   Phase 4 - merge clusters into a new generation of clusters in a new graph
@@ -273,7 +268,7 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
    */
 
   /**
-    * Merge all the clustersToMerge Doubleo a new Cluster.
+    * Merge all the clustersToMerge into a new Cluster.
     * Return a ClusterGraph that replaces all the merged clusters with a single new cluster and none of the clusters to merge, and retains all other clusters.
     *
     * The clustersToMerge become subclusters in the new cluster
