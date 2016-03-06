@@ -10,8 +10,9 @@ trait Undigraph[Node] extends Graph[Node] {
 
   trait UndigraphInnerNodeTrait extends InnerNodeTrait {
 
-    def edges:Set[InnerEdgeType]
+    def innerEdges:Set[InnerEdgeType]
 
+    def outerEdges:Set[OuterEdgeType]
   }
 
   /**

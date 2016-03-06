@@ -3,7 +3,7 @@ package net.walend.disentangle.graph.cluster
 import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, SomeGraph, NodePair}
 
 import scala.collection.immutable.Iterable
-import scala.collection.{GenTraversable, GenSeq, GenSet}
+//import scala.collection.{GenTraversable, GenSeq, GenSet}
 
 /**
   * Create a hierarchy of cluster graphs via parallel agglomeratation based on the Jaccard index for each node.
@@ -42,29 +42,39 @@ object Agglomeratate {
 //  case class Graph(subgraphs:Set[Graph],edges:Set[(NodePair[Graph],Edge)])
 
   sealed abstract class Cluster {
-//    def edges:Map[Cluster,Double]
+    def members:Set[Cluster]
   }
+
   type ClusterGraph = IndexedUndigraph[Cluster]
 
   /**
    * A cluster with just one member
    */
-  case class Initial[Node](node:Node) extends Cluster
+  case class Initial[Node](node:Node) extends Cluster {
+    override val members: Set[Cluster] = Set.empty
+  }
 
   /**
     * A cluster of isolated clusters
     */
-  case class Isolates(clusters:Set[Cluster]) extends Cluster
+  case class Isolates(members:Set[Cluster]) extends Cluster
 
-  case class Sibling(graph:ClusterGraph, archetype:Cluster) extends Cluster
+  case class Sibling(graph:ClusterGraph, archetype:Cluster) extends Cluster {
+    override def members: Set[Cluster] = graph.nodes
+  }
 
-  case class Wheel(graph:ClusterGraph, hub:Cluster) extends Cluster
+  case class Wheel(graph:ClusterGraph, hub:Cluster) extends Cluster {
+    override def members: Set[Cluster] = graph.nodes
+  }
 
-  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster]) extends Cluster //todo Loop
+  //todo rename loop
+  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster]) extends Cluster {
+    override def members: Set[Cluster] = graph.nodes
+  }
 
-  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster]) extends Cluster
-
-  case class Single(graph:ClusterGraph, cluster:Cluster) extends Cluster
+  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster]) extends Cluster {
+    override def members: Set[Cluster] = graph.nodes
+  }
 
 //  type Edge = ClusterGraph.OuterEdgeType
 //  case class Cluster(graph:LabelUndigraph[Cluster,Double],archNode:String)
@@ -105,7 +115,7 @@ object Agglomeratate {
 
   parallel sort should do fine . (In something too big to sort, just sort the neighbors)
 */
-  def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.edges.size).reverse
+  def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
 
   val sortedInitialNodes = sortNodes(initialCluster)
 
@@ -133,16 +143,16 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     * @see https://en.wikipedia.org/wiki/Jaccard_index
     */
     def jaccardIndex(node:graph.InnerNodeType,candidate:graph.InnerNodeType): Int = {
-      node.edges.union(candidate.edges).size
+      node.innerEdges.union(candidate.innerEdges).size
     }
 
     def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = {
       //skip self-edges, which will have a maximum jaccard index
-      node.edges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
+      node.innerEdges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
     }
 
     //separate connected nodes from isolates
-    val (connected,isolated) = graph.innerNodes.partition(n => n.edges.nonEmpty)
+    val (connected,isolated) = graph.innerNodes.partition(n => n.innerEdges.nonEmpty)
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
     val isolates = FormIsolate(isolated.map(_.value))
@@ -177,22 +187,63 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 */
 
 
+  //todo maybe these are better as apply() methods on Cluster's companion objects ???
   trait FormCluster {
     def members:Set[Cluster]
+
+    def clusterGraphAndExternalEdges(prevGraph: ClusterGraph): (ClusterGraph, Set[prevGraph.OuterEdgeType]) = {
+      val involvedEdges: Set[prevGraph.OuterEdgeType] = members.flatMap(cluster => prevGraph.innerNode(cluster).get.outerEdges)
+
+      def isInternalEdge(edge:prevGraph.OuterEdgeType):Boolean =
+        members.contains(edge._1) && members.contains(edge._2)
+
+      val (internalEdges,externalEdges) = involvedEdges.partition(isInternalEdge)
+
+      (AdjacencyUndigraph[Cluster](edges = internalEdges.map(e => NodePair(e._1,e._2)),
+        nodes = members.to[Seq])
+        ,externalEdges)
+    }
+
+    def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cluster,Set[prevGraph.OuterEdgeType])
   }
 
-  case class FormIsolate(members:Set[Cluster]) extends FormCluster
-
-  case class FormSibling(archType:Cluster, members:Set[Cluster]) extends FormCluster
-
-  case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster
-
-  case class FormChain(memberList:Iterable[Cluster]) extends FormCluster {
-    lazy val members: Set[Cluster] = memberList.to[Set]
+  case class FormIsolate(members:Set[Cluster]) extends FormCluster {
+    override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Isolates,Set[prevGraph.OuterEdgeType])  = {
+      val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
+      (Isolates(clusterGraph.nodes),externalEdges)
+    }
   }
 
-  case class FormLoop(memberList:List[Cluster]) extends FormCluster {
+  case class FormSibling(archType:Cluster, members:Set[Cluster]) extends FormCluster {
+    override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Sibling,Set[prevGraph.OuterEdgeType])  = {
+      val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
+      (Sibling(clusterGraph,archType),externalEdges)
+    }
+  }
+
+  case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster {
+    override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Wheel,Set[prevGraph.OuterEdgeType])  = {
+      val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
+      (Wheel(clusterGraph,archType),externalEdges)
+    }
+  }
+
+  case class FormCaterpillar(memberList:Seq[Cluster]) extends FormCluster {
     lazy val members: Set[Cluster] = memberList.to[Set]
+
+    override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
+      val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
+      (Caterpillar(clusterGraph,memberList),externalEdges)
+    }
+  }
+
+  case class FormCycle(memberList:List[Cluster]) extends FormCluster {
+    lazy val members: Set[Cluster] = memberList.to[Set]
+
+    override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cycle,Set[prevGraph.OuterEdgeType])  = {
+      val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
+      (Cycle(clusterGraph,memberList),externalEdges)
+    }
   }
 
   def clustersFromMostSimilar(clustersToPicked:Map[Cluster,Cluster]): Iterable[FormCluster] = {
@@ -220,7 +271,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
       pathLikeClustersToPicks.get(link).fold(List.empty[Cluster])(next => next :: createChain(next))
     }
 
-    val chains: Set[FormChain] = chainStarts.map(createChain).map(FormChain)
+    val chains: Set[FormCaterpillar] = chainStarts.map(createChain).map(FormCaterpillar)
     //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other)
 
     val clustersInChains: Set[Cluster] = chains.flatMap(_.memberList)
@@ -245,7 +296,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
         aLoop :: createLoops(remainingLessALoop)
       }
     }
-    val loops: List[FormLoop] = createLoops(clustersInLoops).map(FormLoop)
+    val loops: List[FormCycle] = createLoops(clustersInLoops).map(FormCycle)
 
     wheels ++ siblings ++ chains ++ loops
   }
@@ -278,120 +329,21 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
     *                                                      or {if an edge exists already} combine weight with the existing edge
     *
     */
-  def merge(clusterGraph: ClusterGraph,clustersToMerge:Set[Cluster]):ClusterGraph = {
+  def merge(clusterGraph: ClusterGraph,clustersToMerge:Iterable[FormCluster]):ClusterGraph = {
 
-    val clustersNotMerged: GenSet[Cluster] = clusterGraph.nodes.partition(n => clustersToMerge.contains(n))._2
+    //todo is it faster to let toClusterAndExternalEdges find all the external edges, or to find all edges - all internal edges?
+    //todo I'll guess there will be a more internal edges due to max similarity
+    val mergedClustersAndExternalEdges = clustersToMerge.map(c => c.toClusterAndExternalEdges(clusterGraph))
+    val nodes = mergedClustersAndExternalEdges.map(mcaee => mcaee._1).to[Seq]
 
-    def completelyContainedEdge(edge:clusterGraph.OuterEdgeType,nodes:GenSet[Cluster]):Boolean = {
-      nodes.contains(edge._1) && nodes.contains(edge._2)
-    }
+    val membersToMerged: Map[Cluster, Cluster] = mergedClustersAndExternalEdges.flatMap(mc => mc._1.members.map(m => (m,mc._1))).toMap
 
-    val (edgesInMergedCluster,otherEdges: GenTraversable[NodePair[Cluster]]) = clusterGraph.edges.partition(e => completelyContainedEdge(e,clustersToMerge))
-    val (edgesNotMerged,spanningEdges: GenTraversable[NodePair[Cluster]]) = otherEdges.partition(e => completelyContainedEdge(e,clustersNotMerged))
+    val edges: Set[NodePair[Cluster]] = mergedClustersAndExternalEdges.flatMap(mcaxe => mcaxe._2).to[Set] //todo if using weighted edges, use .map(), then merge the edges with something other than .to[Set]
 
-    val mergedCluster = Single(AdjacencyUndigraph[Cluster](edges = edgesInMergedCluster,nodes = clustersToMerge.to[GenSeq]),null) //todo ug
-
-    def outsideNodeOfSpanningEdge(spanningEdge:clusterGraph.OuterEdgeType):Cluster = {
-      if (clustersToMerge.contains(spanningEdge._1)) spanningEdge._2
-      else spanningEdge._1
-    }
-    val edgesToMergedCluster: GenSeq[NodePair[Cluster]] = spanningEdges.map(e => e -> outsideNodeOfSpanningEdge(e)).groupBy(x => x._2).map(x => (x._1,x._2.map(y => y._1._2).size)).map(x => NodePair(x._1,mergedCluster)).toSeq
-
-    AdjacencyUndigraph[Cluster](edges = edgesNotMerged ++ edgesToMergedCluster,
-                                          nodes = clustersNotMerged.toSeq :+ mergedCluster)
-  }
-        /*
-  //use for Sigma_in, Sigma_tot, 2m
-  //todo maybe make a lazy val in Cluster
-  def totalWeight(graph: ClusterGraph):Double = graph.edges.map(e => e._2).sum
-
-  def totalWeight(cluster:Cluster):Double = cluster match {
-    case subgraph:Subgraph => totalWeight(subgraph.graph)
-    case leaf:Initial => 0
+    AdjacencyUndigraph(edges,nodes)
   }
 
-  //use for sigmaTot, k_i
-  //todo makey make a lazy val on the inner node
-  def totalIncidentWeight(graph:ClusterGraph,cluster:Cluster):Double = {
-    val innerNode: graph.InnerNodeType = graph.innerNode(cluster).getOrElse(throw new IllegalArgumentException(s"$cluster is not in $graph"))
-    innerNode.edges.map(e => e._2).sum
-  }
-
-  //use for k_i_in
-  def incidentWeightBetweenClusters(graph: ClusterGraph,a:Cluster,b:Cluster):Double = graph.edge(NodePair(a,b))._2
-  
-  //todo maybe do something stupider with set intersections as a faster algorithm
-
-  def deltaModularity(graph:ClusterGraph,existing:Cluster,proposed:Cluster):Double = {
-    val twoM = totalWeight(graph)
-    val sigmaIn = totalWeight(existing)
-    val kiIn = incidentWeightBetweenClusters(graph,existing,proposed)
-    val sigmaTot = totalIncidentWeight(graph,existing)
-    val ki = totalIncidentWeight(graph,proposed)
-
-    def sqr(x:Double) = Math.pow(x,2)
-
-    //todo since all comparisons are relative anyway it might make sense to factor out twoM, then use Ints or other numeric types
-    val firstTerm = ((sigmaIn+kiIn)/twoM) - sqr((sigmaTot + ki)/twoM)
-    val secondTerm = (sigmaIn/twoM) - sqr(sigmaTot/twoM) - sqr(ki/twoM)
-    firstTerm - secondTerm
-  }
-
-  def bestModularityGainWith(graph:ClusterGraph,cluster:Cluster):Cluster = {
-    val innerNode: graph.InnerNodeType = graph.innerNode(cluster).getOrElse(throw new IllegalArgumentException(s"$cluster is not in $graph"))
-    val clustersAndDeltaMods: Set[(Cluster, Double)] = innerNode.edges.map(e => {
-      val proposed = e._1.other(innerNode).value
-      val deltaMod = deltaModularity(graph,cluster,proposed)
-      (proposed,deltaMod)
-    })
-    if(clustersAndDeltaMods.isEmpty) cluster
-    else {
-      val bestCluster: (Cluster, Double) = clustersAndDeltaMods.maxBy(_._2)
-      if(bestCluster._2 >= 0) bestCluster._1
-      else cluster
-    }
-  }
-
-  def bestModularitiesWith(graph:ClusterGraph): GenSet[(Cluster, Cluster)] = graph.nodes.map(n => (n,bestModularityGainWith(graph,n)))
-
-  def findClustersAndMerge(graph:ClusterGraph):ClusterGraph = {
-    val bestMods: GenSet[(Cluster, Cluster)] = bestModularitiesWith(graph)
-    val clustersToMerge: GenMap[Cluster, GenSet[Cluster]] = bestMods.groupBy(_._2).map(x => (x._1,x._2.map(_._1)))
-    val (loneClusters,groupedClusters: GenMap[Cluster, GenSet[Cluster]]) = clustersToMerge.partition(_._2.size == 1)
-
-    //if a lone cluster is a key then add it to that key's value
-    val (loneClustersToPutSomewhere,survivors) = loneClusters.partition(x => groupedClusters.contains(x._1))
-
-    //todo use a foldLeft ? to merge clusters
-
-  }
-   */
-  //The core data structure is a Set of (Node -> Map(Node -> Weight)) , an adjacency graph
-  //The resulting type of each iteration is the same Set of (Node -> Map(Node -> Weight, but the node type here is a Set of the previous iteration's Nodes. (recursive type). A cluster label will help preserve sanity
-
-  // 0) Initialize a Cluster for each node
-/*
-  def initialCluster(undiGraph: LabelUndigraph[String,Double]) = {
-    val graph:Graph = undiGraph.innerNodes.map(n => Set(n.value) -> n.edges.map(e => Set(e._1.other(n).value) -> e._2))
-
-    graph
-  }
-
-
-
-  def sumOfWeights(graph:Graph):Double = {
-    graph.map(c => c._2.map(_._2).sum).sum
-  }
-
-  def modularity(cluster:Cluster,graph: Graph) = {
-
-  }
-    */
-  // 1) For each node, chose (create) the cluster that delivers the biggest modularity gain. Produce (Node -> Cluster). (Label the cluster with the first node in it if you need to)
-
-
-
-  // 2) Use the clusters to rebuild the next iteration's graph - a Set of (Node -> Map(Node -> Weight))
+  val clusterGraph = merge(initialCluster,formClusters)
 
 
 }

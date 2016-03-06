@@ -50,7 +50,13 @@ trait Graph[Node] {
 
   type OuterEdgeType
 
-  type InnerEdgeType
+  //todo is there a way to inject an InnerEdgeTrait that can return the outer edge??
+/*
+  trait InnerEdgeTrait {
+    def value:OuterEdgeType
+  }
+  */
+  type InnerEdgeType // <: InnerEdgeTrait
 
   /**
    * @return A Traversable (usually something more specific) of the edges

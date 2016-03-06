@@ -14,7 +14,7 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
                                           outEdges:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
                                          ) extends IndexedUndigraph[Node] {
 
-  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   //todo really should be a Set, not an IndexedSet
@@ -33,8 +33,12 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
-    override def edges: IndexedSet[InnerEdgeType] = {
+    override def innerEdges: IndexedSet[InnerEdgeType] = {
       inEdges(index)
+    }
+
+    override def outerEdges: Set[NodePair[Node]] = {
+      outEdges(index)
     }
 
     override def hashCode(): Int = index
@@ -45,7 +49,6 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
         case _ => false
       }
     }
-
   }
 
   /**

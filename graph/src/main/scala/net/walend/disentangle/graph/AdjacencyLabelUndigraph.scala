@@ -35,8 +35,12 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   case class InNode(override val value:Node,override val index:Int) extends this.UndigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
-    override def edges: IndexedSet[InnerEdgeType] = {
+    override def innerEdges: IndexedSet[InnerEdgeType] = {
       inEdges(index)
+    }
+
+    override def outerEdges: Set[(NodePair[Node], Label)] = {
+      outEdges(index)
     }
 
     override def hashCode(): Int = index
@@ -47,7 +51,6 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
         case _ => false
       }
     }
-
   }
 
   /**
