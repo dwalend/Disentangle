@@ -26,7 +26,7 @@ Worst case is O(n ln n). (I think) Each node will be merged with some other node
 
  */
 
-object Agglomeratate {
+object Agglomerate {
 
 /*
   type Node = String
