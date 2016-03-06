@@ -11,7 +11,7 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @since v0.2.1
   */
 class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                                          outEdges:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
+                               adjacencyMatrix:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
                                          ) extends IndexedUndigraph[Node] {
 
   val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
@@ -23,7 +23,7 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
   }
 
   //todo really should be a Set, not an IndexedSet
-  val inEdges:Vector[IndexedSet[InnerEdgeType]] = outEdges.map(neighborSet)
+  val inAdjacencyMatrix:Vector[IndexedSet[InnerEdgeType]] = adjacencyMatrix.map(neighborSet)
 
   def nodes = outNodes
 
@@ -34,11 +34,11 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
     override def innerEdges: IndexedSet[InnerEdgeType] = {
-      inEdges(index)
+      inAdjacencyMatrix(index)
     }
 
     override def outerEdges: Set[NodePair[Node]] = {
-      outEdges(index)
+      adjacencyMatrix(index)
     }
 
     override def hashCode(): Int = index
@@ -70,14 +70,14 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
   /**
     * @return A Traversable of the edges as represented in the graph
     */
-  override def innerEdges:Vector[InnerEdgeType] = inEdges.flatten
+  override lazy val innerEdges:Vector[InnerEdgeType] = inAdjacencyMatrix.flatten.distinct
 
   /**
     * O(n&#94;2)
     *
     * @return All of the edges in the graph
     */
-  override def edges: Seq[OuterEdgeType] = outEdges.flatten
+  override lazy val edges: Seq[OuterEdgeType] = adjacencyMatrix.flatten.distinct
 
   /**
     * O(1)

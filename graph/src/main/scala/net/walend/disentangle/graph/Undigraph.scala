@@ -39,14 +39,14 @@ case class NodePair[+A](_1: A, _2: A) {
   def contains[B >: A](elem: B): Boolean =
     elem == _1 || elem == _2
 
-  override def equals(other: Any): Boolean =
-    other match {
+  override def equals(that: Any): Boolean =
+    that match {
 
       case that: NodePair[_] =>
         (that canEqual this) &&
           (((this._1 == that._1) &&
             (this._2 == that._2)) ||
-            ((this._1 == that._2) &&
+           ((this._1 == that._2) &&
               (this._2 == that._1)))
 
       case _ => false

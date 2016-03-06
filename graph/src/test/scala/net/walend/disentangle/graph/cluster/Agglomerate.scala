@@ -338,7 +338,7 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
 
     val membersToMerged: Map[Cluster, Cluster] = mergedClustersAndExternalEdges.flatMap(mc => mc._1.members.map(m => (m,mc._1))).toMap
 
-    val edges: Set[NodePair[Cluster]] = mergedClustersAndExternalEdges.flatMap(mcaxe => mcaxe._2).map(prev => NodePair(membersToMerged(prev._1),membersToMerged(prev._2))).to[Set] //todo if using weighted edges, use .map(), then merge the edges with something other than .to[Set]
+    val edges = mergedClustersAndExternalEdges.flatMap(mcaxe => mcaxe._2).map(prev => NodePair(membersToMerged(prev._1),membersToMerged(prev._2))).to[Set] //todo if using weighted edges, use .map(), then merge the edges with something other than .to[Set]
 
     AdjacencyUndigraph(edges,nodes)
   }
