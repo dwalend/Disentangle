@@ -74,14 +74,14 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   /**
     * @return A Traversable of the edges as represented in the graph
     */
-  override def innerEdges:Vector[InnerEdgeType] = inEdges.flatten
+  override lazy val innerEdges:Vector[InnerEdgeType] = inEdges.flatten.distinct
 
   /**
     * O(n&#94;2)
     *
     * @return All of the edges in the graph
     */
-  override def edges: Seq[OuterEdgeType] = outEdges.flatten
+  override def edges: Seq[OuterEdgeType] = outEdges.flatten.distinct
 
   /**
     * O(n)
