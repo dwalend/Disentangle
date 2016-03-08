@@ -91,9 +91,6 @@ object Agglomerate {
 
   The initial graph is a Map(Initial -> Set(Initial)) of type Map(Cluster -> Set(Cluster))s that it can reach
 */
-
-  val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
-
   def initialClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
 
     val nodesToInitialClusters = graph.nodes.asSeq.map(n => (n,Initial(n)))
@@ -108,16 +105,12 @@ object Agglomerate {
     AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2).toSeq)
   }
 
-  val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
-
 /*
   Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
 
   parallel sort should do fine . (In something too big to sort, just sort the neighbors)
 */
   def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
-
-  val sortedInitialNodes = sortNodes(initialCluster)
 
 /*
 Phase 2 - pick most similar Cluster to each Cluster
@@ -159,8 +152,6 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     (clustersToMostSimilarNeighbor,isolates)
   }
-
-  val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(initialCluster)
 
   /*
   Phase 3 - Refine the set of characteristic clusters and deal with corner cases
@@ -301,8 +292,6 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     wheels ++ siblings ++ chains ++ loops
   }
 
-  val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ Seq(isolates)
-
   /*
   Phase 4 - merge clusters into a new generation of clusters in a new graph
 
@@ -343,7 +332,17 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
     AdjacencyUndigraph(edges,nodes)
   }
 
-  val clusterGraph = merge(initialCluster,formClusters)
+  def makeClusters(graph:ClusterGraph):ClusterGraph = {
+    val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
+    val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(graph)
+    val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ Seq(isolates)
+    merge(graph,formClusters)
+  }
 
+
+  val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
+  val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
+
+  val firstGenClusters = makeClusters(initialCluster)
 
 }
