@@ -274,6 +274,8 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     //unfortunately I don't see a good way to do this in parallel without doing extra work. (building the same loop multiple times, then squashing them into a set. Hopefully there won't be many of these early. It seems unlikely in a typical social hairball
     def createLoops(loopClustersToPicks:Map[Cluster,Cluster]):List[List[Cluster]] = {
       def followLoop(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster]):List[Cluster] = {
+        println(s"followLoop($start,$cluster,$remaining")
+
         val next = remaining.get(cluster).get
         if (next == start) List.empty[Cluster]
         else start :: followLoop(start,next,remaining)
@@ -332,17 +334,25 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
     AdjacencyUndigraph(edges,nodes)
   }
 
-  def makeClusters(graph:ClusterGraph):ClusterGraph = {
+  def createClusters(graph:ClusterGraph):ClusterGraph = {
     val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
     val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(graph)
     val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ Seq(isolates)
     merge(graph,formClusters)
   }
 
+  def agglomerate(graph:ClusterGraph):List[ClusterGraph] = {
+    if (graph.nodeCount <= 1) List(graph)
+    else {
+      val nextGraph = createClusters(graph)
+      graph :: agglomerate(nextGraph)
+    }
+  }
 
   val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
   val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
 
-  val firstGenClusters = makeClusters(initialCluster)
+//  val firstGenClusters = createClusters(initialCluster)
 
+  val clusters = agglomerate(initialCluster)
 }

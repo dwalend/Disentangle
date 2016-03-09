@@ -1,4 +1,4 @@
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.9.4"
 

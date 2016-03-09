@@ -8,7 +8,7 @@ version := "0.2.1-SNAPSHOT"
 
 isSnapshot := false
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 sbtVersion := "0.13.9"
 
