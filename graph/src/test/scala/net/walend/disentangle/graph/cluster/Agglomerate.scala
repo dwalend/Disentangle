@@ -274,24 +274,24 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     val clustersInLoops: Map[Cluster, Cluster] = pathLikeClustersToPicks.filterNot(cToP => clustersInChains.contains(cToP._1))
 
     //unfortunately I don't see a good way to do this in parallel without doing extra work. (building the same loop multiple times, then squashing them into a set. Hopefully there won't be many of these early. It seems unlikely in a typical social hairball
-    //todo @tailrec accumulator or foldLeft
-    def createCycle(loopClustersToPicks:Map[Cluster,Cluster]):List[List[Cluster]] = {
+    @tailrec
+    def createCycle(loopClustersToPicks:Map[Cluster,Cluster],acc:List[List[Cluster]] = Nil):List[List[Cluster]] = {
 
-      //todo @tailrec accumulator or foldLeft
-      def followCycle(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster]):List[Cluster] = {
+      @tailrec
+      def followCycle(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster],acc:List[Cluster] = Nil):List[Cluster] = {
         val next = remaining.get(cluster).get
-        if (next == start) List(start)
-        else next :: followCycle(start,next,remaining)
+        if (next == start) cluster::acc
+        else followCycle(start,next,remaining,cluster::acc)
       }
 
-      if(loopClustersToPicks.isEmpty) Nil
+      if(loopClustersToPicks.isEmpty) acc
       else {
         val start = loopClustersToPicks.iterator.next()._1
         val aLoop = followCycle(start, start, loopClustersToPicks)
         println(s"found loop $aLoop")
         val loopAsSet = aLoop.to[Set]
         val remainingLessALoop = loopClustersToPicks.filterNot(x => loopAsSet.contains(x._1))
-        aLoop :: createCycle(remainingLessALoop)
+        createCycle(remainingLessALoop,aLoop::acc)
       }
     }
     val loops: List[FormCycle] = createCycle(clustersInLoops).map(FormCycle)
