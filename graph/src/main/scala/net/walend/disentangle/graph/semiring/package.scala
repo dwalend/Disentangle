@@ -17,13 +17,12 @@ import scala.collection.parallel.immutable.ParSeq
  */
 package object semiring {
 
-
   /**
     * @since v0.2.1
     *
     * Helper methods for LabelDigraphs
     */
-  implicit class LabelDigraphSemiringAlgoritms[Node,Label](self: LabelDigraph[Node,Label]) {
+  implicit class LabelDigraphSemiringAlgorithms[Node,Label](self: LabelDigraph[Node,Label]) {
 
     def allPairsShortestPaths: Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsShortestPaths(indexed.edges,indexed.nodes.asSeq)
@@ -65,7 +64,7 @@ package object semiring {
     *
     * Helper methods for LabelUndigraphs
     */
-  implicit class LabelUndigraphSemiringAlgoritms[Node,Label](self: LabelUndigraph[Node,Label]) {
+  implicit class LabelUndigraphSemiringAlgorithms[Node,Label](self: LabelUndigraph[Node,Label]) {
 
     def allPairsShortestPaths: Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
       case indexed:IndexedLabelUndigraph[Node,Label] => Dijkstra.allPairsShortestPaths(diEdges,indexed.nodes.asSeq)

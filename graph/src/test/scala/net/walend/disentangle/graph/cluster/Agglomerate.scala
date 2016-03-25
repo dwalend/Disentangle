@@ -2,6 +2,7 @@ package net.walend.disentangle.graph.cluster
 
 import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, SomeGraph, NodePair}
 
+import scala.annotation.tailrec
 import scala.collection.immutable.Iterable
 //import scala.collection.{GenTraversable, GenSeq, GenSet}
 
@@ -130,7 +131,7 @@ If a node is an isolate - max Jaccard index is Zero, just point it to itself or 
 Map(Cluster -> Cluster marker to merge with for next generation)
 
 */
-  def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], FormIsolate) = {
+  def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], Option[FormIsolate]) = {
 
   /**
     * @see https://en.wikipedia.org/wiki/Jaccard_index
@@ -148,7 +149,8 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     val (connected,isolated) = graph.innerNodes.partition(n => n.innerEdges.nonEmpty)
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
-    val isolates = FormIsolate(isolated.map(_.value))
+    val isolates = if(!isolated.isEmpty) Option(FormIsolate(isolated.map(_.value)))
+                    else None
 
     (clustersToMostSimilarNeighbor,isolates)
   }
@@ -272,24 +274,27 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     val clustersInLoops: Map[Cluster, Cluster] = pathLikeClustersToPicks.filterNot(cToP => clustersInChains.contains(cToP._1))
 
     //unfortunately I don't see a good way to do this in parallel without doing extra work. (building the same loop multiple times, then squashing them into a set. Hopefully there won't be many of these early. It seems unlikely in a typical social hairball
-    def createLoops(loopClustersToPicks:Map[Cluster,Cluster]):List[List[Cluster]] = {
-      def followLoop(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster]):List[Cluster] = {
-        println(s"followLoop($start,$cluster,$remaining")
+    //todo @tailrec accumulator or foldLeft
+    def createCycle(loopClustersToPicks:Map[Cluster,Cluster]):List[List[Cluster]] = {
 
+      //todo @tailrec accumulator or foldLeft
+      def followCycle(start:Cluster,cluster:Cluster,remaining:Map[Cluster,Cluster]):List[Cluster] = {
         val next = remaining.get(cluster).get
-        if (next == start) List.empty[Cluster]
-        else start :: followLoop(start,next,remaining)
+        if (next == start) List(start)
+        else next :: followCycle(start,next,remaining)
       }
+
       if(loopClustersToPicks.isEmpty) Nil
       else {
         val start = loopClustersToPicks.iterator.next()._1
-        val aLoop = followLoop(start, start, loopClustersToPicks)
+        val aLoop = followCycle(start, start, loopClustersToPicks)
+        println(s"found loop $aLoop")
         val loopAsSet = aLoop.to[Set]
         val remainingLessALoop = loopClustersToPicks.filterNot(x => loopAsSet.contains(x._1))
-        aLoop :: createLoops(remainingLessALoop)
+        aLoop :: createCycle(remainingLessALoop)
       }
     }
-    val loops: List[FormCycle] = createLoops(clustersInLoops).map(FormCycle)
+    val loops: List[FormCycle] = createCycle(clustersInLoops).map(FormCycle)
 
     wheels ++ siblings ++ chains ++ loops
   }
@@ -337,7 +342,7 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
   def createClusters(graph:ClusterGraph):ClusterGraph = {
     val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
     val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(graph)
-    val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ Seq(isolates)
+    val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ isolates.to[Seq]
     merge(graph,formClusters)
   }
 
@@ -354,5 +359,5 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
 
 //  val firstGenClusters = createClusters(initialCluster)
 
-  val clusters = agglomerate(initialCluster)
+//  val clusters = agglomerate(initialCluster)
 }
