@@ -265,7 +265,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     }
 
     val chains: Set[FormCaterpillar] = chainStarts.map(createChain).map(FormCaterpillar)
-    //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other)
+    //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other) if it needs to be done
 
     val clustersInChains: Set[Cluster] = chains.flatMap(_.memberList)
 
