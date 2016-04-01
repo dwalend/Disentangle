@@ -42,7 +42,7 @@ object Agglomerate {
 
 //  case class Graph(subgraphs:Set[Graph],edges:Set[(NodePair[Graph],Edge)])
 
-  sealed abstract class Cluster {
+  sealed abstract class Cluster(val level:Int) {
     def members:Set[Cluster]
   }
 
@@ -51,29 +51,31 @@ object Agglomerate {
   /**
    * A cluster with just one member
    */
-  case class Initial[Node](node:Node) extends Cluster {
+  case class Initial[Node](node:Node) extends Cluster(1) {
     override val members: Set[Cluster] = Set.empty
+
+    override def toString = node.toString
   }
 
   /**
     * A cluster of isolated clusters
     */
-  case class Isolates(members:Set[Cluster]) extends Cluster
+  case class Isolates(members:Set[Cluster],override val level:Int) extends Cluster(level)
 
-  case class Sibling(graph:ClusterGraph, archetype:Cluster) extends Cluster {
+  case class Sibling(graph:ClusterGraph, archetype:Cluster,override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
-  case class Wheel(graph:ClusterGraph, hub:Cluster) extends Cluster {
+  case class Wheel(graph:ClusterGraph, hub:Cluster,override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
   //todo rename loop
-  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster]) extends Cluster {
+  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster],override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
-  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster]) extends Cluster {
+  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
@@ -200,24 +202,26 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cluster,Set[prevGraph.OuterEdgeType])
   }
 
+  def firstMember[A](members:Set[A]):A = members.iterator.next()
+
   case class FormIsolate(members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Isolates,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Isolates(clusterGraph.nodes),externalEdges)
+      (Isolates(clusterGraph.nodes,firstMember(members).level + 1 ),externalEdges)
     }
   }
 
   case class FormSibling(archType:Cluster, members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Sibling,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Sibling(clusterGraph,archType),externalEdges)
+      (Sibling(clusterGraph,archType,firstMember(members).level + 1),externalEdges)
     }
   }
 
   case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Wheel,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Wheel(clusterGraph,archType),externalEdges)
+      (Wheel(clusterGraph,archType,firstMember(members).level + 1),externalEdges)
     }
   }
 
@@ -226,7 +230,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Caterpillar(clusterGraph,memberList),externalEdges)
+      (Caterpillar(clusterGraph,memberList,firstMember(members).level + 1),externalEdges)
     }
   }
 
@@ -235,7 +239,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cycle,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Cycle(clusterGraph,memberList),externalEdges)
+      (Cycle(clusterGraph,memberList,firstMember(members).level + 1),externalEdges)
     }
   }
 
@@ -288,7 +292,6 @@ Map(Cluster -> Cluster marker to merge with for next generation)
       else {
         val start = loopClustersToPicks.iterator.next()._1
         val aLoop = followCycle(start, start, loopClustersToPicks)
-        println(s"found loop $aLoop")
         val loopAsSet = aLoop.to[Set]
         val remainingLessALoop = loopClustersToPicks.filterNot(x => loopAsSet.contains(x._1))
         createCycle(remainingLessALoop,aLoop::acc)
