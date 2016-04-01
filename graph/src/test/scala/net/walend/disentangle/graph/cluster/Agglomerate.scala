@@ -4,43 +4,21 @@ import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, SomeG
 
 import scala.annotation.tailrec
 import scala.collection.immutable.Iterable
-//import scala.collection.{GenTraversable, GenSeq, GenSet}
 
 /**
+  * An Experimental algorithm, still pretty rough. Use at your own risk.
+  *
   * Create a hierarchy of cluster graphs via parallel agglomeratation based on the Jaccard index for each node.
   * Exploits bit-wise operations and parallelism
+  *
+  * Worst case is O(n ln n). (I think) Each node will be merged with some other node unless it is an isolate (which should just drop out of the problem). (Except for chains that contain one cluster. Will these be a problem?)
   *
   * @see https://en.wikipedia.org/wiki/Hierarchical_clustering
   * @author dwalend
   * @since v0.2.1
   */
 
-/*
-phase 5 - Try with a smaller graph.
-
-Go to phase 2 with this new graph until a pass doesn't reduce the number of nodes. (Then combine them all into one big graph. Might just be down to isolates at that point.)  Likely this will be when there are only isolates.
-
------
-
-Worst case is O(n ln n). (I think) Each node will be merged with some other node unless it is an isolate (which should just drop out of the problem).
-
-
- */
-
 object Agglomerate {
-
-/*
-  type Node = String
-  type Weight = Double
-
-  type Edge = (Cluster,Weight)
-
-  type Cluster = Set[Node]
-*/
-//  type Graph = GenSet[(Cluster,Set[Edge])]
-
-
-//  case class Graph(subgraphs:Set[Graph],edges:Set[(NodePair[Graph],Edge)])
 
   sealed abstract class Cluster(val level:Int) {
     def members:Set[Cluster]
@@ -62,29 +40,35 @@ object Agglomerate {
     */
   case class Isolates(members:Set[Cluster],override val level:Int) extends Cluster(level)
 
+  /**
+    * A cluster where all members are most like a cluster outside their membership.
+    */
   case class Sibling(graph:ClusterGraph, archetype:Cluster,override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
+  /**
+    * A cluster where all members (but one) are most like a single cluster within their membership. That one cluster is most like another member cluster.
+    */
   case class Wheel(graph:ClusterGraph, hub:Cluster,override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
-  //todo rename loop
+  /**
+    * A cluster with members that form a loop.
+    */
   case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster],override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
+  /**
+    * A cluster with members that form a chain. TODO I am curious about length 1 Caterpillars. They violate my scale-up rule, but I'm not sure if they cause actual problems. Plan is to leave them in for now, see if they get swept up neatly in the next iteration.
+    */
   case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val level:Int) extends Cluster(level) {
     override def members: Set[Cluster] = graph.nodes
   }
 
-//  type Edge = ClusterGraph.OuterEdgeType
-//  case class Cluster(graph:LabelUndigraph[Cluster,Double],archNode:String)
-
-//  val graph = LabelUndigraph()
-
-  /*
+  /**
   Phase 0 - init
 
   For a graph create an Initial cluster - a cluster of one node in the graph. Build up a graph of Initial Clusters (that are leafs)
@@ -108,14 +92,14 @@ object Agglomerate {
     AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2).toSeq)
   }
 
-/*
+/**
   Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
 
   parallel sort should do fine . (In something too big to sort, just sort the neighbors)
 */
   def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
 
-/*
+/**
 Phase 2 - pick most similar Cluster to each Cluster
 
 (can be in parallel)
@@ -157,7 +141,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     (clustersToMostSimilarNeighbor,isolates)
   }
 
-  /*
+  /**
   Phase 3 - Refine the set of characteristic clusters and deal with corner cases
 
   Join every cluster with at least one other cluster. (Worst case is a binary tree) Process at least n clusters per n units of work.
@@ -167,17 +151,13 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Initial, maybe attached to its Hub)
     Nodes that remain picked unique targets. Each target will have one node that selected it.
     Create a Wheel from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
-    Find Digons, Cycles, Caterpillars, and Leafs (all Paths)
-      For chains, the start of a chain won't be in the set of picked clusters. Find all the starts and follow them
+    Find Cycles and Caterpillars
+      For Caterpillars, the start of a Caterpillars won't be in the set of picked clusters. Find all the starts and follow them
 
-      For Digons, exactly one node selected this node, and this node selected the one that selected it. (Cycle of two nodes.) (Could be anything next time)
-      For the rest, start at a node and follow downstream to detect, building a list of nodes.
+      For the Cycle, start at a node and follow downstream to detect, building a list of nodes.
         If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
-        If you hit a node picked by >1 node or a node picked by none, look for a Caterpillar.
-          Follow upstream, building a list of nodes. If greater than one build a Caterpillar. (Likely a Initial or a Bridge next time)
-            For a list of length 1 make a Initial (assert no other node picked it) (Likely Siblings or a Diagon next time)
 
-(Expect time-dependent relationships to have a big caterpillar, others to show Cycles and Hubs)
+(Expect time-dependent relationships to have a big caterpillar, others to have Cycles and Wheels)
 
 */
 
@@ -302,22 +282,10 @@ Map(Cluster -> Cluster marker to merge with for next generation)
     wheels ++ siblings ++ chains ++ loops
   }
 
-  /*
-  Phase 4 - merge clusters into a new generation of clusters in a new graph
-
-(I think this can be done in parallel per cluster with the full map of where everything is going)
-
-Groupby on that map.
-For each Set of clusters, create a new Cluster that contains those clusters.
-  For every edge completely inside the cluster, keep that edge in the subgraph
-  For every edge that spans from inside the cluster to outside, add an edge from the new cluster to the (new) outside cluster
-
-Create a Graph from these new Clusters and spanning edges. Isolates just pass through.
-
-
-   */
-
   /**
+    * Phase 4 - merge clusters into a new generation of clusters in a new graph
+
+    * (I think this can be done in parallel per cluster with the full map of where everything is going)
     * Merge all the clustersToMerge into a new Cluster.
     * Return a ClusterGraph that replaces all the merged clusters with a single new cluster and none of the clusters to merge, and retains all other clusters.
     *
@@ -331,7 +299,7 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
   def merge(clusterGraph: ClusterGraph,clustersToMerge:Iterable[FormCluster]):ClusterGraph = {
 
     //todo is it faster to let toClusterAndExternalEdges find all the external edges, or to find all edges - all internal edges?
-    //todo I'll guess there will be a more internal edges due to max similarity
+    //todo I'll guess there will be more internal edges due to max similarity
     val mergedClustersAndExternalEdges = clustersToMerge.map(c => c.toClusterAndExternalEdges(clusterGraph))
     val nodes = mergedClustersAndExternalEdges.map(mcaee => mcaee._1).to[Seq]
 
@@ -342,6 +310,9 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
     AdjacencyUndigraph(edges,nodes)
   }
 
+  /**
+    * Create a level of clusters from the previous level.
+    */
   def createClusters(graph:ClusterGraph):ClusterGraph = {
     val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
     val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(graph)
@@ -349,6 +320,9 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
     merge(graph,formClusters)
   }
 
+  /**
+    * Keep creating levels of clusters until there is only one isolated node.
+    */
   def agglomerate(graph:ClusterGraph):List[ClusterGraph] = {
     if (graph.nodeCount <= 1) List(graph)
     else {
@@ -360,7 +334,4 @@ Create a Graph from these new Clusters and spanning edges. Isolates just pass th
   val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
   val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
 
-//  val firstGenClusters = createClusters(initialCluster)
-
-//  val clusters = agglomerate(initialCluster)
 }
