@@ -116,8 +116,6 @@ package object semiring {
     }
 
   }
-    //todo test Undirected Label Graphs with a special version of Brandes
-
   //todo add for Digraphs and Undirected graphs without labels
 }
 //todo pathcount as a decorator semiring

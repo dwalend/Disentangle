@@ -92,4 +92,20 @@ class BrandesExampleTest extends FlatSpec with Matchers {
     val paths = BrandesExample.paths
     paths should be(expectedPaths)
   }
+
+  "The BrandesImplicitsExample" should "produce expected results" in {
+
+    val expectedBetweenesses = Map(
+      E -> 7.5,
+      F -> 0.0,
+      A -> 0.0,
+      B -> 5.666666666666667,
+      C -> 2.5,
+      H -> 0.6666666666666666,
+      D -> 0.6666666666666666
+    )
+    val betweenesses = BrandesImplicitsExample.betweennessValues
+
+    betweenesses should be(expectedBetweenesses)
+  }
 }

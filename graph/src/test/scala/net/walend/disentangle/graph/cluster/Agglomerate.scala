@@ -232,6 +232,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     //The hub of a wheel might be in pathLikeThings, or something else's sibling, so it isn't actually part of a wheel.
     //todo straighten out the above later, or ignore it
+    //todo something in this is not quite working as expected with the test case
     val (wheelParts,siblingParts) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
     val siblings: Iterable[FormSibling] = siblingParts.map(x=>FormSibling(x._1,x._2))
     val wheels: Iterable[FormSibling] = wheelParts.map(x=>FormSibling(x._1,x._2))
