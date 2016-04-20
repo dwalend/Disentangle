@@ -9,8 +9,11 @@ Further, the library provides support for computational stability. The same inpu
 
 ## Changes in 0.2.1, the fifth release
 
+* Added implicit methods to graphs for algorithms via pimping in net.walend.disentangle.graph.{LabelDigraphSemiringAlgorithms, LabelUndigraphSemiringAlgorithms}
+** The undirected graph versions correct Brandes betweenness in undirected graphs (by dividing by 2).
 * Added Undigraph, a trait for undirected graphs
 * Added hierarchy down to AdjacencyLabelUndigraph, an immutable adjacency list labeled undirected digraph.
+* Added a proof-of-concept clustering algorithm. (Isolated in the graph test .jar. Definitely not ready for general use.)
 
 ## Changes in 0.2.0, the forth release
 
@@ -44,16 +47,17 @@ If you want to change Disentangle to meet your every whim, share your changes by
     cd Disentangle
     # bend Disentangle to your will
     sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.0-SNAPSHOT.jar /your/projectname/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.0-SNAPSHOT.jar /your/project/lib
 
 ## Algorithms
 
 Disentangle supplies
 
-* A [Fibonacci heap](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/heap/FibonacciHeap.scala) -- a generic heap that supports an efficient changeKey operation.
-* The [Floyd-Warshall algorithm ](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/FloydWarshall.scala)
-* [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala) with a Fibonacci Heap
-* [Brandes' algorithm](https://github.com/dwalend/Disentangle/blob/to0.1.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala) for betweenness and all shortest paths
+* A [Fibonacci heap](https://github.com/dwalend/Disentangle/blob/master.2/graph/src/main/scala/net/walend/disentangle/heap/FibonacciHeap.scala) -- a generic heap that supports an efficient changeKey operation.
+* The [Floyd-Warshall algorithm ](https://github.com/dwalend/Disentangle/blob/master.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/FloydWarshall.scala)
+* [Dijkstra's algorithm](https://github.com/dwalend/Disentangle/blob/master.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Dijkstra.scala) with a Fibonacci Heap
+* [Brandes' algorithm](https://github.com/dwalend/Disentangle/blob/master.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/Brandes.scala) for betweenness and all shortest paths
+* [implicit pimps for Graphs](https://github.com/dwalend/Disentangle/blob/master.2/graph/src/main/scala/net/walend/disentangle/graph/semiring/package.scala) to access these methods.
 
 ### Parallel Algorithms
 
@@ -69,6 +73,27 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 ## Using Disentangle
 
 See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
+
+### Using implicit methods on net.walend.graph._ graphs with [Pimped Algorithms](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/BrandesImplicitsExample.scala)
+
+If you are already using net.walend.graph._ graphs 
+
+    import net.walend.disentangle.graph.semiring.LabelUndigraphSemiringAlgorithms
+    //or
+    import net.walend.disentangle.graph.semiring.LabelDigraphSemiringAlgorithms
+
+    ...
+    
+    val graph = AdjacencyLabelUndigraph(edges,nodeOrder)
+    
+    //call the implicit methods
+    val brandesResults = graph.allLeastPathsAndBetweenness()
+    
+    val nextStepsAndCosts: IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])] = brandesResults._1
+    
+    val betweennessValues: Map[String, Double] = brandesResults._2
+
+
 
 ### Finding Shortest Paths with ([Dijkstra's](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) and [Floyd-Warshall](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/FloydWarshallExample.scala) Algorithms)
 
@@ -274,17 +299,13 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ### Next Big Release
 
-* Brandes' algorithm for an undirected graph
-* Community detection experiment
-
 ### New Algorithms
 
+* More development of the clustering prototype
+* JIT heap optimization of Dijkstra's algorithm
+* A* 
 * Lazy Dijkstra's
 * MST using a Heap
-* A* 
-* SemiLouvain
-* Parallel SemiLouvain
-
 
 ### More Semirings
 
@@ -296,7 +317,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## License and Contributions
 
-Disentangle carries the MIT license and is (c) David Walend 2013,2014,2015
+Disentangle carries the MIT license and is (c) David Walend 2013,2014,2015,2016
 
 Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience. And thanks to Aleksandar Prokopec for some answers about the [parallel collections](http://docs.scala-lang.org/overviews/parallel-collections/overview.html).
 

@@ -1,20 +1,28 @@
 This release
 
-* Undirected graphs, graphs without labels
+* Undirected graphs
 ** With Brandes' algorithm
-* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
-
+** Implicit methods for semirings
 
 Next release
 
 * Clustering algorithm
 * IndexedSubSet backed by BitSet
 
+Future
+
 * Subgraph representation
 * Dijkstra's and Brandes - fill heap as nodes become reachable to reduce the heap's average complexity
+* Semiring algorithm - create label graph methods for label-less directed graphs, undirected graphs.
+* A way to get nodes from edges via the Graph interface - specify a methodn and supply an implicit method maybe.
+
+Far Future
+
+* Graph layout based on clusters
 
 Blog
 
+* Blog about implicits
 * Blog about examples
 * Blog about computational stability
 
@@ -22,6 +30,7 @@ Blog
 Later
 
 * More Enron
+* Congressional record
 * path representation for net.walend.graph
 * Prim's MST algorithm
 * Faster transitive closure
