@@ -7,6 +7,7 @@ This release
 Next release
 
 * Clustering algorithm
+* A*
 * IndexedSubSet backed by BitSet
 
 Future
