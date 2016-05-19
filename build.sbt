@@ -4,7 +4,8 @@ name := "Disentangle"
 organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.2.1-SNAPSHOT"
+//version := "0.2.2-SNAPSHOT"
+version := "0.2.1"
 
 isSnapshot := false
 
