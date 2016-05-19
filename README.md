@@ -29,7 +29,7 @@ Further, the library provides support for computational stability. The same inpu
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.0" 
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.1" 
 
 ### The Latest Snapshot (When Available)
 
@@ -37,7 +37,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.1-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.2-SNAPSHOT"
 
 ### Clone the Code
 
@@ -47,7 +47,7 @@ If you want to change Disentangle to meet your every whim, share your changes by
     cd Disentangle
     # bend Disentangle to your will
     sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.0-SNAPSHOT.jar /your/project/lib
+    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.1-SNAPSHOT.jar /your/project/lib
 
 ## Algorithms
 
@@ -72,7 +72,7 @@ I've used a profiler to quench hotspots where I could find ways to speed up algo
 
 ## Using Disentangle
 
-See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.0/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
+See the [scaladoc](http://dwalend.github.io/Disentangle/v0.2.1/#net.walend.disentangle.graph.package) and [examples](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples).
 
 ### Using implicit methods on net.walend.graph._ graphs with [Pimped Algorithms](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/BrandesImplicitsExample.scala)
 
