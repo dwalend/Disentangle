@@ -11,7 +11,7 @@ isSnapshot := false
 
 scalaVersion := "2.11.8"
 
-sbtVersion := "0.13.9"
+sbtVersion := "0.13.11"
 
 lazy val root: Project = Project(
   id        = "root",
