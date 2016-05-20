@@ -1,0 +1,929 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>AdjacencyLabelUndigraph - net.walend.disentangle.graph.AdjacencyLabelUndigraph</title>
+          <meta name="description" content="AdjacencyLabelUndigraph - net.walend.disentangle.graph.AdjacencyLabelUndigraph" />
+          <meta name="keywords" content="AdjacencyLabelUndigraph net.walend.disentangle.graph.AdjacencyLabelUndigraph" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'net.walend.disentangle.graph.AdjacencyLabelUndigraph';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <a href="AdjacencyLabelUndigraph$.html" title="See companion object"><img alt="Class/Object" src="../../../../lib/class_to_object_big.png" /></a>
+        <p id="owner"><a href="../../../package.html" class="extype" name="net">net</a>.<a href="../../package.html" class="extype" name="net.walend">walend</a>.<a href="../package.html" class="extype" name="net.walend.disentangle">disentangle</a>.<a href="package.html" class="extype" name="net.walend.disentangle.graph">graph</a></p>
+        <h1><a href="AdjacencyLabelUndigraph$.html" title="See companion object">AdjacencyLabelUndigraph</a></h1><h3><span class="morelinks"><div>
+            Related Docs:
+            <a href="AdjacencyLabelUndigraph$.html" title="See companion object">object AdjacencyLabelUndigraph</a>
+            | <a href="package.html" class="extype" name="net.walend.disentangle.graph">package graph</a>
+          </div></span></h3><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <span class="name">AdjacencyLabelUndigraph</span><span class="tparams">[<span name="Node">Node</span>, <span name="Label">Label</span>]</span><span class="result"> extends <a href="IndexedLabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.IndexedLabelUndigraph">IndexedLabelUndigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>]</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides constant-time access for edges of a node.</p><p>The constructor is O(n + a ln(n))
+</p></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.2.1</p></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a href="IndexedLabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.IndexedLabelUndigraph">IndexedLabelUndigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>], <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>], <a href="Undigraph.html" class="extype" name="net.walend.disentangle.graph.Undigraph">Undigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>], <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>], <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By Inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph"><span>AdjacencyLabelUndigraph</span></li><li class="in" name="net.walend.disentangle.graph.IndexedLabelUndigraph"><span>IndexedLabelUndigraph</span></li><li class="in" name="net.walend.disentangle.graph.LabelUndigraph"><span>LabelUndigraph</span></li><li class="in" name="net.walend.disentangle.graph.Undigraph"><span>Undigraph</span></li><li class="in" name="net.walend.disentangle.graph.IndexedGraph"><span>IndexedGraph</span></li><li class="in" name="net.walend.disentangle.graph.Graph"><span>Graph</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show All</span></li>
+            </ol>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(outNodes:net.walend.disentangle.graph.IndexedSet[Node],outEdges:Vector[net.walend.disentangle.graph.IndexedSet[(net.walend.disentangle.graph.NodePair[Node],Label)]],noEdgeExistsLabel:(Node,Node)=&gt;Label):net.walend.disentangle.graph.AdjacencyLabelUndigraph[Node,Label]"></a>
+      <a id="&lt;init&gt;:AdjacencyLabelUndigraph[Node,Label]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">AdjacencyLabelUndigraph</span><span class="params">(<span name="outNodes">outNodes: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</span>, <span name="outEdges">outEdges: <span class="extype" name="scala.Vector">Vector</span>[<a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[(<a href="NodePair.html" class="extype" name="net.walend.disentangle.graph.NodePair">NodePair</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>], <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>)]]</span>, <span name="noEdgeExistsLabel">noEdgeExistsLabel: (<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>) ⇒ <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span></span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@&lt;init&gt;(outNodes:net.walend.disentangle.graph.IndexedSet[Node],outEdges:Vector[net.walend.disentangle.graph.IndexedSet[(net.walend.disentangle.graph.NodePair[Node],Label)]],noEdgeExistsLabel:(Node,Node)=&gt;Label):net.walend.disentangle.graph.AdjacencyLabelUndigraph[Node,Label]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InNodeextendsAdjacencyLabelUndigraph.this.UndigraphInnerNodeTraitwithAdjacencyLabelUndigraph.this.InnerIndexedNodeTraitwithProductwithSerializable"></a>
+      <a id="InNode:InNode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AdjacencyLabelUndigraph$InNode.html"><span class="name">InNode</span></a><span class="params">(<span name="value">value: <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span></span>, <span name="index">index: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="#UndigraphInnerNodeTraitextendsUndigraph.this.InnerNodeTrait" class="extmbr" name="net.walend.disentangle.graph.Undigraph.UndigraphInnerNodeTrait">UndigraphInnerNodeTrait</a> with <a href="#InnerIndexedNodeTraitextendsIndexedGraph.this.InnerNodeTrait" class="extmbr" name="net.walend.disentangle.graph.IndexedGraph.InnerIndexedNodeTrait">InnerIndexedNodeTrait</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@InNodeextendsAdjacencyLabelUndigraph.this.UndigraphInnerNodeTraitwithAdjacencyLabelUndigraph.this.InnerIndexedNodeTraitwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerEdgeType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)"></a>
+      <a id="InnerEdgeType:InnerEdgeType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">InnerEdgeType</span><span class="result"> = (<a href="NodePair.html" class="extype" name="net.walend.disentangle.graph.NodePair">NodePair</a>[<a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a>], <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.IndexedGraph.InnerIndexedNodeTrait" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="InnerIndexedNodeTraitextendsIndexedGraph.this.InnerNodeTrait"></a>
+      <a id="InnerIndexedNodeTrait:InnerIndexedNodeTrait"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="IndexedGraph$InnerIndexedNodeTrait.html"><span class="name">InnerIndexedNodeTrait</span></a><span class="result"> extends <a href="IndexedGraph.html#InnerNodeTraitextendsAnyRef" class="extmbr" name="net.walend.disentangle.graph.Graph.InnerNodeTrait">InnerNodeTrait</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.IndexedGraph@InnerIndexedNodeTraitextendsIndexedGraph.this.InnerNodeTrait" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An internal representation of nodes within the graph
+</p><div class="fullcomment"><div class="comment cmt"><p>An internal representation of nodes within the graph
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.Graph.InnerNodeTrait" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="InnerNodeTraitextendsAnyRef"></a>
+      <a id="InnerNodeTrait:InnerNodeTrait"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Graph$InnerNodeTrait.html"><span class="name">InnerNodeTrait</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.Graph@InnerNodeTraitextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An internal representation of nodes within the graph
+</p><div class="fullcomment"><div class="comment cmt"><p>An internal representation of nodes within the graph
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerNodeType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="InnerNodeType=AdjacencyLabelUndigraph.this.InNode"></a>
+      <a id="InnerNodeType:InnerNodeType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">InnerNodeType</span><span class="result"> = <a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@InnerNodeType=AdjacencyLabelUndigraph.this.InNode" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The type of InnerNodeTrait for this digraph representation
+</p><div class="fullcomment"><div class="comment cmt"><p>The type of InnerNodeTrait for this digraph representation
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedLabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.IndexedLabelUndigraph">IndexedLabelUndigraph</a> → <a href="Undigraph.html" class="extype" name="net.walend.disentangle.graph.Undigraph">Undigraph</a> → <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.LabelUndigraph.OuterEdgeType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="OuterEdgeType=(net.walend.disentangle.graph.NodePair[Node],Label)"></a>
+      <a id="OuterEdgeType:OuterEdgeType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">OuterEdgeType</span><span class="result"> = (<a href="NodePair.html" class="extype" name="net.walend.disentangle.graph.NodePair">NodePair</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>], <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>)</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@OuterEdgeType=(net.walend.disentangle.graph.NodePair[Node],Label)" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.Undigraph.UndigraphInnerNodeTrait" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="UndigraphInnerNodeTraitextendsUndigraph.this.InnerNodeTrait"></a>
+      <a id="UndigraphInnerNodeTrait:UndigraphInnerNodeTrait"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Undigraph$UndigraphInnerNodeTrait.html"><span class="name">UndigraphInnerNodeTrait</span></a><span class="result"> extends <a href="Undigraph.html#InnerNodeTraitextendsAnyRef" class="extmbr" name="net.walend.disentangle.graph.Graph.InnerNodeTrait">InnerNodeTrait</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.Undigraph@UndigraphInnerNodeTraitextendsUndigraph.this.InnerNodeTrait" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Undigraph.html" class="extype" name="net.walend.disentangle.graph.Undigraph">Undigraph</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@##():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#edge" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="edge(between:net.walend.disentangle.graph.NodePair[Node]):AdjacencyLabelUndigraph.this.InnerEdgeType"></a>
+      <a id="edge(NodePair[Node]):InnerEdgeType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">edge</span><span class="params">(<span name="between">between: <a href="NodePair.html" class="extype" name="net.walend.disentangle.graph.NodePair">NodePair</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</span>)</span><span class="result">: <a href="#InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerEdgeType">InnerEdgeType</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@edge(between:net.walend.disentangle.graph.NodePair[Node]):AdjacencyLabelUndigraph.this.InnerEdgeType" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the Label between a pair of nodes, or noEdgeExistsLable if no edge exists.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a></dd><dt>Exceptions thrown</dt><dd><span class="cmt"><p><span class="extype" name="IllegalArgumentException"><code>IllegalArgumentException</code></span> if either node is not in the graph</p></span></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#edges" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="edges:Seq[AdjacencyLabelUndigraph.this.OuterEdgeType]"></a>
+      <a id="edges:Seq[OuterEdgeType]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">edges</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="#OuterEdgeType=(net.walend.disentangle.graph.NodePair[Node],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.OuterEdgeType">OuterEdgeType</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@edges:Seq[AdjacencyLabelUndigraph.this.OuterEdgeType]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(n&#94;2)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(n&#94;2)
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>All of the edges in the graph</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#inEdges" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="inEdges:Vector[net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InnerEdgeType]]"></a>
+      <a id="inEdges:Vector[IndexedSet[InnerEdgeType]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">inEdges</span><span class="result">: <span class="extype" name="scala.Vector">Vector</span>[<a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<a href="#InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerEdgeType">InnerEdgeType</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@inEdges:Vector[net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InnerEdgeType]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#inNodes" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="inNodes:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InNode]"></a>
+      <a id="inNodes:IndexedSet[InNode]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">inNodes</span><span class="result">: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@inNodes:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InNode]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#innerEdges" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="innerEdges:Vector[AdjacencyLabelUndigraph.this.InnerEdgeType]"></a>
+      <a id="innerEdges:Vector[InnerEdgeType]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">innerEdges</span><span class="result">: <span class="extype" name="scala.Vector">Vector</span>[<a href="#InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerEdgeType">InnerEdgeType</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@innerEdges:Vector[AdjacencyLabelUndigraph.this.InnerEdgeType]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>A Traversable of the edges as represented in the graph</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#innerNode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="innerNode(value:Node):Option[AdjacencyLabelUndigraph.this.InNode]"></a>
+      <a id="innerNode(Node):Option[InNode]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">innerNode</span><span class="params">(<span name="value">value: <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@innerNode(value:Node):Option[AdjacencyLabelUndigraph.this.InNode]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(ln(n))</p><div class="fullcomment"><div class="comment cmt"><p>O(ln(n))</p></div><dl class="paramcmts block"><dt class="param">value</dt><dd class="cmt"><p>a node that might be in this digraph</p></dd><dt>returns</dt><dd class="cmt"><p>Some inner node if it exists in the digraph or None</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#innerNodeForIndex" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="innerNodeForIndex(i:Int):AdjacencyLabelUndigraph.this.InNode"></a>
+      <a id="innerNodeForIndex(Int):InNode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">innerNodeForIndex</span><span class="params">(<span name="i">i: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@innerNodeForIndex(i:Int):AdjacencyLabelUndigraph.this.InNode" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(1)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(1)
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#innerNodes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="innerNodes:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InNode]"></a>
+      <a id="innerNodes:IndexedSet[InNode]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">innerNodes</span><span class="result">: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@innerNodes:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InNode]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(1)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(1)
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>InnerNode representation of all of the nodes in the graph.</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#label" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="label(i:Int,j:Int):Label"></a>
+      <a id="label(Int,Int):Label"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">label</span><span class="params">(<span name="i">i: <span class="extype" name="scala.Int">Int</span></span>, <span name="j">j: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@label(i:Int,j:Int):Label" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(n)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(n)
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedLabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.IndexedLabelUndigraph">IndexedLabelUndigraph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#label" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="label(between:net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InnerNodeType]):Label"></a>
+      <a id="label(NodePair[InnerNodeType]):Label"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">label</span><span class="params">(<span name="between">between: <a href="NodePair.html" class="extype" name="net.walend.disentangle.graph.NodePair">NodePair</a>[<a href="#InnerNodeType=AdjacencyLabelUndigraph.this.InNode" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerNodeType">InnerNodeType</a>]</span>)</span><span class="result">: <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@label(between:net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InnerNodeType]):Label" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(n)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(n)
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the edge between start and end or noEdgeExistsValue</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a></dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#neighborSet" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="neighborSet(indexedSet:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.OuterEdgeType]):net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InnerEdgeType]"></a>
+      <a id="neighborSet(IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">neighborSet</span><span class="params">(<span name="indexedSet">indexedSet: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<a href="#OuterEdgeType=(net.walend.disentangle.graph.NodePair[Node],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.OuterEdgeType">OuterEdgeType</a>]</span>)</span><span class="result">: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<a href="#InnerEdgeType=(net.walend.disentangle.graph.NodePair[AdjacencyLabelUndigraph.this.InNode],Label)" class="extmbr" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InnerEdgeType">InnerEdgeType</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@neighborSet(indexedSet:net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.OuterEdgeType]):net.walend.disentangle.graph.IndexedSet[AdjacencyLabelUndigraph.this.InnerEdgeType]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#noEdgeExistsLabel" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="noEdgeExistsLabel:(Node,Node)=&gt;Label"></a>
+      <a id="noEdgeExistsLabel:(Node,Node)⇒Label"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">noEdgeExistsLabel</span><span class="result">: (<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>) ⇒ <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@noEdgeExistsLabel:(Node,Node)=&gt;Label" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the label to return when no edge exists</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#node" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="node(i:Int):Node"></a>
+      <a id="node(Int):Node"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">node</span><span class="params">(<span name="i">i: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@node(i:Int):Node" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">O(1)
+</p><div class="fullcomment"><div class="comment cmt"><p>O(1)
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#nodeCount" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nodeCount:Int"></a>
+      <a id="nodeCount:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nodeCount</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@nodeCount:Int" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>number of nodes in the graph</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#nodeToInNode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nodeToInNode:Map[Node,AdjacencyLabelUndigraph.this.InNode]"></a>
+      <a id="nodeToInNode:Map[Node,InNode]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nodeToInNode</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <a href="AdjacencyLabelUndigraph$InNode.html" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.InNode">InNode</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@nodeToInNode:Map[Node,AdjacencyLabelUndigraph.this.InNode]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#nodes" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nodes:net.walend.disentangle.graph.IndexedSet[Node]"></a>
+      <a id="nodes:IndexedSet[Node]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nodes</span><span class="result">: <a href="IndexedSet.html" class="extype" name="net.walend.disentangle.graph.IndexedSet">IndexedSet</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@nodes:net.walend.disentangle.graph.IndexedSet[Node]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">All the nodes in the graph, in an indexed set
+</p><div class="fullcomment"><div class="comment cmt"><p>All the nodes in the graph, in an indexed set
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a> → <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a></dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.AdjacencyLabelUndigraph#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@toString():String" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph">AdjacencyLabelUndigraph</a> → AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#net.walend.disentangle.graph.AdjacencyLabelUndigraph@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="net.walend.disentangle.graph.IndexedLabelUndigraph">
+              <h3>Inherited from <a href="IndexedLabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.IndexedLabelUndigraph">IndexedLabelUndigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>]</h3>
+            </div><div class="parent" name="net.walend.disentangle.graph.LabelUndigraph">
+              <h3>Inherited from <a href="LabelUndigraph.html" class="extype" name="net.walend.disentangle.graph.LabelUndigraph">LabelUndigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>, <span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Label">Label</span>]</h3>
+            </div><div class="parent" name="net.walend.disentangle.graph.Undigraph">
+              <h3>Inherited from <a href="Undigraph.html" class="extype" name="net.walend.disentangle.graph.Undigraph">Undigraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</h3>
+            </div><div class="parent" name="net.walend.disentangle.graph.IndexedGraph">
+              <h3>Inherited from <a href="IndexedGraph.html" class="extype" name="net.walend.disentangle.graph.IndexedGraph">IndexedGraph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</h3>
+            </div><div class="parent" name="net.walend.disentangle.graph.Graph">
+              <h3>Inherited from <a href="Graph.html" class="extype" name="net.walend.disentangle.graph.Graph">Graph</a>[<span class="extype" name="net.walend.disentangle.graph.AdjacencyLabelUndigraph.Node">Node</span>]</h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>benchmark - net.walend.disentangle.graph.semiring.benchmark</title>
+          <meta name="description" content="benchmark - net.walend.disentangle.graph.semiring.benchmark" />
+          <meta name="keywords" content="benchmark net.walend.disentangle.graph.semiring.benchmark" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'net.walend.disentangle.graph.semiring.benchmark.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img alt="Package" src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="net">net</a>.<a href="../../../../package.html" class="extype" name="net.walend">walend</a>.<a href="../../../package.html" class="extype" name="net.walend.disentangle">disentangle</a>.<a href="../../package.html" class="extype" name="net.walend.disentangle.graph">graph</a>.<a href="../package.html" class="extype" name="net.walend.disentangle.graph.semiring">semiring</a></p>
+        <h1>benchmark</h1><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">benchmark</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="net.walend.disentangle.graph.semiring.benchmark.Timeable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TimeableextendsAnyRef"></a>
+      <a id="Timeable:Timeable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Timeable.html"><span class="name">Timeable</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@TimeableextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.TimingStudy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TimingStudyextendsProductwithSerializable"></a>
+      <a id="TimingStudy:TimingStudy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TimingStudy.html"><span class="name">TimingStudy</span></a><span class="params">(<span name="timeF">timeF: (<span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="scala.Long">Long</span></span>, <span name="expectedF">expectedF: ((<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Long">Long</span>), <span class="extype" name="scala.Int">Int</span>) ⇒ <span class="extype" name="scala.Long">Long</span></span>, <span name="minExponent">minExponent: <span class="extype" name="scala.Int">Int</span></span>, <span name="maxExponent">maxExponent: <span class="extype" name="scala.Int">Int</span></span>, <span name="outFile">outFile: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.io.File">File</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@TimingStudyextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">timeF</dt><dd class="cmt"><p>Runs the timing study.</p></dd><dt class="param">expectedF</dt><dd class="cmt"><p>Predicted time based on early, calibration results</p></dd><dt class="param">minExponent</dt><dd class="cmt"><p>Use 2^^minExponent nodes as the smallest graph in the study</p></dd><dt class="param">maxExponent</dt><dd class="cmt"><p>Use 2^^maxExponent nodes as the largest graph in the study</p></dd><dt class="param">outFile</dt><dd class="cmt"><p>File to write output, will use std out for None</p></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="net.walend.disentangle.graph.semiring.benchmark.BrandesTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BrandesTiming"></a>
+      <a id="BrandesTiming:BrandesTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="BrandesTiming$.html"><span class="name">BrandesTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@BrandesTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.0.1</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.DijkstraTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="DijkstraTiming"></a>
+      <a id="DijkstraTiming:DijkstraTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DijkstraTiming$.html"><span class="name">DijkstraTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@DijkstraTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.0.1</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.FloydWarshallTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FloydWarshallTiming"></a>
+      <a id="FloydWarshallTiming:FloydWarshallTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FloydWarshallTiming$.html"><span class="name">FloydWarshallTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@FloydWarshallTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.0.1</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.JungDijkstraTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="JungDijkstraTiming"></a>
+      <a id="JungDijkstraTiming:JungDijkstraTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="JungDijkstraTiming$.html"><span class="name">JungDijkstraTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@JungDijkstraTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.0.1</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.ParBrandesTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ParBrandesTiming"></a>
+      <a id="ParBrandesTiming:ParBrandesTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ParBrandesTiming$.html"><span class="name">ParBrandesTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@ParBrandesTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.2</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.ParDijkstraTiming" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ParDijkstraTiming"></a>
+      <a id="ParDijkstraTiming:ParDijkstraTiming"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ParDijkstraTiming$.html"><span class="name">ParDijkstraTiming</span></a><span class="result"> extends <a href="Timeable.html" class="extype" name="net.walend.disentangle.graph.semiring.benchmark.Timeable">Timeable</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@ParDijkstraTiming" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.2</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.TimingStudies" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TimingStudies"></a>
+      <a id="TimingStudies:TimingStudies"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TimingStudies$.html"><span class="name">TimingStudies</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@TimingStudies" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.2</p></dd></dl></div>
+    </li><li name="net.walend.disentangle.graph.semiring.benchmark.TimingStudy" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TimingStudy"></a>
+      <a id="TimingStudy:TimingStudy"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="TimingStudy$.html"><span class="name">TimingStudy</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../../index.html#net.walend.disentangle.graph.semiring.benchmark.package@TimingStudy" title="Permalink" target="_top">
+        <img src="../../../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="attributes block"> <dt>Since</dt><dd><p>v0.1.2</p></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
