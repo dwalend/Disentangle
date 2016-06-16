@@ -24,12 +24,12 @@ object Dijkstra {
                                   semiring:SemiringSupport[Label,Key]#Semiring)
                                 (from:digraph.InnerNodeType,
                                  through:digraph.InnerNodeType,
-                                 to:(digraph.InnerNodeType,digraph.InnerNodeType,Label)):Label = {
+                                 to:digraph.InnerEdgeType):Label = {
 
     val fromThrough:Label = labels(through.index)
-    val throughTo:Label = to._3
+    val throughTo:Label = to.label
 
-    val current:Label = labels(to._2.index)
+    val current:Label = labels(to.to.index)
 
     semiring.relax(fromThrough,throughTo,current)
   }
@@ -61,11 +61,11 @@ object Dijkstra {
       //For any node that is reachable from this node not yet visited (because it's key is still in the heap)
       for(successor <- topNode.successors) {
         //if the node has not yet been visited (because its key is still in the heap)
-        val heapKey = heapMembers(successor._2.index)
+        val heapKey = heapMembers(successor.to.index)
         if(heapKey.isInHeap) {
           //Relax to get a new label
           val label = relaxSource(initialGraph,labels,support.semiring)(source,topNode,successor)
-          labels(successor._2.index) = label
+          labels(successor.to.index) = label
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }
       }
@@ -153,14 +153,14 @@ object Dijkstra {
   def relaxSink[Node,Label,Key](digraph:IndexedLabelDigraph[Node,Label],
                                 labels:ArrayBuffer[Label],
                                 semiring:SemiringSupport[Label,Key]#Semiring)
-                               (from:(digraph.InnerNodeType,digraph.InnerNodeType,Label),
+                               (from:digraph.InnerEdgeType,
                                 through:digraph.InnerNodeType,
                                 to:digraph.InnerNodeType):Label = {
 
-    val fromThrough:Label = from._3
+    val fromThrough:Label = from.label
     val throughTo:Label = labels(through.index)
 
-    val current:Label = labels(from._1.index)
+    val current:Label = labels(from.from.index)
 
     semiring.relax(fromThrough,throughTo,current)
   }
@@ -194,11 +194,11 @@ object Dijkstra {
       //For any node that can reach this node not yet visited (because it's key is still in the heap)
       for(predecessor <- topNode.predecessors) {
         //if the node has not yet been visited (because its key is still in the heap)
-        val heapKey = heapMembers(predecessor._1.index)
+        val heapKey = heapMembers(predecessor.from.index)
         if(heapKey.isInHeap) {
           //Relax to get a new label
           val label = relaxSink(initialGraph,labels,support.semiring)(predecessor,topNode,sink)
-          labels(predecessor._1.index) = label
+          labels(predecessor.from.index) = label
           heapKey.raiseKey(support.heapKeyForLabel(label))
         }
       }

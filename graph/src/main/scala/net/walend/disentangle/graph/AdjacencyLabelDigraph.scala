@@ -19,12 +19,12 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
   val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborSet(indexedSet:IndexedSet[(Node,Node,Label)]):IndexedSet[(InNode,InNode,Label)] = {
-    indexedSet.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
+  def neighborSet(indexedSet:IndexedSet[(Node,Node,Label)]):IndexedSet[InnerEdgeType] = {
+    indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
   }
 
-  val inSuccessors:Vector[IndexedSet[(InNode,InNode,Label)]] = outSuccessors.map(neighborSet)
-  val inPredecessors:Vector[IndexedSet[(InNode,InNode,Label)]] = outPredecessors.map(neighborSet)
+  val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
+  val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
 
   def nodes = outNodes
 
@@ -34,11 +34,11 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
-    override def successors: IndexedSet[(InNode,InNode,Label)] = {
+    override def successors: IndexedSet[InnerEdgeType] = {
       inSuccessors(index)
     }
 
-    override def predecessors: IndexedSet[(InNode,InNode,Label)] = {
+    override def predecessors: IndexedSet[InnerEdgeType] = {
       inPredecessors(index)
     }
 
@@ -69,7 +69,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    */
   override def innerNodes: IndexedSet[InNode] = inNodes
 
-  override type InnerEdgeType = (InNode,InNode,Label)
+  override type InnerEdgeType = InnerEdge
 
   /**
    * @return A Traversable of the edges as represented in the graph
@@ -89,10 +89,10 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return the edge between start and end or noEdgeExistsValue
    */
   override def label(from: InNode, to: InNode):Label = {
-    val indexedSet = inSuccessors(from.index).filter(x => x._2 == to)
+    val indexedSet = inSuccessors(from.index).filter(x => x.from == to)
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
-      case 1 => indexedSet.iterator.next()._3
+      case 1 => indexedSet.iterator.next().label
       case _ => throw new IllegalStateException(s"Multiple edges from $from to $to: "+indexedSet)
     }
   }
@@ -117,10 +117,10 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return
    */
   override def label(i: Int, j: Int): Label = {
-    val indexedSet = inSuccessors(i).filter(x => x._2 == inNodes.get(j))
+    val indexedSet = inSuccessors(i).filter(x => x.from == inNodes.get(j))
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
-      case 1 => indexedSet.iterator.next()._3
+      case 1 => indexedSet.iterator.next().label
       case _ => throw new IllegalStateException(s"Multiple edges from ${node(i)} to ${node(j)}: "+indexedSet)
     }
   }

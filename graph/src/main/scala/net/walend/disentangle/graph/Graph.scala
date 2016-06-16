@@ -55,7 +55,7 @@ trait Graph[Node] {
   trait InnerEdgeTrait {
     def value:OuterEdgeType
   }
-  */
+*/
   type InnerEdgeType // <: InnerEdgeTrait
 
   /**

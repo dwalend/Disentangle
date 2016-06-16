@@ -10,7 +10,9 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
 
   type OuterEdgeType = (Node,Node,Label)
 
-  type InnerEdgeType = (InnerNodeType,InnerNodeType,Label)
+  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label)
+
+  type InnerEdgeType = InnerEdge
 
   /**
    * @return the label to return when no edge exists

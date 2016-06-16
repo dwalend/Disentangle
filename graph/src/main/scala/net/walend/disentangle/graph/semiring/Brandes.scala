@@ -266,7 +266,8 @@ object Brandes {
      * Create the acyclic subgraph defined by BrandesSupport
      */
     //todo another spot for an insert-ordered set
-    def subgraphEdges(labelGraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerEdgeType)] = {
+    //todo rework to return inner edges or outer edges
+    def subgraphEdges(labelGraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
 
       val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
       //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.

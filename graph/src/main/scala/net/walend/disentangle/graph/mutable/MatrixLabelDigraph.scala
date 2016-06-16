@@ -38,16 +38,16 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     /**
      * O(n&#94;2)
      */
-    override def successors: IndexedSet[(InNode, InNode, Label)] = {
-      inNodes.zip(edgeMatrix(index)).map(x => (this,x._1,x._2)).filter(_._2 != noEdgeExistsLabel)
+    override def successors: IndexedSet[InnerEdgeType] = {
+      inNodes.zip(edgeMatrix(index)).map(x => InnerEdge(this,x._1,x._2)).filter(_.to != noEdgeExistsLabel)
     }
 
     /**
      * O(n&#94;2)
      */
-    override def predecessors: IndexedSet[(InNode, InNode, Label)]  = {
+    override def predecessors: IndexedSet[InnerEdgeType]  = {
       val edgeColumn:Seq[Label] = edgeMatrix.map(_(index))
-      inNodes.zip(edgeColumn).map(x => (x._1,this,x._2)).filter(_._2 != noEdgeExistsLabel)
+      inNodes.zip(edgeColumn).map(x => InnerEdge(x._1,this,x._2)).filter(_.to != noEdgeExistsLabel)
     }
 
     override def hashCode(): Int = index
@@ -75,18 +75,16 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   }
 
-  override type InnerEdgeType = (InNode,InNode,Label)
-
   /**
    * @return A Traversable of the edges as represented in the graph
    */
   override def innerEdges: Vector[InnerEdgeType] = {
 
-    def edgesInRow(row:(ArrayBuffer[Label],Int)):Seq[(InNode,InNode,Label)] = {
+    def edgesInRow(row:(ArrayBuffer[Label],Int)):Seq[InnerEdgeType] = {
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
-      cellsWithEdges.map(x => (inNodes.get(rowIndex),inNodes.get(x._2),x._1))
+      cellsWithEdges.map(x => InnerEdge(inNodes.get(rowIndex),inNodes.get(x._2),x._1))
     }
 
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
