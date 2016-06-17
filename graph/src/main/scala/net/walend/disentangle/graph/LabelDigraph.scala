@@ -13,7 +13,7 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
   case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends DigraphInnerEdgeTrait
 
   type InnerEdgeType = InnerEdge
-  type DigraphInnerEdgeType = InnerEdge
+  type DigraphInnerEdgeType = InnerEdgeType
 
   /**
    * @return the label to return when no edge exists
