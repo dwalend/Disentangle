@@ -1,5 +1,6 @@
 This release
 
+* Fixed bug in edge() methods in Adjacency Digraphs
 * A way to get nodes from edges via the Graph interface - specify a methodn and supply an implicit method maybe.
 
 * Clustering algorithm

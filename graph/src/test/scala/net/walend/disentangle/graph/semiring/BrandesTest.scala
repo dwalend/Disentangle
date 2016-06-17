@@ -72,6 +72,7 @@ class BrandesTest extends FlatSpec with Matchers {
 
   val brandesSupport: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
 
+  //todo test with edges
   def expectedSubgraphEdges(labelDigraph:LabelDigraph[String,brandesSupport.Label]) = Set(
     (labelDigraph.innerNode(H).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(1,1,List(2)))),
     (labelDigraph.innerNode(E).get,labelDigraph.innerNode(B).get,Some(BrandesSteps(1,1,List(1)))),
