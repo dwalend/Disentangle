@@ -20,6 +20,9 @@ trait Digraph[Node] extends Graph[Node] {
     */
   type InnerNodeType <: DigraphInnerNodeTrait
 
+  def edge(from: InnerNodeType,to: InnerNodeType):Option[InnerEdgeType]
+
+//todo next  def edge(from: Node,to: Node):Option[InnerEdgeType]
 }
 
 /**
@@ -32,5 +35,6 @@ trait Tuple2Digraph[Node] extends Digraph[Node] {
 
   type OuterEdgeType = (Node,Node)
 
+  //todo update. Can this be pulledout? Probably not used yet
   type InnerEdgeType = (InnerNodeType,InnerNodeType)
 }

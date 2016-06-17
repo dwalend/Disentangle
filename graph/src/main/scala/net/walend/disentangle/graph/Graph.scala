@@ -5,7 +5,7 @@ import scala.collection.{GenSet, GenTraversable}
 /**
  * Ancestor trait for a variety of Graphs.
  *
- * A graph with Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph.
+ * A graph has Nodes that can be distinguished from each other. An InnerNodeType provides access to a nodes place in the graph.
  *
  * I've pulled definitions from Wikipedia: http://en.wikipedia.org/wiki/Graph_(mathematics) where possible
  *

@@ -99,6 +99,8 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"
   }
+
+  override def edge(from: InNode, to: InNode): Option[(InNode, InNode)] = ???  //todo
 }
 
 /**

@@ -69,7 +69,8 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   /**
    * O(n)
-   * @return InnerNode representation of all of the nodes in the graph.
+    *
+    * @return InnerNode representation of all of the nodes in the graph.
    */
   override def innerNodes: IndexedSet[InNode] = {
     outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
@@ -138,6 +139,12 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes,noEdgeExistsValue = $noEdgeExistsLabel)"
+  }
+
+  override def edge(from: InNode, to: InNode): Option[InnerEdge] = {
+    val l = label(from.index,to.index)
+    if(noEdgeExistsLabel == l) None
+    else Some(InnerEdge(from,to,l))
   }
 }
 

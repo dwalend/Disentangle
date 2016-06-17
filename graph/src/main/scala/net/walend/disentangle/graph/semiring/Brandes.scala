@@ -266,26 +266,25 @@ object Brandes {
      * Create the acyclic subgraph defined by BrandesSupport
      */
     //todo another spot for an insert-ordered set
-    //todo rework to return inner edges or outer edges
-    def subgraphEdges(labelGraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Set[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
+    def subgraphEdges(labelGraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Set[labelGraph.InnerEdgeType] = {
 
       val innerTo = labelGraph.innerNode(to).getOrElse(throw new IllegalArgumentException(s"$to not in labelGraph"))
-      //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
-      def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = {
-        val label:Label = labelGraph.label(innerFrom,innerTo)
+      val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
 
+      //todo capture visited nodes and don't revisit them, by taking innerFrom as a Set, pulling out bits, passing in Sets of novel nodes to visit, and passing around another set of nodes already visited.
+      def recurse(innerFrom:labelGraph.InnerNodeType,innerTo:labelGraph.InnerNodeType):Seq[labelGraph.InnerEdgeType] = {
+
+        val edge = labelGraph.edge(innerFrom,innerTo)
         //if the label is None then return an empty set
         //otherwise, follow the choices
-        label.fold(Seq.empty[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)])(firstSteps => {
-          val innerChoices = firstSteps.choiceIndexes.map(choice => labelGraph.innerNodeForIndex(choice))
-          val closeEdges:Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map((innerFrom,_,label))
-
-          val farEdges:Seq[(labelGraph.InnerNodeType,labelGraph.InnerNodeType,Label)] = innerChoices.map(recurse(_,innerTo)).flatten
+        edge.fold(Seq.empty[labelGraph.InnerEdgeType])(firstSteps => {
+          val innerChoices: Seq[labelGraph.InnerNodeType] = firstSteps.label.get.choiceIndexes.map(choice => labelGraph.innerNodeForIndex(choice))
+          val closeEdges:Seq[labelGraph.InnerEdgeType] = innerChoices.map(labelGraph.edge(innerFrom,_).get)
+          val farEdges:Seq[labelGraph.InnerEdgeType] = innerChoices.flatMap(recurse(_, innerTo))
 
           closeEdges ++ farEdges
         })
       }
-      val innerFrom = labelGraph.innerNode(from).getOrElse(throw new IllegalArgumentException(s"$from not in labelGraph"))
 
       recurse(innerFrom,innerTo).to[Set]
     }

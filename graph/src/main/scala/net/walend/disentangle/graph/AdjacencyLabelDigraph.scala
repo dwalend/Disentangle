@@ -88,8 +88,9 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    *
    * @return the edge between start and end or noEdgeExistsValue
    */
+  //todo reconsile with edge() and the other label.
   override def label(from: InNode, to: InNode):Label = {
-    val indexedSet = inSuccessors(from.index).filter(x => x.from == to)
+    val indexedSet = inSuccessors(from.index).filter(x => x.to == to)
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
       case 1 => indexedSet.iterator.next().label
@@ -117,7 +118,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return
    */
   override def label(i: Int, j: Int): Label = {
-    val indexedSet = inSuccessors(i).filter(x => x.from == inNodes.get(j))
+    val indexedSet = inSuccessors(i).filter(x => x.to == inNodes.get(j))
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
       case 1 => indexedSet.iterator.next().label
@@ -127,6 +128,17 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
 
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes,noEdgeExistsValue = $noEdgeExistsLabel)"
+  }
+
+  override def edge(from: InNode, to: InNode): Option[InnerEdge] = {
+
+    val indexedSet = inSuccessors(from.index).filter(x => x.to == to)
+
+    indexedSet.size match {
+      case 0 => None
+      case 1 => Some(indexedSet.iterator.next())
+      case _ => throw new IllegalStateException(s"Multiple edges from $from to $to: "+indexedSet)
+    }
   }
 }
 
