@@ -72,14 +72,13 @@ class BrandesTest extends FlatSpec with Matchers {
 
   val brandesSupport: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
 
-  //todo test with edges
-  def expectedSubgraphEdges(labelDigraph:LabelDigraph[String,brandesSupport.Label]) = Set(
-    (labelDigraph.innerNode(H).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(1,1,List(2)))),
-    (labelDigraph.innerNode(E).get,labelDigraph.innerNode(B).get,Some(BrandesSteps(1,1,List(1)))),
-    (labelDigraph.innerNode(C).get,labelDigraph.innerNode(D).get,Some(BrandesSteps(1,1,List(3)))),
-    (labelDigraph.innerNode(E).get,labelDigraph.innerNode(H).get,Some(BrandesSteps(1,1,List(7)))),
-    (labelDigraph.innerNode(B).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(1,1,List(2))))
-  )
+  def expectedSubgraphEdges(labelDigraph:LabelDigraph[String,brandesSupport.Label]): Set[labelDigraph.InnerEdge] = Set(
+    labelDigraph.edge(H,C),
+    labelDigraph.edge(E,B),
+    labelDigraph.edge(C,D),
+    labelDigraph.edge(E,H),
+    labelDigraph.edge(B,C)
+  ).filter(_.isDefined).map(_.get)
 
   def checkBrandesResults(labelGraphAndBetweenness:(GenSeq[(String, String, Option[BrandesSteps[String, Int]])], GenMap[String, Double])):Unit = {
     (labelGraphAndBetweenness._1.to[Set] -- expectedArcs) should be (Set.empty)
@@ -95,7 +94,7 @@ class BrandesTest extends FlatSpec with Matchers {
     labelDigraph.innerNode(H).get
 
     val subgraphEdges = brandesSupport.subgraphEdges(labelDigraph,"E","D")
-    subgraphEdges.map(e => (e.from,e.to,e.label)) should be (expectedSubgraphEdges(labelDigraph))
+    subgraphEdges should be (expectedSubgraphEdges(labelDigraph))
 
     val expectedPaths = List(
       List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),

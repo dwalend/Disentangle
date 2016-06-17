@@ -69,13 +69,13 @@ class FloydWarshallExampleTest extends FlatSpec with Matchers {
 
     shortPathGraph should be (expectedShortPathGraph)
     
-    val expectedSubgraphEdges = Set(
-      (shortPathGraph.innerNode(C).get,shortPathGraph.innerNode(D).get,Some(support.FirstSteps(1,Set(D)))),
-      (shortPathGraph.innerNode(E).get,shortPathGraph.innerNode(H).get,Some(support.FirstSteps(3,Set(B, H)))),
-      (shortPathGraph.innerNode(E).get,shortPathGraph.innerNode(B).get,Some(support.FirstSteps(3,Set(B, H)))),
-      (shortPathGraph.innerNode(B).get,shortPathGraph.innerNode(C).get,Some(support.FirstSteps(2,Set(C)))),
-      (shortPathGraph.innerNode(H).get,shortPathGraph.innerNode(C).get,Some(support.FirstSteps(2,Set(C))))
-    )
+    val expectedSubgraphEdges: Set[shortPathGraph.InnerEdge] = Set(
+      shortPathGraph.edge(H,C),
+      shortPathGraph.edge(E,B),
+      shortPathGraph.edge(C,D),
+      shortPathGraph.edge(E,H),
+      shortPathGraph.edge(B,C)
+    ).filter(_.isDefined).map(_.get)
 
     val subgraphEdges = FloydWarshallExample.subgraph
 

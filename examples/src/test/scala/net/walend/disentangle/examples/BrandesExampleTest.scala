@@ -69,20 +69,18 @@ class BrandesExampleTest extends FlatSpec with Matchers {
     shortestPathsAndBetweennessesFromPar._2 should be (expectedBetweennesses)
 
     val labelDigraph = BrandesExample.labelDigraph
-    
-    
-    
-    val expectedSubgraph = Set(
-      (labelDigraph.innerNode(C).get,labelDigraph.innerNode(D).get,Some(BrandesSteps(1,1,List(3)))),
-      (labelDigraph.innerNode(E).get,labelDigraph.innerNode(H).get,Some(BrandesSteps(3,2,List(1, 6)))),
-      (labelDigraph.innerNode(B).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(2,1,List(2)))),
-      (labelDigraph.innerNode(E).get,labelDigraph.innerNode(B).get,Some(BrandesSteps(3,2,List(1, 6)))),
-      (labelDigraph.innerNode(H).get,labelDigraph.innerNode(C).get,Some(BrandesSteps(2,1,List(2))))
-    )
+
+    val expectedSubgraphEdges: Set[labelDigraph.InnerEdge] = Set(
+      labelDigraph.edge(H,C),
+      labelDigraph.edge(E,B),
+      labelDigraph.edge(C,D),
+      labelDigraph.edge(E,H),
+      labelDigraph.edge(B,C)
+    ).filter(_.isDefined).map(_.get)
 
     val subgraph = BrandesExample.subgraph
 
-    subgraph should be(expectedSubgraph)
+    subgraph should be(expectedSubgraphEdges)
 
     val expectedPaths = List(
       List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),

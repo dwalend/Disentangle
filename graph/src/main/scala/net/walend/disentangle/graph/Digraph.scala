@@ -22,7 +22,15 @@ trait Digraph[Node] extends Graph[Node] {
 
   def edge(from: InnerNodeType,to: InnerNodeType):Option[InnerEdgeType]
 
-//todo next  def edge(from: Node,to: Node):Option[InnerEdgeType]
+  def edge(from: Node, to: Node): Option[InnerEdgeType] = {
+    val inFrom = innerNode(from)
+    val inTo = innerNode(to)
+    (inFrom, inTo) match {
+      case (Some(f), Some(t)) => edge(f, t)
+      case _ => None
+    }
+  }
+
 }
 
 /**
