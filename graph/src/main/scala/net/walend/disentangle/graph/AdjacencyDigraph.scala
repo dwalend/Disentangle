@@ -18,12 +18,12 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[(InNode,InNode)] = {
-    indexedSet.map(x => (nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
+  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[DigraphInnerEdgeType] = {
+    indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
   }
 
-  val inSuccessors:Vector[IndexedSet[(InNode,InNode)]] = outSuccessors.map(neighborSet)
-  val inPredecessors:Vector[IndexedSet[(InNode,InNode)]] = outPredecessors.map(neighborSet)
+  val inSuccessors:Vector[IndexedSet[DigraphInnerEdgeType]] = outSuccessors.map(neighborSet)
+  val inPredecessors:Vector[IndexedSet[DigraphInnerEdgeType]] = outPredecessors.map(neighborSet)
 
   def nodes = outNodes
 
@@ -33,11 +33,11 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
 
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
-    override def successors: IndexedSet[(InNode,InNode)] = {
+    override def successors: IndexedSet[DigraphInnerEdgeType] = {
       inSuccessors(index)
     }
 
-    override def predecessors: IndexedSet[(InNode,InNode)] = {
+    override def predecessors: IndexedSet[DigraphInnerEdgeType] = {
       inPredecessors(index)
     }
 
@@ -51,6 +51,12 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     }
 
   }
+
+  override type InnerEdgeType = InnerEdge
+  override type DigraphInnerEdgeType = InnerEdge
+
+  case class InnerEdge(from:InNode,to:InNode) extends DigraphInnerEdgeTrait
+
 
   /**
     * O(ln(n))
@@ -68,7 +74,6 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     */
   override def innerNodes: IndexedSet[InNode] = inNodes
 
-  override type InnerEdgeType = (InNode,InNode)
 
   /**
     * @return A Traversable of the edges as represented in the graph
@@ -100,7 +105,7 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"
   }
 
-  override def edge(from: InNode, to: InNode): Option[(InNode, InNode)] = ???  //todo
+  override def edge(from: InNode, to: InNode): Option[DigraphInnerEdgeType] = ???  //todo
 }
 
 /**

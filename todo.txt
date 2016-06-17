@@ -1,7 +1,9 @@
-This release
+Done
 
-* Fixed bug in edge() methods in Adjacency Digraphs
-* A way to get nodes from edges via the Graph interface - specify a methodn and supply an implicit method maybe.
+* Fixed bug in edge(,) methods in Adjacency Digraphs to return the correct edge.
+* Added DigraphInnerEdgeTrait and LabelDigraphInnerEdgeTrait to get inner nodes and labels from edges.
+
+TODO This release
 
 * Clustering algorithm
 * Congressional record

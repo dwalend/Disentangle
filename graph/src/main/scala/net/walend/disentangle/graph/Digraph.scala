@@ -20,9 +20,16 @@ trait Digraph[Node] extends Graph[Node] {
     */
   type InnerNodeType <: DigraphInnerNodeTrait
 
-  def edge(from: InnerNodeType,to: InnerNodeType):Option[InnerEdgeType]
+  trait DigraphInnerEdgeTrait{
+    def from:InnerNodeType
+    def to:InnerNodeType
+  }
 
-  def edge(from: Node, to: Node): Option[InnerEdgeType] = {
+  type DigraphInnerEdgeType <: InnerEdgeType with DigraphInnerEdgeTrait
+
+  def edge(from: InnerNodeType,to: InnerNodeType):Option[DigraphInnerEdgeType]
+
+  def edge(from: Node, to: Node): Option[DigraphInnerEdgeType] = {
     val inFrom = innerNode(from)
     val inTo = innerNode(to)
     (inFrom, inTo) match {
@@ -40,9 +47,5 @@ trait Digraph[Node] extends Graph[Node] {
   * @since v0.2.1
   */
 trait Tuple2Digraph[Node] extends Digraph[Node] {
-
   type OuterEdgeType = (Node,Node)
-
-  //todo update. Can this be pulledout? Probably not used yet
-  type InnerEdgeType = (InnerNodeType,InnerNodeType)
 }
