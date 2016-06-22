@@ -18,33 +18,19 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
                                            noEdgeExistsLabel:Label //value for no edge
                                           ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
-  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
-  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-
-  /**
-    * O(1)
-    */
-  override def nodes = outNodes
-
-  /**
-   * O(1)
-   */
-  override def nodeCount: Int = outNodes.size
-
-  type InnerNodeType = InNode
-
+  override type InnerNodeType = InNode
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     /**
-     * O(n&#94;2)
-     */
+      * O(n&#94;2)
+      */
     override def successors: IndexedSet[InnerEdgeType] = {
       inNodes.zip(edgeMatrix(index)).map(x => InnerEdge(this,x._1,x._2)).filter(_.to != noEdgeExistsLabel)
     }
 
     /**
-     * O(n&#94;2)
-     */
+      * O(n&#94;2)
+      */
     override def predecessors: IndexedSet[InnerEdgeType]  = {
       val edgeColumn:Seq[Label] = edgeMatrix.map(_(index))
       inNodes.zip(edgeColumn).map(x => InnerEdge(x._1,this,x._2)).filter(_.to != noEdgeExistsLabel)
@@ -60,9 +46,21 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     }
   }
 
+  override type InnerEdgeType = InnerEdge
   case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
 
-  override type InnerEdgeType = InnerEdge
+  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+
+  /**
+    * O(1)
+    */
+  override def nodes = outNodes
+
+  /**
+   * O(1)
+   */
+  override def nodeCount: Int = outNodes.size
 
   /**
    * O(ln(n))

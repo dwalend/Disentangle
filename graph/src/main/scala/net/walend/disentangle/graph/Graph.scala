@@ -15,6 +15,35 @@ import scala.collection.{GenSet, GenTraversable}
 trait Graph[Node] {
 
   /**
+    * The edge type used to build this graph representation
+    */
+  type OuterEdgeType
+
+  /**
+    * An internal representation of nodes within the graph
+    */
+  trait InnerNodeTrait {
+    def value:Node
+
+  }
+
+  /**
+    * The node type returned by graph representation
+    */
+  type InnerNodeType <: InnerNodeTrait
+
+  //todo is there a way to inject an InnerEdgeTrait that can return the outer edge??
+  /*
+    trait InnerEdgeTrait {
+      def value:OuterEdgeType
+    }
+  */
+  /**
+    * The edge type returned by this graph representation
+    */
+  type InnerEdgeType // <: InnerEdgeTrait
+
+  /**
    * All the nodes in the graph
    */
   def nodes:GenSet[Node]
@@ -23,19 +52,6 @@ trait Graph[Node] {
    * @return number of nodes in the graph
    */
   def nodeCount:Int
-
-  /**
-   * An internal representation of nodes within the graph
-   */
-  trait InnerNodeTrait {
-    def value:Node
-
-  }
-
-  /**
-   * The type of InnerNodeTrait for this digraph representation
-   */
-  type InnerNodeType <: InnerNodeTrait
 
   /**
    * @return InnerNode representation of all of the nodes in the graph.
@@ -47,16 +63,6 @@ trait Graph[Node] {
    * @return Some inner node if it exists in the digraph or None
    */
   def innerNode(value:Node):Option[InnerNodeType]
-
-  type OuterEdgeType
-
-  //todo is there a way to inject an InnerEdgeTrait that can return the outer edge??
-/*
-  trait InnerEdgeTrait {
-    def value:OuterEdgeType
-  }
-*/
-  type InnerEdgeType // <: InnerEdgeTrait
 
   /**
    * @return A Traversable (usually something more specific) of the edges
@@ -80,6 +86,18 @@ trait Graph[Node] {
 trait IndexedGraph[Node] extends Graph[Node] {
 
   /**
+    * An internal representation of nodes within the graph
+    */
+  trait InnerIndexedNodeTrait extends InnerNodeTrait {
+    def index:Int
+  }
+
+  /**
+    * The type of InnerNodeTrait for this digraph representation
+    */
+  override type InnerNodeType <: InnerIndexedNodeTrait
+
+  /**
     * All the nodes in the graph, in an indexed set
     */
   def nodes:IndexedSet[Node]
@@ -88,20 +106,6 @@ trait IndexedGraph[Node] extends Graph[Node] {
     * @return internal representation of all of the nodes in the graph.
     */
   def innerNodes:IndexedSet[InnerNodeType]
-
-  /**
-    * An internal representation of nodes within the graph
-    */
-  trait InnerIndexedNodeTrait extends InnerNodeTrait {
-
-    def index:Int
-
-  }
-
-  /**
-    * The type of InnerNodeTrait for this digraph representation
-    */
-  type InnerNodeType <: InnerIndexedNodeTrait
 
   def node(i:Int):Node
 

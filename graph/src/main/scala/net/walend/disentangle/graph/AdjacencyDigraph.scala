@@ -14,23 +14,7 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
                                         outSuccessors:Vector[IndexedSet[(Node,Node)]], // (i) is the successors for node i, (j) is the node,node tuple to reach that second node.
                                         outPredecessors:Vector[IndexedSet[(Node,Node)]]
                                        ) extends Tuple2Digraph[Node] with IndexedGraph[Node] {
-
-  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
-  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-
-  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[InnerEdgeType] = {
-    indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
-  }
-
-  val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
-  val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
-
-  def nodes = outNodes
-
-  override def nodeCount: Int = outNodes.size
-
-  type InnerNodeType = InNode
-
+  override type InnerNodeType = InNode
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def successors: IndexedSet[InnerEdgeType] = {
@@ -49,13 +33,24 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
         case _ => false
       }
     }
-
   }
 
   override type InnerEdgeType = InnerEdge
-
   case class InnerEdge(from:InNode,to:InNode) extends DigraphInnerEdgeTrait
 
+  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+
+  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[InnerEdgeType] = {
+    indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
+  }
+
+  val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
+  val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
+
+  def nodes = outNodes
+
+  override def nodeCount: Int = outNodes.size
 
   /**
     * O(ln(n))
