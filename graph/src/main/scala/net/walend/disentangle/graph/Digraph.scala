@@ -25,11 +25,11 @@ trait Digraph[Node] extends Graph[Node] {
     def to:InnerNodeType
   }
 
-  type DigraphInnerEdgeType <: InnerEdgeType with DigraphInnerEdgeTrait
+  override type InnerEdgeType <: DigraphInnerEdgeTrait
 
-  def edge(from: InnerNodeType,to: InnerNodeType):Option[DigraphInnerEdgeType]
+  def edge(from: InnerNodeType,to: InnerNodeType):Option[InnerEdgeType]
 
-  def edge(from: Node, to: Node): Option[DigraphInnerEdgeType] = {
+  def edge(from: Node, to: Node): Option[InnerEdgeType] = {
     val inFrom = innerNode(from)
     val inTo = innerNode(to)
     (inFrom, inTo) match {

@@ -69,7 +69,7 @@ class FloydWarshallExampleTest extends FlatSpec with Matchers {
 
     shortPathGraph should be (expectedShortPathGraph)
     
-    val expectedSubgraphEdges: Set[shortPathGraph.InnerEdge] = Set(
+    val expectedSubgraphEdges: Set[shortPathGraph.InnerEdgeType] = Set(
       shortPathGraph.edge(H,C),
       shortPathGraph.edge(E,B),
       shortPathGraph.edge(C,D),

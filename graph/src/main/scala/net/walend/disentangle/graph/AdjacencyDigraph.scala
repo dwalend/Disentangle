@@ -18,12 +18,12 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
-  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[DigraphInnerEdgeType] = {
+  def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[InnerEdgeType] = {
     indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
   }
 
-  val inSuccessors:Vector[IndexedSet[DigraphInnerEdgeType]] = outSuccessors.map(neighborSet)
-  val inPredecessors:Vector[IndexedSet[DigraphInnerEdgeType]] = outPredecessors.map(neighborSet)
+  val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
+  val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
 
   def nodes = outNodes
 
@@ -33,11 +33,11 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
 
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
-    override def successors: IndexedSet[DigraphInnerEdgeType] = {
+    override def successors: IndexedSet[InnerEdgeType] = {
       inSuccessors(index)
     }
 
-    override def predecessors: IndexedSet[DigraphInnerEdgeType] = {
+    override def predecessors: IndexedSet[InnerEdgeType] = {
       inPredecessors(index)
     }
 
@@ -53,7 +53,6 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   }
 
   override type InnerEdgeType = InnerEdge
-  override type DigraphInnerEdgeType = InnerEdge
 
   case class InnerEdge(from:InNode,to:InNode) extends DigraphInnerEdgeTrait
 
@@ -105,7 +104,7 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"
   }
 
-  override def edge(from: InNode, to: InNode): Option[DigraphInnerEdgeType] = ???  //todo
+  override def edge(from: InNode, to: InNode): Option[InnerEdgeType] = ???  //todo
 }
 
 /**

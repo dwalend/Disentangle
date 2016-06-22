@@ -1,7 +1,9 @@
 Done
 
 * Fixed bug in edge(,) methods in Adjacency Digraphs to return the correct edge.
-* Added DigraphInnerEdgeTrait and LabelDigraphInnerEdgeTrait to get inner nodes and labels from edges.
+* Added DigraphInnerEdgeTrait
+
+TODO next - and LabelDigraphInnerEdgeTrait to get inner nodes and labels from edges.
 
 TODO This release
 

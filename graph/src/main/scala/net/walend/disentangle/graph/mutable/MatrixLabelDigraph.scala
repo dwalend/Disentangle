@@ -60,6 +60,10 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     }
   }
 
+  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
+
+  override type InnerEdgeType = InnerEdge
+
   /**
    * O(ln(n))
    */

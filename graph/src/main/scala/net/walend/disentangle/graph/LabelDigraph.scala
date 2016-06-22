@@ -10,10 +10,11 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
 
   type OuterEdgeType = (Node,Node,Label)
 
-  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends DigraphInnerEdgeTrait
+  trait LabelDigraphEdgeTrait extends DigraphInnerEdgeTrait {
+    def label:Label
+  }
 
-  type InnerEdgeType = InnerEdge
-  type DigraphInnerEdgeType = InnerEdgeType
+  override type InnerEdgeType <: LabelDigraphEdgeTrait
 
   /**
    * @return the label to return when no edge exists
@@ -25,6 +26,7 @@ trait LabelDigraph[Node,Label] extends Digraph[Node] {
    * @return the Edge between start and end or noEdgeExistsValue if no edge connects start to end
    */
   def label(start:InnerNodeType,end:InnerNodeType):Label
+
 }
 
 /**
