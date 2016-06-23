@@ -24,7 +24,6 @@ trait Graph[Node] {
     */
   trait InnerNodeTrait {
     def value:Node
-
   }
 
   /**

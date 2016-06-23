@@ -15,6 +15,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
                                        outPredecessors:Vector[IndexedSet[(Node,Node,Label)]],
                                        val noEdgeExistsLabel:Label //value for no edge
                                             ) extends IndexedLabelDigraph[Node,Label] {
+  override type InnerNodeType = InnerNode
   case class InnerNode(override val value:Node, override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def successors: IndexedSet[InnerEdgeType] = {
@@ -34,10 +35,9 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
       }
     }
   }
-  override type InnerNodeType = InnerNode
 
-  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
   override type InnerEdgeType = InnerEdge
+  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
 
   val inNodes:IndexedSet[InnerNode] =outNodes.zipWithIndex.map(x => InnerNode(x._1,x._2))
   val nodeToInNode:Map[Node,InnerNode] = inNodes.map(x => x.value -> x).toMap

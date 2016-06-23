@@ -18,8 +18,8 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
                                            noEdgeExistsLabel:Label //value for no edge
                                           ) extends IndexedLabelDigraph[Node,Label] with MutableLabelDigraph[Node,Label] {
 
-  override type InnerNodeType = InNode
-  case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
+  override type InnerNodeType = InnerNode
+  case class InnerNode(override val value:Node, override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     /**
       * O(n&#94;2)
@@ -40,7 +40,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
     override def equals(obj: Any): Boolean = {
       obj match {
-        case inNode:InNode => inNode.index == index
+        case inNode:InnerNode => inNode.index == index
         case _ => false
       }
     }
@@ -49,8 +49,8 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   override type InnerEdgeType = InnerEdge
   case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
 
-  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
-  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+  val inNodes:IndexedSet[InnerNode] = outNodes.zipWithIndex.map(x => InnerNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InnerNode] = inNodes.map(x => x.value -> x).toMap
 
   /**
     * O(1)
@@ -65,7 +65,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   /**
    * O(ln(n))
    */
-  override def innerNode(value: Node): Option[InNode] = {
+  override def innerNode(value: Node): Option[InnerNode] = {
     nodeToInNode.get(value)
   }
 
@@ -74,8 +74,8 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     *
     * @return InnerNode representation of all of the nodes in the graph.
    */
-  override def innerNodes: IndexedSet[InNode] = {
-    outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  override def innerNodes: IndexedSet[InnerNode] = {
+    outNodes.zipWithIndex.map(x => InnerNode(x._1,x._2))
   }
 
   /**
@@ -115,13 +115,13 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
    *
    * @return the edge between start and end or noEdgeExistsValue
    */
-  override def label(from: InNode, to: InNode):Label = edgeMatrix(from.index)(to.index)
- 
+  override def label(from: InnerNode, to: InnerNode):Label = edgeMatrix(from.index)(to.index)
+
 
   /**
    * O(1)
    */
-  override def upsertEdge(from: InNode, to: InNode, label: Label): Unit = edgeMatrix(from.index)(to.index) = label
+  override def upsertEdge(from: InnerNode, to: InnerNode, label: Label): Unit = edgeMatrix(from.index)(to.index) = label
 
 
   /**
@@ -132,7 +132,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   /**
    * O(1)
    */
-  override def innerNodeForIndex(i: Int): InNode = innerNodes.get(i)
+  override def innerNodeForIndex(i: Int): InnerNode = innerNodes.get(i)
 
   /**
    * O(1)
@@ -143,7 +143,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes,noEdgeExistsValue = $noEdgeExistsLabel)"
   }
 
-  override def edge(from: InNode, to: InNode): Option[InnerEdge] = {
+  override def edge(from: InnerNode, to: InnerNode): Option[InnerEdge] = {
     val l = label(from.index,to.index)
     if(noEdgeExistsLabel == l) None
     else Some(InnerEdge(from,to,l))
