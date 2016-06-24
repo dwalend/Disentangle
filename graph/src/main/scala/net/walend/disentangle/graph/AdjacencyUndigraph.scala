@@ -14,23 +14,7 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
                                adjacencyMatrix:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
                                          ) extends IndexedUndigraph[Node] {
 
-  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
-  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-
-  //todo really should be a Set, not an IndexedSet
-  def neighborSet(indexedSet:IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType] = {
-    indexedSet.map(e => NodePair(nodeToInNode(e._1),nodeToInNode(e._2)))
-  }
-
-  //todo really should be a Set, not an IndexedSet
-  val inAdjacencyMatrix:Vector[IndexedSet[InnerEdgeType]] = adjacencyMatrix.map(neighborSet)
-
-  def nodes = outNodes
-
-  override def nodeCount: Int = outNodes.size
-
   type InnerNodeType = InNode
-
   case class InNode(override val value:Node,override val index:Int) extends this.InnerIndexedNodeTrait {
 
     override def innerEdges: IndexedSet[InnerEdgeType] = {
@@ -50,6 +34,29 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
       }
     }
   }
+
+  type InnerEdgeType = InnerEdge
+  case class InnerEdge(nodePair: NodePair[InNode]) extends InnerEdgeTrait {
+    override def value: NodePair[Node] = NodePair(nodePair._1.value,nodePair._2.value)
+  }
+  object InnerEdge{
+    def apply(_1:InNode,_2:InNode): InnerEdge = new InnerEdge(NodePair(_1,_2))
+  }
+
+  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+
+  //todo really should be a Set, not an IndexedSet
+  def neighborSet(indexedSet:IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType] = {
+    indexedSet.map(e => InnerEdge(nodeToInNode(e._1),nodeToInNode(e._2)))
+  }
+
+  //todo really should be a Set, not an IndexedSet
+  val inAdjacencyMatrix:Vector[IndexedSet[InnerEdgeType]] = adjacencyMatrix.map(neighborSet)
+
+  def nodes = outNodes
+
+  override def nodeCount: Int = outNodes.size
 
   /**
     * O(ln(n))
@@ -128,10 +135,9 @@ trait IndexedUndigraph[Node] extends Undigraph[Node] {
   /**
     * The type of InnerNodeTrait for this digraph representation
     */
-  type InnerNodeType <: InnerIndexedNodeTrait
+  override type InnerNodeType <: InnerIndexedNodeTrait
 
   override type OuterEdgeType = NodePair[Node]
-  override type InnerEdgeType = NodePair[InnerNodeType]
 
   /**
     * All the nodes in the graph, in an indexed set

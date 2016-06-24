@@ -16,23 +16,15 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
                                           val noEdgeExistsLabel:(Node,Node) => Label //value for no edge
                                        ) extends IndexedLabelUndigraph[Node,Label] {
 
-  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
-  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
-
-  //todo really should be a Set, not an IndexedSet
-  def neighborSet(indexedSet:IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType] = {
-    indexedSet.map(e => (NodePair(nodeToInNode(e._1._1),nodeToInNode(e._1._2)),e._2))
+  type InnerEdgeType = InnerEdge
+  case class InnerEdge(nodePair: NodePair[InNode],label: Label) extends InnerEdgeTrait {
+    override def value: (NodePair[Node],Label) = (NodePair(nodePair._1.value,nodePair._2.value),label)
+  }
+  object InnerEdge{
+    def apply(_1:InNode,_2:InNode,label: Label): InnerEdge = new InnerEdge(NodePair(_1,_2),label)
   }
 
-  //todo really should be a Set, not an IndexedSet
-  val inEdges:Vector[IndexedSet[InnerEdgeType]] = outEdges.map(neighborSet)
-
-  def nodes = outNodes
-
-  override def nodeCount: Int = outNodes.size
-
   type InnerNodeType = InNode
-
   case class InNode(override val value:Node,override val index:Int) extends this.UndigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def innerEdges: IndexedSet[InnerEdgeType] = {
@@ -53,6 +45,21 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     }
   }
 
+  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
+
+  //todo really should be a Set, not an IndexedSet
+  def neighborSet(indexedSet:IndexedSet[OuterEdgeType]):IndexedSet[InnerEdgeType] = {
+    indexedSet.map(e => InnerEdge(NodePair(nodeToInNode(e._1._1),nodeToInNode(e._1._2)),e._2))
+  }
+
+  //todo really should be a Set, not an IndexedSet
+  val inEdges:Vector[IndexedSet[InnerEdgeType]] = outEdges.map(neighborSet)
+
+  def nodes = outNodes
+
+  override def nodeCount: Int = outNodes.size
+
   /**
     * O(ln(n))
     *
@@ -68,8 +75,6 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     * @return InnerNode representation of all of the nodes in the graph.
     */
   override def innerNodes: IndexedSet[InNode] = inNodes
-
-  override type InnerEdgeType = (NodePair[InNode],Label)
 
   /**
     * @return A Traversable of the edges as represented in the graph
@@ -90,10 +95,10 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     */
   override def label(between:NodePair[InnerNodeType]):Label = {
 
-    val indexedSet = inEdges(between._1.index).filter(x => x._1.contains(between._2))
+    val indexedSet = inEdges(between._1.index).filter(x => x.nodePair.contains(between._2))
     indexedSet.size match {
       case 0 => noEdgeExistsLabel(between._1.value,between._2.value)
-      case 1 => indexedSet.iterator.next()._2
+      case 1 => indexedSet.iterator.next().label
       case _ => throw new IllegalStateException(s"Multiple edges between $between: "+indexedSet)
     }
   }
@@ -107,7 +112,7 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     val a: InNode = innerNode(between._1).getOrElse(throw new IllegalArgumentException(s"${between._1} is not in $this"))
     val b: InNode = innerNode(between._2).getOrElse(throw new IllegalArgumentException(s"${between._2} is not in $this"))
     val nodePair = NodePair(a,b)
-    (nodePair,label(nodePair))
+    InnerEdge(nodePair,label(nodePair))
   }
 
   /**
@@ -130,9 +135,9 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     * @return
     */
   override def label(i: Int, j: Int): Label = {
-    val indexedSet = inEdges(i).filter(x => x._2 == inNodes.get(j))
+    val indexedSet = inEdges(i).filter(x => x.nodePair._2 == inNodes.get(j))
     indexedSet.size match {
-      case 1 => indexedSet.iterator.next()._2
+      case 1 => indexedSet.iterator.next().label
       case 0 => noEdgeExistsLabel(outNodes.asSeq(i),outNodes.asSeq(j))
       case _ => throw new IllegalStateException(s"Multiple edges from ${node(i)} to ${node(j)}: "+indexedSet)
     }

@@ -126,11 +126,13 @@ Map(Cluster -> Cluster marker to merge with for next generation)
       node.innerEdges.union(candidate.innerEdges).size
     }
 
-    def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = {
+    def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = ???
+    /*
+    {
       //skip self-edges, which will have a maximum jaccard index
       node.innerEdges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
     }
-
+      */
     //separate connected nodes from isolates
     val (connected,isolated) = graph.innerNodes.partition(n => n.innerEdges.nonEmpty)
 

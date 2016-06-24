@@ -18,9 +18,9 @@ trait Digraph[Node] extends Graph[Node] {
   /**
     * The type of InnerNodeTrait for this digraph representation
     */
-  type InnerNodeType <: DigraphInnerNodeTrait
+  override type InnerNodeType <: DigraphInnerNodeTrait
 
-  trait DigraphInnerEdgeTrait{
+  trait DigraphInnerEdgeTrait extends InnerEdgeTrait {
     def from:InnerNodeType
     def to:InnerNodeType
   }

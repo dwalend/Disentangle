@@ -10,8 +10,6 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
 
   type OuterEdgeType = (NodePair[Node],Label)
 
-  type InnerEdgeType = (NodePair[InnerNodeType],Label)
-
   /**
     * @return the label to return when no edge exists
     */

@@ -47,7 +47,9 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   }
 
   override type InnerEdgeType = InnerEdge
-  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait
+  case class InnerEdge(from:InnerNodeType,to:InnerNodeType,label:Label) extends LabelDigraphEdgeTrait {
+    override def value: OuterEdgeType = (from.value,to.value,label)
+  }
 
   val inNodes:IndexedSet[InnerNode] = outNodes.zipWithIndex.map(x => InnerNode(x._1,x._2))
   val nodeToInNode:Map[Node,InnerNode] = inNodes.map(x => x.value -> x).toMap

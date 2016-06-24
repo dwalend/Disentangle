@@ -36,7 +36,9 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   }
 
   override type InnerEdgeType = InnerEdge
-  case class InnerEdge(from:InNode,to:InNode) extends DigraphInnerEdgeTrait
+  case class InnerEdge(from:InNode,to:InNode) extends DigraphInnerEdgeTrait {
+    override def value: OuterEdgeType = (from.value,to.value)
+  }
 
   val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap

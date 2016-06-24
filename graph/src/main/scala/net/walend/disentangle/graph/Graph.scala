@@ -31,16 +31,17 @@ trait Graph[Node] {
     */
   type InnerNodeType <: InnerNodeTrait
 
-  //todo is there a way to inject an InnerEdgeTrait that can return the outer edge??
-  /*
-    trait InnerEdgeTrait {
-      def value:OuterEdgeType
-    }
-  */
+  /**
+    * An internal representation of edges within the graph
+    */
+  trait InnerEdgeTrait {
+    def value:OuterEdgeType
+  }
+
   /**
     * The edge type returned by this graph representation
     */
-  type InnerEdgeType // <: InnerEdgeTrait
+  type InnerEdgeType <: InnerEdgeTrait
 
   /**
    * All the nodes in the graph
