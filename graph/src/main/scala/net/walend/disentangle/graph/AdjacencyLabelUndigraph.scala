@@ -10,10 +10,9 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @author dwalend
   * @since v0.2.1
   */
-//todo for noEdgeExistsLabel, make it a function => Label, and throw an exception by default. Also in Digraphs.
 class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                           outEdges:Vector[IndexedSet[(NodePair[Node],Label)]], // (i) is the edges for node i, (j) is the NodePair[node,node],edge pair to reach that second node.
-                                          val noEdgeExistsLabel:(Node,Node) => Label //value for no edge
+                                          val noEdgeExistsLabel:Label //value for no edge
                                        ) extends IndexedLabelUndigraph[Node,Label] {
 
   type InnerEdgeType = InnerEdge
@@ -97,7 +96,7 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 
     val indexedSet = inEdges(between._1.index).filter(x => x.nodePair.contains(between._2))
     indexedSet.size match {
-      case 0 => noEdgeExistsLabel(between._1.value,between._2.value)
+      case 0 => noEdgeExistsLabel
       case 1 => indexedSet.iterator.next().label
       case _ => throw new IllegalStateException(s"Multiple edges between $between: "+indexedSet)
     }
@@ -138,7 +137,7 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
     val indexedSet = inEdges(i).filter(x => x.nodePair._2 == inNodes.get(j))
     indexedSet.size match {
       case 1 => indexedSet.iterator.next().label
-      case 0 => noEdgeExistsLabel(outNodes.asSeq(i),outNodes.asSeq(j))
+      case 0 => noEdgeExistsLabel
       case _ => throw new IllegalStateException(s"Multiple edges from ${node(i)} to ${node(j)}: "+indexedSet)
     }
   }
@@ -153,12 +152,10 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   */
 object AdjacencyLabelUndigraph{
 
-  def defaultNoEdgeExists[Node,Label](a:Node,b:Node):Label =  throw new NoSuchElementException(s"No edge exists between $a and $b.")
-
   //noinspection ConvertibleToMethodValue
   def apply[Node,Label](edges:GenTraversable[(NodePair[Node],Label)] = Seq.empty,
                         nodes:GenSeq[Node] = Seq.empty,
-                        noEdgeExists:((Node,Node) => Label) = defaultNoEdgeExists[Node,Label]_) = {
+                        noEdgeExists:Label = null) = {
 
     val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1._1) ++ edges.map(_._1._2)).distinct.to[Vector]
 

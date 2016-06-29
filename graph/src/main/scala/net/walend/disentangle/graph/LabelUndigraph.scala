@@ -13,7 +13,7 @@ trait LabelUndigraph[Node,Label] extends Undigraph[Node] {
   /**
     * @return the label to return when no edge exists
     */
-  def noEdgeExistsLabel:(Node,Node) => Label
+  def noEdgeExistsLabel:Label
 
   /**
     * @return the Label between a pair of nodes, or noEdgeExistsLabel if no edge exists.
@@ -40,6 +40,6 @@ trait IndexedLabelUndigraph[Node,Label] extends  IndexedGraph[Node] with LabelUn
     */
   def label(i:Int,j:Int):Label
 
-  //todo def edge(i:Int,j:Int):InnerEdgeType when it becomes clear what to do for edges that don't exist, and when the method is needed. (InnerNodeType,InnerNodeType,noEdgeExistsLabel) might be fine.
+  //todo def edge(i:Int,j:Int):InnerEdgeType when needed
 
 }
