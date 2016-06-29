@@ -8,20 +8,20 @@ import scala.collection.immutable.Iterable
 /**
   * An Experimental algorithm, still pretty rough. Use at your own risk.
   *
-  * Create a hierarchy of cluster graphs via parallel agglomeratation based on the Jaccard index for each node.
-  * Exploits bit-wise operations and parallelism
+  * Create a hierarchy of graphs of clusters via parallel agglomeratation based on the Jaccard index for each node.
   *
-  * Worst case is O(n ln n). (I think) Each node will be merged with some other node unless it is an isolate (which should just drop out of the problem). (Except for chains that contain one cluster. Will these be a problem?)
+  * Worst case is O(n ln n) to cluster the whole graph. Each node will be merged with some other node unless it is an isolate (which should just drop out of the problem).
   *
   * @see https://en.wikipedia.org/wiki/Hierarchical_clustering
   * @author dwalend
   * @since v0.2.1
   */
 
+//todo exploit bitwise operations and parallelism
 object Agglomerate {
 
-  sealed abstract class Cluster(val level:Int) {
-    def members:Set[Cluster]
+  sealed abstract class Cluster(val generation: Int) {
+    def members: Set[Cluster]
   }
 
   type ClusterGraph = IndexedUndigraph[Cluster]
@@ -38,45 +38,45 @@ object Agglomerate {
   /**
     * A cluster of isolated clusters
     */
-  case class Isolates(members:Set[Cluster],override val level:Int) extends Cluster(level)
+  case class Isolates(members:Set[Cluster],override val generation: Int) extends Cluster(generation)
 
   /**
     * A cluster where all members are most like a cluster outside their membership.
     */
-  case class Sibling(graph:ClusterGraph, archetype:Cluster,override val level:Int) extends Cluster(level) {
+  case class Sibling(graph:ClusterGraph, archetype:Cluster,override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
 
   /**
     * A cluster where all members (but one) are most like a single cluster within their membership. That one cluster is most like another member cluster.
     */
-  case class Wheel(graph:ClusterGraph, hub:Cluster,override val level:Int) extends Cluster(level) {
+  case class Wheel(graph:ClusterGraph, hub:Cluster,override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
 
   /**
     * A cluster with members that form a loop.
     */
-  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster],override val level:Int) extends Cluster(level) {
+  case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster],override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
 
   /**
     * A cluster with members that form a chain. TODO I am curious about length 1 Caterpillars. They violate my scale-up rule, but I'm not sure if they cause actual problems. Plan is to leave them in for now, see if they get swept up neatly in the next iteration.
     */
-  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val level:Int) extends Cluster(level) {
+  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
 
   /**
-  Phase 0 - init
-
-  For a graph create an Initial cluster - a cluster of one node in the graph. Build up a graph of Initial Clusters (that are leafs)
-  Edges in this graph indicate existence of an edge in the original graph.
-
-  Creating the Initial clusters should be fine in parallel
-
-  The initial graph is a Map(Initial -> Set(Initial)) of type Map(Cluster -> Set(Cluster))s that it can reach
+    * Phase 0 - init
+    **
+    * For a graph create an Initial cluster - a cluster of one node in the graph. Build up a graph of Initial Clusters (that are leafs)
+    * Edges in this graph indicate existence of an edge in the original graph.
+    **
+    * Creating the Initial clusters should be fine in parallel
+    **
+    * The initial graph is a Map(Initial -> Set(Initial)) of type Map(Cluster -> Set(Cluster))s that it can reach
 */
   def initialClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
 
@@ -93,30 +93,30 @@ object Agglomerate {
   }
 
 /**
-  Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
-
-  parallel sort should do fine . (In something too big to sort, just sort the neighbors)
+  * Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
+  **
+  * parallel sort should do fine . (In something too big to sort, just sort the neighbors)
 */
   def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
 
 /**
-Phase 2 - pick most similar Cluster to each Cluster
-
-(can be in parallel)
-For each node
-  From its edges
-    Partition isolates out into their own cluster
-    Pick the node with the highest Jaccard index that isn't the node you're considering
-      Break ties using the sort order
-
-Gives a Map(Cluster -> Cluster)
-
-(has to gather, but can be remarked in parallel if this is a bottle neck)
-If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
-
-Map(Cluster -> Cluster marker to merge with for next generation)
-
-*/
+  * Phase 2 - pick most similar Cluster to each Cluster
+  **
+  * (can be in parallel)
+  * For each node
+  * From its edges
+  * Partition isolates out into their own cluster
+  * Pick the node with the highest Jaccard index that isn't the node you're considering
+  * Break ties using the sort order
+  **
+  * Gives a Map(Cluster -> Cluster)
+  **
+  * (has to gather, but can be remarked in parallel if this is a bottle neck)
+  * If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
+  **
+  * Map(Cluster -> Cluster marker to merge with for next generation)
+  *
+  */
   def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], Option[FormIsolate]) = {
 
   /**
@@ -144,24 +144,24 @@ Map(Cluster -> Cluster marker to merge with for next generation)
   }
 
   /**
-  Phase 3 - Refine the set of characteristic clusters and deal with corner cases
-
-  Join every cluster with at least one other cluster. (Worst case is a binary tree) Process at least n clusters per n units of work.
-
-  Make a decision for each node as follows (start at the top of the list):
-
-    Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Initial, maybe attached to its Hub)
-    Nodes that remain picked unique targets. Each target will have one node that selected it.
-    Create a Wheel from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
-    Find Cycles and Caterpillars
-      For Caterpillars, the start of a Caterpillars won't be in the set of picked clusters. Find all the starts and follow them
-
-      For the Cycle, start at a node and follow downstream to detect, building a list of nodes.
-        If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
-
-(Expect time-dependent relationships to have a big caterpillar, others to have Cycles and Wheels)
-
-*/
+    * Phase 3 - Refine the set of characteristic clusters and deal with corner cases
+    **
+    * Join every cluster with at least one other cluster. (Worst case is a binary tree) Process at least n clusters per n units of work.
+    **
+    * Make a decision for each node as follows (start at the top of the list):
+    **
+    * Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Initial, maybe attached to its Hub)
+    * Nodes that remain picked unique targets. Each target will have one node that selected it.
+    * Create a Wheel from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
+    * Find Cycles and Caterpillars
+    * For Caterpillars, the start of a Caterpillars won't be in the set of picked clusters. Find all the starts and follow them
+    **
+    * For the Cycle, start at a node and follow downstream to detect, building a list of nodes.
+    * If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
+    **
+    * (Expect time-dependent relationships to have a big caterpillar, others to have Cycles and Wheels)
+    *
+    */
 
 
   //todo maybe these are better as apply() methods on Cluster's companion objects ???
@@ -189,21 +189,21 @@ Map(Cluster -> Cluster marker to merge with for next generation)
   case class FormIsolate(members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Isolates,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Isolates(clusterGraph.nodes,firstMember(members).level + 1 ),externalEdges)
+      (Isolates(clusterGraph.nodes,firstMember(members).generation + 1 ),externalEdges)
     }
   }
 
   case class FormSibling(archType:Cluster, members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Sibling,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Sibling(clusterGraph,archType,firstMember(members).level + 1),externalEdges)
+      (Sibling(clusterGraph,archType,firstMember(members).generation + 1),externalEdges)
     }
   }
 
   case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Wheel,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Wheel(clusterGraph,archType,firstMember(members).level + 1),externalEdges)
+      (Wheel(clusterGraph,archType,firstMember(members).generation + 1),externalEdges)
     }
   }
 
@@ -212,7 +212,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Caterpillar(clusterGraph,memberList,firstMember(members).level + 1),externalEdges)
+      (Caterpillar(clusterGraph,memberList,firstMember(members).generation + 1),externalEdges)
     }
   }
 
@@ -221,7 +221,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cycle,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Cycle(clusterGraph,memberList,firstMember(members).level + 1),externalEdges)
+      (Cycle(clusterGraph,memberList,firstMember(members).generation + 1),externalEdges)
     }
   }
 
@@ -287,7 +287,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
 
   /**
     * Phase 4 - merge clusters into a new generation of clusters in a new graph
-
+    *
     * (I think this can be done in parallel per cluster with the full map of where everything is going)
     * Merge all the clustersToMerge into a new Cluster.
     * Return a ClusterGraph that replaces all the merged clusters with a single new cluster and none of the clusters to merge, and retains all other clusters.
@@ -314,7 +314,7 @@ Map(Cluster -> Cluster marker to merge with for next generation)
   }
 
   /**
-    * Create a level of clusters from the previous level.
+    * Create a generation of clusters from the previous generation.
     */
   def createClusters(graph:ClusterGraph):ClusterGraph = {
     val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
