@@ -20,6 +20,7 @@ import scala.collection.immutable.Iterable
 //todo exploit bitwise operations and parallelism
 object Agglomerate {
 
+  //todo trait with Scala 2.12
   sealed abstract class Cluster(val generation: Int) {
     def members: Set[Cluster]
   }
@@ -27,7 +28,7 @@ object Agglomerate {
   type ClusterGraph = IndexedUndigraph[Cluster]
 
   /**
-   * A cluster with just one member
+   * A cluster with exactly one member.
    */
   case class Initial[Node](node:Node) extends Cluster(1) {
     override val members: Set[Cluster] = Set.empty
@@ -36,10 +37,11 @@ object Agglomerate {
   }
 
   /**
-    * A cluster of isolated clusters
+    * A cluster isolated from other clusters
     */
   case class Isolates(members:Set[Cluster],override val generation: Int) extends Cluster(generation)
 
+  //todo is there a way to show a picture in Scaladoc?
   /**
     * A cluster where all members are most like a cluster outside their membership.
     */
@@ -62,8 +64,9 @@ object Agglomerate {
   }
 
   /**
-    * A cluster with members that form a chain. TODO I am curious about length 1 Caterpillars. They violate my scale-up rule, but I'm not sure if they cause actual problems. Plan is to leave them in for now, see if they get swept up neatly in the next iteration.
+    * A cluster with members that form a chain.
     */
+  //TODO I am curious about length 1 Caterpillars. They violate my scale-up rule, but I'm not sure if they cause actual problems. Plan is to leave them in for now, see if they get swept up neatly in the next iteration.
   case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
@@ -71,7 +74,7 @@ object Agglomerate {
   /**
     * Phase 0 - init
     **
-    * For a graph create an Initial cluster - a cluster of one node in the graph. Build up a graph of Initial Clusters (that are leafs)
+    * For a graph create an Initial cluster - a cluster of one node in the graph. Create a graph of Initial Clusters
     * Edges in this graph indicate existence of an edge in the original graph.
     **
     * Creating the Initial clusters should be fine in parallel
@@ -84,12 +87,12 @@ object Agglomerate {
     val nodeMap = nodesToInitialClusters.toMap
 
     def clusterEdgeFromEdge(e:graph.OuterEdgeType): NodePair[Initial[Node]] = {
-      NodePair(nodeMap(e._1),nodeMap(e._2))    //todo use original weights
+      NodePair(nodeMap(e._1),nodeMap(e._2))    //todo original weights - will need a mapping function at some point.
     }
 
     val edges = graph.edges.map(clusterEdgeFromEdge)
 
-    AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2).toSeq)
+    AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2))
   }
 
 /**
@@ -126,18 +129,17 @@ object Agglomerate {
       node.innerEdges.union(candidate.innerEdges).size
     }
 
-    def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = ???
-    /*
-    {
+  //todo someday pass in weights
+    def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = {
       //skip self-edges, which will have a maximum jaccard index
-      node.innerEdges.filterNot(_ == NodePair(node,node)).map((e: graph.InnerEdgeType) => e.other(node)).maxBy(jaccardIndex(node,_))
+      node.innerEdges.filterNot(_.selfEdge).map(e => e.other(node)).maxBy(jaccardIndex(node,_))
     }
-      */
+
     //separate connected nodes from isolates
     val (connected,isolated) = graph.innerNodes.partition(n => n.innerEdges.nonEmpty)
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
-    val isolates = if(!isolated.isEmpty) Option(FormIsolate(isolated.map(_.value)))
+    val isolates = if(!isolated.isEmpty) Some(FormIsolate(isolated.map(_.value)))
                     else None
 
     (clustersToMostSimilarNeighbor,isolates)
@@ -150,20 +152,18 @@ object Agglomerate {
     **
     * Make a decision for each node as follows (start at the top of the list):
     **
-    * Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one. (That always reduces the number of nodes (Most likely result is a Initial, maybe attached to its Hub)
+    * Create a Siblings cluster from all of the nodes that selected the same "most similar node" if there is more than one.
     * Nodes that remain picked unique targets. Each target will have one node that selected it.
-    * Create a Wheel from any node that was selected by a Siblings cluster and picked a node in the Siblings (Most likely result is a Digon) (Or maybe just put that node in with the Siblings.)
-    * Find Cycles and Caterpillars
-    * For Caterpillars, the start of a Caterpillars won't be in the set of picked clusters. Find all the starts and follow them
+    * Create a Wheel from any node that was selected by a Siblings cluster and picked a node in those Siblings
+    * Find Cycles and Caterpillars by following connections.
+    * For Caterpillars, the start of a Caterpillars won't be in the set of picked clusters. Find all the starts and follow them to form caterpillars. (Caterpillars must end on siblings or wheels. )
     **
-    * For the Cycle, start at a node and follow downstream to detect, building a list of nodes.
-    * If you hit the start node, you've found a Cycle. (Could be anything next time, likely a Bridge)
+    * For a Cycle, start at a node and follow downstream to detect, building a list of nodes.
+    * If you hit the start node, you've found a complete Cycle.
     **
     * (Expect time-dependent relationships to have a big caterpillar, others to have Cycles and Wheels)
     *
     */
-
-
   //todo maybe these are better as apply() methods on Cluster's companion objects ???
   trait FormCluster {
     def members:Set[Cluster]

@@ -16,11 +16,11 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
                                        ) extends IndexedLabelUndigraph[Node,Label] {
 
   type InnerEdgeType = InnerEdge
-  case class InnerEdge(nodePair: NodePair[InNode],label: Label) extends InnerEdgeTrait {
+  case class InnerEdge(nodePair: NodePair[InNode],label: Label) extends UndigraphInnerEdgeTrait {
     override def value: (NodePair[Node],Label) = (NodePair(nodePair._1.value,nodePair._2.value),label)
   }
   object InnerEdge{
-    def apply(_1:InNode,_2:InNode,label: Label): InnerEdge = new InnerEdge(NodePair(_1,_2),label)
+    def apply(_1:InNode, _2:InNode, label: Label): InnerEdge = new InnerEdge(NodePair(_1,_2),label)
   }
 
   type InnerNodeType = InNode

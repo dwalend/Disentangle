@@ -23,6 +23,15 @@ trait Digraph[Node] extends Graph[Node] {
   trait DigraphInnerEdgeTrait extends InnerEdgeTrait {
     def from:InnerNodeType
     def to:InnerNodeType
+
+    override def selfEdge = {from == to}
+
+    override def other(node:InnerNodeType) = {
+      if(node == from) to
+      else if (node == to) from
+      else throw new IllegalArgumentException(s"This edge contains ${from} and ${to}, not $node.")
+    }
+
   }
 
   override type InnerEdgeType <: DigraphInnerEdgeTrait

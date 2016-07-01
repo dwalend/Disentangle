@@ -20,6 +20,16 @@ trait Undigraph[Node] extends Graph[Node] {
     */
   type InnerNodeType <: UndigraphInnerNodeTrait
 
+  trait UndigraphInnerEdgeTrait extends InnerEdgeTrait {
+    def nodePair: NodePair[InnerNodeType]
+
+    override def selfEdge: Boolean = nodePair._1 == nodePair._2
+
+    override def other(node: InnerNodeType): InnerNodeType = nodePair.other(node)
+  }
+
+  type InnerEdgeType <: UndigraphInnerEdgeTrait
+
 }
 
 /**

@@ -36,7 +36,7 @@ class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master 
   }
 
   type InnerEdgeType = InnerEdge
-  case class InnerEdge(nodePair: NodePair[InNode]) extends InnerEdgeTrait {
+  case class InnerEdge(nodePair: NodePair[InNode]) extends UndigraphInnerEdgeTrait {
     override def value: NodePair[Node] = NodePair(nodePair._1.value,nodePair._2.value)
   }
   object InnerEdge{

@@ -36,6 +36,10 @@ trait Graph[Node] {
     */
   trait InnerEdgeTrait {
     def value:OuterEdgeType
+
+    def selfEdge:Boolean
+
+    def other(node:InnerNodeType):InnerNodeType
   }
 
   /**
