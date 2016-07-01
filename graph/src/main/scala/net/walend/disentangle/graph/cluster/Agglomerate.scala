@@ -1,13 +1,11 @@
 package net.walend.disentangle.graph.cluster
 
-import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, SomeGraph, NodePair}
+import net.walend.disentangle.graph.{AdjacencyUndigraph, IndexedUndigraph, NodePair}
 
 import scala.annotation.tailrec
 import scala.collection.immutable.Iterable
 
 /**
-  * An Experimental algorithm, still pretty rough. Use at your own risk.
-  *
   * Create a hierarchy of graphs of clusters via parallel agglomeratation based on the Jaccard index for each node.
   *
   * Worst case is O(n ln n) to cluster the whole graph. Each node will be merged with some other node unless it is an isolate (which should just drop out of the problem).
@@ -18,6 +16,7 @@ import scala.collection.immutable.Iterable
   */
 
 //todo exploit bitwise operations and parallelism
+//todo make it possible to substitute something with labels for the Jaccard index
 object Agglomerate {
 
   //todo trait with Scala 2.12
@@ -28,8 +27,8 @@ object Agglomerate {
   type ClusterGraph = IndexedUndigraph[Cluster]
 
   /**
-   * A cluster with exactly one member.
-   */
+    * A cluster with exactly one member.
+    */
   case class Initial[Node](node:Node) extends Cluster(1) {
     override val members: Set[Cluster] = Set.empty
 
@@ -80,7 +79,7 @@ object Agglomerate {
     * Creating the Initial clusters should be fine in parallel
     **
     * The initial graph is a Map(Initial -> Set(Initial)) of type Map(Cluster -> Set(Cluster))s that it can reach
-*/
+    */
   def initialClusterFromGraph[Node](graph:IndexedUndigraph[Node]):ClusterGraph = {
 
     val nodesToInitialClusters = graph.nodes.asSeq.map(n => (n,Initial(n)))
@@ -95,41 +94,41 @@ object Agglomerate {
     AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2))
   }
 
-/**
-  * Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
-  **
-  * parallel sort should do fine . (In something too big to sort, just sort the neighbors)
-*/
+  /**
+    * Phase 1 - sort the nodes by /something/ , best bet is either most-to-least or least-to-most edges.  .
+    **
+    * parallel sort should do fine . (In something too big to sort, just sort the neighbors)
+    */
   def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
 
-/**
-  * Phase 2 - pick most similar Cluster to each Cluster
-  **
-  * (can be in parallel)
-  * For each node
-  * From its edges
-  * Partition isolates out into their own cluster
-  * Pick the node with the highest Jaccard index that isn't the node you're considering
-  * Break ties using the sort order
-  **
-  * Gives a Map(Cluster -> Cluster)
-  **
-  * (has to gather, but can be remarked in parallel if this is a bottle neck)
-  * If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
-  **
-  * Map(Cluster -> Cluster marker to merge with for next generation)
-  *
-  */
+  /**
+    * Phase 2 - pick most similar Cluster to each Cluster
+    **
+    * (can be in parallel)
+    * For each node
+    * From its edges
+    * Partition isolates out into their own cluster
+    * Pick the node with the highest Jaccard index that isn't the node you're considering
+    * Break ties using the sort order
+    **
+    * Gives a Map(Cluster -> Cluster)
+    **
+    * (has to gather, but can be remarked in parallel if this is a bottle neck)
+    * If a node is an isolate - max Jaccard index is Zero, just point it to itself or dump it in an isolate bucket.
+    **
+    * Map(Cluster -> Cluster marker to merge with for next generation)
+    *
+    */
   def pickCharacteristicClusters(graph:ClusterGraph): (Map[Cluster, Cluster], Option[FormIsolate]) = {
 
-  /**
-    * @see https://en.wikipedia.org/wiki/Jaccard_index
-    */
+    /**
+      * @see https://en.wikipedia.org/wiki/Jaccard_index
+      */
     def jaccardIndex(node:graph.InnerNodeType,candidate:graph.InnerNodeType): Int = {
       node.innerEdges.union(candidate.innerEdges).size
     }
 
-  //todo someday pass in weights
+    //todo someday pass in weights
     def nodeWithMaxJaccardIndex(node:graph.InnerNodeType):graph.InnerNodeType = {
       //skip self-edges, which will have a maximum jaccard index
       node.innerEdges.filterNot(_.selfEdge).map(e => e.other(node)).maxBy(jaccardIndex(node,_))
@@ -140,7 +139,7 @@ object Agglomerate {
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
     val isolates = if(!isolated.isEmpty) Some(FormIsolate(isolated.map(_.value)))
-                    else None
+    else None
 
     (clustersToMostSimilarNeighbor,isolates)
   }
@@ -333,8 +332,5 @@ object Agglomerate {
       graph :: agglomerate(nextGraph)
     }
   }
-
-  val testGraph = SomeGraph.testUndigraph//todo work with the karate school graph
-  val initialCluster: ClusterGraph = initialClusterFromGraph(testGraph)
-
 }
+
