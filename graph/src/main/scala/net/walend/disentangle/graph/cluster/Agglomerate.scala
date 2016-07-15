@@ -32,7 +32,7 @@ object Agglomerate {
   case class Initial[Node](node:Node) extends Cluster(1) {
     override val members: Set[Cluster] = Set.empty
 
-    override def toString = node.toString
+    override def toString = s"I(${node.toString})"
   }
 
   /**

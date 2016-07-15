@@ -10,7 +10,7 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @author dwalend
   * @since v0.2.1
   */
-class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master index values for each node.
+case class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master index values for each node.
                                adjacencyMatrix:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
                                          ) extends IndexedUndigraph[Node] {
 
