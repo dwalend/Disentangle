@@ -109,7 +109,7 @@ object AdjacencyUndigraph{
 
   //noinspection ConvertibleToMethodValue
   def apply[Node](edges:GenTraversable[NodePair[Node]] = Seq.empty,
-                        nodes:GenSeq[Node] = Seq.empty) = {
+                        nodes:GenSeq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
 
     val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
 
@@ -123,6 +123,11 @@ object AdjacencyUndigraph{
     val edgeAdjacencies = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
 
     new AdjacencyUndigraph(nodeValues.to[IndexedSet],edgeAdjacencies)
+  }
+
+  def fromPairs[Node](edges:GenTraversable[(Node,Node)],
+                      nodes:GenSeq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
+    apply(edges.map(x => NodePair(x._1,x._2)),nodes)
   }
 
 }
