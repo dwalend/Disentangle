@@ -1,7 +1,7 @@
 package net.walend.disentangle.graph.cluster
 
-import net.walend.disentangle.graph.{AdjacencyUndigraph, SomeGraph}
-import net.walend.disentangle.graph.cluster.Agglomerate.{ClusterGraph, Isolates, Initial => I}
+import net.walend.disentangle.graph.{AdjacencyUndigraph, NodePair, SomeGraph}
+import net.walend.disentangle.graph.cluster.Agglomerate.{Initial => I, _}
 import org.scalatest.{FlatSpec, Matchers}
 import SomeGraph._
 
@@ -44,8 +44,8 @@ class AgglomerateTest extends FlatSpec with Matchers {
 
     clusters should be(expectedClusters)
   }
-        /*
-  "A star graph" should "form a wheel" in {
+
+  "A star graph" should "form siblings and something else" in {
 
     val edges = Seq((A,B),(A,C))
 
@@ -54,10 +54,22 @@ class AgglomerateTest extends FlatSpec with Matchers {
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
 
-    val expectedClusters: List[ClusterGraph] = List(AdjacencyUndigraph(nodes = Seq(I(A), I(B))), AdjacencyUndigraph(nodes = Seq(Isolates(Set(I(A), I(B)),2))))
+    val expectedCaterpillar = Caterpillar(AdjacencyUndigraph(nodes = Seq(I(A))),List(I(A)),2)
+    val expectedSiblings = Sibling(AdjacencyUndigraph(nodes = Seq(I(B), I(C))),I(A),2)
+
+    val expectedCycle = Cycle(
+      AdjacencyUndigraph(edges = Seq(NodePair(expectedCaterpillar,expectedSiblings))),
+        Seq(expectedCaterpillar,expectedSiblings),
+        3)
+
+    val expectedClusters: List[ClusterGraph] = List(
+      AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)), NodePair(I(A),I(C)))),
+      AdjacencyUndigraph(edges = Seq(NodePair(expectedCaterpillar,expectedSiblings))),
+      AdjacencyUndigraph(nodes = Seq(expectedCycle))
+    )
 
     clusters should be(expectedClusters)
 
   }
-  */
+
 }

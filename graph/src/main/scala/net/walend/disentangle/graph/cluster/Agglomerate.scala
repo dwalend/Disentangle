@@ -138,7 +138,7 @@ object Agglomerate {
     val (connected,isolated) = graph.innerNodes.partition(n => n.innerEdges.nonEmpty)
 
     val clustersToMostSimilarNeighbor = connected.map(n => (n.value,nodeWithMaxJaccardIndex(n).value)).toMap
-    val isolates = if(!isolated.isEmpty) Some(FormIsolate(isolated.map(_.value)))
+    val isolates = if(isolated.nonEmpty) Some(FormIsolate(isolated.map(_.value)))
     else None
 
     (clustersToMostSimilarNeighbor,isolates)
@@ -206,12 +206,12 @@ object Agglomerate {
     }
   }
 
-  case class FormCaterpillar(memberList:Seq[Cluster]) extends FormCluster {
-    lazy val members: Set[Cluster] = memberList.to[Set]
+  case class FormCaterpillar(tail:Seq[Cluster],head:Cluster) extends FormCluster {
+    lazy val members: Set[Cluster] = tail.to[Set]
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Caterpillar(clusterGraph,memberList,firstMember(members).generation + 1),externalEdges)
+      (Caterpillar(clusterGraph,tail,firstMember(members).generation + 1),externalEdges)
     }
   }
 
@@ -229,15 +229,18 @@ object Agglomerate {
     //have to gather to do the groupBy. Dang.
     val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
     //Wheels and Siblings first
-    val (wheelsOrSiblings,pathLikeThings) = pickedClustersToSets.partition(x => x._2.size > 1) //Set size is >= 1
+    val (wheelsOrSiblings,pathLikeThings) = pickedClustersToSets.partition(x => x._2.size > 1) //Set size is >= 1, never an empty set from the groupBy
 
     //The hub of a wheel might be in pathLikeThings, or something else's sibling, so it isn't actually part of a wheel.
+    //todo think about if you even have wheels
     //todo straighten out the above later, or ignore it
     //todo something in this is not quite working as expected with the test case
-    val (wheelParts,siblingParts) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
-    val siblings: Iterable[FormSibling] = siblingParts.map(x=>FormSibling(x._1,x._2))
-    val wheels: Iterable[FormSibling] = wheelParts.map(x=>FormSibling(x._1,x._2))
+    //val (possibleWheelParts,definteSiblingParts) = wheelsOrSiblings.partition(pToCS => pToCS._2.contains(clustersToPicked(pToCS._1)))
+    //val siblings = definteSiblingParts.map(x=>FormSibling(x._1,x._2))
+    //todo should be FormWheel
+    //val wheels = possibleWheelParts.map(x=>FormSibling(x._1,x._2))
 
+    val siblings = wheelsOrSiblings.map(x=>FormSibling(x._1,x._2))
     val pathLikePicksToClusters: Map[Cluster, Cluster] = pathLikeThings.map(pToCS => pToCS._1 -> pToCS._2.find(x => true).get) //Set size is 1, so the find() is OK.
 
     val pathLikeClustersToPicks: Map[Cluster, Cluster] = pathLikePicksToClusters.map(_.swap)
@@ -247,13 +250,14 @@ object Agglomerate {
 
     //follow the chains up
     def createChain(link:Cluster):List[Cluster] = {
-      pathLikeClustersToPicks.get(link).fold(List.empty[Cluster])(next => next :: createChain(next))
+      val next: Option[Cluster] = pathLikeClustersToPicks.get(link)
+      next.fold(List(link))(next => link :: createChain(next))
     }
 
-    val chains: Set[FormCaterpillar] = chainStarts.map(createChain).map(FormCaterpillar)
+    val chains: Set[FormCaterpillar] = chainStarts.map(createChain).map(_.reverse)map(x => FormCaterpillar(x.tail,x.head))
     //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other) if it needs to be done
 
-    val clustersInChains: Set[Cluster] = chains.flatMap(_.memberList)
+    val clustersInChains: Set[Cluster] = chains.flatMap(_.tail)
 
     // anything left must be part of a loop
 
@@ -281,7 +285,7 @@ object Agglomerate {
     }
     val loops: List[FormCycle] = createCycle(clustersInLoops).map(FormCycle)
 
-    wheels ++ siblings ++ chains ++ loops
+    siblings ++ chains ++ loops   //todo wheels
   }
 
   /**
