@@ -45,6 +45,19 @@ class AgglomerateTest extends FlatSpec with Matchers {
     clusters should be(expectedClusters)
   }
 
+  "A graph with two linked nodes " should "form a cycle" in {
+    val testGraph = AdjacencyUndigraph(edges = Seq(NodePair(A,B)))
+
+    val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
+    val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
+
+    val expectedInitial: AdjacencyUndigraph[Cluster] = AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B))))
+    val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)))),Seq(I(A),I(B)),2)
+    val expectedClusters: List[ClusterGraph] = List(expectedInitial, AdjacencyUndigraph(nodes = Seq(expectedCycle)))
+
+    clusters should be(expectedClusters)
+  }
+
   "A star graph" should "form siblings and something else" in {
 
     val edges = Seq((A,B),(A,C))
