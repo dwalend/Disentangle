@@ -49,7 +49,7 @@ object Agglomerate {
   }
 
   /**
-    * A cluster where all members (but one) are most like a single cluster within their membership. That one cluster is most like another member cluster.
+    * A cluster where all members (but one) are most like a single cluster within their membership. That one cluster is most like another member cluster. The hub is not in the cluster, but does point back into a node with in the cluster as a length-1 caterpillar.
     */
   case class Wheel(graph:ClusterGraph, hub:Cluster,override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
@@ -60,13 +60,15 @@ object Agglomerate {
     */
   case class Cycle(graph:ClusterGraph, cycle:Seq[Cluster],override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
+
+    //todo Cycles with different starting points in the cycle member sequence should be equal
   }
 
   /**
-    * A cluster with members that form a chain.
+    * A cluster with members that form a chain. The head is not in the cluster; it's where the cluster plugs in to another structure.
     */
   //TODO I am curious about length 1 Caterpillars. They violate my scale-up rule, but I'm not sure if they cause actual problems. Plan is to leave them in for now, see if they get swept up neatly in the next iteration.
-  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster],override val generation:Int) extends Cluster(generation) {
+  case class Caterpillar(graph:ClusterGraph, nodes:Seq[Cluster], head:Cluster,override val generation:Int) extends Cluster(generation) {
     override def members: Set[Cluster] = graph.nodes
   }
 
@@ -199,7 +201,7 @@ object Agglomerate {
     }
   }
 
-  case class FormWheel(archType:Cluster, members:Set[Cluster]) extends FormCluster {
+  case class FormWheel(archType:Cluster, members:Set[Cluster],hub:Cluster) extends FormCluster {
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Wheel,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
       (Wheel(clusterGraph,archType,firstMember(members).generation + 1),externalEdges)
@@ -211,7 +213,7 @@ object Agglomerate {
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
-      (Caterpillar(clusterGraph,tail,firstMember(members).generation + 1),externalEdges)
+      (Caterpillar(clusterGraph,tail,head,firstMember(members).generation + 1),externalEdges)
     }
   }
 
@@ -230,6 +232,8 @@ object Agglomerate {
     val pickedClustersToSets: Map[Cluster, Set[Cluster]] = clustersToPicked.groupBy(c2c => c2c._2).map(c2cmap => (c2cmap._1,c2cmap._2.keySet))
     //Wheels and Siblings first
     val (wheelsOrSiblings,pathLikeThings) = pickedClustersToSets.partition(x => x._2.size > 1) //Set size is >= 1, never an empty set from the groupBy
+
+    //The
 
     //The hub of a wheel might be in pathLikeThings, or something else's sibling, so it isn't actually part of a wheel.
     //todo think about if you even have wheels
@@ -254,6 +258,7 @@ object Agglomerate {
       next.fold(List(link))(next => link :: createChain(next))
     }
 
+    //todo don't do the reverse
     val chains: Set[FormCaterpillar] = chainStarts.map(createChain).map(_.reverse)map(x => FormCaterpillar(x.tail,x.head))
     //todo find size = 1 chains and put these warts in the cluster that they point to (to preserve the "always combine one node with at least one other) if it needs to be done
 

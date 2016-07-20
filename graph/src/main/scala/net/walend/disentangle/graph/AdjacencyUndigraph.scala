@@ -103,6 +103,18 @@ case class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the ma
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"
   }
+
+  override def equals(that: Any): Boolean =
+    that match {
+
+      case that: Graph[_] =>
+        (edges.toSet.equals(that.edges.toSet)) && (nodes.equals(that.nodes))
+
+      case _ => false
+    }
+
+  override lazy val hashCode:Int = edges.toSet.hashCode() + nodes.hashCode()
+
 }
 
 object AdjacencyUndigraph{
