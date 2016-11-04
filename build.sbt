@@ -4,12 +4,12 @@ name := "Disentangle"
 organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-//version := "0.2.2-SNAPSHOT"
-version := "0.2.1"
+version := "0.2.2-SNAPSHOT"
+//version := "0.2.1"
 
 isSnapshot := false
 
-scalaVersion := "2.11.8"
+scalaVersion in ThisBuild := "2.12.0"
 
 sbtVersion := "0.13.11"
 
@@ -22,7 +22,6 @@ lazy val root: Project = Project(
   )
 )
 .settings(unidocSettings: _*)
-
 
 lazy val graph = project
 

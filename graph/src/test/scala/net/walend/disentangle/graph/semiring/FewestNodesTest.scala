@@ -139,7 +139,7 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }
-
+/*
   "Parallel Dijkstra for Enron data" should "be calculated" in {
 
     import scala.io.Source
@@ -153,5 +153,5 @@ class FewestNodesTest extends FlatSpec with Matchers {
 
     val labels = Dijkstra.parAllPairsLeastPaths(edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.empty)
   }
-
+*/
 }

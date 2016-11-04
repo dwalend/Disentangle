@@ -225,7 +225,7 @@ AL TN
 
     }
   }
-
+/*
   "Betweenness for Enron data" should "be calculated" in {
 
     import scala.io.Source
@@ -239,4 +239,5 @@ AL TN
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(edges,Seq.empty,support,FewestNodes.convertEdgeToLabel)
   }
+  */
 }
