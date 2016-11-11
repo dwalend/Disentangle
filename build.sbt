@@ -1,3 +1,5 @@
+import sbt.Keys._
+
 name := "Disentangle"
 
 //organization in ThisBuild := "net.walend.disentangle"
@@ -5,31 +7,56 @@ organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
 version := "0.2.2-SNAPSHOT"
-//version := "0.2.1"
 
-isSnapshot := false
+isSnapshot := true
 
-scalaVersion in ThisBuild := "2.12.0"
+scalaVersion in ThisBuild := "2.11.8" //"2.12.0"
+
+scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
 sbtVersion := "0.13.11"
 
 lazy val root: Project = Project(
   id        = "root",
   base      = file("."),
-  aggregate = Seq(graph, toScalaGraph, benchmark, examples),
+  aggregate = Seq(graphCross
+    , toScalaGraph, benchmark, examples),
   settings  = Project.defaultSettings ++ Seq(
     packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
   )
 )
 .settings(unidocSettings: _*)
 
-lazy val graph = project
+lazy val graphCross = project.in(file("graph")).
+  aggregate(graphJS, graphJVM).
+  settings(
+    publish := {},
+    publishLocal := {}
+  )
 
-lazy val toScalaGraph = project.dependsOn(graph)
+lazy val graph = crossProject.in(file("graph")).
+  settings(
+    name := "graph"
+  ).
+  jvmSettings(
+    libraryDependencies ++= Seq(
+      "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+      "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test", //for timing comparisons
+      "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
+    )
+  ).
+  jsSettings(
+    // Add JS-specific settings here
+  )
 
-lazy val benchmark = project.dependsOn(graph,toScalaGraph % "test->test;compile->compile")
+lazy val graphJVM = graph.jvm
+lazy val graphJS = graph.js
 
-lazy val examples = project.dependsOn(graph % "test->test;compile->compile")
+lazy val toScalaGraph = project.dependsOn(graphJVM)
+
+lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")
+
+lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile")
 
 //git.remoteRepo := "git@github.com:dwalend/disentangle.git"
 

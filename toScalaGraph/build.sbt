@@ -1,4 +1,4 @@
-libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.11.3"
+libraryDependencies += "com.assembla.scala-incubator" %% "graph-core" % "1.11.0"
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
