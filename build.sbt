@@ -10,7 +10,7 @@ version := "0.2.2-SNAPSHOT"
 
 isSnapshot := true
 
-scalaVersion in ThisBuild := "2.11.11" //"2.12.0"
+scalaVersion in ThisBuild := "2.12.2"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
@@ -20,7 +20,7 @@ lazy val root: Project = Project(
   id        = "root",
   base      = file("."),
   aggregate = Seq(graphCross
-    , toScalaGraph, benchmark, examples),
+    , examples), //todo someday add back toScalaGraph and benchmark
   settings  = Project.defaultSettings ++ Seq(
     packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
   )
@@ -52,9 +52,9 @@ lazy val graph = crossProject.in(file("graph")).
 lazy val graphJVM = graph.jvm
 lazy val graphJS = graph.js
 
-lazy val toScalaGraph = project.dependsOn(graphJVM)
+//lazy val toScalaGraph = project.dependsOn(graphJVM)
 
-lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")
+//lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")   //todo remove dependency on toScalaGraph
 
 lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile")
 
