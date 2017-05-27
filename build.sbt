@@ -10,7 +10,7 @@ version := "0.2.2-SNAPSHOT"
 
 isSnapshot := true
 
-scalaVersion in ThisBuild := "2.11.8" //"2.12.0"
+scalaVersion in ThisBuild := "2.11.11" //"2.12.0"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
@@ -40,7 +40,7 @@ lazy val graph = crossProject.in(file("graph")).
   ).
   jvmSettings(
     libraryDependencies ++= Seq(
-      "org.scalatest" % "scalatest_2.11" % "3.0.0" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
       "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test", //for timing comparisons
       "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
     )
