@@ -20,7 +20,7 @@ lazy val root: Project = Project(
   id        = "root",
   base      = file("."),
   aggregate = Seq(graphCross
-    , examples), //todo someday add back toScalaGraph and benchmark
+    ,toScalaGraph, benchmark, examples),
   settings  = Project.defaultSettings ++ Seq(
     packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
   )
@@ -52,9 +52,8 @@ lazy val graph = crossProject.in(file("graph")).
 lazy val graphJVM = graph.jvm
 lazy val graphJS = graph.js
 
-//lazy val toScalaGraph = project.dependsOn(graphJVM)
-
-//lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")   //todo remove dependency on toScalaGraph
+lazy val toScalaGraph = project.dependsOn(graphJVM)
+lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")   //todo remove dependency on toScalaGraph
 
 lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile")
 
