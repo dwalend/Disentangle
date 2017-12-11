@@ -10,22 +10,21 @@ version := "0.2.2-SNAPSHOT"
 
 isSnapshot := true
 
-scalaVersion in ThisBuild := "2.12.2"
+scalaVersion in ThisBuild := "2.12.4"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
-sbtVersion := "0.13.11"
+sbtVersion := "1.0.3"
 
 lazy val root: Project = Project(
   id        = "root",
-  base      = file("."),
-  aggregate = Seq(graphCross
-    ,toScalaGraph, benchmark, examples),
-  settings  = Project.defaultSettings ++ Seq(
+  base      = file(".")
+).aggregate(graphCross,toScalaGraph,benchmark,examples)
+.settings(
     packagedArtifacts := Map.empty           // prevent publishing superproject artifacts
   )
-)
-.settings(unidocSettings: _*)
+
+//.settings(unidocSettings: _*)
 
 lazy val graphCross = project.in(file("graph")).
   aggregate(graphJS, graphJVM).
