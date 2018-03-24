@@ -7,29 +7,11 @@ Most graph libraries available on the internet provide some way to find shortest
 
 Further, the library provides support for computational stability. The same input will reliably result in the same output. Small changes in input typically result in small changes in output. The semiring-based algorithms offer an optional nodeOrder argument to provide that stability.
 
-## Changes in 0.2.1, the fifth release
-
-* Added implicit methods to graphs for algorithms via pimping in net.walend.disentangle.graph.{LabelDigraphSemiringAlgorithms, LabelUndigraphSemiringAlgorithms}
-** The undirected graph versions correct Brandes betweenness in undirected graphs (by dividing by 2).
-* Added Undigraph, a trait for undirected graphs
-* Added hierarchy down to AdjacencyLabelUndigraph, an immutable adjacency list labeled undirected digraph.
-* Added a proof-of-concept clustering algorithm. (Isolated in the graph test .jar. Definitely not ready for general use.)
-
-## Changes in 0.2.0, the forth release
-
-* [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).
-* Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
-* Restructured into subprojects to minimize dependencies on third-party libraries in your code
-** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https://github.com/dwalend/Disentangle/tree/master/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https://github.com/dwalend/Disentangle/tree/master/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
-* Started tracking [performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
-* Added [helper methods](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) to some semirings to produce shortest paths.
-
-
 ## Getting Disentangle
 
 The easiest way to include this project in yours is to add the jar files from sonatype's mvn repository.
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.1" 
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.2" 
 
 ### The Latest Snapshot (When Available)
 
@@ -314,6 +296,27 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 * Concurrent Graph structure
 * Parallel queued graph minimization
 * Parallel A* variations
+
+## Changes in 0.2.2, the sixth release
+
+* Upgraded to Scala version 2.12.4
+
+## Changes in 0.2.1, the fifth release
+
+* Added implicit methods to graphs for algorithms via pimping in net.walend.disentangle.graph.{LabelDigraphSemiringAlgorithms, LabelUndigraphSemiringAlgorithms}
+** The undirected graph versions correct Brandes betweenness in undirected graphs (by dividing by 2).
+* Added Undigraph, a trait for undirected graphs
+* Added hierarchy down to AdjacencyLabelUndigraph, an immutable adjacency list labeled undirected digraph.
+* Added a proof-of-concept clustering algorithm. (Isolated in the graph test .jar. Definitely not ready for general use.)
+
+## Changes in 0.2.0, the forth release
+
+* [Renamed the project Disentangle](http://dwalend.github.io/blog/2015/11/03/Rename-to-Disentangle/) from ScalaGraphMinimizer (which was nearly impossible to say).
+* Added [parallel versions](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) of Dijkstra's and Brandes' algorithms for all shortest paths.
+* Restructured into subprojects to minimize dependencies on third-party libraries in your code
+** Added an [example subproject](https://github.com/dwalend/Disentangle/tree/master/examples/src/main/scala/net/walend/disentangle/examples), [benchmark subproject](https://github.com/dwalend/Disentangle/tree/master/benchmark/src/main/scala/net/walend/disentangle/graph/semiring/benchmark), and [toScalaGraph subproject](https://github.com/dwalend/Disentangle/tree/master/toScalaGraph/src/main/scala/net/walend/disentangle/scalagraph/semiring/ConvertToLabelDigraph.scala)
+* Started tracking [performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) (No javascript rendering in README.mds, but [try this page on your own](https://github.com/dwalend/Disentangle/blob/master/benchmark/src/main/html/plot.html).)
+* Added [helper methods](https://github.com/dwalend/Disentangle/blob/master/examples/src/main/scala/net/walend/disentangle/examples/DijkstraExample.scala) to some semirings to produce shortest paths.
 
 ## License and Contributions
 

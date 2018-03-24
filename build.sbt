@@ -6,15 +6,15 @@ name := "Disentangle"
 organization in ThisBuild := "net.walend.disentangle"
 
 // Project version. Only release version (w/o SNAPSHOT suffix) can be promoted.
-version := "0.2.2-SNAPSHOT"
+version := "0.2.2"
 
-isSnapshot := true
+isSnapshot := false
 
 scalaVersion in ThisBuild := "2.12.4"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
-sbtVersion := "1.0.3"
+sbtVersion := "1.1.1"
 
 lazy val root: Project = Project(
   id        = "root",
@@ -58,8 +58,15 @@ lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile")
 
 //git.remoteRepo := "git@github.com:dwalend/disentangle.git"
 
-publishMavenStyle := true
+//tod why didn't this work?
+//credentials += Credentials(Path.userHome / ".sbt" / "1.0" / "sonatype.sbt")
 
+credentials += Credentials("Sonatype Nexus Repository Manager",
+  "oss.sonatype.org",
+  "dwalend",
+  "changeme")
+
+publishMavenStyle := true
 
 publishTo in ThisBuild := {
   val nexus = "https://oss.sonatype.org/"
