@@ -7,6 +7,8 @@ import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
 import net.walend.disentangle.heap.{HeapOrdering, Heap, FibonacciHeap}
 import scala.collection.{GenSeq, GenTraversable}
 
+import scala.collection.immutable.List
+
 /**
  * Brandes' algorithm for betweenness and minimal paths.
  *
@@ -326,19 +328,19 @@ object Brandes {
 
 }
 
-case class Stack[A](var elems:List[A] = List.empty) {
+case class Stack[A](var list:List[A] = List.empty) {
 
-  def push(elem: A): this.type = { elems = elem :: elems; this }
+  def push(elem: A): this.type = { list = elem :: list; this }
 
-  def map[B](f: A => B) = Stack(elems.map(f))
+  def map[B](f: A => B) = Stack(list.map(f))
 
-  def filter(p: A => Boolean) = Stack(elems.filter(p))
+  def filter(p: A => Boolean) = Stack(list.filter(p))
 
-  def nonEmpty: Boolean = elems.nonEmpty
+  def nonEmpty: Boolean = list.nonEmpty
 
   def pop(): A = {
-    val res = elems.head
-    elems = elems.tail
-    res
+    val result = list.head
+    list = list.tail
+    result
   }
 }
