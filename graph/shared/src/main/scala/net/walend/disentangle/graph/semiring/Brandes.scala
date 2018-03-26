@@ -17,8 +17,6 @@ import scala.collection.{GenSeq, GenTraversable}
 
 object Brandes {
 
-  import scala.collection.mutable.Stack
-
   /**
    * Dijkstra's algorithm for a single sink, with a Seq of visited edges to support Brandes' algorithm.
    *
@@ -326,4 +324,21 @@ object Brandes {
     def apply[Node]():BrandesSupport[Node,Int,Int] = new BrandesSupport[Node,Int,Int](FewestNodes)
   }
 
+}
+
+case class Stack[A](var elems:List[A] = List.empty) {
+
+  def push(elem: A): this.type = { elems = elem :: elems; this }
+
+  def map[B](f: A => B) = Stack(elems.map(f))
+
+  def filter(p: A => Boolean) = Stack(elems.filter(p))
+
+  def nonEmpty: Boolean = elems.nonEmpty
+
+  def pop(): A = {
+    val res = elems.head
+    elems = elems.tail
+    res
+  }
 }
