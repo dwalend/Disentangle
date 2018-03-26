@@ -19,7 +19,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.2-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.3-SNAPSHOT"
 
 ### Clone the Code
 
