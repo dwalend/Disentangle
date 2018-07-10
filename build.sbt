@@ -10,7 +10,7 @@ version := "0.2.3-SNAPSHOT"
 
 isSnapshot := true
 
-scalaVersion in ThisBuild := "2.12.5" //todo go to 2.12.5 when scala.js catches up
+scalaVersion in ThisBuild := "2.12.6" 
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
