@@ -82,6 +82,8 @@ If you are already using net.walend.graph._ graphs
 You'll need to bring a GenTraversable[(Node,Node,Edge)] for your graph.
 
 ```tut
+    import net.walend.disentangle.graph.semiring.Dijkstra
+
     val edges = Seq(
                     ("A","B","ab"),
                     ("B","C","bc"),

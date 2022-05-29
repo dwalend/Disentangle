@@ -14,7 +14,7 @@ scalaVersion in ThisBuild := "2.12.6"
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation","-feature")
 
-sbtVersion := "1.1.1"
+sbtVersion := "1.1.6"
 
 lazy val root: Project = Project(
   id        = "root",
@@ -39,7 +39,7 @@ lazy val graph = crossProject.in(file("graph")).
   ).
   jvmSettings(
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+      "org.scalatest" %% "scalatest" % "3.0.5" % "test",
       "net.sf.jung" % "jung-graph-impl" % "2.0.1" % "test", //for timing comparisons
       "net.sf.jung" % "jung-algorithms" % "2.0.1" % "test" //for timing comparisons
     )
@@ -54,7 +54,7 @@ lazy val graphJS = graph.js
 lazy val toScalaGraph = project.dependsOn(graphJVM)
 lazy val benchmark = project.dependsOn(graphJVM,toScalaGraph % "test->test;compile->compile")   //todo remove dependency on toScalaGraph
 
-lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile")
+lazy val examples = project.dependsOn(graphJVM % "test->test;compile->compile").enablePlugins(TutPlugin)
 
 //git.remoteRepo := "git@github.com:dwalend/disentangle.git"
 
