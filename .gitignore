@@ -1,6 +1,12 @@
 *.class
 *.log
 
+#mill specific
+out/*
+
+#bsp
+.bsp/*
+
 # sbt specific
 dist/*
 target/
