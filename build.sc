@@ -13,7 +13,7 @@ object Shared {
   val javaVersion = "11.0.10" //todo new release?
 }
 
-object graph extends ScalaModule {
+object Graph extends ScalaModule {
   override def artifactName: T[String] = "Disentangle-Graph"
 
   def scalaVersion = Shared.scalaVersion
