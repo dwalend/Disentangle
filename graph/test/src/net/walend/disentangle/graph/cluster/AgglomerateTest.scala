@@ -52,7 +52,7 @@ class AgglomerateTest extends FlatSpec with Matchers {
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
 
     val expectedInitial: AdjacencyUndigraph[Cluster] = AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B))))
-    val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)))),Seq(I(A),I(B)),2)
+    val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)))),Seq(I(B),I(A)),2)
     val expectedClusters: List[ClusterGraph] = List(expectedInitial, AdjacencyUndigraph(nodes = Seq(expectedCycle)))
 
     clusters should be(expectedClusters)
@@ -65,7 +65,7 @@ class AgglomerateTest extends FlatSpec with Matchers {
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
 
     val expectedInitial: AdjacencyUndigraph[Cluster] = AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)),NodePair(I(B),I(C)),NodePair(I(C),I(A))))
-    val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)),NodePair(I(B),I(C)),NodePair(I(C),I(A)))),Seq(I(B),I(A),I(C)),2)
+    val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)),NodePair(I(B),I(C)),NodePair(I(C),I(A)))),Seq(I(C),I(B),I(A)),2)
     val expectedClusters: List[ClusterGraph] = List(expectedInitial, AdjacencyUndigraph(nodes = Seq(expectedCycle)))
 
     clusters should be(expectedClusters)
