@@ -5,17 +5,20 @@ import coursier.Repository
 import mill.api.Loose
 import mill.api.Result
 import mill.define.{Command, Target}
+import mill.scalajslib.ScalaJSModule
 import os.{CommandResult, Path}
 
 object Shared {
   val scalacOptions = Seq("-deprecation")
+  val scalaJSVersion = "1.7.1"
   val scalaVersion = "2.12.16" //todo move to scala 2.13, then scala 3
   val javaVersion = "11.0.10" //todo new release?
 }
 
-object Graph extends ScalaModule {
+object Graph extends ScalaJSModule {
   override def artifactName: T[String] = "Disentangle-Graph"
 
+  def scalaJSVersion = Shared.scalaJSVersion
   def scalaVersion = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
