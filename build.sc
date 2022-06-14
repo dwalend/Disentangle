@@ -11,11 +11,11 @@ import os.{CommandResult, Path}
 object Shared {
   val scalacOptions = Seq("-deprecation")
   val scalaJSVersion = "1.7.1"
-  val scalaVersion = "2.12.16" //todo move to scala 2.13, then scala 3
+  val scalaVersion = "2.12.16" //todo move to scala 2.13.8, then scala 3.0.2, then scala 3.1.2
   val javaVersion = "11.0.10" //todo new release?
 }
 
-object Graph extends ScalaJSModule {
+object Graph extends ScalaModule {  //todo ScalaJSModule does not play nice with ScalaTest
   override def artifactName: T[String] = "Disentangle-Graph"
 
   def scalaJSVersion = Shared.scalaJSVersion
@@ -38,5 +38,26 @@ object Graph extends ScalaJSModule {
     os.copy.over(target.path, millw)
     os.perms.set(millw, os.perms(millw) + java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE)
     target
+  }
+}
+
+object Examples extends ScalaModule {
+  override def artifactName: T[String] = "Disentangle-Examples"
+
+  def scalaJSVersion = Shared.scalaJSVersion
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
+
+  override def scalacOptions = Shared.scalacOptions
+
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
+
+  object test extends Tests with TestModule.ScalaTest {
+
+    override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
+
+    def ivyDeps = Agg(
+      ivy"org.scalatest::scalatest:3.0.5"
+    )
   }
 }

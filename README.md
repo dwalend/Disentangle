@@ -281,7 +281,10 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## Roadmap for Future Work
 
-### Next Big Release
+### Next Release 0.3
+
+* Build with mill
+* Update to latest Scala and Scala JS
 
 ### New Algorithms
 
@@ -293,7 +296,7 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ### More Semirings
 
-### Concurrent Graph Minization
+### Concurrent Graph Minimization
 
 * Concurrent Graph structure
 * Parallel queued graph minimization
