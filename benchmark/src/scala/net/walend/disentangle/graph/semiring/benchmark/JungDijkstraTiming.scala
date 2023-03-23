@@ -28,8 +28,9 @@ object JungDijkstraTiming extends Timeable {
 
     val dijkstraShortestPath = new DijkstraShortestPath(jungGraph)
     val result = TimingStudy.timeFunction {
-      import scala.collection.JavaConversions.iterableAsScalaIterable
-      for (node <- iterableAsScalaIterable(jungGraph.getVertices)) {
+
+      import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+      for (node <- jungGraph.getVertices) {
         dijkstraShortestPath.getIncomingEdgeMap(node)
       }
     }

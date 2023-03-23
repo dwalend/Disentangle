@@ -163,7 +163,8 @@ object TimingStudiesTest {
   }
 
   def nodeCountsFrom32(exponent:Int):Seq[Int] = {
-    (5.0.to(exponent.toDouble,0.25)).map(x => Math.pow(2,x).toInt)
+    //noinspection ScalaDeprecation
+    (5.0.to(exponent,0.25)).map(x => Math.pow(2,x).toInt)
   }
 
   def warmUp[T](number:Int,body: ⇒ T) = {

@@ -168,8 +168,8 @@ class BrandesTest extends AnyFlatSpec with Matchers {
     }
 
     val jungBetweenCalc = new BetweennessCentrality(jungGraph)
-    import scala.collection.JavaConversions._
 
+    import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
     val jb = jungGraph.getVertices.to[Seq].map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
 
     jb

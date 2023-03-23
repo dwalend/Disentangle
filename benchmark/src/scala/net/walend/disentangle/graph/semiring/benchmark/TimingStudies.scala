@@ -52,7 +52,7 @@ object TimingStudies {
 
     val argsConfig: Option[ArgsConfig] = argsParser.parse(args,ArgsConfig())
 
-    argsConfig.fold(){ argsConfig =>
+    argsConfig.fold(()){ argsConfig =>
 //      val fileType = argsConfig.out.fold("csv")(file => file.getName.split('.').lastOption.fold("csv")(end => end))
       argsConfig.validate()
 

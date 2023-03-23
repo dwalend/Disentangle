@@ -54,7 +54,8 @@ case class TimingStudy(timeF:Int => Long,expectedF:((Int,Long),Int) => Long,minE
   }
 
   def nodeCountSeq(minExponent:Int,maxExponent:Int):Seq[Int] = {
-    (minExponent.toDouble.to(maxExponent.toDouble,0.25)).map(x => Math.pow(2,x).toInt)
+    //noinspection ScalaDeprecation
+    (minExponent.toDouble.to(maxExponent,0.25)).map(x => Math.pow(2,x).toInt)
   }
 
   def warmUp[T](number:Int,body: ⇒ T) = {
