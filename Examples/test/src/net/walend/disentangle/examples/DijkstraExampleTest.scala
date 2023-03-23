@@ -1,6 +1,7 @@
 package net.walend.disentangle.examples
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -8,7 +9,7 @@ import org.scalatest.{Matchers, FlatSpec}
  * @author dwalend
  * @since v0.2.0
  */
-class DijkstraExampleTest extends FlatSpec with Matchers {
+class DijkstraExampleTest extends AnyFlatSpec with Matchers {
 
   "The Dijkstra example" should "produce expected results" in {
     val edges = DijkstraExample.edges

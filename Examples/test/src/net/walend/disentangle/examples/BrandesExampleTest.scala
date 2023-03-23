@@ -1,9 +1,10 @@
 package net.walend.disentangle.examples
 
-import org.scalatest.{Matchers, FlatSpec}
 
 import net.walend.disentangle.graph.SomeGraph._
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -11,7 +12,7 @@ import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
  * @author dwalend
  * @since v0.2.0
  */
-class BrandesExampleTest extends FlatSpec with Matchers {
+class BrandesExampleTest extends AnyFlatSpec with Matchers {
 
   "The Brandes example" should "produce expected results" in {
 

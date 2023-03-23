@@ -1,8 +1,9 @@
 package net.walend.disentangle.graph.semiring
 
-import org.scalatest.{Matchers, FlatSpec}
 import net.walend.disentangle.graph.SomeGraph
 import SomeGraph._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  * Tests algorithms with LeastWeights
@@ -11,7 +12,7 @@ import SomeGraph._
  * @since v0.1.0
  */
 
-class LeastWeightsTest extends FlatSpec with Matchers {
+class LeastWeightsTest extends AnyFlatSpec with Matchers {
 
   val arcsToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
                                                               ,bc -> 2.0

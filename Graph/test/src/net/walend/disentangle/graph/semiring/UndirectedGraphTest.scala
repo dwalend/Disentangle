@@ -2,7 +2,8 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.SomeGraph
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   *
@@ -10,7 +11,7 @@ import org.scalatest.{Matchers, FlatSpec}
   * @author dwalend
   * @since v0.2.1
   */
-class UndirectedGraphTest extends FlatSpec with Matchers {
+class UndirectedGraphTest extends AnyFlatSpec with Matchers {
 
   import SomeGraph._
 

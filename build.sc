@@ -10,9 +10,9 @@ import os.{CommandResult, Path}
 
 object Shared {
   val scalacOptions = Seq("-deprecation")
-  val scalaJSVersion = "1.7.1"
-  val scalaVersion = "2.12.16" //todo move to scala 2.13.8, then scala 3.0.2, then scala 3.1.2
-  val javaVersion = "11.0.10" //todo new release?
+  val scalaJSVersion = "1.13.0" //todo set up javascript again
+  val scalaVersion = "2.12.17" //todo move to scala 2.13.8, then scala 3.0.2, then scala 3.1.2
+  val javaVersion = "17.0.6"
 }
 
 object Graph extends ScalaModule {  //todo ScalaJSModule does not play nice with ScalaTest
@@ -26,9 +26,9 @@ object Graph extends ScalaModule {  //todo ScalaJSModule does not play nice with
 
   object test extends Tests with TestModule.ScalaTest {
     def ivyDeps = Agg(
-      ivy"org.scalatest::scalatest:3.0.5",
-      ivy"net.sf.jung:jung-graph-impl:2.0.1",
-      ivy"net.sf.jung:jung-algorithms:2.0.1"
+      ivy"org.scalatest::scalatest:3.2.15",
+      ivy"net.sf.jung:jung-graph-impl:2.1.1",
+      ivy"net.sf.jung:jung-algorithms:2.1.1"
     )
   }
 
@@ -57,7 +57,7 @@ object Examples extends ScalaModule {
     override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
 
     def ivyDeps = Agg(
-      ivy"org.scalatest::scalatest:3.0.5"
+      ivy"org.scalatest::scalatest:3.2.15"
     )
   }
 }
@@ -74,10 +74,10 @@ object Benchmark extends ScalaModule {
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
 
   def ivyDeps = Agg(
-    ivy"org.scalatest::scalatest:3.0.5",
-    ivy"net.sf.jung:jung-graph-impl:2.0.1",
-    ivy"net.sf.jung:jung-algorithms:2.0.1",
-    ivy"com.github.scopt::scopt:3.5.0"
+    ivy"org.scalatest::scalatest:3.2.15",
+    ivy"net.sf.jung:jung-graph-impl:2.1.1",
+    ivy"net.sf.jung:jung-algorithms:2.1.1",
+    ivy"com.github.scopt::scopt:4.1.0"
   )
 
   object test extends Tests with TestModule.ScalaTest {
@@ -85,7 +85,7 @@ object Benchmark extends ScalaModule {
     override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
 
     def ivyDeps = Agg(
-      ivy"org.scalatest::scalatest:3.0.5"
+      ivy"org.scalatest::scalatest:3.2.15"
     )
   }
 }

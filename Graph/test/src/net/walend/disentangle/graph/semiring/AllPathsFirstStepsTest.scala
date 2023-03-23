@@ -1,8 +1,9 @@
 package net.walend.disentangle.graph.semiring
 
-import org.scalatest.{Matchers, FlatSpec}
 import net.walend.disentangle.graph.SomeGraph
 import SomeGraph._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.GenTraversable
 
@@ -12,7 +13,7 @@ import scala.collection.GenTraversable
  * @author dwalend
  * @since v0.1.0
  */
-class AllPathsFirstStepsTest extends FlatSpec with Matchers {
+class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
 
   val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 

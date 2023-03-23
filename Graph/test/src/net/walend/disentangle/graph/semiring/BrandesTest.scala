@@ -1,11 +1,12 @@
 package net.walend.disentangle.graph.semiring
 
-import org.scalatest.{Matchers, FlatSpec}
-import net.walend.disentangle.graph.{LabelDigraph, AdjacencyLabelDigraph, SomeGraph}
+import net.walend.disentangle.graph.{AdjacencyLabelDigraph, LabelDigraph, SomeGraph}
 import SomeGraph._
 import Brandes.BrandesSteps
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-import scala.collection.{GenSeq, GenMap}
+import scala.collection.{GenMap, GenSeq}
 
 /**
  *
@@ -13,7 +14,7 @@ import scala.collection.{GenSeq, GenMap}
  * @author dwalend
  * @since v0.1.0
  */
-class BrandesTest extends FlatSpec with Matchers {
+class BrandesTest extends AnyFlatSpec with Matchers {
 
   val expectedArcs = Set[(String,String,Option[BrandesSteps[String,Int]])](
     (A,A,Some(BrandesSteps(0,1,Seq()))),

@@ -1,8 +1,9 @@
 package net.walend.disentangle.graph.semiring
 
-import org.scalatest.{Matchers, FlatSpec}
 import net.walend.disentangle.graph.SomeGraph
 import SomeGraph._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  * Tests algorithms with FewestNodes
@@ -11,7 +12,7 @@ import SomeGraph._
  * @since v0.1.0
  */
 
-class FewestNodesTest extends FlatSpec with Matchers {
+class FewestNodesTest extends AnyFlatSpec with Matchers {
 
   "Initializing the label graph" should "produce a label graph with self-arcs and arcs where SomeGraph has them" in {
 

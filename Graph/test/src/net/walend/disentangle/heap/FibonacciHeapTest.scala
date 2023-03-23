@@ -1,6 +1,8 @@
 package net.walend.disentangle.heap
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+
 
 /**
  * Tests of a Fibonacci Heap
@@ -8,7 +10,7 @@ import org.scalatest.{Matchers, FlatSpec}
  * @author dwalend
  * @since v0.0.0
  */
-class FibonacciHeapTest extends FlatSpec with Matchers {
+class FibonacciHeapTest extends AnyFlatSpec with Matchers {
 
   def emptyHeap = new FibonacciHeap[Double,String](MinDoubleHeapOrdering)
   def oneMemberHeap:FibonacciHeap[Double,String] = {

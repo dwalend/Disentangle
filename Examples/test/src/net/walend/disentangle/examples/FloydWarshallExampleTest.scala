@@ -1,12 +1,11 @@
 package net.walend.disentangle.examples
 
-import org.scalatest.{Matchers, FlatSpec}
-
 import net.walend.disentangle.graph.IndexedLabelDigraph
 import net.walend.disentangle.graph.mutable.MatrixLabelDigraph
 import net.walend.disentangle.graph.semiring.{FirstStepsTrait, FloydWarshall}
-
 import net.walend.disentangle.graph.SomeGraph._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -14,7 +13,7 @@ import net.walend.disentangle.graph.SomeGraph._
  * @author dwalend
  * @since v0.2.0
  */
-class FloydWarshallExampleTest extends FlatSpec with Matchers {
+class FloydWarshallExampleTest extends AnyFlatSpec with Matchers {
 
   val support  = FloydWarshall.defaultSupport[String]
 
