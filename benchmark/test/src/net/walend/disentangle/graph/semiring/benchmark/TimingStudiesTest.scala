@@ -1,9 +1,9 @@
 package net.walend.disentangle.graph.semiring.benchmark
 
-import scalax.collection.GraphPredef.EdgeLikeIn
+//import scalax.collection.GraphPredef.EdgeLikeIn
 
 import net.walend.disentangle.graph.semiring.{Dijkstra, FloydWarshall, Brandes, FewestNodes, FirstStepsTrait, AllPathsFirstSteps}
-import net.walend.disentangle.scalagraph.semiring.{ConvertToLabelDigraph, GraphFactory}
+//import net.walend.disentangle.scalagraph.semiring.{ConvertToLabelDigraph, GraphFactory}
 
 /**
  * @author dwalend
@@ -71,7 +71,7 @@ object TimingStudiesTest {
 
     result._2
   }
-
+/*
   def timeJungDijkstra(nodeCount:Int):Long = {
 
     val graph = GraphFactory.createRandomNormalGraph(nodeCount,16)
@@ -99,7 +99,7 @@ object TimingStudiesTest {
 
     result._2
   }
-
+*/
   def expectedTimeDijkstra(calibration:(Int,Long),nodeCount:Int):Long = {
 
     //O(|V|^2 ln|V|)
@@ -119,7 +119,7 @@ object TimingStudiesTest {
 
     ((bigO(nodeCount)/bigO(calibration._1))*calibration._2).toLong
   }
-
+/*
   def timeScalaGraphConvertDijkstra(nodeCount:Int):Long = {
 
     import scalax.collection.Graph
@@ -143,7 +143,7 @@ object TimingStudiesTest {
 
     result._2
   }
-
+*/
   def expectedTimeFloyd(calibration:(Int,Long),nodeCount:Int):Long = {
     (Math.pow(nodeCount.toDouble/calibration._1,3) * calibration._2).toLong
   }

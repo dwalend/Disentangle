@@ -61,3 +61,31 @@ object Examples extends ScalaModule {
     )
   }
 }
+
+object Benchmark extends ScalaModule {
+  override def artifactName: T[String] = "Disentangle-Benchmark"
+
+  def scalaJSVersion = Shared.scalaJSVersion
+  def scalaVersion = Shared.scalaVersion
+  def javaVersion = Shared.javaVersion
+
+  override def scalacOptions = Shared.scalacOptions
+
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
+
+  def ivyDeps = Agg(
+    ivy"org.scalatest::scalatest:3.0.5",
+    ivy"net.sf.jung:jung-graph-impl:2.0.1",
+    ivy"net.sf.jung:jung-algorithms:2.0.1",
+    ivy"com.github.scopt::scopt:3.5.0"
+  )
+
+  object test extends Tests with TestModule.ScalaTest {
+
+    override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
+
+    def ivyDeps = Agg(
+      ivy"org.scalatest::scalatest:3.0.5"
+    )
+  }
+}
