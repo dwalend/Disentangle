@@ -1,11 +1,12 @@
 package net.walend.disentangle.graph.semiring
 
-import scala.collection.parallel.ParSeq
-import scala.collection.parallel.immutable.ParMap
+//todo make it parallel again
+//import scala.collection.parallel.ParSeq
+//import scala.collection.parallel.immutable.ParMap
 
 import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
 import net.walend.disentangle.heap.{HeapOrdering, Heap, FibonacciHeap}
-import scala.collection.{GenSeq, GenTraversable}
+import scala.collection.{Seq, Iterable}
 
 import scala.collection.immutable.List
 
@@ -84,7 +85,7 @@ object Brandes {
       })
     }
 
-    partialBetweenness
+    IndexedSeq.from(partialBetweenness)
   }
 
   /**
@@ -92,14 +93,14 @@ object Brandes {
    *
    * @return an IndexedDigraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)] = Seq.empty,
-                                                         nodeOrder: GenSeq[Node] = Seq.empty,
+  def createLabelDigraph[Node, EdgeLabel, CoreLabel, Key](edges: Iterable[(Node, Node, EdgeLabel)] = Seq.empty,
+                                                         nodeOrder: Seq[Node] = Seq.empty,
                                                          support: BrandesSupport[Node, CoreLabel, Key],
                                                          labelForEdge: (Node, Node, EdgeLabel) => CoreLabel): IndexedLabelDigraph[Node, Option[BrandesSteps[Node, CoreLabel]]] = {
 
     val nodes = (nodeOrder ++ edges.map(_._1) ++ edges.map(_._2)).distinct
     val nonSelfEdges = edges.filter(x => x._1 != x._2)
-    val labelEdges: GenSeq[(Node, Node, CoreLabel)] = nodes.map(x => (x,x,support.coreSupport.semiring.I)) ++
+    val labelEdges: Seq[(Node, Node, CoreLabel)] = nodes.map(x => (x,x,support.coreSupport.semiring.I)) ++
       nonSelfEdges.map(x => (x._1,x._2,labelForEdge(x._1,x._2,x._3)))
 
     //Use that to create the Brandes labels
@@ -111,8 +112,8 @@ object Brandes {
   /**
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
-  def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
-                                                                  nodeOrder: GenSeq[Node] = Seq.empty,
+  def allLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: Iterable[(Node, Node, EdgeLabel)],
+                                                                  nodeOrder: Seq[Node] = Seq.empty,
                                                                   coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                   labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
@@ -142,8 +143,9 @@ object Brandes {
   /**
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
-  def parAllLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
-                                                                   nodeOrder: GenSeq[Node] = Seq.empty,
+/* todo parallel
+  def parAllLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: Iterable[(Node, Node, EdgeLabel)],
+                                                                   nodeOrder: Seq[Node] = Seq.empty,
                                                                    coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                                    labelForEdge: (Node, Node, EdgeLabel) => CoreLabel = FewestNodes.edgeToLabelConverter): (ParSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], ParMap[Node, Double]) = {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
@@ -169,6 +171,7 @@ object Brandes {
 
     (shortPaths, betweennessMap)
   }
+  */
 
   case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Seq[Int]) {
 
@@ -286,7 +289,7 @@ object Brandes {
         })
       }
 
-      recurse(innerFrom,innerTo).to[Set]
+      Set.from(recurse(innerFrom,innerTo))
     }
 
     def allLeastPaths(leastPathDigraph:IndexedLabelDigraph[Node,Label],from:Node,to:Node):Seq[Seq[leastPathDigraph.InnerNodeType]] = {

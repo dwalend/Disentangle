@@ -141,7 +141,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
   private def consolidate():Unit = {
 
     import scala.collection.mutable.ArraySeq
-    val fibNodes:ArraySeq[FibonacciHeapMember] = new ArraySeq[FibonacciHeapMember](size)
+    val fibNodes:ArraySeq[FibonacciHeapMember] = ArraySeq.make(Array.ofDim[FibonacciHeapMember](size))
 
     var rootCount:Int = 0
     var x:FibonacciHeapMember = top
@@ -342,14 +342,14 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
       right.left = left
     }
 
-    private[FibonacciHeap] def cat(node: FibonacciHeapMember) {
+    private[FibonacciHeap] def cat(node: FibonacciHeapMember): Unit = {
       node.left = this
       node.right = right
       right = node
       node.right.left = node
     }
 
-    private[FibonacciHeap] def addChild(childNode: FibonacciHeapMember) {
+    private[FibonacciHeap] def addChild(childNode: FibonacciHeapMember): Unit = {
       if (child == null) {
         child = childNode
         childNode.right = childNode
@@ -363,7 +363,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
       childNode.lostChild = false
     }
 
-    private[FibonacciHeap] def releaseChild(childNode: FibonacciHeapMember) {
+    private[FibonacciHeap] def releaseChild(childNode: FibonacciHeapMember): Unit = {
       childNode.release()
       childCount = childCount - 1
       if (child == childNode) {

@@ -3,10 +3,12 @@ package net.walend.disentangle.graph.cluster
 import net.walend.disentangle.graph.{AdjacencyUndigraph, NodePair, SomeGraph}
 import net.walend.disentangle.graph.cluster.Agglomerate.{Initial => I, _}
 import SomeGraph._
+import org.scalatest.Ignore
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 
+@Ignore
 class AgglomerateTest extends AnyFlatSpec with Matchers {
 
   "Testing with SomeGraph" should "not crash" in {

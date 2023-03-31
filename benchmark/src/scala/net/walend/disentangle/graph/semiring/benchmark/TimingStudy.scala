@@ -10,7 +10,7 @@ import java.io.{File, FileOutputStream, PrintStream}
  */
 object TimingStudy {
 
-  def timeFunction[T](body: ⇒ T):(T,Long) = {
+  def timeFunction[T](body: => T):(T,Long) = {
     val startTime:Long = System.nanoTime()
     val result = body
     val endTime:Long = System.nanoTime()
@@ -54,11 +54,12 @@ case class TimingStudy(timeF:Int => Long,expectedF:((Int,Long),Int) => Long,minE
   }
 
   def nodeCountSeq(minExponent:Int,maxExponent:Int):Seq[Int] = {
-    //noinspection ScalaDeprecation
-    (minExponent.toDouble.to(maxExponent,0.25)).map(x => Math.pow(2,x).toInt)
+    val exponents: Seq[Double] = (0 to (maxExponent - minExponent) * 4).map(_.toDouble).map(_ / 4 + minExponent)
+
+    exponents.map(x => Math.pow(2, x).toInt)
   }
 
-  def warmUp[T](number:Int,body: ⇒ T) = {
+  def warmUp[T](number:Int,body: => T) = {
     for(i <- 0 until number) body
   }
 

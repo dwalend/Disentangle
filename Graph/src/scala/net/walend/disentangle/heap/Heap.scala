@@ -48,7 +48,7 @@ trait HeapOrdering[K] extends PartialOrdering[K] {
   /**
    * @throws IllegalArgumentException if the key is unusable
    */
-  def checkKey(key:K)
+  def checkKey(key:K):Unit
 
   /**
    * A key that will always be at the top of the heap if present at all. Used to efficiently remove items from the heap.

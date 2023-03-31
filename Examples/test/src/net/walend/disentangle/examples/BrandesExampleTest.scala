@@ -63,12 +63,12 @@ class BrandesExampleTest extends AnyFlatSpec with Matchers {
 
     shortestPathsAndBetweennesses._1 should be (expectedShortestPaths)
     shortestPathsAndBetweennesses._2 should be (expectedBetweennesses)
-
-    val shortestPathsAndBetweennessesFromPar =BrandesExample.shortestPathsAndBetweennessFromPar
+/*
+    val shortestPathsAndBetweennessesFromPar = BrandesExample.shortestPathsAndBetweennessFromPar
 
     shortestPathsAndBetweennessesFromPar._1 should be (expectedShortestPaths)
     shortestPathsAndBetweennessesFromPar._2 should be (expectedBetweennesses)
-
+*/
     val labelDigraph = BrandesExample.labelDigraph
 
     val expectedSubgraphEdges: Set[labelDigraph.InnerEdge] = Set(

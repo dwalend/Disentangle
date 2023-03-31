@@ -117,7 +117,7 @@ case class AllPathsFirstSteps[Node,CoreLabel,Key](coreSupport:SemiringSupport[Co
           if (firstSteps.choices == Set.empty) Seq(Seq(fromTo._2)) //No further steps. from should be to and the label should be I
           else {
             //Follow each choice and prepend the node this starts from
-            for (choice <- firstSteps.choices.to[Seq]) yield {
+            for (choice <- Seq.from(firstSteps.choices)) yield {
               val tails: Seq[Path] = leastPathsOfInnerNodes(leastPathDigraph.innerNode(choice), toInner)
               for (tail <- tails) yield {
                 Seq(fromTo._1 +: tail)

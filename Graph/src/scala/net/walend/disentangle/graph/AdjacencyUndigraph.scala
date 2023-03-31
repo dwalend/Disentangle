@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{GenMap, GenSeq, GenTraversable}
+import scala.collection.immutable.{Map, Seq, Iterable}
 
 /**
   * Provides constant-time access for edges of a node.
@@ -11,7 +11,7 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @since v0.2.1
   */
 case class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                               adjacencyMatrix:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
+                                    adjacencyMatrix:Vector[IndexedSet[NodePair[Node]]] // (i) is the edges for node i, (j) is the NodePair[node,node] pair to reach that second node.
                                          ) extends IndexedUndigraph[Node] {
 
   type InnerNodeType = InNode
@@ -120,25 +120,25 @@ case class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the ma
 object AdjacencyUndigraph{
 
   //noinspection ConvertibleToMethodValue
-  def apply[Node](edges:GenTraversable[NodePair[Node]] = Seq.empty,
-                        nodes:GenSeq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
+  def apply[Node](edges:Iterable[NodePair[Node]] = Seq.empty,
+                        nodes:Seq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues = Vector.from((nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct)
 
     val successorMap = edges.groupBy(x => x._1)
     val predecessorMap = edges.groupBy(x => x._2)
 
-    def getOrEmpty(n:Node,nodeToTrav:GenMap[Node,GenTraversable[NodePair[Node]]]) = {
-      nodeToTrav.getOrElse(n,Vector.empty[NodePair[Node]]).to[IndexedSet]
+    def getOrEmpty(n:Node,nodeToTrav:Map[Node,Iterable[NodePair[Node]]]) = {
+      IndexedSet.from(nodeToTrav.getOrElse(n,Vector.empty[NodePair[Node]]))
     }
 
-    val edgeAdjacencies = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
+    val edgeAdjacencies: Vector[IndexedSet[NodePair[Node]]] = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
 
-    new AdjacencyUndigraph(nodeValues.to[IndexedSet],edgeAdjacencies)
+    new AdjacencyUndigraph(IndexedSet.from(nodeValues),edgeAdjacencies)
   }
 
-  def fromPairs[Node](edges:GenTraversable[(Node,Node)],
-                      nodes:GenSeq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
+  def fromPairs[Node](edges:Iterable[(Node,Node)],
+                      nodes:Seq[Node] = Seq.empty): AdjacencyUndigraph[Node] = {
     apply(edges.map(x => NodePair(x._1,x._2)),nodes)
   }
 

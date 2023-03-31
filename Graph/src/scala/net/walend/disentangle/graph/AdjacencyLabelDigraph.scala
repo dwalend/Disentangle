@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{GenMap, GenSeq, GenTraversable}
+import scala.collection.{Map, Seq, Iterable}
 
 /**
  * Provides constant-time access for successor and predecessor edges of a node.
@@ -45,13 +45,13 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
   val nodeToInNode:Map[Node,InnerNode] = inNodes.map(x => x.value -> x).toMap
 
   def neighborSet(indexedSet:IndexedSet[(Node,Node,Label)]):IndexedSet[InnerEdgeType] = {
-    indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get,x._3))
+    indexedSet.map(x => InnerEdge(nodeToInNode(x._1),nodeToInNode(x._2),x._3))
   }
 
   val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
   val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
 
-  def nodes = outNodes
+  def nodes: IndexedSet[Node] = outNodes
 
   override def nodeCount: Int = outNodes.size
 
@@ -74,14 +74,14 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
   /**
    * @return A Traversable of the edges as represented in the graph
    */
-  override def innerEdges:Vector[InnerEdgeType] = inSuccessors.flatten
+  override def innerEdges:Iterable[InnerEdgeType] = inSuccessors.flatten
 
   /**
    * O(n&#94;2)
    *
    * @return All of the edges in the graph
    */
-  override def edges: Seq[OuterEdgeType] = outSuccessors.flatten
+  override def edges: Iterable[OuterEdgeType] = outSuccessors.flatten
 
   /**
    * O(n)
@@ -147,19 +147,19 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
  */
 object AdjacencyLabelDigraph{
 
-  def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
-                       nodes:GenSeq[Node] = Seq.empty,
-                       noEdgeExistsValue:Label = null) = {
+  def apply[Node,Label](edges:Iterable[(Node,Node,Label)] = Seq.empty,
+                       nodes:Seq[Node] = Seq.empty,
+                       noEdgeExistsValue:Label = null): AdjacencyLabelDigraph[Node, Label] = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues: Vector[Node] = Vector.from((nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct)
 
-    val successorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._1)
-    val predecessorMap:GenMap[Node,GenTraversable[(Node,Node,Label)]] = edges.groupBy(_._2)
+    val successorMap:Map[Node,Iterable[(Node,Node,Label)]] = edges.groupBy(_._1)
+    val predecessorMap:Map[Node,Iterable[(Node,Node,Label)]] = edges.groupBy(_._2)
 
-    val successorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[IndexedSet])
-    val predecessorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)]).to[IndexedSet])
+    val successorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => IndexedSet.from(successorMap.getOrElse(n,Vector.empty[(Node,Node,Label)])))
+    val predecessorAdjacencies:Vector[IndexedSet[(Node,Node,Label)]] = nodeValues.map(n => IndexedSet.from(predecessorMap.getOrElse(n,Vector.empty[(Node,Node,Label)])))
 
-    new AdjacencyLabelDigraph(nodeValues.to[IndexedSet],successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
+    new AdjacencyLabelDigraph(IndexedSet.from(nodeValues),successorAdjacencies,predecessorAdjacencies,noEdgeExistsValue)
   }
 
 }

@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{GenMap, GenSeq, GenTraversable}
+import scala.collection.{Map, Seq, Iterable}
 
 /**
   * Provides constant-time access for edges of a node.
@@ -55,7 +55,7 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   //todo really should be a Set, not an IndexedSet
   val inEdges:Vector[IndexedSet[InnerEdgeType]] = outEdges.map(neighborSet)
 
-  def nodes = outNodes
+  def nodes: IndexedSet[Node] = outNodes
 
   override def nodeCount: Int = outNodes.size
 
@@ -153,22 +153,22 @@ class AdjacencyLabelUndigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
 object AdjacencyLabelUndigraph{
 
   //noinspection ConvertibleToMethodValue
-  def apply[Node,Label](edges:GenTraversable[(NodePair[Node],Label)] = Seq.empty,
-                        nodes:GenSeq[Node] = Seq.empty,
-                        noEdgeExists:Label = null) = {
+  def apply[Node,Label](edges:Iterable[(NodePair[Node],Label)] = Seq.empty,
+                        nodes:Seq[Node] = Seq.empty,
+                        noEdgeExists:Label = null): AdjacencyLabelUndigraph[Node, Label] = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1._1) ++ edges.map(_._1._2)).distinct.to[Vector]
+    val nodeValues = Vector.from((nodes ++ edges.map(_._1._1) ++ edges.map(_._1._2)).distinct)
 
-    val successorMap:GenMap[Node,GenTraversable[(NodePair[Node],Label)]] = edges.groupBy(x => x._1._1)
-    val predecessorMap:GenMap[Node,GenTraversable[(NodePair[Node],Label)]] = edges.groupBy(x => x._1._2)
+    val successorMap:Map[Node,Iterable[(NodePair[Node],Label)]] = edges.groupBy(x => x._1._1)
+    val predecessorMap:Map[Node,Iterable[(NodePair[Node],Label)]] = edges.groupBy(x => x._1._2)
 
-    def getOrEmpty(n:Node,nodeToTrav:GenMap[Node,GenTraversable[(NodePair[Node],Label)]]):IndexedSet[(NodePair[Node],Label)] = {
-      nodeToTrav.getOrElse(n,Vector.empty[(NodePair[Node],Label)]).to[IndexedSet]
+    def getOrEmpty(n:Node,nodeToTrav:Map[Node,Iterable[(NodePair[Node],Label)]]):IndexedSet[(NodePair[Node],Label)] = {
+      IndexedSet.from(nodeToTrav.getOrElse(n,Vector.empty[(NodePair[Node],Label)]))
     }
 
-    val edgeAdjacencies:Vector[IndexedSet[(NodePair[Node],Label)]] = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
+    val edgeAdjacencies: Vector[IndexedSet[(NodePair[Node], Label)]] = nodeValues.map(n => getOrEmpty(n,successorMap) ++ getOrEmpty(n,predecessorMap) )
 
-    new AdjacencyLabelUndigraph(nodeValues.to[IndexedSet],edgeAdjacencies,noEdgeExists)
+    new AdjacencyLabelUndigraph(IndexedSet.from(nodeValues),edgeAdjacencies,noEdgeExists)
   }
 
 }

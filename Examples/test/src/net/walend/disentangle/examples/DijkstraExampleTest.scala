@@ -16,7 +16,7 @@ class DijkstraExampleTest extends AnyFlatSpec with Matchers {
 
     val simpleShortPathLabels = DijkstraExample.simpleShortPathLabels
 
-    val simpleShortPathLabelsFromPar = DijkstraExample.simpleShortPathLabelsFromPar
+//todo    val simpleShortPathLabelsFromPar = DijkstraExample.simpleShortPathLabelsFromPar
 
     val labelDigraph = DijkstraExample.labelDigraph
 

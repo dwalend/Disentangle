@@ -15,7 +15,7 @@ class DijkstraLeastWeightsExampleTest extends AnyFlatSpec with Matchers {
 
     val shortPathLabels = DijkstraLeastWeightsExample.leastPathLabels
 
-    val shortPathLabelsFromPar = DijkstraLeastWeightsExample.leastPathLabelsFromPar
+//todo    val shortPathLabelsFromPar = DijkstraLeastWeightsExample.leastPathLabelsFromPar
 
     val labelDigraph = DijkstraLeastWeightsExample.labelDigraph
 

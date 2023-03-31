@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{GenMap, GenSeq, GenTraversable}
+import scala.collection.{Map, Seq, Iterable}
 
 /**
   * Provides constant-time access for successor and predecessor edges of a node.
@@ -11,18 +11,18 @@ import scala.collection.{GenMap, GenSeq, GenTraversable}
   * @since v0.2.1
   */
 class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master index values for each node.
-                                        outSuccessors:Vector[IndexedSet[(Node,Node)]], // (i) is the successors for node i, (j) is the node,node tuple to reach that second node.
-                                        outPredecessors:Vector[IndexedSet[(Node,Node)]]
+                                        outSuccessors:IndexedSet[IndexedSet[(Node,Node)]], // (i) is the successors for node i, (j) is the node,node tuple to reach that second node.
+                                        outPredecessors:IndexedSet[IndexedSet[(Node,Node)]]
                                        ) extends Tuple2Digraph[Node] with IndexedGraph[Node] {
   override type InnerNodeType = InNode
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def successors: IndexedSet[InnerEdgeType] = {
-      inSuccessors(index)
+      inSuccessors.get(index)
     }
 
     override def predecessors: IndexedSet[InnerEdgeType] = {
-      inPredecessors(index)
+      inPredecessors.get(index)
     }
 
     override def hashCode(): Int = index
@@ -40,15 +40,15 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     override def value: OuterEdgeType = (from.value,to.value)
   }
 
-  val inNodes:IndexedSet[InNode] =outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
+  val inNodes:IndexedSet[InNode] = outNodes.zipWithIndex.map(x => InNode(x._1,x._2))
   val nodeToInNode:Map[Node,InNode] = inNodes.map(x => x.value -> x).toMap
 
   def neighborSet(indexedSet:IndexedSet[(Node,Node)]):IndexedSet[InnerEdgeType] = {
     indexedSet.map(x => InnerEdge(nodeToInNode.get(x._1).get,nodeToInNode.get(x._2).get))
   }
 
-  val inSuccessors:Vector[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
-  val inPredecessors:Vector[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
+  val inSuccessors:IndexedSet[IndexedSet[InnerEdgeType]] = outSuccessors.map(neighborSet)
+  val inPredecessors:IndexedSet[IndexedSet[InnerEdgeType]] = outPredecessors.map(neighborSet)
 
   def nodes = outNodes
 
@@ -74,14 +74,14 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   /**
     * @return A Traversable of the edges as represented in the graph
     */
-  override def innerEdges:Vector[InnerEdgeType] = inSuccessors.flatten
+  override def innerEdges:IndexedSet[InnerEdgeType] = inSuccessors.flatten
 
   /**
     * O(n&#94;2)
     *
     * @return All of the edges in the graph
     */
-  override def edges: Seq[OuterEdgeType] = outSuccessors.flatten
+  override def edges: IndexedSet[OuterEdgeType] = outSuccessors.flatten
 
   /**
     * O(1)
@@ -109,18 +109,18 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   */
 object AdjacencyDigraph{
 
-  def apply[Node](edges:GenTraversable[(Node,Node)] = Seq.empty,
-                        nodes:GenSeq[Node] = Seq.empty) = {
+  def apply[Node](edges:Iterable[(Node,Node)] = Seq.empty,
+                        nodes:Seq[Node] = Seq.empty) = {
 
-    val nodeValues:Vector[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[Vector]
+    val nodeValues = IndexedSet.from((nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct)
 
-    val successorMap:GenMap[Node,GenTraversable[(Node,Node)]] = edges.groupBy(_._1)
-    val predecessorMap:GenMap[Node,GenTraversable[(Node,Node)]] = edges.groupBy(_._2)
+    val successorMap:Map[Node,Iterable[(Node,Node)]] = edges.groupBy(_._1)
+    val predecessorMap:Map[Node,Iterable[(Node,Node)]] = edges.groupBy(_._2)
 
-    val successorAdjacencies:Vector[IndexedSet[(Node,Node)]] = nodeValues.map(n => successorMap.getOrElse(n,Vector.empty[(Node,Node)]).to[IndexedSet])
-    val predecessorAdjacencies:Vector[IndexedSet[(Node,Node)]] = nodeValues.map(n => predecessorMap.getOrElse(n,Vector.empty[(Node,Node)]).to[IndexedSet])
+    val successorAdjacencies: IndexedSet[IndexedSet[(Node, Node)]] = nodeValues.map(n => IndexedSet.from(successorMap.getOrElse(n,Vector.empty[(Node,Node)])))
+    val predecessorAdjacencies: IndexedSet[IndexedSet[(Node, Node)]] = nodeValues.map(n => IndexedSet.from(predecessorMap.getOrElse(n,Vector.empty[(Node,Node)])))
 
-    new AdjacencyDigraph(nodeValues.to[IndexedSet],successorAdjacencies,predecessorAdjacencies)
+    new AdjacencyDigraph(nodeValues,successorAdjacencies,predecessorAdjacencies)
   }
 
 }

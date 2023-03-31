@@ -25,7 +25,7 @@ object TimingStudiesTest {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{FloydWarshall.allPairsLeastPaths(graph.edges,graph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
+    val result = timeFunction{FloydWarshall.allPairsLeastPaths(graph.edges,Seq.from(graph.nodes),support,support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel))}
 
     result._2
   }
@@ -38,7 +38,7 @@ object TimingStudiesTest {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{Dijkstra.allPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), graph.nodes.to[Seq])}
+    val result = timeFunction{Dijkstra.allPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), Seq.from(graph.nodes))}
 /*
     val result = timeFunction{
         val initNode = initialGraph.innerNodes.head
@@ -58,7 +58,7 @@ object TimingStudiesTest {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,graph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)}
+    val result = timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,Seq.from(graph.nodes),support,FewestNodes.convertEdgeToLabel)}
 
     /*
         val result = timeFunction{
@@ -163,8 +163,9 @@ object TimingStudiesTest {
   }
 
   def nodeCountsFrom32(exponent:Int):Seq[Int] = {
-    //noinspection ScalaDeprecation
-    (5.0.to(exponent,0.25)).map(x => Math.pow(2,x).toInt)
+    val exponents: Seq[Double] = (0 to (exponent-5) * 4).map(_.toDouble).map(_/4 + 5.0)
+
+    exponents.map(x => Math.pow(2,x).toInt)
   }
 
   def warmUp[T](number:Int,body: ⇒ T) = {

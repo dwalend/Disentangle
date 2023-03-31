@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{GenSet, GenTraversable}
+import scala.collection.{Set, Iterable}
 
 /**
  * Ancestor trait for a variety of Graphs.
@@ -50,7 +50,7 @@ trait Graph[Node] {
   /**
    * All the nodes in the graph
    */
-  def nodes:GenSet[Node]
+  def nodes:Set[Node]
 
   /**
    * @return number of nodes in the graph
@@ -60,7 +60,7 @@ trait Graph[Node] {
   /**
    * @return InnerNode representation of all of the nodes in the graph.
    */
-  def innerNodes:GenSet[InnerNodeType]
+  def innerNodes:Set[InnerNodeType]
 
   /**
    * @param value a node that might be in this digraph
@@ -71,12 +71,12 @@ trait Graph[Node] {
   /**
    * @return A Traversable (usually something more specific) of the edges
    */
-  def edges:GenTraversable[OuterEdgeType]
+  def edges:Iterable[OuterEdgeType]
 
   /**
    * @return A Traversable of the edges as represented in the graph
    */
-  def innerEdges:GenTraversable[InnerEdgeType]
+  def innerEdges:Iterable[InnerEdgeType]
 }
 
 /**

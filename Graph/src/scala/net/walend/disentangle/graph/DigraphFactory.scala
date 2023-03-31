@@ -18,18 +18,19 @@ object DigraphFactory {
     require(maxOutEdgesPerNode < nodeCount)
 
 //    val nodes:Range = 0 until nodeCount
-    val nodes:Set[Int] = (0 until nodeCount).to[Set]
+    val nodes:Seq[Int] = 0 until nodeCount
 
-    val seqOfListOfEdges = nodes.par.map{fromNode =>
-      shuffleAndTake(nodes,Random.nextInt(maxOutEdgesPerNode),fromNode).map(toNode => (fromNode,toNode,true))
+    //todo nodes.par
+    val seqOfListOfEdges = nodes.map{fromNode =>
+      shuffleAndTake(Set.from(nodes),Random.nextInt(maxOutEdgesPerNode),fromNode).map(toNode => (fromNode,toNode,true))
     }
 
-    val edges:Seq[(Int,Int,Boolean)] = seqOfListOfEdges.flatten.to[Seq]
+    val edges:Seq[(Int,Int,Boolean)] = Seq.from(seqOfListOfEdges.flatten)
 
-    AdjacencyLabelDigraph(edges,nodes.to[Seq],false)
+    AdjacencyLabelDigraph(edges,nodes,false)
   }
 
   def shuffleAndTake[T](items:Set[T],toTake:Int,never:T):Seq[T] = {
-    Random.shuffle((items - never).to[Seq]).take(toTake)
+    Random.shuffle(Seq.from(items - never)).take(toTake)
   }
 }

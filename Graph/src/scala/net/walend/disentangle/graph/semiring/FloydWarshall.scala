@@ -2,7 +2,7 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.mutable.{MutableLabelDigraph, MatrixLabelDigraph}
 import net.walend.disentangle.graph.IndexedLabelDigraph
-import scala.collection.{GenSeq, GenTraversable}
+import scala.collection.{Seq, Iterable}
 
 /**
  * An implementation of the Floyd Warshall algorithm for general graph minimization.
@@ -55,8 +55,8 @@ object FloydWarshall {
    *
    * @return a Digraph with graph's nodes, a self-edge for each node with the semiring's identifier, and an edge for each edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
-                                              extraNodes:GenSeq[Node] = Seq.empty,
+  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges:Iterable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                              extraNodes:Seq[Node] = Seq.empty,
                                               support:SemiringSupport[Label,Key],
                                               labelForEdge:(Node,Node,EdgeLabel)=>Label):MatrixLabelDigraph[Node,Label] = {
     val nodes = (extraNodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct
@@ -70,8 +70,8 @@ object FloydWarshall {
   /**
    * O(n&#94;3)
    */
-  def allPairsLeastPaths[Node,EdgeLabel,Label,Key](edges:GenTraversable[(Node,Node,EdgeLabel)] = Seq.empty,
-                                                 extraNodes:GenSeq[Node] = Seq.empty,
+  def allPairsLeastPaths[Node,EdgeLabel,Label,Key](edges:Iterable[(Node,Node,EdgeLabel)] = Seq.empty,
+                                                 extraNodes:Seq[Node] = Seq.empty,
                                                  support:SemiringSupport[Label,Key],
                                                  labelForEdge:(Node,Node,EdgeLabel)=>Label):IndexedLabelDigraph[Node,Label] = {
     val initialDigraph = createLabelDigraph(edges,extraNodes,support,labelForEdge)
@@ -80,8 +80,8 @@ object FloydWarshall {
 
   def defaultSupport[Node] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
 
-  def allPairsShortestPaths[Node,EdgeLabel](edges:GenTraversable[(Node,Node,EdgeLabel)],
-                                            nodeOrder:GenSeq[Node] = Seq.empty
+  def allPairsShortestPaths[Node,EdgeLabel](edges:Iterable[(Node,Node,EdgeLabel)],
+                                            nodeOrder:Seq[Node] = Seq.empty
                                            ):IndexedLabelDigraph[Node,Option[FirstStepsTrait[Node, Int]]] = {
     val support = defaultSupport[Node]
     allPairsLeastPaths(edges, nodeOrder, support, support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel))

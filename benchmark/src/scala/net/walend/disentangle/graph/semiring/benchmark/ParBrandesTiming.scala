@@ -11,6 +11,7 @@ import net.walend.disentangle.graph.semiring.{Brandes, FewestNodes}
  * @author dwalend
  * @since v0.1.2
  */
+/*
 object ParBrandesTiming extends Timeable {
 
   def measureTime(nodeCount:Int):Long = {
@@ -29,3 +30,5 @@ object ParBrandesTiming extends Timeable {
     DijkstraTiming.expectedTime(calibration,nodeCount)
   }
 }
+
+ */

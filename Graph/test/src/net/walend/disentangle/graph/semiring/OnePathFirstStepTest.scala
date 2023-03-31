@@ -59,18 +59,18 @@ class OnePathFirstStepTest extends AnyFlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
-    labelGraph.edges.to[Set] -- expectedArcs should be (Set.empty)
-    labelGraph.edges.to[Set] should be (expectedArcs)
+    Set.from(labelGraph.edges) -- expectedArcs should be (Set.empty)
+    Set.from(labelGraph.edges) should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(edges = testDigraph.edges, support = support, labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), nodeOrder = testDigraph.nodes.to[Seq])
+    val labelTuples:Seq[(String,String,Option[FirstStepTrait[String,Int]])] = Dijkstra.allPairsLeastPaths(edges = testDigraph.edges, support = support, labelForEdge = support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), nodeOrder = Seq.from(testDigraph.nodes))
 
     labelTuples.size should be (expectedArcs.size)
-    labelTuples.to[Set] should be (expectedArcs)
+    Set.from(labelTuples) should be (expectedArcs)
   }
 
   "OnePathFirstStep and FloydWarshall's algorithm" should "produce labels that can create the correct shortest paths for Somegraph" in {
@@ -117,7 +117,7 @@ class OnePathFirstStepTest extends AnyFlatSpec with Matchers {
       (H,H) -> Some(List())
     )
     
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
     val pairsToPathsOfInnerNodes = labelGraph.edges.map(edge => ((edge._1,edge._2),support.leastPath(edge._1,edge._2)(labelGraph)))
 

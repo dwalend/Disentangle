@@ -16,7 +16,7 @@ object DijkstraTiming extends Timeable {
   //    val support = new OnePathFirstStep[Int,Int,Int](FFewestNodes)
       val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-      val result = TimingStudy.timeFunction{Dijkstra.allPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), graph.nodes.to[Seq])}
+      val result = TimingStudy.timeFunction{Dijkstra.allPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), Seq.from(graph.nodes))}
 
       result._2
     }

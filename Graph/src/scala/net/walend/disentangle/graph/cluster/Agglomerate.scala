@@ -92,8 +92,8 @@ object Agglomerate {
     }
 
     val edges = graph.edges.map(clusterEdgeFromEdge)
-
-    AdjacencyUndigraph[Cluster](edges,nodes = nodesToInitialClusters.map(n => n._2))
+???
+//    AdjacencyUndigraph.(edges = edges,nodes = nodesToInitialClusters.map(n => n._2))
   }
 
   /**
@@ -101,7 +101,7 @@ object Agglomerate {
     **
     * parallel sort should do fine . (In something too big to sort, just sort the neighbors)
     */
-  def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = graph.innerNodes.to[List].sortBy(_.innerEdges.size).reverse
+  def sortNodes(graph:ClusterGraph): List[graph.InnerNodeType] = List.from(graph.innerNodes).sortBy(_.innerEdges.size).reverse
 
   /**
     * Phase 2 - pick most similar Cluster to each Cluster
@@ -178,7 +178,7 @@ object Agglomerate {
       val (internalEdges,externalEdges) = involvedEdges.partition(isInternalEdge)
 
       (AdjacencyUndigraph[Cluster](edges = internalEdges.map(e => NodePair(e._1,e._2)),
-        nodes = members.to[Seq])
+        nodes = Seq.from(members))
         ,externalEdges)
     }
 
@@ -209,7 +209,7 @@ object Agglomerate {
   }
 
   case class FormCaterpillar(tail:Seq[Cluster],head:Cluster) extends FormCluster {
-    lazy val members: Set[Cluster] = tail.to[Set]
+    lazy val members: Set[Cluster] = Set.from(tail)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Caterpillar,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
@@ -218,7 +218,7 @@ object Agglomerate {
   }
 
   case class FormCycle(memberList:List[Cluster]) extends FormCluster {
-    lazy val members: Set[Cluster] = memberList.to[Set]
+    lazy val members: Set[Cluster] = Set.from(memberList)
 
     override def toClusterAndExternalEdges(prevGraph: ClusterGraph):(Cycle,Set[prevGraph.OuterEdgeType])  = {
       val (clusterGraph,externalEdges) = clusterGraphAndExternalEdges(prevGraph)
@@ -250,7 +250,7 @@ object Agglomerate {
     val pathLikeClustersToPicks: Map[Cluster, Cluster] = pathLikePicksToClusters.map(_.swap)
 
     //Find starts of chains
-    val chainStarts: Set[Cluster] = pathLikePicksToClusters.filterNot(x => pathLikePicksToClusters.keySet.contains(x._2)).values.to[Set]  //need this as a Set??
+    val chainStarts: Set[Cluster] = Set.from(pathLikePicksToClusters.filterNot(x => pathLikePicksToClusters.keySet.contains(x._2)).values) //need this as a Set??
 
     //follow the chains up
     def createChain(link:Cluster):List[Cluster] = {
@@ -283,7 +283,7 @@ object Agglomerate {
       else {
         val start = loopClustersToPicks.iterator.next()._1
         val aLoop = followCycle(start, start, loopClustersToPicks)
-        val loopAsSet = aLoop.to[Set]
+        val loopAsSet = Set.from(aLoop)
         val remainingLessALoop = loopClustersToPicks.filterNot(x => loopAsSet.contains(x._1))
         createCycle(remainingLessALoop,aLoop::acc)
       }
@@ -312,11 +312,11 @@ object Agglomerate {
     //todo is it faster to let toClusterAndExternalEdges find all the external edges, or to find all edges - all internal edges?
     //todo I'll guess there will be more internal edges due to max similarity
     val mergedClustersAndExternalEdges = clustersToMerge.map(c => c.toClusterAndExternalEdges(clusterGraph))
-    val nodes = mergedClustersAndExternalEdges.map(mcaee => mcaee._1).to[Seq]
+    val nodes = Seq.from(mergedClustersAndExternalEdges.map(mcaee => mcaee._1))
 
     val membersToMerged: Map[Cluster, Cluster] = mergedClustersAndExternalEdges.flatMap(mc => mc._1.members.map(m => (m,mc._1))).toMap
 
-    val edges = mergedClustersAndExternalEdges.flatMap(mcaxe => mcaxe._2).map(prev => NodePair(membersToMerged(prev._1),membersToMerged(prev._2))).to[Set] //todo if using weighted edges, use .map(), then merge the edges with something other than .to[Set]
+    val edges = mergedClustersAndExternalEdges.flatMap(mcaxe => mcaxe._2).map(prev => NodePair(membersToMerged(prev._1),membersToMerged(prev._2))) //todo if using weighted edges, use .map(), then merge the edges with something other than .to[Set]
 
     AdjacencyUndigraph(edges,nodes)
   }
@@ -327,7 +327,7 @@ object Agglomerate {
   def createClusters(graph:ClusterGraph):ClusterGraph = {
     val sortedInitialNodes = sortNodes(graph) //todo this isn't used yet  !!
     val (clustersToMostSimilarNeighbor,isolates) = pickCharacteristicClusters(graph)
-    val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ isolates.to[Seq]
+    val formClusters: Iterable[FormCluster] = clustersFromMostSimilar(clustersToMostSimilarNeighbor) ++ isolates
     merge(graph,formClusters)
   }
 

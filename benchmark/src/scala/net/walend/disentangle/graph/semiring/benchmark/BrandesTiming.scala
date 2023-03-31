@@ -15,7 +15,7 @@ object BrandesTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,graph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)}
+    val result = TimingStudy.timeFunction{Brandes.allLeastPathsAndBetweenness(graph.edges,Seq.from(graph.nodes),support,FewestNodes.convertEdgeToLabel)}
 
     result._2
   }

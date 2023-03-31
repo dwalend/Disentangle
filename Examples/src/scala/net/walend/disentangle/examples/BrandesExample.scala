@@ -1,10 +1,12 @@
 package net.walend.disentangle.examples
 
-import scala.collection.parallel
-import scala.collection.parallel.immutable.ParMap
+//import scala.collection.parallel
+//import scala.collection.parallel.immutable.ParMap
+import net.walend.disentangle.examples.BrandesExample.support
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, AdjacencyLabelUndigraph, NodePair}
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import net.walend.disentangle.graph.semiring.Brandes
+import scala.collection.immutable.Seq
 
 /**
  * Use Brandes' algorithms to find least paths and betweenness for a directed graph.
@@ -41,7 +43,7 @@ object BrandesExample {
   /**
    * Find shortest paths and betweenness for the graph in parallel
    */
-  lazy val shortestPathsAndBetweennessFromPar: (parallel.ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
+//todo  lazy val shortestPathsAndBetweennessFromPar: (parallel.ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
 
   /**
    * The first item in the tuple holds edges labels.
@@ -74,6 +76,6 @@ object BrandesExample {
    /**
     * Or just get the shortest paths
     */
-   lazy val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
+   lazy val paths = support.allLeastPaths(labelDigraph,"E","D") //todo add type annotation back Seq[Seq[labelDigraph.InnerNodeType]]
 }
 

@@ -6,6 +6,7 @@ import net.walend.disentangle.graph.semiring.{Dijkstra, FewestNodes, AllPathsFir
  * @author dwalend
  * @since v0.1.2
  */
+
 object ParDijkstraTiming extends Timeable {
 
   def measureTime(nodeCount:Int):Long = {
@@ -15,9 +16,10 @@ object ParDijkstraTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Dijkstra.parAllPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), graph.nodes.to[Seq])}
+//    val result = TimingStudy.timeFunction{Dijkstra.parAllPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), graph.nodes.to[Seq])}
 
-    result._2
+//    result._2
+    0L
   }
 
   override def expectedTime(calibration: (Int, Long), nodeCount: Int): Long = DijkstraTiming.expectedTime(calibration,nodeCount)

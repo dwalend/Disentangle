@@ -58,17 +58,17 @@ class TransitiveClosureTest extends AnyFlatSpec with Matchers {
 
   "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,testDigraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
-    labelGraph.edges.to[Set] should be (expectedArcs)
+    Set.from(labelGraph.edges) should be (expectedArcs)
   }
 
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges, TransitiveClosure, TransitiveClosure.convertEdgeToLabel, testDigraph.nodes.to[Seq])
+    val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges, TransitiveClosure, TransitiveClosure.convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
     edges.size should be (expectedArcs.size)
-    edges.to[Set] should be (expectedArcs)
+    Set.from(edges) should be (expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -84,7 +84,7 @@ class TransitiveClosureTest extends AnyFlatSpec with Matchers {
 
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,testDigraph.nodes.to[Seq],TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
     labelGraphAndBetweenness._2 should be (expectedBetweenness)
   }

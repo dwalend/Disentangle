@@ -1,10 +1,9 @@
 package net.walend.disentangle.graph
 
-import scala.collection.generic.{GenericSetTemplate,ImmutableSetFactory,CanBuildFrom,GenericParTemplate,ParSetFactory}
-import scala.collection.parallel.{ParSetLike, IterableSplitter, Combiner}
-import scala.collection.parallel.immutable.ParSet
-import scala.collection.{CustomParallelizable, SetLike,GenTraversableOnce}
-import scala.collection.mutable.{Builder,SetBuilder}
+import scala.collection.immutable.{Set, SetOps}
+import scala.collection.mutable.{Buffer, ReusableBuilder}
+import scala.collection.{IterableFactory, IterableFactoryDefaults, IterableOps, mutable}
+
 
 /**
  *
@@ -14,105 +13,80 @@ import scala.collection.mutable.{Builder,SetBuilder}
  */
 
 //todo investigate backing this with a BitSet.
-class IndexedSet[A](outerSeq:IndexedSeq[A]) extends Set[A] with GenericSetTemplate[A, IndexedSet] with SetLike[A, IndexedSet[A]] with CustomParallelizable[A, ParIndexedSet[A]] with Serializable  {
+final class IndexedSet[A](outerSeq:IndexedSeq[A])
+  extends Set[A]
+    with SetOps[A,IndexedSet,IndexedSet[A]]
+    with IterableFactoryDefaults[A, IndexedSet]
+    with Serializable  {
 
-  private val asSet:Set[A] = outerSeq.to[Set]
+  private val asSet:Set[A] = outerSeq.toSet
 
-  import scala.collection.mutable.ArrayBuffer
-  if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.to[ArrayBuffer] -- asSet}")
+  if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.groupBy(x => x).filter{x: (A, IndexedSeq[A]) => x._2.size > 1}}")
 
   //Indexed access
-  def get(index:Int) = outerSeq(index)
+  //todo rename apply()
+  def get(index:Int): A = outerSeq(index)
 
-  def indexOf(a:A) = outerSeq.indexOf(a)
+  def indexOf(a:A): Int = outerSeq.indexOf(a)
 
-  //todo how do I override to[Seq] ?
-  def asSeq = outerSeq
+  def asSeq: IndexedSeq[A] = outerSeq
   
   //AbstractSet contract
   override def contains(elem: A): Boolean = asSet.contains(elem)
 
-  override def +(elem: A): IndexedSet[A] = {
-    if(asSet.contains(elem)) this
-    else new IndexedSet(outerSeq :+ elem)}
-
-  override def -(elem: A): IndexedSet[A] = {
-    if(asSet.contains(elem)) {
-      new IndexedSet(outerSeq.filter(_!=elem))
-    }
-    else this
-  }
-
   override def iterator: Iterator[A] = outerSeq.iterator
 
-  //GenericSetTemplate
-  override def companion = IndexedSet
-
-  //profiling says ++ is slow, and slams asSeq
-  /* todo revisit ++ and flatten
-  def ++[B >: A](that : GenTraversableOnce[B]):IndexedSet[B] = {
+  override def concat(that: collection.IterableOnce[A]): IndexedSet[A] = {
+    println(s"concat2 $that")
     new IndexedSet((outerSeq ++ that).distinct)
   }
 
-  def ++[B >: A](that : TraversableOnce[B]):IndexedSet[B] = {
-    new IndexedSet((outerSeq ++ that).distinct)
+  override def incl(elem: A): IndexedSet[A] = {
+    if(contains(elem)) this
+    else new IndexedSet(outerSeq :+ elem)
   }
 
-  def ++[B >: A](that : Traversable[B]):IndexedSet[B] = {
-    new IndexedSet((outerSeq ++ that).distinct)
+  override def excl(elem: A): IndexedSet[A] = {
+    if(!contains(elem)) this
+    else new IndexedSet(outerSeq.filterNot(_ == elem))
   }
-  */
+
+  override def iterableFactory: IterableFactory[IndexedSet] = IndexedSet
 }
 
-object IndexedSet extends ImmutableSetFactory[IndexedSet] with Serializable {
+
+object IndexedSet extends IterableFactory[IndexedSet] {
   //  def apply[A](traversable:Traversable[A]) = IndexedSeq(traversable.to[Seq].distinct)
 
-  lazy val emptyInstance = new IndexedSet[Any](IndexedSeq.empty)
+  def from[A](source: IterableOnce[A]): IndexedSet[A] = new IndexedSet[A](IndexedSeq.from(source))
 
-  override def newBuilder[A]: Builder[A, IndexedSet[A]] = {
-    new SetBuilder[A, IndexedSet[A]](IndexedSet.empty[A])
+  def empty[A]: IndexedSet[A] = new IndexedSet[A](IndexedSeq.empty)
+
+  def newBuilder[A]: mutable.Builder[A, IndexedSet[A]] = ???
+}
+
+private final class IndexedSetBuilderImpl[A] extends ReusableBuilder[A, IndexedSet[A]] {
+  private val elems = mutable.ArrayBuffer.empty[A]
+
+  override def clear(): Unit = elems.clear()
+
+  override def result(): IndexedSet[A] = new IndexedSet(IndexedSeq.from(elems))
+
+  def addOne(elem: A): IndexedSetBuilderImpl.this.type = {
+    elems += elem
+    this
   }
 
-  implicit def canBuildFrom[T]: CanBuildFrom[IndexedSet[_], T, IndexedSet[T]] =
-    new CanBuildFrom[IndexedSet[_], T, IndexedSet[T]] {
-      def apply(from: IndexedSet[_]) = newBuilder[T]
-
-      def apply() = newBuilder[T]
+  override def addAll(xs: IterableOnce[A]): this.type = {
+    if (xs.asInstanceOf[AnyRef] eq this) addAll(Buffer.from(xs)) // avoid mutating under our own iterator
+    else {
+      val it = xs.iterator
+      while (it.hasNext) {
+        addOne(it.next())
+      }
     }
+    this
+  }
 }
 
-//extends ParSet[T] with GenericParTemplate[T, ParHashSet] with ParSetLike[T, ParHashSet[T], HashSet[T]] with Serializable
-class ParIndexedSet[A](indexedSet:IndexedSet[A]) extends GenericParTemplate[A, ParIndexedSet] with ParSet[A] with ParSetLike[A, ParIndexedSet[A], IndexedSet[A]] with Serializable {
-  //ParSet methods
-  //ParIterableLike methods
-  override def seq: IndexedSet[A] = indexedSet
-
-//  override protected[parallel] def splitter: IterableSplitter[A] = ???
-  //seq.par.splitter is protected, but iterator is not. However, iterator just returns splitter. casting.
-  override def splitter: IterableSplitter[A] = indexedSet.seq.par.iterator.asInstanceOf[IterableSplitter[A]]
-
-  //GenSetLike methods
-  override def +(elem: A): ParIndexedSet[A] = new ParIndexedSet(indexedSet + elem)
-
-  override def contains(elem: A): Boolean = indexedSet.contains(elem)
-
-  override def -(elem: A): ParIndexedSet[A] = new ParIndexedSet(indexedSet - elem)
-
-  //todo I'm surprised I had to put this here. Worked in IndexedSet without it.
-  override def empty = new ParIndexedSet[A](new IndexedSet(IndexedSeq.empty))
-
-  //GenTraversableLike
-  override def size: Int = indexedSet.size
-
-  //GenericParTemplate
-  override def companion = ParIndexedSet
-}
-
-//extends ParSetFactory[ParHashSet] with Serializable
-object ParIndexedSet extends ParSetFactory[ParIndexedSet] {
-  //ParSetFactory methods
-  //todo
-  override def newCombiner[A]: Combiner[A, ParIndexedSet[A]] = ???
-
-  def emptyInstance = new ParIndexedSet(IndexedSet.emptyInstance)
-}
+//todo parallel version

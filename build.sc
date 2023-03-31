@@ -11,7 +11,7 @@ import os.{CommandResult, Path}
 object Shared {
   val scalacOptions = Seq("-deprecation")
   val scalaJSVersion = "1.13.0" //todo set up javascript again
-  val scalaVersion = "2.12.17" //todo move to scala 2.13.8, then scala 3.0.2, then scala 3.1.2
+  val scalaVersion = "2.13.10" //todo move to scala 2.13.10, then scala 3.0.x, then scala 3.1.x
   val javaVersion = "17.0.6"
 }
 

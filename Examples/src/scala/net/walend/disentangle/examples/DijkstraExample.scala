@@ -1,6 +1,6 @@
 package net.walend.disentangle.examples
 
-import scala.collection.parallel.immutable.ParSeq
+//import scala.collection.parallel.immutable.ParSeq
 
 import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
 import net.walend.disentangle.graph.semiring.{FewestNodes, AllPathsFirstSteps, FirstStepsTrait, Dijkstra}
@@ -44,7 +44,7 @@ object DijkstraExample {
   /**
    * Generate all the shortest paths in the graph in parallel
    */
-  lazy val simpleShortPathLabelsFromPar: ParSeq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.parAllPairsShortestPaths(edges)
+//todo  lazy val simpleShortPathLabelsFromPar: ParSeq[(String, String, Option[FirstStepsTrait[String, Int]])] = Dijkstra.parAllPairsShortestPaths(edges)
 
   /**
    * The helper methods in AllPathsFirstSteps need a directed graph.

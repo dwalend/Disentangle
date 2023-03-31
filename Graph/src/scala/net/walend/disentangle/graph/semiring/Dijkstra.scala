@@ -1,12 +1,12 @@
 package net.walend.disentangle.graph.semiring
 
-import scala.collection.parallel.immutable.ParSeq
+//todo parallel import scala.collection.parallel.immutable.ParSeq
 
 import net.walend.disentangle.graph.IndexedLabelDigraph
 import net.walend.disentangle.heap.{Heap, FibonacciHeap}
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.{GenSeq, GenTraversable}
-
+import scala.collection.Iterable
+import scala.collection.immutable.Seq
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
  *
@@ -72,7 +72,7 @@ object Dijkstra {
     }
 
     //put everything back together
-    labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O)
+    Seq.from(labels.zipWithIndex.map(x => (source.value,initialGraph.node(x._2),x._1)).filter(x => x._3 != support.semiring.O))
   }
 
   /**
@@ -81,7 +81,7 @@ object Dijkstra {
   def allNodesSingleSource[Node,Label,Key](labelDigraph:IndexedLabelDigraph[Node,Label],support:SemiringSupport[Label,Key]):Seq[(Node,Node,Label)] = {
 
     //The profiler pointed to both flatten and fold(IndexedSet.empty)((a,b) => a ++ b) as trouble.
-    labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
+    Seq.from(labelDigraph.innerNodes).flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
   /**
@@ -91,10 +91,10 @@ object Dijkstra {
    *
    * @return an IndexedDigraph with all nodes, a self-edge for each node with the semiring's identifier, and an edge for label edge specified by labelForEdge.
    */
-  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
+  def createLabelDigraph[Node,EdgeLabel,Label,Key](edges: Iterable[(Node, Node, EdgeLabel)],
                                                    support: SemiringSupport[Label, Key],
                                                    labelForEdge: (Node, Node, EdgeLabel) => Label,
-                                                   nodeOrder: GenSeq[Node] = Seq.empty):IndexedLabelDigraph[Node, Label] = {
+                                                   nodeOrder: Seq[Node] = Seq.empty):IndexedLabelDigraph[Node, Label] = {
     import net.walend.disentangle.graph.AdjacencyLabelDigraph
 
     val nodes = (nodeOrder ++ edges.map(_._1) ++ edges.map(_._2)).distinct
@@ -107,20 +107,20 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na)
    */
-  def allPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
+  def allPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: Iterable[(Node, Node, EdgeLabel)],
                                                    support: SemiringSupport[Label, Key],
                                                    labelForEdge: (Node, Node, EdgeLabel) => Label,
-                                                   nodeOrder: GenSeq[Node] = Seq.empty):Seq[(Node, Node, Label)] = {
+                                                   nodeOrder: Seq[Node] = Seq.empty):Seq[(Node, Node, Label)] = {
     val labelDigraph = createLabelDigraph(edges, support, labelForEdge, nodeOrder)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
-    labelDigraph.innerNodes.to[Seq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
+    Seq.from(labelDigraph.innerNodes).flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
   def defaultSupport[Node] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
 
-  def allPairsShortestPaths[Node,EdgeLabel](edges:GenTraversable[(Node,Node,EdgeLabel)],
-                                          nodeOrder:GenSeq[Node] = Seq.empty
+  def allPairsShortestPaths[Node,EdgeLabel](edges:Iterable[(Node,Node,EdgeLabel)],
+                                          nodeOrder:Seq[Node] = Seq.empty
                                         ):Seq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
     val support = defaultSupport[Node]
     allPairsLeastPaths(edges, support, support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel), nodeOrder)
@@ -129,10 +129,11 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na) / cores
    */
-  def parAllPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: GenTraversable[(Node, Node, EdgeLabel)],
+/* todo parallel
+  def parAllPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: Iterable[(Node, Node, EdgeLabel)],
                                                       support: SemiringSupport[Label, Key],
                                                       labelForEdge: (Node, Node, EdgeLabel) => Label,
-                                                      nodeOrder: GenSeq[Node] = ParSeq.empty):ParSeq[(Node, Node, Label)] = {
+                                                      nodeOrder: Seq[Node] = ParSeq.empty):ParSeq[(Node, Node, Label)] = {
     val labelDigraph = createLabelDigraph(edges.par, support, labelForEdge, nodeOrder.par)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
@@ -140,13 +141,13 @@ object Dijkstra {
   }
 
   def parAllPairsShortestPaths[Node,EdgeLabel](
-                                             edges:GenTraversable[(Node,Node,EdgeLabel)],
-                                             nodeOrder:GenSeq[Node] = Seq.empty
+                                             edges:Iterable[(Node,Node,EdgeLabel)],
+                                             nodeOrder:Seq[Node] = Seq.empty
                                              ):ParSeq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = {
     val support = defaultSupport[Node]
     parAllPairsLeastPaths(edges, support, support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel), nodeOrder)
   }
-
+*/
   /**
    * O(1)
    */
@@ -205,7 +206,7 @@ object Dijkstra {
     }
 
     //don't filter out where labels == semiring.O. Need the indexes intact
-    labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1))
+    IndexedSeq.from(labels.zipWithIndex.map(x => (initialGraph.node(x._2),sink.value,x._1)))
   }
 
   /**

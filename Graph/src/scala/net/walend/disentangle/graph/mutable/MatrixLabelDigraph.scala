@@ -1,7 +1,7 @@
 package net.walend.disentangle.graph.mutable
 
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.{GenSeq, GenTraversable}
+import scala.collection.{Seq, Iterable}
 
 import net.walend.disentangle.graph.{IndexedLabelDigraph, IndexedSet}
 
@@ -89,7 +89,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
-      cellsWithEdges.map(x => InnerEdge(inNodes.get(rowIndex),inNodes.get(x._2),x._1))
+      Seq.from(cellsWithEdges.map(x => InnerEdge(inNodes.get(rowIndex),inNodes.get(x._2),x._1)))
     }
 
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
@@ -106,7 +106,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
-      cellsWithEdges.map(x => (outNodes.get(rowIndex),outNodes.get(x._2),x._1))
+      Seq.from(cellsWithEdges.map(x => (outNodes.get(rowIndex),outNodes.get(x._2),x._1)))
     }
 
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
@@ -157,15 +157,15 @@ object MatrixLabelDigraph{
   /**
    * O(n ln(n) + en)
    */
-  def apply[Node,Label](edges:GenTraversable[(Node,Node,Label)] = Seq.empty,
-                       nodes:GenSeq[Node] = Seq.empty,
+  def apply[Node,Label](edges:Iterable[(Node,Node,Label)] = Seq.empty,
+                       nodes:Seq[Node] = Seq.empty,
                        noEdgeExistsValue:Label = null) = {
 
-    val nodeValues:IndexedSet[Node] = (nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct.to[IndexedSet]
+    val nodeValues:IndexedSet[Node] = IndexedSet.from((nodes ++ edges.map(_._1) ++ edges.map(_._2)).distinct)
 
     val size = nodeValues.size
 
-    val matrix:Vector[ArrayBuffer[Label]] = nodeValues.asSeq.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)).to[Vector]
+    val matrix:Vector[ArrayBuffer[Label]] = Vector.from(nodeValues.asSeq.map(x => ArrayBuffer.fill(size)(noEdgeExistsValue)))
 
     for (edgeTriple <- edges) {
       val row = nodeValues.indexOf(edgeTriple._1)
