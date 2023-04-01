@@ -1,12 +1,12 @@
 package net.walend.disentangle.examples
 
-//import scala.collection.parallel
-//import scala.collection.parallel.immutable.ParMap
 import net.walend.disentangle.examples.BrandesExample.support
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, AdjacencyLabelUndigraph, NodePair}
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import net.walend.disentangle.graph.semiring.Brandes
+
 import scala.collection.immutable.Seq
+import scala.collection.parallel.immutable.{ParMap, ParSeq}
 
 /**
  * Use Brandes' algorithms to find least paths and betweenness for a directed graph.
@@ -43,7 +43,7 @@ object BrandesExample {
   /**
    * Find shortest paths and betweenness for the graph in parallel
    */
-//todo  lazy val shortestPathsAndBetweennessFromPar: (parallel.ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
+  lazy val shortestPathsAndBetweennessFromPar: (ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
 
   /**
    * The first item in the tuple holds edges labels.

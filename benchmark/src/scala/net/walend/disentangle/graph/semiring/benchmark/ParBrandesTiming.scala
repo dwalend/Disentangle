@@ -11,7 +11,7 @@ import net.walend.disentangle.graph.semiring.{Brandes, FewestNodes}
  * @author dwalend
  * @since v0.1.2
  */
-/*
+
 object ParBrandesTiming extends Timeable {
 
   def measureTime(nodeCount:Int):Long = {
@@ -21,7 +21,7 @@ object ParBrandesTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Brandes.parAllLeastPathsAndBetweenness(graph.edges,graph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)}
+    val result = TimingStudy.timeFunction{Brandes.parAllLeastPathsAndBetweenness(Seq.from(graph.edges),Seq.from(graph.nodes),support,FewestNodes.convertEdgeToLabel)}
 
     result._2
   }
@@ -31,4 +31,4 @@ object ParBrandesTiming extends Timeable {
   }
 }
 
- */
+

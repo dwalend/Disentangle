@@ -1,9 +1,10 @@
 package net.walend.disentangle.examples
 
-//import scala.collection.parallel.immutable.ParSeq
+import net.walend.disentangle.examples.DijkstraLeastWeightsExample.support
+import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
+import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, Dijkstra, LeastWeights}
 
-import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
-import net.walend.disentangle.graph.semiring.{LeastWeights, AllPathsFirstSteps, Dijkstra}
+import scala.collection.parallel.immutable.ParSeq
 
 /**
  * Use Dijkstra's algorithms to find either single-source or all-pairs shortest paths using a custom semiring, LeastWeights.
@@ -30,7 +31,7 @@ object DijkstraLeastWeightsExample {
   /**
    * A semiring support instance that uses double-valued labels to find the shortest paths.
    */
-  lazy val support: AllPathsFirstSteps[String, Double, Double] = new AllPathsFirstSteps(LeastWeights)
+  lazy val support: AllPathsFirstSteps[String, Double, Double] = AllPathsFirstSteps(LeastWeights)
 
   /**
    * This time, we'll need to supply a function that can convert from a String to a Double to build up the initial graph
@@ -51,7 +52,7 @@ object DijkstraLeastWeightsExample {
   /**
    * Generate the first steps for all paths in the graph in parallel
    */
-//todo  lazy val leastPathLabelsFromPar: ParSeq[(String, String, support.Label)] = Dijkstra.parAllPairsLeastPaths(edges,support,labelForEdge)
+  lazy val leastPathLabelsFromPar: ParSeq[(String, String, support.Label)] = Dijkstra.parAllPairsLeastPaths(edges,support,labelForEdge)
 
   /**
    * The helper methods in AllPathsFirstSteps need a directed graph.
@@ -62,12 +63,12 @@ object DijkstraLeastWeightsExample {
   /**
    * Get a subgraph that holds all the possible shortest paths
    */
-  lazy val subgraph: Set[labelDigraph.InnerEdgeType] = support.subgraphEdges(labelDigraph,"E","D")
+  lazy val subgraph = support.subgraphEdges(labelDigraph,"E","D")
 
   /**
    * Or just get the shortest paths
    */
-  lazy val paths: Seq[Seq[labelDigraph.InnerNodeType]] = support.allLeastPaths(labelDigraph,"E","D")
+  lazy val paths: Seq[Seq[AdjacencyLabelDigraph[String, support.Label]#InnerNode]] = support.allLeastPaths(labelDigraph,"E","D")
 
   /**
    * To get all shortest paths from a single source (or sink), first create the initial label digraph.
