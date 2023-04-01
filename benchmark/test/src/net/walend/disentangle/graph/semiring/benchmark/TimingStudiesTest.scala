@@ -1,9 +1,6 @@
 package net.walend.disentangle.graph.semiring.benchmark
 
-//import scalax.collection.GraphPredef.EdgeLikeIn
-
-import net.walend.disentangle.graph.semiring.{Dijkstra, FloydWarshall, Brandes, FewestNodes, FirstStepsTrait, AllPathsFirstSteps}
-//import net.walend.disentangle.scalagraph.semiring.{ConvertToLabelDigraph, GraphFactory}
+import net.walend.disentangle.graph.semiring.{Dijkstra, FloydWarshall, Brandes, FewestNodes, AllPathsFirstSteps}
 
 /**
  * @author dwalend
@@ -11,7 +8,7 @@ import net.walend.disentangle.graph.semiring.{Dijkstra, FloydWarshall, Brandes, 
  */
 object TimingStudiesTest {
 
-  def main (args:Array[String]) {
+  def main (args:Array[String]):Unit = {
 
     //Time Brandes' algorithm with AllShortestPaths
     val brandesResults = study(11,timeBrandes,expectedTimeDijkstra)
@@ -157,7 +154,7 @@ object TimingStudiesTest {
 
     val calibration = nodeCountAndTime.head
     val expected = nodeCountAndTime.map(x => x._1 -> expectedF(calibration,x._1)).toMap
-    val ratio = nodeCountAndTime.map(x => x._1 -> x._2.toDouble/expected.get(x._1).get).toMap
+    val ratio = nodeCountAndTime.map(x => x._1 -> x._2.toDouble/expected(x._1)).toMap
 
     nodeCountAndTime.map(x => (x._1,x._2,expected(x._1),ratio(x._1)))
   }
@@ -168,11 +165,11 @@ object TimingStudiesTest {
     exponents.map(x => Math.pow(2,x).toInt)
   }
 
-  def warmUp[T](number:Int,body: ⇒ T) = {
-    for(i <- 0 until number) body
+  def warmUp[T](number:Int,body: => T): Unit = {
+    for(_ <- 0 until number) body
   }
 
-  def timeFunction[T](body: ⇒ T):(T,Long) = {
+  def timeFunction[T](body: => T):(T,Long) = {
     val startTime:Long = System.nanoTime()
     val result = body
     val endTime:Long = System.nanoTime()

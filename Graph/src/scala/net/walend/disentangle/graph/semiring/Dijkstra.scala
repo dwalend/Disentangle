@@ -4,8 +4,6 @@ import net.walend.disentangle.graph.IndexedLabelDigraph
 import net.walend.disentangle.heap.{FibonacciHeap, Heap}
 
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.Iterable
-import scala.collection.immutable.Seq
 import scala.collection.parallel.immutable.ParSeq
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
@@ -117,7 +115,7 @@ object Dijkstra {
     Seq.from(labelDigraph.innerNodes).flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
-  def defaultSupport[Node] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
+  def defaultSupport[Node]: AllPathsFirstSteps[Node, Int, Int] = AllPathsFirstSteps[Node,Int,Int](FewestNodes)
 
   def allPairsShortestPaths[Node,EdgeLabel](edges:Iterable[(Node,Node,EdgeLabel)],
                                           nodeOrder:Seq[Node] = Seq.empty
@@ -133,7 +131,6 @@ object Dijkstra {
                                                       support: SemiringSupport[Label, Key],
                                                       labelForEdge: (Node, Node, EdgeLabel) => Label,
                                                       nodeOrder: Seq[Node] = Seq.empty):ParSeq[(Node, Node, Label)] = {
-    import scala.collection.parallel.CollectionConverters._
     val labelDigraph = createLabelDigraph(edges, support, labelForEdge, nodeOrder)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble

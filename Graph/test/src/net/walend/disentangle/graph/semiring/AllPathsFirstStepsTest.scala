@@ -5,8 +5,6 @@ import SomeGraph._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import scala.collection.GenTraversable
-
 /**
  *
  *
@@ -17,7 +15,7 @@ class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
 
   val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 
-  val expectedArcs = Set[(String,String,Option[FirstStepsTrait[String,Int]])](
+  val expectedArcs: Set[(String, String, Option[FirstStepsTrait[String, Int]])] = Set[(String,String,Option[FirstStepsTrait[String,Int]])](
     (A,A,Some(support.FirstSteps(0,Set()))),
     (A,B,Some(support.FirstSteps(1,Set(B)))),
     (A,C,Some(support.FirstSteps(2,Set(B)))),
@@ -201,13 +199,13 @@ class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
 
     val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(labelGraph,edge._1,edge._2)))
 
-    val shortestOuterPaths:GenTraversable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
+    val shortestOuterPaths:Iterable[((String,String),Seq[Seq[String]])] = for(shortestPathsBetweenNodes <- shortestPaths) yield {
       val shortOuterPaths = for(shortPath <- shortestPathsBetweenNodes._2) yield {
         shortPath.map(node => node.value)
       }
       (shortestPathsBetweenNodes._1,shortOuterPaths)
     }
-    val pairsToShortestOuter = shortestOuterPaths.seq.toMap
+    val pairsToShortestOuter = shortestOuterPaths.toMap
 
     pairsToShortestOuter should be (expectedShortPaths)
   }

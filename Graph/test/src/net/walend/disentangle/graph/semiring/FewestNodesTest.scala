@@ -40,7 +40,7 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
     Set.from(labelGraph.edges) should be (expectedArcs)
   }
 
-  val expectedArcs = Set(
+  val expectedArcs: Set[(String, String, Int)] = Set(
     (A,A,0),
     (A,B,1),
     (A,C,2),

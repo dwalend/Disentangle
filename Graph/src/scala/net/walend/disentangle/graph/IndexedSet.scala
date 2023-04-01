@@ -4,8 +4,8 @@ import scala.collection.generic.{CanCombineFrom, GenericParCompanion, GenericPar
 import scala.collection.immutable.{Set, SetOps}
 import scala.collection.mutable.{Buffer, ReusableBuilder}
 import scala.collection.parallel.{Combiner, IterableSplitter, ParIterable, ParSetLike}
-import scala.collection.parallel.immutable.{HashSetCombiner, ParSeq, ParSet}
-import scala.collection.{IterableFactory, IterableFactoryDefaults, IterableOps, mutable}
+import scala.collection.parallel.immutable.{ParSeq, ParSet}
+import scala.collection.{IterableFactory, IterableFactoryDefaults, mutable}
 
 
 /**
@@ -65,7 +65,7 @@ object IndexedSet extends IterableFactory[IndexedSet] {
 
   def empty[A]: IndexedSet[A] = new IndexedSet[A](IndexedSeq.empty)
 
-  def newBuilder[A]: mutable.Builder[A, IndexedSet[A]] = ???
+  def newBuilder[A]: mutable.Builder[A, IndexedSet[A]] = new IndexedSetBuilderImpl[A]
 }
 
 private final class IndexedSetBuilderImpl[A] extends ReusableBuilder[A, IndexedSet[A]] {
@@ -100,13 +100,13 @@ final class ParIndexedSet[A](outerSeq:ParSeq[A])
 
   private val asSet:ParSet[A] = outerSeq.toSet
 
-  override def contains(elem: A): Boolean = ???
+  override def contains(elem: A): Boolean = asSet.contains(elem)
 
   override def +(elem: A): ParIndexedSet[A] = ???
 
   override def -(elem: A): ParIndexedSet[A] = ???
 
-  override def size: Int = ???
+  override def size: Int = asSet.size
 
   override def seq: IndexedSet[A] = ???
 

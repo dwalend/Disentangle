@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring.benchmark
 
-import net.walend.disentangle.graph.DigraphFactory
 import net.walend.disentangle.graph.semiring.Brandes
 import net.walend.disentangle.graph.semiring.FewestNodes
-import net.walend.disentangle.graph.semiring.{Brandes, FewestNodes}
 
 /**
  *

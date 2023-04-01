@@ -6,7 +6,7 @@ import Brandes.BrandesSteps
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import scala.collection.{Map, GenSeq}
+import scala.collection.Map
 
 /**
  *
@@ -16,7 +16,7 @@ import scala.collection.{Map, GenSeq}
  */
 class BrandesTest extends AnyFlatSpec with Matchers {
 
-  val expectedArcs = Set[(String,String,Option[BrandesSteps[String,Int]])](
+  val expectedArcs: Set[(String, String, Option[BrandesSteps[String, Int]])] = Set[(String,String,Option[BrandesSteps[String,Int]])](
     (A,A,Some(BrandesSteps(0,1,Seq()))),
     (A,B,Some(BrandesSteps(1,1,Seq(1)))),
     (A,C,Some(BrandesSteps(2,1,Seq(1)))),
@@ -58,7 +58,7 @@ class BrandesTest extends AnyFlatSpec with Matchers {
     (H,H,Some(BrandesSteps(0,1,Seq())))
   )
 
-  val support = FewestNodes
+  val support: FewestNodes.type = FewestNodes
 
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,
@@ -141,7 +141,7 @@ class BrandesTest extends AnyFlatSpec with Matchers {
 
     val result = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
 
-    val betweennesses = result._2.toMap
+    val betweennesses = result._2
 
     //if only    betweennesses should be(jungBetwennesses)
     for(node <- betweennesses.keys) {
@@ -170,16 +170,15 @@ class BrandesTest extends AnyFlatSpec with Matchers {
 
     val jungBetweenCalc = new BetweennessCentrality(jungGraph)
 
-    import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
-    val jb = Seq.from(jungGraph.getVertices).map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
+    import scala.jdk.CollectionConverters.CollectionHasAsScala
+    val jb = Seq.from(jungGraph.getVertices.asScala).map(node => (node,jungBetweenCalc.getVertexScore(node).toDouble))
 
     jb
   }
 
-  def usStateEdges = {
+  def usStateEdges: Seq[(String, String, Unit)] = {
 
     import scala.io.Source
-    import scala.util.matching.Regex
 
     /*
 AL FL
@@ -195,7 +194,7 @@ AL TN
       Some((splitLine(0),splitLine(1),()))
     }
 
-    val arcs = Seq.from(lines.map(arcFromLine).flatten)
+    val arcs = Seq.from(lines.flatMap(arcFromLine))
 
     arcs
   }
@@ -209,11 +208,11 @@ AL TN
 
     //find betweenness
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
-    val betweennesses:Map[String,Double] = Seq.from(labelGraphAndBetweenness._2).map(bet => (bet._1,(bet._2/2))).toMap
+    val betweennesses:Map[String,Double] = Seq.from(labelGraphAndBetweenness._2).map(bet => (bet._1, bet._2/2)).toMap
 
     //find betweenness in parallel
     val parLabelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(allArcs,Seq.empty,support,FewestNodes.convertEdgeToLabel)
-    val parBetweennesses:Map[String,Double] = Seq.from(parLabelGraphAndBetweenness._2).map(bet => (bet._1,(bet._2/2))).toMap
+    val parBetweennesses:Map[String,Double] = Seq.from(parLabelGraphAndBetweenness._2).map(bet => (bet._1, bet._2/2)).toMap
 
     //find betweenness with Jung
     val jungB:Map[String,Double] = jungBetweenness(arcs).toMap

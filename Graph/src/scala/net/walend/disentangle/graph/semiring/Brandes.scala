@@ -4,7 +4,6 @@ import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import net.walend.disentangle.heap.{FibonacciHeap, Heap, HeapOrdering}
 
 import scala.collection.{Iterable, Seq}
-import scala.collection.immutable.List
 import scala.collection.parallel.immutable.{ParMap, ParSeq}
 
 /**
@@ -175,17 +174,18 @@ object Brandes {
     /**
      * Overriding equals to speed up.
      */
-    override def equals(any: Any) = {
+    override def equals(any: Any): Boolean = {
       //noinspection TypeCheckCanBeMatch ,ComparingUnrelatedTypes - match too slow in profiler and benchmark
-      if (any.isInstanceOf[BrandesSteps[Node, CoreLabel]]) {
-        val other: BrandesSteps[Node, CoreLabel] = any.asInstanceOf[BrandesSteps[Node, CoreLabel]]
-        if (this eq other) true //if they share a memory address, no need to compare
-        else {
-          if ((weight == other.weight) && (pathCount == other.pathCount)) {
-            choiceIndexes == other.choiceIndexes
-          } else false
-        }
-      } else false
+      any match {
+        case other:BrandesSteps[_, _] =>
+          if (this eq other) true
+          else {
+            if ((weight == other.weight) && (pathCount == other.pathCount)) {
+              choiceIndexes == other.choiceIndexes
+            } else false
+          }
+        case _ => false
+      }
     }
 
     /**
@@ -220,8 +220,8 @@ object Brandes {
       }
 
       //identity and annihilator
-      val I = Option(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Seq.empty))
-      val O = None
+      val I: Label = Option(BrandesSteps[Node, CoreLabel](coreSupport.semiring.I, 1, Seq.empty))
+      val O: Label = None
 
       def summary(fromThroughToLabel: Label, currentLabel: Label): Label = {
 
@@ -332,9 +332,9 @@ case class Stack[A](var list:List[A] = List.empty) {
 
   def push(elem: A): this.type = { list = elem :: list; this }
 
-  def map[B](f: A => B) = Stack(list.map(f))
+  def map[B](f: A => B): Stack[B] = Stack(list.map(f))
 
-  def filter(p: A => Boolean) = Stack(list.filter(p))
+  def filter(p: A => Boolean): Stack[A] = Stack(list.filter(p))
 
   def nonEmpty: Boolean = list.nonEmpty
 

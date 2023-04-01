@@ -1,6 +1,5 @@
 package net.walend.disentangle.examples
 
-import net.walend.disentangle.examples.DijkstraLeastWeightsExample.support
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, Dijkstra, LeastWeights}
 

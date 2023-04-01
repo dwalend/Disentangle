@@ -5,8 +5,6 @@ import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-import scala.collection.parallel.immutable.ParVector
-
 /**
   *
   *
@@ -19,7 +17,7 @@ class UndirectedGraphTest extends AnyFlatSpec with Matchers {
 
   val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 
-  val expectedShortestPaths = Vector(
+  val expectedShortestPaths: Seq[(String, String, Some[Any])] = Vector(
     (A,A,Some(support.FirstSteps(0,Set()))),
     (A,B,Some(support.FirstSteps(1,Set(B)))),
     (A,C,Some(support.FirstSteps(2,Set(B)))),
