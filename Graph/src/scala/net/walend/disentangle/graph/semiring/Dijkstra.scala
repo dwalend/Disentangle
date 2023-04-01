@@ -1,12 +1,12 @@
 package net.walend.disentangle.graph.semiring
 
-//todo parallel import scala.collection.parallel.immutable.ParSeq
-
 import net.walend.disentangle.graph.IndexedLabelDigraph
-import net.walend.disentangle.heap.{Heap, FibonacciHeap}
+import net.walend.disentangle.heap.{FibonacciHeap, Heap}
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.Iterable
 import scala.collection.immutable.Seq
+import scala.collection.parallel.immutable.ParSeq
 /**
  * An implementation of Dijkstra's algorithm for general graph minimization for both single-source and single-sink.
  *
@@ -129,15 +129,15 @@ object Dijkstra {
   /**
    * O(n&#94;2 ln(n) + na) / cores
    */
-/* todo parallel
   def parAllPairsLeastPaths[Node,EdgeLabel,Label,Key](edges: Iterable[(Node, Node, EdgeLabel)],
                                                       support: SemiringSupport[Label, Key],
                                                       labelForEdge: (Node, Node, EdgeLabel) => Label,
-                                                      nodeOrder: Seq[Node] = ParSeq.empty):ParSeq[(Node, Node, Label)] = {
-    val labelDigraph = createLabelDigraph(edges.par, support, labelForEdge, nodeOrder.par)
+                                                      nodeOrder: Seq[Node] = Seq.empty):ParSeq[(Node, Node, Label)] = {
+    import scala.collection.parallel.CollectionConverters._
+    val labelDigraph = createLabelDigraph(edges, support, labelForEdge, nodeOrder)
 
     //profiler blamed both flatten and fold of IndexedSets as trouble
-    labelDigraph.innerNodes.to[ParSeq].flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
+    ParSeq.fromSpecific(labelDigraph.innerNodes).flatMap(source => dijkstraSingleSource(labelDigraph, support)(source))
   }
 
   def parAllPairsShortestPaths[Node,EdgeLabel](
@@ -147,7 +147,7 @@ object Dijkstra {
     val support = defaultSupport[Node]
     parAllPairsLeastPaths(edges, support, support.convertEdgeToLabel(FewestNodes.convertEdgeToLabel), nodeOrder)
   }
-*/
+
   /**
    * O(1)
    */

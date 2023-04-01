@@ -81,7 +81,7 @@ class BrandesTest extends AnyFlatSpec with Matchers {
     labelDigraph.edge(B,C)
   ).filter(_.isDefined).map(_.get)
 
-  def checkBrandesResults(labelGraphAndBetweenness:(GenSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double])):Unit = {
+  def checkBrandesResults(labelGraphAndBetweenness:(Seq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double])):Unit = {
     (Set.from(labelGraphAndBetweenness._1) -- expectedArcs) should be (Set.empty)
 
     Set.from(labelGraphAndBetweenness._1) should be (expectedArcs)
@@ -112,20 +112,20 @@ class BrandesTest extends AnyFlatSpec with Matchers {
     val labelGraphAndBetweenness: (IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) = testDigraph.allLeastPathsAndBetweenness()
     checkBrandesResults(labelGraphAndBetweenness)
   }
-/*
+
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph" in {
 
-    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,testDigraph.nodes.to[Seq],support,FewestNodes.convertEdgeToLabel)
-//todo    checkBrandesResults(labelGraphAndBetweenness)
+    val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),support,FewestNodes.convertEdgeToLabel)
+    checkBrandesResults(labelGraphAndBetweenness)
   }
- */
-/*
+
+
   "Brandes' algorithm" should "produce the correct label graph and betweenness using the implicit method on a Digraph in parallel" in {
 
     val labelGraphAndBetweenness = Brandes.parAllLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),support,FewestNodes.convertEdgeToLabel)
-//todo    checkBrandesResults(labelGraphAndBetweenness)
+    checkBrandesResults((Seq.from(labelGraphAndBetweenness._1),Map.from(labelGraphAndBetweenness._2)))
   }
-*/
+
   "Brandes' algorithm" should "produce both the correct label graph and betweenness for a figure-8 graph" in {
 
     val expectedB:Map[String,Double] = Map(

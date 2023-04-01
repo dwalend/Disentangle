@@ -2,9 +2,8 @@ package net.walend.disentangle.graph
 
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 
-import scala.collection.Iterable
-//todo parallel import scala.collection.parallel.immutable.ParSeq
-import scala.collection.immutable.Seq
+import scala.collection.parallel.immutable.ParSeq
+
 /**
  * Semirings and semiring-based graph minimizing algorithms.
  *
@@ -28,25 +27,23 @@ package object semiring {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsShortestPaths(indexed.edges,indexed.nodes.asSeq)
       case _ => Dijkstra.allPairsShortestPaths(self.edges)
     }
-/*todo parallel
     def parAllPairsShortestPaths: ParSeq[(Node, Node, Option[FirstStepsTrait[Node, Int]])] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsShortestPaths(indexed.edges,indexed.nodes.asSeq)
       case _ => Dijkstra.parAllPairsShortestPaths(self.edges)
     }
-*/
+
     def allPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
                                           labelForEdge: (Node, Node, Label) => SemiringLabel):Seq[(Node, Node, SemiringLabel)] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsLeastPaths(indexed.edges,support,labelForEdge,indexed.nodes.asSeq)
       case _ => Dijkstra.allPairsLeastPaths(self.edges,support,labelForEdge)
     }
 
-  /* todo parallel
     def parAllPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
                                               labelForEdge: (Node, Node, Label) => SemiringLabel):ParSeq[(Node, Node, SemiringLabel)] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsLeastPaths(indexed.edges,support,labelForEdge,indexed.nodes.asSeq)
       case _ => Dijkstra.parAllPairsLeastPaths(self.edges,support,labelForEdge)
     }
-*/
+
     def allLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                      labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Brandes.allLeastPathsAndBetweenness(indexed.edges,indexed.nodes.asSeq,coreSupport,labelForEdge)
@@ -71,24 +68,24 @@ package object semiring {
       case indexed:IndexedLabelUndigraph[Node,Label] => Dijkstra.allPairsShortestPaths(diEdges,indexed.nodes.asSeq)
       case _ => Dijkstra.allPairsShortestPaths(diEdges)
     }
-/* todo parallel
+
     def parAllPairsShortestPaths: ParSeq[(Node,Node,Option[FirstStepsTrait[Node, Int]])] = self match {
       case indexed:IndexedLabelUndigraph[Node,Label] => Dijkstra.parAllPairsShortestPaths(diEdges,indexed.nodes.asSeq)
       case _ => Dijkstra.parAllPairsShortestPaths(diEdges)
     }
-*/
+
     def allPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
                                               labelForEdge: (Node, Node, Label) => SemiringLabel):Seq[(Node, Node, SemiringLabel)] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.allPairsLeastPaths(diEdges,support,labelForEdge,indexed.nodes.asSeq)
       case _ => Dijkstra.allPairsLeastPaths(diEdges,support,labelForEdge)
     }
-/* todo parallel
+
     def parAllPairsLeastPaths[SemiringLabel,Key](support: SemiringSupport[SemiringLabel, Key],
                                               labelForEdge: (Node, Node, Label) => SemiringLabel):ParSeq[(Node, Node, SemiringLabel)] = self match {
       case indexed:IndexedLabelDigraph[Node,Label] => Dijkstra.parAllPairsLeastPaths(diEdges,support,labelForEdge,indexed.nodes.asSeq)
       case _ => Dijkstra.parAllPairsLeastPaths(diEdges,support,labelForEdge)
     }
-*/
+
     def allLeastPathsAndBetweenness[CoreLabel, Key]( coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
                                                      labelForEdge: (Node, Node, Label) => CoreLabel = FewestNodes.edgeToLabelConverter): (IndexedSeq[(Node, Node, Option[BrandesSteps[Node, CoreLabel]])], Map[Node, Double]) = {
       val digraphResult = self match {

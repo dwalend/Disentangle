@@ -5,6 +5,8 @@ import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.collection.parallel.immutable.ParVector
+
 /**
   *
   *
@@ -76,14 +78,14 @@ class UndirectedGraphTest extends AnyFlatSpec with Matchers {
 
     allShortestPaths should be(expectedShortestPaths)
   }
-/*
+
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph in parallel" in {
 
     val allShortestPaths = SomeGraph.testLabelUndigraph.parAllPairsShortestPaths
 
-    allShortestPaths should be(expectedShortestPaths)
+    Vector.from(allShortestPaths) should be(expectedShortestPaths)
   }
-*/
+
   "Brandes algorithm" should "produce the correct label graph and betweeness values for Somegraph" in {
 
     val expectedFirstSteps = Vector((A,A,Some(BrandesSteps(0,1,List()))),

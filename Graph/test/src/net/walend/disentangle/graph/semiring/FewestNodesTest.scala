@@ -96,15 +96,15 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
     labels.size should be (expectedArcs.size)
     Set.from(labels) should be (expectedArcs)
   }
-/*
+
   "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
 
-    val labels = Dijkstra.parAllPairsLeastPaths(testDigraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, testDigraph.nodes.to[Seq])
+    val labels = Dijkstra.parAllPairsLeastPaths(testDigraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
     labels.size should be (expectedArcs.size)
-    labels.to[Set] should be (expectedArcs)
+    Set.from(labels) should be (expectedArcs)
   }
-*/
+
   "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testDigraph" in {
 
     val labels = testDigraph.allPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
@@ -112,16 +112,14 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
     labels.size should be (expectedArcs.size)
     Set.from(labels) should be (expectedArcs)
   }
-/*
+
   "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testDigraph" in {
 
     val labels = testDigraph.parAllPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
 
     labels.size should be (expectedArcs.size)
-    labels.to[Set] should be (expectedArcs)
+    Set.from(labels) should be (expectedArcs)
   }
-*/
-
 
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,

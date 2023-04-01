@@ -1,14 +1,11 @@
 package net.walend.disentangle.graph.semiring
 
-//todo make it parallel again
-//import scala.collection.parallel.ParSeq
-//import scala.collection.parallel.immutable.ParMap
+import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
+import net.walend.disentangle.heap.{FibonacciHeap, Heap, HeapOrdering}
 
-import net.walend.disentangle.graph.{IndexedLabelDigraph, AdjacencyLabelDigraph}
-import net.walend.disentangle.heap.{HeapOrdering, Heap, FibonacciHeap}
-import scala.collection.{Seq, Iterable}
-
+import scala.collection.{Iterable, Seq}
 import scala.collection.immutable.List
+import scala.collection.parallel.immutable.{ParMap, ParSeq}
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.
@@ -143,7 +140,6 @@ object Brandes {
   /**
    * This method runs Dijkstra's algorithm and finds betweenness for all nodes in the label graph.
    */
-/* todo parallel
   def parAllLeastPathsAndBetweenness[Node, EdgeLabel, CoreLabel, Key](edges: Iterable[(Node, Node, EdgeLabel)],
                                                                    nodeOrder: Seq[Node] = Seq.empty,
                                                                    coreSupport: SemiringSupport[CoreLabel, Key] = FewestNodes,
@@ -151,9 +147,10 @@ object Brandes {
     val support = new BrandesSupport[Node,CoreLabel,Key](coreSupport)
     type Label = support.Label
 
-    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges.par, nodeOrder.par, support, labelForEdge)
+    //todo make parallel if needed
+    val initialGraph: IndexedLabelDigraph[Node,Label] = createLabelDigraph(edges, nodeOrder, support, labelForEdge)
 
-    val innerNodes = initialGraph.innerNodes.asSeq.par
+    val innerNodes = ParSeq.fromSpecific(initialGraph.innerNodes)
 
     val edgesAndBetweenParts = for (sink <- innerNodes) yield {
       val edgeAndNodeStack = brandesDijkstra(initialGraph, support)(sink)
@@ -171,7 +168,7 @@ object Brandes {
 
     (shortPaths, betweennessMap)
   }
-  */
+
 
   case class BrandesSteps[Node, CoreLabel](weight: CoreLabel, pathCount: Int, choiceIndexes:Seq[Int]) {
 
