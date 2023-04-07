@@ -2,6 +2,8 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.heap.HeapOrdering
 
+import scala.annotation.unused
+
 /**
  * Labels are true if the sink can be reached from the source, false if not.
  *
@@ -10,13 +12,13 @@ import net.walend.disentangle.heap.HeapOrdering
  */
 object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKey] {
 
-  def semiring = TransitiveClosureSemiring
+  def semiring: TransitiveClosure.Semiring = TransitiveClosureSemiring
 
-  def heapOrdering = TransitiveClosureHeapOrdering
+  def heapOrdering: HeapOrdering[TransitiveClosureHeapKey] = TransitiveClosureHeapOrdering
 
-  def heapKeyForLabel = {(label:Label) => TransitiveClosureHeapKey.keyForLabel(label)}
+  def heapKeyForLabel: TransitiveClosure.Label => TransitiveClosureHeapKey = { (label:Label) => TransitiveClosureHeapKey.keyForLabel(label)}
 
-  def convertEdgeToLabel[Node, EdgeLabel](start: Node, end: Node, label: EdgeLabel): TransitiveClosure.Label = true
+  def convertEdgeToLabel[Node, EdgeLabel](@unused start: Node, @unused end: Node, @unused label: EdgeLabel): TransitiveClosure.Label = true
 
   object TransitiveClosureSemiring extends Semiring {
 
@@ -70,9 +72,9 @@ object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKe
 sealed case class TransitiveClosureHeapKey(label:Boolean, state:Int)
 
 object TransitiveClosureHeapKey {
-  val TrueKey = TransitiveClosureHeapKey(label = true,1)
-  val FalseKey = TransitiveClosureHeapKey(label = false,0)
-  val TopKey = TransitiveClosureHeapKey(label = true,2)
+  val TrueKey: TransitiveClosureHeapKey = TransitiveClosureHeapKey(label = true,1)
+  val FalseKey: TransitiveClosureHeapKey = TransitiveClosureHeapKey(label = false,0)
+  val TopKey: TransitiveClosureHeapKey = TransitiveClosureHeapKey(label = true,2)
 
   def keyForLabel(label:Boolean):TransitiveClosureHeapKey = {
     if(label) TrueKey

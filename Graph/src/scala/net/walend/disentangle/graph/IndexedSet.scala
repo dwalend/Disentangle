@@ -3,7 +3,7 @@ package net.walend.disentangle.graph
 import scala.collection.generic.{CanCombineFrom, GenericParCompanion, GenericParTemplate, ParSetFactory}
 import scala.collection.immutable.{Set, SetOps}
 import scala.collection.mutable.{Buffer, ReusableBuilder}
-import scala.collection.parallel.{Combiner, IterableSplitter, ParIterable, ParSetLike}
+import scala.collection.parallel.{Combiner, IterableSplitter, ParIterable, ParSetLike, SeqSplitter}
 import scala.collection.parallel.immutable.{ParSeq, ParSet}
 import scala.collection.{IterableFactory, IterableFactoryDefaults, mutable}
 
@@ -102,15 +102,21 @@ final class ParIndexedSet[A](outerSeq:ParSeq[A])
 
   override def contains(elem: A): Boolean = asSet.contains(elem)
 
-  override def +(elem: A): ParIndexedSet[A] = ???
+  override def +(elem: A): ParIndexedSet[A] = {
+    if (contains(elem)) this
+    else new ParIndexedSet(outerSeq :+ elem)
+  }
 
-  override def -(elem: A): ParIndexedSet[A] = ???
+  override def -(elem: A): ParIndexedSet[A] = {
+    if (!contains(elem)) this
+    else new ParIndexedSet(outerSeq.filterNot(_ == elem))
+  }
 
   override def size: Int = asSet.size
 
-  override def seq: IndexedSet[A] = ???
+  override def seq: IndexedSet[A] = new IndexedSet[A](IndexedSeq.from(outerSeq))
 
-  override def splitter: IterableSplitter[A] = ???
+  override def splitter: IterableSplitter[A] = ???//SeqSplitter[A]
 
   override def empty: ParIndexedSet[A] = new ParIndexedSet(ParSeq.empty[A])
 

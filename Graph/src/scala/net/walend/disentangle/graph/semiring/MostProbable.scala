@@ -2,6 +2,8 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.heap.HeapOrdering
 
+import scala.annotation.unused
+
 /**
  * Finds most probable paths that traverse from start to end nodes with the on double-weight edge (weights between zero and one).
  *
@@ -11,13 +13,13 @@ import net.walend.disentangle.heap.HeapOrdering
 
 object MostProbable extends SemiringSupport[Double,Double] {
 
-  def semiring = MostProbableSemiring
+  def semiring: MostProbable.Semiring = MostProbableSemiring
 
-  def heapOrdering = MostProbableOrdering
+  def heapOrdering: HeapOrdering[Double] = MostProbableOrdering
 
-  def heapKeyForLabel = {(label:Label) => label}
+  def heapKeyForLabel: MostProbable.Label => Double = { (label:Label) => label}
 
-  def convertEdgeToLabel[Node, Label](start: Node, end: Node, label: Label): MostProbable.Label = semiring.I
+  def convertEdgeToLabel[Node, Label](@unused start: Node, @unused end: Node, @unused label: Label): MostProbable.Label = semiring.I
 
   object MostProbableSemiring extends Semiring {
 
@@ -63,7 +65,7 @@ object MostProbable extends SemiringSupport[Double,Double] {
     def keyDomainDescription = "between one and zero (the annihilator)"
 
     def checkKey(key: Double): Unit = {
-      require((MostProbable.MostProbableSemiring.inDomain(key)||(key == MostProbable.MostProbableSemiring.O)),s"Key must be $keyDomainDescription, not $key")
+      require(MostProbable.MostProbableSemiring.inDomain(key)||(key == MostProbable.MostProbableSemiring.O),s"Key must be $keyDomainDescription, not $key")
     }
 
     /**

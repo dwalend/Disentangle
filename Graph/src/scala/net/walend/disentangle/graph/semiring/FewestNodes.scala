@@ -2,6 +2,8 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.heap.HeapOrdering
 
+import scala.annotation.unused
+
 /**
  * Finds the length of a path that traverses the fewest edges.
  *
@@ -10,20 +12,20 @@ import net.walend.disentangle.heap.HeapOrdering
  */
 object FewestNodes extends SemiringSupport[Int,Int] {
 
-  def semiring = FewestNodesSemiring
+  def semiring: FewestNodes.Semiring = FewestNodesSemiring
 
-  def heapOrdering = FewestNodesHeapOrdering
+  def heapOrdering: HeapOrdering[Int] = FewestNodesHeapOrdering
 
-  def heapKeyForLabel = {(label:Label) => label}
+  def heapKeyForLabel: FewestNodes.Label => Int = { (label:Label) => label}
 
-  def convertEdgeToLabel(start: Any, end: Any, label: Any): FewestNodes.Label = 1
+  def convertEdgeToLabel(@unused start: Any, @unused end: Any, @unused label: Any): FewestNodes.Label = 1
 
   val edgeToLabelConverter:(Any,Any,Any) => Int = convertEdgeToLabel
 
   object FewestNodesSemiring extends Semiring {
 
     def I = 0
-    def O = Int.MaxValue
+    def O: FewestNodes.Label = Int.MaxValue
 
     def inDomain(label: Label): Boolean = {
       I <= label && label < O
@@ -66,7 +68,7 @@ object FewestNodes extends SemiringSupport[Int,Int] {
     def keyDomainDescription = "between zero and Int.MaxValue (the annihilator)"
 
     def checkKey(key: Int): Unit = {
-      require((FewestNodes.FewestNodesSemiring.inDomain(key)||(key == FewestNodes.FewestNodesSemiring.O)),s"Key must be $keyDomainDescription, not $key")
+      require(FewestNodes.FewestNodesSemiring.inDomain(key)||(key == FewestNodes.FewestNodesSemiring.O),s"Key must be $keyDomainDescription, not $key")
     }
 
     /**

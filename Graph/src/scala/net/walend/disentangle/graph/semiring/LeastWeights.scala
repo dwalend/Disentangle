@@ -2,6 +2,8 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.heap.HeapOrdering
 
+import scala.annotation.unused
+
 /**
  * Finds paths that traverse from start to end nodes with the least Double-valued weight.
  *
@@ -11,18 +13,18 @@ import net.walend.disentangle.heap.HeapOrdering
 
 object LeastWeights extends SemiringSupport[Double,Double] {
 
-  def semiring = LeastWeightsSemiring
+  def semiring: LeastWeights.Semiring = LeastWeightsSemiring
 
-  def heapOrdering = LeastWeightsOrdering
+  def heapOrdering: HeapOrdering[Double] = LeastWeightsOrdering
 
-  def heapKeyForLabel = {(label:Label) => label}
+  def heapKeyForLabel: LeastWeights.Label => Double = { (label:Label) => label}
 
-  def convertEdgeToLabel[Node, Label](start: Node, end: Node, edge: Label): LeastWeights.Label = 1
+  def convertEdgeToLabel[Node, Label](@unused start: Node, @unused end: Node, @unused edge: Label): LeastWeights.Label = 1
 
   object LeastWeightsSemiring extends Semiring {
 
     def I = 0
-    def O = Double.PositiveInfinity
+    def O: LeastWeights.Label = Double.PositiveInfinity
 
     def inDomain(label: Label): Boolean = {
       I <= label && label < O
@@ -61,7 +63,7 @@ object LeastWeights extends SemiringSupport[Double,Double] {
     def keyDomainDescription = "between zero and Double.PositiveInfinity (the annihilator)"
 
     def checkKey(key: Double): Unit = {
-      require((LeastWeights.LeastWeightsSemiring.inDomain(key)||(key == LeastWeights.LeastWeightsSemiring.O)),s"Key must be $keyDomainDescription, not $key")
+      require(LeastWeights.LeastWeightsSemiring.inDomain(key)||(key == LeastWeights.LeastWeightsSemiring.O),s"Key must be $keyDomainDescription, not $key")
     }
 
     /**

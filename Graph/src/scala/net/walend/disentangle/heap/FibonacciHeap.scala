@@ -1,5 +1,7 @@
 package net.walend.disentangle.heap
 
+import scala.annotation.{tailrec, unused}
+
 /**
  * A generic Fibonacci heap
  *
@@ -106,7 +108,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     builder.toString()
   }
 
-  private var top:FibonacciHeapMember = null
+  private var top:FibonacciHeapMember = _
   private var size:Int = 0
 
   private def reinsert(key:K,fibNode:FibonacciHeapMember):FibonacciHeapMember = {
@@ -117,7 +119,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     if(top != null) {
       top.cat(fibNode)
     }
-    if((top==null)||(comparator.lt(top.key,fibNode.key))) {
+    if((top==null)|| comparator.lt(top.key,fibNode.key)) {
       top = fibNode
     }
     size = size +1
@@ -125,6 +127,7 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     fibNode
   }
 
+  @tailrec
   private def cascadingCut(y: FibonacciHeapMember): Unit = {
     val z: FibonacciHeapMember = y.parent
     if (z != null) {
@@ -227,18 +230,18 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
 
   private class ChildIterator(startNode:FibonacciHeapMember) {
   
-    private var currentNode:FibonacciHeapMember = null
-    private var currentChildIterator:ChildIterator = null
+    private var currentNode:FibonacciHeapMember = _
+    private var currentChildIterator:ChildIterator = _
     
     def hasNext:Boolean = {
-      if((currentChildIterator!=null)&&(currentChildIterator.hasNext)) {
+      if((currentChildIterator!=null)&& currentChildIterator.hasNext) {
         return true
       }
       startNode != currentNode
     }
     
     def next():FibonacciHeapMember = {
-      if((currentChildIterator!=null)&&(currentChildIterator.hasNext)) {
+      if((currentChildIterator!=null)&& currentChildIterator.hasNext) {
         currentChildIterator.next()
       }
       else if(currentNode!=null) {
@@ -258,8 +261,6 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
         startNode
       }
     }
-    
-    def remove():Unit = throw new UnsupportedOperationException
   }
 
   private def iterator():ChildIterator = {
@@ -269,14 +270,15 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
   class FibonacciHeapMember(val value:V) extends HeapMember {
 
     private var _key:K = comparator.AlwaysTop
-    private[FibonacciHeap] var parent: FibonacciHeapMember = null //todo only need accessor outside of member
-    private[FibonacciHeap] var child: FibonacciHeapMember = null //todo only need accessor outside of member
+    private[FibonacciHeap] var parent: FibonacciHeapMember = _ //todo only need accessor outside of member
+    private[FibonacciHeap] var child: FibonacciHeapMember = _ //todo only need accessor outside of member
     private var left: FibonacciHeapMember = this
     private[FibonacciHeap] var right: FibonacciHeapMember = this //todo only need accessor outside of member
     private[FibonacciHeap] var childCount: Int = 0
     private[FibonacciHeap] var lostChild: Boolean = false
     private var inHeap: Boolean = false
 
+    @unused
     private def toDebugString: String = {
       val builder: StringBuffer = new StringBuffer
       builder.append("key: " + _key + "value: "+value)
