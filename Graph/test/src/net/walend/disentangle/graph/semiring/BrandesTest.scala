@@ -150,7 +150,7 @@ class BrandesTest extends AnyFlatSpec with Matchers {
       assert(abs(betweennesses(node) - expectedB(node)) <= epsilon,s"$node's betweenness ${betweennesses(node)} does not match jung's ${expectedB(node)}")
     }
   }
-
+/*
   def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Seq[(Node,Double)] = {
     import edu.uci.ics.jung.graph.UndirectedSparseGraph
     import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
@@ -226,6 +226,7 @@ AL TN
 
     }
   }
+*/
 /*
   "Betweenness for Enron data" should "be calculated" in {
 
