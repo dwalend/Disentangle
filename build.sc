@@ -11,15 +11,15 @@ import os.{CommandResult, Path}
 object Shared {
   val scalacOptions = Seq("-deprecation")
   val scalaJSVersion = "1.13.0" //todo set up javascript again
-  val scalaVersion = "3.2.2" 
+  val scalaVersion = "3.2.2"
   val javaVersion = "17.0.6"
 }
 
 object Graph extends ScalaModule {  //todo ScalaJSModule does not play nice with ScalaTest
   override def artifactName: T[String] = "Disentangle-Graph"
 
-  def scalaJSVersion = Shared.scalaJSVersion
-  def scalaVersion = Shared.scalaVersion
+//  override def scalaJSVersion: T[String] = Shared.scalaJSVersion
+  override def scalaVersion: T[String] = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
@@ -49,10 +49,10 @@ object Examples extends ScalaModule {
   override def artifactName: T[String] = "Disentangle-Examples"
 
   def scalaJSVersion = Shared.scalaJSVersion
-  def scalaVersion = Shared.scalaVersion
+  override def scalaVersion: T[String] = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
-  override def scalacOptions = Shared.scalacOptions
+  override def scalacOptions: Target[Seq[String]] = Shared.scalacOptions
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
 
@@ -60,7 +60,7 @@ object Examples extends ScalaModule {
 
     override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
 
-    def ivyDeps = Agg(
+    override def ivyDeps = Agg(
       ivy"org.scalatest::scalatest:3.2.15"
     )
   }
@@ -70,7 +70,7 @@ object Benchmark extends ScalaModule {
   override def artifactName: T[String] = "Disentangle-Benchmark"
 
   def scalaJSVersion = Shared.scalaJSVersion
-  def scalaVersion = Shared.scalaVersion
+  override def scalaVersion: T[String] = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
   override def scalacOptions = Shared.scalacOptions
