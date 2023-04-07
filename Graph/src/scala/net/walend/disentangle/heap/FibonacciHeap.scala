@@ -146,10 +146,11 @@ class FibonacciHeap[K,V](comparator:HeapOrdering[K]) extends Heap[K,V] {
     var rootCount:Int = 0
     var x:FibonacciHeapMember = top
     if(x!=null) {
-      do {
+      while {
         rootCount = rootCount + 1
         x = x.right
-      } while(x!=top)
+        x != top
+      } do ()
   
       while(rootCount>0) {
         var d:Int = x.childCount

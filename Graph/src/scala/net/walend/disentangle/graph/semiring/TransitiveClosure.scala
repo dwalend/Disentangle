@@ -14,7 +14,7 @@ object TransitiveClosure extends SemiringSupport[Boolean,TransitiveClosureHeapKe
 
   def heapOrdering = TransitiveClosureHeapOrdering
 
-  def heapKeyForLabel = {label:Label => TransitiveClosureHeapKey.keyForLabel(label)}
+  def heapKeyForLabel = {(label:Label) => TransitiveClosureHeapKey.keyForLabel(label)}
 
   def convertEdgeToLabel[Node, EdgeLabel](start: Node, end: Node, label: EdgeLabel): TransitiveClosure.Label = true
 

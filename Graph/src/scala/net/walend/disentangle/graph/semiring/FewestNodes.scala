@@ -14,7 +14,7 @@ object FewestNodes extends SemiringSupport[Int,Int] {
 
   def heapOrdering = FewestNodesHeapOrdering
 
-  def heapKeyForLabel = {label:Label => label}
+  def heapKeyForLabel = {(label:Label) => label}
 
   def convertEdgeToLabel(start: Any, end: Any, label: Any): FewestNodes.Label = 1
 

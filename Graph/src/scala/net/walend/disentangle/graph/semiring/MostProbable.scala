@@ -15,7 +15,7 @@ object MostProbable extends SemiringSupport[Double,Double] {
 
   def heapOrdering = MostProbableOrdering
 
-  def heapKeyForLabel = {label:Label => label}
+  def heapKeyForLabel = {(label:Label) => label}
 
   def convertEdgeToLabel[Node, Label](start: Node, end: Node, label: Label): MostProbable.Label = semiring.I
 

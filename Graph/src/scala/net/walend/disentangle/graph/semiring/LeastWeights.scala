@@ -15,7 +15,7 @@ object LeastWeights extends SemiringSupport[Double,Double] {
 
   def heapOrdering = LeastWeightsOrdering
 
-  def heapKeyForLabel = {label:Label => label}
+  def heapKeyForLabel = {(label:Label) => label}
 
   def convertEdgeToLabel[Node, Label](start: Node, end: Node, edge: Label): LeastWeights.Label = 1
 

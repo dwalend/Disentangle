@@ -24,7 +24,7 @@ final class IndexedSet[A](outerSeq:IndexedSeq[A])
 
   private val asSet:Set[A] = outerSeq.toSet
 
-  if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.groupBy(x => x).filter{x: (A, IndexedSeq[A]) => x._2.size > 1}}")
+  if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.groupBy(x => x).filter{(x: (A, IndexedSeq[A])) => x._2.size > 1}}")
 
   //Indexed access
   //todo rename apply()
