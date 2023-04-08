@@ -10,10 +10,10 @@ object Shared {
   val javaVersion = "17.0.6"
 }
 
-object Graph extends ScalaModule {//todo ScalaJSModule {
+object Graph extends ScalaJSModule {
   override def artifactName: T[String] = "Disentangle-Graph"
 
-//  override def scalaJSVersion: T[String] = Shared.scalaJSVersion
+  override def scalaJSVersion: T[String] = Shared.scalaJSVersion
   override def scalaVersion: T[String] = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
@@ -34,7 +34,7 @@ object Graph extends ScalaModule {//todo ScalaJSModule {
   }
 }
 
-//todo then build Graph as ScalaJS
+//todo move out the agglomerate experiment
 //todo then move the rest to Munit
 
 object GraphJvm extends ScalaModule {

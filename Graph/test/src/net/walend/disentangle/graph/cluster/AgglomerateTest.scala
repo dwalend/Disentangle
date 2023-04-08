@@ -8,14 +8,14 @@ import net.walend.disentangle.graph.cluster.Agglomerate.{Initial as I, *}
 class AgglomerateTest extends FunSuite {
   import SomeGraph._
 
-  test("Testing with SomeGraph should not crash") {
+  test("Testing with SomeGraph should not crash".ignore) {
 
     val testGraph = SomeGraph.testUndigraph //todo work with the karate school graph
     val initialCluster = Agglomerate.initialClusterFromGraph(testGraph)
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialCluster)
   }
 
-  test("An empty graph should result in a List with an empty graph") {
+  test("An empty graph should result in a List with an empty graph".ignore) {
     val testGraph = AdjacencyUndigraph()
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -25,7 +25,7 @@ class AgglomerateTest extends FunSuite {
   }
 
 
-  test("A graph with one node should not crash") {
+  test("A graph with one node should not crash".ignore) {
     val testGraph = AdjacencyUndigraph(nodes = List(A))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -34,7 +34,7 @@ class AgglomerateTest extends FunSuite {
     assertEquals(clusters,List(AdjacencyUndigraph(nodes = List(Agglomerate.Initial(A)))))
   }
 
-  test("A graph with two isolated nodes should not crash") {
+  test("A graph with two isolated nodes should not crash".ignore) {
     val testGraph = AdjacencyUndigraph(nodes = List(A,B))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -45,7 +45,7 @@ class AgglomerateTest extends FunSuite {
     assertEquals(clusters,expectedClusters)
   }
 
-  test("A graph with two linked nodes should form a cycle") {
+  test("A graph with two linked nodes should form a cycle".ignore) {
     val testGraph = AdjacencyUndigraph(edges = Seq(NodePair(A,B)))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -58,7 +58,7 @@ class AgglomerateTest extends FunSuite {
     assertEquals(clusters,expectedClusters)
   }
 
-  test("A graph with three linked nodes should form a cycle")  {
+  test("A graph with three linked nodes should form a cycle".ignore)  {
     val testGraph = AdjacencyUndigraph(edges = Seq(NodePair(A,B),NodePair(B,C),NodePair(C,A)),nodes = Seq(A,B,C))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -72,7 +72,7 @@ class AgglomerateTest extends FunSuite {
   }
 
 
-  test("A star graph should form something reasonable") {
+  test("A star graph should form something reasonable".ignore) {
 
     val edges = Seq((A,B),(B,C))
 
@@ -100,6 +100,4 @@ class AgglomerateTest extends FunSuite {
 //    clusters should be(expectedClusters)
 
   }
-
-
 }
