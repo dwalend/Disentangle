@@ -2,8 +2,7 @@ package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, LabelDigraph}
 import Brandes.BrandesSteps
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
 import scala.collection.Map
 
@@ -13,7 +12,7 @@ import scala.collection.Map
  * @author dwalend
  * @since v0.1.0
  */
-class BrandesJungTest extends AnyFlatSpec with Matchers {
+class BrandesJungTest extends FunSuite {
 
   val support: FewestNodes.type = FewestNodes
   val brandesSupport: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
@@ -66,7 +65,7 @@ AL TN
     arcs
   }
 
-  "Brandes' algorithm" should "produce the same betweenness as Jung for the US state dataSeq, even in parallel" in {
+  test("Brandes' algorithm should produce the same betweenness as Jung for the US state dataSeq, even in parallel") {
 
     val arcs = usStateEdges
 
