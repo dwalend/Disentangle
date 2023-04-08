@@ -117,14 +117,7 @@ class BrandesTest extends FunSuite {
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),support,FewestNodes.convertEdgeToLabel)
     checkBrandesResults(labelGraphAndBetweenness)
   }
-
-
-  test("Brandes' algorithm should produce the correct label graph and betweenness using the implicit method on a Digraph in parallel") {
-
-    val labelGraphAndBetweenness = Brandes.parAllLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),support,FewestNodes.convertEdgeToLabel)
-    checkBrandesResults((Seq.from(labelGraphAndBetweenness._1),Map.from(labelGraphAndBetweenness._2)))
-  }
-
+  
   test("Brandes' algorithm should produce both the correct label graph and betweenness for a figure-8 graph") {
 
     val expectedB:Map[String,Double] = Map(

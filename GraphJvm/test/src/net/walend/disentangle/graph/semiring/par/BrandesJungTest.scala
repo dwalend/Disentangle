@@ -1,8 +1,8 @@
-package net.walend.disentangle.graph.semiring
+package net.walend.disentangle.graph.semiring.par
 
-import net.walend.disentangle.graph.{AdjacencyLabelDigraph, LabelDigraph}
-import Brandes.BrandesSteps
 import munit.FunSuite
+import net.walend.disentangle.graph.semiring.{Brandes, FewestNodes}
+import net.walend.disentangle.graph.{AdjacencyLabelDigraph, LabelDigraph}
 
 import scala.collection.Map
 
@@ -18,8 +18,8 @@ class BrandesJungTest extends FunSuite {
   val brandesSupport: Brandes.BrandesSupport[String, Int, Int] = Brandes.BrandesSupport[String]()
 
   def jungBetweenness[Node,Label](arcs:Seq[(Node,Node,Label)]):Seq[(Node,Double)] = {
-    import edu.uci.ics.jung.graph.UndirectedSparseGraph
     import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality
+    import edu.uci.ics.jung.graph.UndirectedSparseGraph
 
     val jungGraph = new UndirectedSparseGraph[Node,Any]()
 

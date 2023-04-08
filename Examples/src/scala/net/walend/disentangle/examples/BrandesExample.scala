@@ -4,6 +4,7 @@ import net.walend.disentangle.examples.BrandesExample.support
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, AdjacencyLabelUndigraph, NodePair}
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import net.walend.disentangle.graph.semiring.Brandes
+import net.walend.disentangle.graph.semiring.par.ParBrandes
 
 import scala.collection.immutable.Seq
 import scala.collection.parallel.immutable.{ParMap, ParSeq}
@@ -43,7 +44,7 @@ object BrandesExample {
   /**
    * Find shortest paths and betweenness for the graph in parallel
    */
-  lazy val shortestPathsAndBetweennessFromPar: (ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = Brandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
+  lazy val shortestPathsAndBetweennessFromPar: (ParSeq[(String, String, Option[BrandesSteps[String, Int]])], ParMap[String, Double]) = ParBrandes.parAllLeastPathsAndBetweenness(edges,nodeOrder)
 
   /**
    * The first item in the tuple holds edges labels.

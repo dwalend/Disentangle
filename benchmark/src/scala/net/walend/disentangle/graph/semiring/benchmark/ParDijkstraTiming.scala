@@ -1,6 +1,8 @@
 package net.walend.disentangle.graph.semiring.benchmark
 
-import net.walend.disentangle.graph.semiring.{Dijkstra, FewestNodes, AllPathsFirstSteps}
+import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, Dijkstra, FewestNodes}
+
+import net.walend.disentangle.graph.semiring.par.ParDijkstra
 
 /**
  * @author dwalend
@@ -16,7 +18,7 @@ object ParDijkstraTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Dijkstra.parAllPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), Seq.from(graph.nodes))}
+    val result = TimingStudy.timeFunction{ParDijkstra.parAllPairsLeastPaths(graph.edges, support, support.convertEdgeToLabelFunc[Boolean](FewestNodes.convertEdgeToLabel), Seq.from(graph.nodes))}
 
     result._2
   }

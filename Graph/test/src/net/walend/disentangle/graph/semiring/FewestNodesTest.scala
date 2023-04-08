@@ -95,15 +95,7 @@ class FewestNodesTest extends FunSuite {
     assertEquals(labels.size, expectedArcs.size)
     assertEquals(Set.from(labels), expectedArcs)
   }
-
-  test("Parallel Dijkstra's algorithm should produce the correct label graph for Somegraph") {
-
-    val labels = Dijkstra.parAllPairsLeastPaths(testDigraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.from(testDigraph.nodes))
-
-    assertEquals(labels.size, expectedArcs.size)
-    assertEquals(Set.from(labels), expectedArcs)
-  }
-
+  
   test("Dijkstra's algorithm should produce the correct label graph for Somegraph using the implicit method on testDigraph") {
 
     val labels = testDigraph.allPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
@@ -111,15 +103,7 @@ class FewestNodesTest extends FunSuite {
     assertEquals(labels.size, expectedArcs.size)
     assertEquals(Set.from(labels), expectedArcs)
   }
-
-  test("Parallel Dijkstra's algorithm should produce the correct label graph for Somegraph using the implicit method on testDigraph") {
-
-    val labels = testDigraph.parAllPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
-
-    assertEquals(labels.size, expectedArcs.size)
-    assertEquals(Set.from(labels), expectedArcs)
-  }
-
+  
   val expectedBetweenness:Map[String,Double] = Map(
     A -> 0.0,
     B -> 6.5,

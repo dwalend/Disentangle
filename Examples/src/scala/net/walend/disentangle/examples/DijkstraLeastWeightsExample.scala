@@ -1,5 +1,6 @@
 package net.walend.disentangle.examples
 
+import net.walend.disentangle.graph.semiring.par.ParDijkstra
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, Dijkstra, LeastWeights}
 
@@ -51,7 +52,7 @@ object DijkstraLeastWeightsExample {
   /**
    * Generate the first steps for all paths in the graph in parallel
    */
-  lazy val leastPathLabelsFromPar: ParSeq[(String, String, support.Label)] = Dijkstra.parAllPairsLeastPaths(edges,support,labelForEdge)
+  lazy val leastPathLabelsFromPar: ParSeq[(String, String, support.Label)] = ParDijkstra.parAllPairsLeastPaths(edges,support,labelForEdge)
 
   /**
    * The helper methods in AllPathsFirstSteps need a directed graph.

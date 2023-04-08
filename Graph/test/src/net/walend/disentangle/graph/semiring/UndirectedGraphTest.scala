@@ -75,14 +75,7 @@ class UndirectedGraphTest extends FunSuite {
 
     assertEquals(allShortestPaths, expectedShortestPaths)
   }
-
-  test("Dijkstra's algorithm should produce the correct label graph for Somegraph in parallel") {
-
-    val allShortestPaths = SomeGraph.testLabelUndigraph.parAllPairsShortestPaths
-
-    assertEquals(Vector.from(allShortestPaths), expectedShortestPaths)
-  }
-
+  
   test("Brandes algorithm should produce the correct label graph and betweeness values for Somegraph") {
 
     val expectedFirstSteps: Seq[(String, String, Option[BrandesSteps[String, Int]])] = Vector((A,A,Some(BrandesSteps(0,1,List()))),

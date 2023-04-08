@@ -19,10 +19,6 @@ object Graph extends ScalaModule {//todo ScalaJSModule {
 
   override def scalacOptions: Target[Seq[String]] = Shared.scalacOptions
 
-  override def ivyDeps = Agg(
-    ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4"
-  )
-
   object test extends Tests with TestModule.Munit {
     override def ivyDeps = Agg(
       ivy"org.scalameta::munit::0.7.29"
@@ -50,9 +46,15 @@ object GraphJvm extends ScalaModule {
 
   override def scalacOptions = Shared.scalacOptions
 
+  override def ivyDeps = Agg(
+    ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4"
+  )
+
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
 
   object test extends Tests with TestModule.Munit {
+    override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
+
     override def ivyDeps = Agg(
       ivy"org.scalameta::munit::0.7.29",
       ivy"net.sf.jung:jung-graph-impl:2.1.1",
@@ -70,7 +72,7 @@ object Examples extends ScalaModule {
 
   override def scalacOptions: Target[Seq[String]] = Shared.scalacOptions
 
-  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph,GraphJvm)
 
   object test extends Tests with TestModule.ScalaTest {
 
@@ -91,7 +93,7 @@ object Benchmark extends ScalaModule {
 
   override def scalacOptions = Shared.scalacOptions
 
-  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph,GraphJvm)
 
   override def ivyDeps = Agg(
     ivy"org.scalatest::scalatest:3.2.15",

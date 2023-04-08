@@ -86,24 +86,7 @@ class AllPathsFirstStepsTest extends FunSuite {
     assertEquals(labels.size, expectedArcs.size)
     assertEquals(Set.from(labels),expectedArcs)
   }
-
-  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using default values for the parallel algorithm") {
-
-    val arcs = Dijkstra.parAllPairsShortestPaths(testDigraph.edges,Seq.from(testDigraph.nodes))
-
-    assertEquals(arcs.size, expectedArcs.size)
-    assertEquals(Set.from(arcs),expectedArcs)
-  }
-
-  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using default values for the parallel algorithm with the implicit extension method") {
-
-    val arcs = testDigraph.parAllPairsShortestPaths
-
-    assertEquals(arcs.size, expectedArcs.size)
-    assertEquals(Set.from(arcs),expectedArcs)
-  }
-
-
+  
   test("AllPathsFirstSteps and the Floyd-Warshall algorithm should produce the correct subgraphs for minimal paths and the correct minimal paths") {
 
     val expectedSubgraphs = Map(

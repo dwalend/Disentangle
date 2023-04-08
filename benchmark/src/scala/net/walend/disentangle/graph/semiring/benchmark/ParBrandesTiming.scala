@@ -3,6 +3,8 @@ package net.walend.disentangle.graph.semiring.benchmark
 import net.walend.disentangle.graph.semiring.Brandes
 import net.walend.disentangle.graph.semiring.FewestNodes
 
+import net.walend.disentangle.graph.semiring.par.ParBrandes
+
 /**
  *
  *
@@ -19,7 +21,7 @@ object ParBrandesTiming extends Timeable {
 
     val graph = DigraphFactory.createRandomNormalDigraph(nodeCount,16)
 
-    val result = TimingStudy.timeFunction{Brandes.parAllLeastPathsAndBetweenness(Seq.from(graph.edges),Seq.from(graph.nodes),support,FewestNodes.convertEdgeToLabel)}
+    val result = TimingStudy.timeFunction{ParBrandes.parAllLeastPathsAndBetweenness(Seq.from(graph.edges),Seq.from(graph.nodes),support,FewestNodes.convertEdgeToLabel)}
 
     result._2
   }
