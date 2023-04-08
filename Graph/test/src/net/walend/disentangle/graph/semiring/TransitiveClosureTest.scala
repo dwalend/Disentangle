@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.SomeGraph
-import SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
 /**
  * Tests algorithms with FewestNodes
@@ -12,9 +10,10 @@ import org.scalatest.matchers.should.Matchers
  * @since v0.1.0
  */
 
-class TransitiveClosureTest extends AnyFlatSpec with Matchers {
+class TransitiveClosureTest extends FunSuite {
+  import SomeGraph.*
 
-  val expectedArcs = Set(
+  val expectedArcs: Set[(String, String, Boolean)] = Set(
     (A,A,true),
     (A,B,true),
     (A,C,true),
@@ -56,19 +55,19 @@ class TransitiveClosureTest extends AnyFlatSpec with Matchers {
     (H,H,true)
   )
 
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+  test("The Floyd-Warshall algorithm should produce the correct label graph for Somegraph") {
 
     val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges), expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
     val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges, TransitiveClosure, TransitiveClosure.convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
-    edges.size should be (expectedArcs.size)
-    Set.from(edges) should be (expectedArcs)
+    assertEquals(edges.size, expectedArcs.size)
+    assertEquals(Set.from(edges), expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -82,10 +81,10 @@ class TransitiveClosureTest extends AnyFlatSpec with Matchers {
     H -> 1.5
   )
 
-  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+  test("Brandes' algorithm should produce both the correct label graph and betweenness for Somegraph") {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),TransitiveClosure,TransitiveClosure.convertEdgeToLabel)
 
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+    assertEquals(labelGraphAndBetweenness._2, expectedBetweenness)
   }
 }

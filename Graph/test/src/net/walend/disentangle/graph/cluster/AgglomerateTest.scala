@@ -1,43 +1,40 @@
 package net.walend.disentangle.graph.cluster
 
+import munit.{FunSuite, IgnoreSuite}
 import net.walend.disentangle.graph.{AdjacencyUndigraph, NodePair, SomeGraph}
-import net.walend.disentangle.graph.cluster.Agglomerate.{Initial => I, _}
-import SomeGraph._
-import org.scalatest.Ignore
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import net.walend.disentangle.graph.cluster.Agglomerate.{Initial as I, *}
 
+@IgnoreSuite
+class AgglomerateTest extends FunSuite {
+  import SomeGraph._
 
-@Ignore
-class AgglomerateTest extends AnyFlatSpec with Matchers {
-
-  "Testing with SomeGraph" should "not crash" in {
+  test("Testing with SomeGraph should not crash") {
 
     val testGraph = SomeGraph.testUndigraph //todo work with the karate school graph
     val initialCluster = Agglomerate.initialClusterFromGraph(testGraph)
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialCluster)
   }
 
-  "An empty graph " should "result in a List with an empty graph" in {
+  test("An empty graph should result in a List with an empty graph") {
     val testGraph = AdjacencyUndigraph()
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
 
-    clusters should be(List(AdjacencyUndigraph()))
+    assertEquals(clusters,List(AdjacencyUndigraph()))
   }
 
 
-  "A graph with one node " should "not crash" in {
+  test("A graph with one node should not crash") {
     val testGraph = AdjacencyUndigraph(nodes = List(A))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
     val clusters: List[ClusterGraph] = Agglomerate.agglomerate(initialClusters)
 
-    clusters should be(List(AdjacencyUndigraph(nodes = List(Agglomerate.Initial(A)))))
+    assertEquals(clusters,List(AdjacencyUndigraph(nodes = List(Agglomerate.Initial(A)))))
   }
 
-  "A graph with two isolated nodes " should "not crash" in {
+  test("A graph with two isolated nodes should not crash") {
     val testGraph = AdjacencyUndigraph(nodes = List(A,B))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -45,10 +42,10 @@ class AgglomerateTest extends AnyFlatSpec with Matchers {
 
     val expectedClusters: List[ClusterGraph] = List(AdjacencyUndigraph(nodes = Seq(I(A), I(B))), AdjacencyUndigraph(nodes = Seq(Isolates(Set(I(A), I(B)),2))))
 
-    clusters should be(expectedClusters)
+    assertEquals(clusters,expectedClusters)
   }
 
-  "A graph with two linked nodes " should "form a cycle" in {
+  test("A graph with two linked nodes should form a cycle") {
     val testGraph = AdjacencyUndigraph(edges = Seq(NodePair(A,B)))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -58,10 +55,10 @@ class AgglomerateTest extends AnyFlatSpec with Matchers {
     val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)))),Seq(I(B),I(A)),2)
     val expectedClusters: List[ClusterGraph] = List(expectedInitial, AdjacencyUndigraph(nodes = Seq(expectedCycle)))
 
-    clusters should be(expectedClusters)
+    assertEquals(clusters,expectedClusters)
   }
 
-  "A graph with three linked nodes " should "form a cycle" in  {
+  test("A graph with three linked nodes should form a cycle")  {
     val testGraph = AdjacencyUndigraph(edges = Seq(NodePair(A,B),NodePair(B,C),NodePair(C,A)),nodes = Seq(A,B,C))
 
     val initialClusters = Agglomerate.initialClusterFromGraph(testGraph)
@@ -71,11 +68,11 @@ class AgglomerateTest extends AnyFlatSpec with Matchers {
     val expectedCycle = Cycle(AdjacencyUndigraph(edges = Seq(NodePair(I(A),I(B)),NodePair(I(B),I(C)),NodePair(I(C),I(A)))),Seq(I(C),I(B),I(A)),2)
     val expectedClusters: List[ClusterGraph] = List(expectedInitial, AdjacencyUndigraph(nodes = Seq(expectedCycle)))
 
-    clusters should be(expectedClusters)
+    assertEquals(clusters,expectedClusters)
   }
 
 
-  "A star graph" should "form something reasonable" in {
+  test("A star graph should form something reasonable") {
 
     val edges = Seq((A,B),(B,C))
 

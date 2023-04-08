@@ -1,9 +1,8 @@
 package net.walend.disentangle.graph.semiring
 
+import munit.FunSuite
 import net.walend.disentangle.graph.SomeGraph
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 
 /**
   *
@@ -11,13 +10,13 @@ import org.scalatest.matchers.should.Matchers
   * @author dwalend
   * @since v0.2.1
   */
-class UndirectedGraphTest extends AnyFlatSpec with Matchers {
+class UndirectedGraphTest extends FunSuite {
 
   import SomeGraph._
 
-  val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
+  val support: AllPathsFirstSteps[String, Int, Int] = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 
-  val expectedShortestPaths: Seq[(String, String, Some[Any])] = Vector(
+  val expectedShortestPaths = Vector(
     (A,A,Some(support.FirstSteps(0,Set()))),
     (A,B,Some(support.FirstSteps(1,Set(B)))),
     (A,C,Some(support.FirstSteps(2,Set(B)))),
@@ -70,23 +69,23 @@ class UndirectedGraphTest extends AnyFlatSpec with Matchers {
     (H,H,Some(support.FirstSteps(0,Set())))
   )
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
-    val allShortestPaths = SomeGraph.testLabelUndigraph.allPairsShortestPaths
+    val allShortestPaths: Seq[(String, String, Option[FirstStepsTrait[String, Int]])] = SomeGraph.testLabelUndigraph.allPairsShortestPaths
 
-    allShortestPaths should be(expectedShortestPaths)
+    assertEquals(allShortestPaths, expectedShortestPaths)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph in parallel" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph in parallel") {
 
     val allShortestPaths = SomeGraph.testLabelUndigraph.parAllPairsShortestPaths
 
-    Vector.from(allShortestPaths) should be(expectedShortestPaths)
+    assertEquals(Vector.from(allShortestPaths), expectedShortestPaths)
   }
 
-  "Brandes algorithm" should "produce the correct label graph and betweeness values for Somegraph" in {
+  test("Brandes algorithm should produce the correct label graph and betweeness values for Somegraph") {
 
-    val expectedFirstSteps = Vector((A,A,Some(BrandesSteps(0,1,List()))),
+    val expectedFirstSteps: Seq[(String, String, Option[BrandesSteps[String, Int]])] = Vector((A,A,Some(BrandesSteps(0,1,List()))),
       (B,A,Some(BrandesSteps(1,1,List(0)))),
       (E,A,Some(BrandesSteps(2,1,List(1)))),
       (C,A,Some(BrandesSteps(2,1,List(1)))),
@@ -146,9 +145,10 @@ class UndirectedGraphTest extends AnyFlatSpec with Matchers {
       H -> 0.6666666666666666
     )
 
-    val allShortestPathsAndBetweenesses = SomeGraph.testLabelUndigraph.allLeastPathsAndBetweenness()
+    val allShortestPathsAndBetweenesses: (Seq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) =
+      SomeGraph.testLabelUndigraph.allLeastPathsAndBetweenness()
 
-    allShortestPathsAndBetweenesses._1 should be (expectedFirstSteps)
-    allShortestPathsAndBetweenesses._2 should be (expectedBetweennesses)
+    assertEquals(allShortestPathsAndBetweenesses._1, expectedFirstSteps)
+    assertEquals(allShortestPathsAndBetweenesses._2, expectedBetweennesses)
   }
 }

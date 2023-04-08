@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
+import munit.FunSuite
 import net.walend.disentangle.graph.SomeGraph
-import SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -11,7 +9,8 @@ import org.scalatest.matchers.should.Matchers
  * @author dwalend
  * @since v0.1.0
  */
-class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
+class AllPathsFirstStepsTest extends FunSuite {
+  import SomeGraph._
 
   val support = new AllPathsFirstSteps[String,Int,Int](FewestNodes)
 
@@ -57,55 +56,55 @@ class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
     (H,H,Some(support.FirstSteps(0,Set())))
   )
 
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+  test("The Floyd-Warshall algorithm should produce the correct label graph for Somegraph") {
 
     val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),support,support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel))
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges),expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
     val arcs = Dijkstra.allPairsLeastPaths(testDigraph.edges, support, support.convertEdgeToLabelFunc[String](FewestNodes.convertEdgeToLabel), Seq.from(testDigraph.nodes))
 
-    arcs.size should be (expectedArcs.size)
-    Set.from(arcs) should be (expectedArcs)
+    assertEquals(arcs.size,expectedArcs.size)
+    assertEquals(Set.from(arcs),expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the algorithm" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using default values for the algorithm") {
 
     val arcs = Dijkstra.allPairsShortestPaths(testDigraph.edges,Seq.from(testDigraph.nodes))
 
-    arcs.size should be (expectedArcs.size)
-    Set.from(arcs) should be (expectedArcs)
+    assertEquals(arcs.size,expectedArcs.size)
+    assertEquals(Set.from(arcs),expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph when used with the implicit extension method" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph when used with the implicit extension method") {
 
     val labels = testDigraph.allPairsShortestPaths
 
-    labels.size should be (expectedArcs.size)
-    Set.from(labels) should be (expectedArcs)
+    assertEquals(labels.size, expectedArcs.size)
+    assertEquals(Set.from(labels),expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using default values for the parallel algorithm") {
 
     val arcs = Dijkstra.parAllPairsShortestPaths(testDigraph.edges,Seq.from(testDigraph.nodes))
 
-    arcs.size should be (expectedArcs.size)
-    Set.from(arcs) should be (expectedArcs)
+    assertEquals(arcs.size, expectedArcs.size)
+    assertEquals(Set.from(arcs),expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using default values for the parallel algorithm with the implicit extension method" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using default values for the parallel algorithm with the implicit extension method") {
 
     val arcs = testDigraph.parAllPairsShortestPaths
 
-    arcs.size should be (expectedArcs.size)
-    Set.from(arcs) should be (expectedArcs)
+    assertEquals(arcs.size, expectedArcs.size)
+    assertEquals(Set.from(arcs),expectedArcs)
   }
 
 
-  "AllPathsFirstSteps and the Floyd-Warshall algorithm" should "produce the correct subgraphs for minimal paths and the correct minimal paths" in {
+  test("AllPathsFirstSteps and the Floyd-Warshall algorithm should produce the correct subgraphs for minimal paths and the correct minimal paths") {
 
     val expectedSubgraphs = Map(
       (A,A) -> Set(),
@@ -195,7 +194,7 @@ class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
 
     val subgraphs = labelGraph.edges.map(edge => ((edge._1,edge._2),support.subgraphEdges(labelGraph,edge._1,edge._2).map(edge => (edge.from.value,edge.to.value)))).toMap
 
-    subgraphs should be (expectedSubgraphs)
+    assertEquals(subgraphs, expectedSubgraphs)
 
     val shortestPaths = labelGraph.edges.map(edge => ((edge._1,edge._2),support.allLeastPaths(labelGraph,edge._1,edge._2)))
 
@@ -207,6 +206,6 @@ class AllPathsFirstStepsTest extends AnyFlatSpec with Matchers {
     }
     val pairsToShortestOuter = shortestOuterPaths.toMap
 
-    pairsToShortestOuter should be (expectedShortPaths)
+    assertEquals(pairsToShortestOuter,expectedShortPaths)
   }
 }

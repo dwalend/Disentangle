@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
 import net.walend.disentangle.graph.SomeGraph
-import SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
 /**
  * Tests algorithms with LeastWeights
@@ -12,7 +10,8 @@ import org.scalatest.matchers.should.Matchers
  * @since v0.1.0
  */
 
-class LeastWeightsTest extends AnyFlatSpec with Matchers {
+class LeastWeightsTest extends FunSuite {
+  import SomeGraph.*
 
   val arcsToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
                                                               ,bc -> 2.0
@@ -24,10 +23,10 @@ class LeastWeightsTest extends AnyFlatSpec with Matchers {
                                                               ,hc -> 8.0
                                                               )
 
-  def convertArcToLabel(start: String, end: String, arc: String): LeastWeights.Label = arcsToWeights.get((start,end,arc)).get
+  def convertArcToLabel(start: String, end: String, arc: String): LeastWeights.Label = arcsToWeights((start, end, arc))
 
 
-  val expectedArcs = Set(
+  val expectedArcs: Set[(String, String, Double)] = Set(
                           (A,A,0.0),
                           (A,B,1.0),
                           (A,C,3.0),
@@ -70,20 +69,20 @@ class LeastWeightsTest extends AnyFlatSpec with Matchers {
                         )
 
 
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+  test("The Floyd-Warshall algorithm should produce the correct label graph for Somegraph") {
 
     val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),LeastWeights,convertArcToLabel)
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges), expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
     val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges,LeastWeights,convertArcToLabel,Seq.from(testDigraph.nodes))
 
-    Set.from(edges) -- expectedArcs should be (Set.empty)
-    expectedArcs -- Set.from(edges) should be (Set.empty)
-    Set.from(edges) should be (expectedArcs)
+    assertEquals(Set.from(edges) -- expectedArcs, Set.empty)
+    assertEquals(expectedArcs -- Set.from(edges), Set.empty)
+    assertEquals(Set.from(edges), expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -97,10 +96,10 @@ class LeastWeightsTest extends AnyFlatSpec with Matchers {
     H -> 0.0
   )
 
-  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+  test("Brandes' algorithm should produce both the correct label graph and betweenness for Somegraph") {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),LeastWeights,convertArcToLabel)
 
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+    assertEquals(labelGraphAndBetweenness._2, expectedBetweenness)
   }
 }

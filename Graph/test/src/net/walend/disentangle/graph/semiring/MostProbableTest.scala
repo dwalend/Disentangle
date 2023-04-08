@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
+import munit.FunSuite
 import net.walend.disentangle.graph.SomeGraph
-import SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 
 /**
  * Tests algorithms with MostProbable
@@ -12,7 +10,8 @@ import org.scalatest.matchers.should.Matchers
  * @since v0.1.0
  */
 
-class MostProbableTest extends AnyFlatSpec with Matchers {
+class MostProbableTest extends FunSuite {
+  import SomeGraph._
 
   val arcsToWeights:Map[(String,String,String),Double] = Map(ab -> 1.0
                                                               ,bc -> 0.9
@@ -24,10 +23,10 @@ class MostProbableTest extends AnyFlatSpec with Matchers {
                                                               ,hc -> 0.3
                                                             )
 
-  def convertEdgeToLabel(start: String, end: String, edge: String): LeastWeights.Label = arcsToWeights.get((start,end,edge)).get
+  def convertEdgeToLabel(start: String, end: String, edge: String): LeastWeights.Label = arcsToWeights((start, end, edge))
 
 
-  val expectedArcs = Set(
+  val expectedArcs: Set[(String, String, Double)] = Set(
                           (A,A,1.0),
                           (A,B,1.0),
                           (A,C,0.9),
@@ -70,20 +69,20 @@ class MostProbableTest extends AnyFlatSpec with Matchers {
                         )
 
 
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+  test("The Floyd-Warshall algorithm should produce the correct label graph for Somegraph"){
 
     val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),MostProbable,convertEdgeToLabel)
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges), expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph"){
 
     val edges = Dijkstra.allPairsLeastPaths(testDigraph.edges, MostProbable, convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
-    Set.from(edges) -- expectedArcs should be (Set.empty)
-    expectedArcs -- Set.from(edges) should be (Set.empty)
-    Set.from(edges) should be (expectedArcs)
+    assertEquals(Set.from(edges) -- expectedArcs, Set.empty)
+    assertEquals(expectedArcs -- Set.from(edges), Set.empty)
+    assertEquals(Set.from(edges), expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -97,11 +96,11 @@ class MostProbableTest extends AnyFlatSpec with Matchers {
     H -> 0.0
   )
 
-  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+  test("Brandes' algorithm should produce both the correct label graph and betweenness for Somegraph") {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),MostProbable,convertEdgeToLabel)
 
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+    assertEquals(labelGraphAndBetweenness._2, expectedBetweenness)
   }
 
 }

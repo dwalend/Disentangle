@@ -1,7 +1,6 @@
 package net.walend.disentangle.heap
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
 
 /**
@@ -10,7 +9,7 @@ import org.scalatest.matchers.should.Matchers
  * @author dwalend
  * @since v0.0.0
  */
-class FibonacciHeapTest extends AnyFlatSpec with Matchers {
+class FibonacciHeapTest extends FunSuite {
 
   def emptyHeap = new FibonacciHeap[Double,String](MinDoubleHeapOrdering)
   def oneMemberHeap:FibonacciHeap[Double,String] = {
@@ -26,36 +25,36 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
     heap
   }
 
-  "A newly created heap" should " be empty" in {
-    emptyHeap.isEmpty should be(true)
+  test("A newly created heap should  be empty") {
+    assertEquals(emptyHeap.isEmpty, true)
   }
 
-  it should "throw an IllegalStateException when asked for its min value" in {
-    a [IllegalStateException] should be thrownBy {emptyHeap.topMember}
+  test("throw an IllegalStateException when asked for its min value") {
+    intercept[IllegalStateException]{emptyHeap.topMember}
   }
 
-  it should "throw an IllegalStateException when asked for its min key value" in {
-    a [IllegalStateException] should be thrownBy {emptyHeap.topKey}
+  test("throw an IllegalStateException when asked for its min key value") {
+    intercept[IllegalStateException]{emptyHeap.topKey}
   }
 
-  it should "not be empty after an item is added" in {
-    oneMemberHeap.isEmpty should be (false)
+  test("not be empty after an item is added") {
+    assert(!oneMemberHeap.isEmpty)
   }
 
-  it should "be empty after a heap with one item has that item removed" in {
+  test( "be empty after a heap with one item has that item removed") {
     val heap = oneMemberHeap
     heap.takeTop()
-    heap.isEmpty should be(true)
+    assertEquals(heap.isEmpty, true)
   }
 
-  it should "not be empty after a heap with two item has that item removed" in {
+  test("not be empty after a heap with two item has that item removed") {
     val heap = twoMemberHeap
 
     heap.takeTop()
-    heap.isEmpty should be(false)
+    assertEquals(heap.isEmpty, false)
   }
 
-  it should "not change what is at the top of the heap if a key in the heap changes to be higher" in {
+  test("not change what is at the top of the heap if a key in the heap changes to be higher") {
 
     val heap = emptyHeap
     val a = heap.insert(1,"A")
@@ -63,10 +62,10 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
 
     b.key_(3)
 
-    heap.takeTop() should be(a)
+    assertEquals(heap.takeTop(), a)
   }
 
-  it should "change what is at the top of the heap if a key in the heap changes to be lower than the min" in {
+  test("change what is at the top of the heap if a key in the heap changes to be lower than the min") {
 
     val heap = emptyHeap
     val a = heap.insert(1,"A")
@@ -74,10 +73,10 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
 
     b.key_(0)
 
-    heap.takeTop() should be(b)
+    assertEquals(heap.takeTop(), b)
   }
 
-  it should "change what is at the top of the heap if the current min in the heap changes to be lower than another key" in {
+  test("change what is at the top of the heap if the current min in the heap changes to be lower than another key") {
 
     val heap = emptyHeap
     val a = heap.insert(1,"A")
@@ -85,10 +84,10 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
 
     a.key_(3)
 
-    heap.takeTop() should be(b)
+    assertEquals(heap.takeTop(), b)
   }
 
-  it should "be able to handle a lot of operations on a larger heap" in {
+  test("be able to handle a lot of operations on a larger heap") {
     val heap = emptyHeap
 
     val a:heap.FibonacciHeapMember = heap.insert(8,"A")
@@ -100,7 +99,7 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
     val g = heap.insert(2,"G")
     val h = heap.insert(1,"H")
 
-    heap.takeTop().value should be("H")
+    assertEquals(heap.takeTop().value, "H")
     g.key_(0)
     f.key_(9)
 
@@ -108,17 +107,17 @@ class FibonacciHeapTest extends AnyFlatSpec with Matchers {
 
     c.remove()
 
-    heap.topMember.value should be("G")
+    assertEquals(heap.topMember.value, "G")
 
     g.key_(10)
 
-    heap.takeTop().value should be("E")
+    assertEquals(heap.takeTop().value, "E")
     a.key_(-1)
-    heap.takeTop().value should be("A")
-    heap.takeTop().value should be("D")
+    assertEquals(heap.takeTop().value, "A")
+    assertEquals(heap.takeTop().value, "D")
 
-    heap.takeTop().value should be("F")
-    heap.takeTop().value should be("G")
-    heap.isEmpty should be (true)
+    assertEquals(heap.takeTop().value, "F")
+    assertEquals(heap.takeTop().value, "G")
+    assert(heap.isEmpty)
   }
 }

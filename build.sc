@@ -31,30 +31,26 @@ object TestTest extends ScalaJSModule { //ScalaModule {  //todo ScalaJSModule do
   object test extends Tests with TestModule.Munit {
     override def ivyDeps = Agg(
       ivy"org.scalameta::munit::0.7.29"
-      //      ivy"net.sf.jung:jung-graph-impl:2.1.1",
-      //      ivy"net.sf.jung:jung-algorithms:2.1.1"
     )
   }
 }
 
-object Graph extends ScalaJSModule { //ScalaModule {  //todo ScalaJSModule does not play nice with ScalaTest
+object Graph extends ScalaModule {//todo ScalaJSModule {
   override def artifactName: T[String] = "Disentangle-Graph"
 
-  override def scalaJSVersion: T[String] = Shared.scalaJSVersion
+//  override def scalaJSVersion: T[String] = Shared.scalaJSVersion
   override def scalaVersion: T[String] = Shared.scalaVersion
   def javaVersion = Shared.javaVersion
 
-  override def scalacOptions = Shared.scalacOptions
+  override def scalacOptions: Target[Seq[String]] = Shared.scalacOptions
 
   override def ivyDeps = Agg(
     ivy"org.scala-lang.modules::scala-parallel-collections:1.0.4"
   )
 
-  object test extends Tests with TestModule.ScalaTest {
+  object test extends Tests with TestModule.Munit {
     override def ivyDeps = Agg(
-      ivy"org.scalatest::scalatest:3.2.15",
-//      ivy"net.sf.jung:jung-graph-impl:2.1.1",
-//      ivy"net.sf.jung:jung-algorithms:2.1.1"
+      ivy"org.scalameta::munit::0.7.29"
     )
   }
 
@@ -67,8 +63,8 @@ object Graph extends ScalaJSModule { //ScalaModule {  //todo ScalaJSModule does 
   }
 }
 
-//todo create a new module - GraphJvmTests - for the Jung tests - that can convert to Munit
 //todo then move the Graph module to use Munit
+//todo GraphJvmTests - rename to GraphJvm - move the parallel parts here - convert to Munit
 //todo then build Graph as ScalaJS
 //todo then move the rest to Munit
 

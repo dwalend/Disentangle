@@ -1,9 +1,7 @@
 package net.walend.disentangle.graph.semiring
 
+import munit.FunSuite
 import net.walend.disentangle.graph.SomeGraph
-import SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 
 /**
  * Tests algorithms with FewestNodes
@@ -12,9 +10,10 @@ import org.scalatest.matchers.should.Matchers
  * @since v0.1.0
  */
 
-class FewestNodesTest extends AnyFlatSpec with Matchers {
+class FewestNodesTest extends FunSuite {
+  import SomeGraph._
 
-  "Initializing the label graph" should "produce a label graph with self-arcs and arcs where SomeGraph has them" in {
+  test("Initializing the label graph should produce a label graph with self-arcs and arcs where SomeGraph has them") {
 
     val labelGraph = FloydWarshall.createLabelDigraph(testDigraph.edges,Seq.from(testDigraph.nodes),FewestNodes,FewestNodes.convertEdgeToLabel)
 
@@ -37,7 +36,7 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
       (H,H,0)
     )
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges), expectedArcs)
   }
 
   val expectedArcs: Set[(String, String, Int)] = Set(
@@ -82,43 +81,43 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
     (H,H,0)
   )
 
-  "The Floyd-Warshall algorithm" should "produce the correct label graph for Somegraph" in {
+  test("The Floyd-Warshall algorithm should produce the correct label graph for Somegraph") {
 
     val labelGraph = FloydWarshall.allPairsLeastPaths(testDigraph.edges,Seq.from(testDigraph.nodes),FewestNodes,FewestNodes.convertEdgeToLabel)
 
-    Set.from(labelGraph.edges) should be (expectedArcs)
+    assertEquals(Set.from(labelGraph.edges), expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
     val labels = Dijkstra.allPairsLeastPaths(testDigraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
-    labels.size should be (expectedArcs.size)
-    Set.from(labels) should be (expectedArcs)
+    assertEquals(labels.size, expectedArcs.size)
+    assertEquals(Set.from(labels), expectedArcs)
   }
 
-  "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph" in {
+  test("Parallel Dijkstra's algorithm should produce the correct label graph for Somegraph") {
 
     val labels = Dijkstra.parAllPairsLeastPaths(testDigraph.edges, FewestNodes, FewestNodes.convertEdgeToLabel, Seq.from(testDigraph.nodes))
 
-    labels.size should be (expectedArcs.size)
-    Set.from(labels) should be (expectedArcs)
+    assertEquals(labels.size, expectedArcs.size)
+    assertEquals(Set.from(labels), expectedArcs)
   }
 
-  "Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testDigraph" in {
+  test("Dijkstra's algorithm should produce the correct label graph for Somegraph using the implicit method on testDigraph") {
 
     val labels = testDigraph.allPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
 
-    labels.size should be (expectedArcs.size)
-    Set.from(labels) should be (expectedArcs)
+    assertEquals(labels.size, expectedArcs.size)
+    assertEquals(Set.from(labels), expectedArcs)
   }
 
-  "Parallel Dijkstra's algorithm" should "produce the correct label graph for Somegraph using the implicit method on testDigraph" in {
+  test("Parallel Dijkstra's algorithm should produce the correct label graph for Somegraph using the implicit method on testDigraph") {
 
     val labels = testDigraph.parAllPairsLeastPaths(FewestNodes, FewestNodes.convertEdgeToLabel)
 
-    labels.size should be (expectedArcs.size)
-    Set.from(labels) should be (expectedArcs)
+    assertEquals(labels.size, expectedArcs.size)
+    assertEquals(Set.from(labels), expectedArcs)
   }
 
   val expectedBetweenness:Map[String,Double] = Map(
@@ -132,11 +131,11 @@ class FewestNodesTest extends AnyFlatSpec with Matchers {
     H -> 1.5
   )
 
-  "Brandes' algorithm" should "produce both the correct label graph and betweenness for Somegraph" in {
+  test("Brandes' algorithm should produce both the correct label graph and betweenness for Somegraph") {
 
     val labelGraphAndBetweenness = Brandes.allLeastPathsAndBetweenness(testDigraph.edges,Seq.from(testDigraph.nodes),FewestNodes,FewestNodes.convertEdgeToLabel)
 
-    labelGraphAndBetweenness._2 should be (expectedBetweenness)
+    assertEquals(labelGraphAndBetweenness._2, expectedBetweenness)
   }
 /*
   "Parallel Dijkstra for Enron data" should "be calculated" in {
