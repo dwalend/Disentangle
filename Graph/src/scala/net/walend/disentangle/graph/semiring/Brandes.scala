@@ -3,7 +3,7 @@ package net.walend.disentangle.graph.semiring
 import net.walend.disentangle.graph.{AdjacencyLabelDigraph, IndexedLabelDigraph}
 import net.walend.disentangle.heap.{FibonacciHeap, Heap, HeapOrdering}
 
-import scala.collection.{Iterable, Seq}
+import scala.collection.immutable.{Iterable, Seq}
 
 /**
  * Brandes' algorithm for betweenness and minimal paths.

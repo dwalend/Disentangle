@@ -2,6 +2,8 @@ package net.walend.disentangle.graph
 
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 
+import scala.collection.immutable.Iterable
+
 /**
  * Semirings and semiring-based graph minimizing algorithms.
  *

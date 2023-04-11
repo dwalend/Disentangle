@@ -5,6 +5,8 @@ import net.walend.disentangle.graph.semiring.Brandes.{BrandesSteps, BrandesSuppo
 import net.walend.disentangle.graph.semiring.{Brandes, FewestNodes, SemiringSupport}
 import net.walend.disentangle.heap.HeapOrdering
 
+import scala.collection.immutable.Iterable
+
 import scala.collection.parallel.immutable.{ParMap, ParSeq}
 
 

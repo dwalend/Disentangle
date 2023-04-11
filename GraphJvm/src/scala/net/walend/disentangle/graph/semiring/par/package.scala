@@ -4,6 +4,8 @@ import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
 import net.walend.disentangle.graph.{IndexedLabelDigraph, IndexedLabelUndigraph, LabelDigraph, LabelUndigraph}
 import net.walend.disentangle.graph.semiring.{Dijkstra, FewestNodes, FirstStepsTrait, SemiringSupport}
 
+import scala.collection.immutable.Iterable
+
 import scala.collection.parallel.immutable.{ParMap, ParSeq}
 
 package object par {

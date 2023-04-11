@@ -91,9 +91,8 @@ object Agglomerate {
       NodePair(nodeMap(e._1),nodeMap(e._2))    //todo original weights - will need a mapping function at some point.
     }
 
-    val edges = graph.edges.map(clusterEdgeFromEdge)
-???
-//    AdjacencyUndigraph.(edges = edges,nodes = nodesToInitialClusters.map(n => n._2))
+    val edges: Iterable[NodePair[Initial[Node]]] = graph.edges.map(clusterEdgeFromEdge)
+    AdjacencyUndigraph(edges = edges,nodes = nodesToInitialClusters.map(n => n._2))
   }
 
   /**

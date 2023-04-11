@@ -34,7 +34,7 @@ object Graph extends ScalaJSModule {
   }
 }
 
-//todo then move the rest to Munit
+//todo move the rest of the tests to Munit
 
 object GraphJvm extends ScalaModule {
   override def artifactName: T[String] = "Disentangle-Graph-JVM"

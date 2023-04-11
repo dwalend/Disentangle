@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{Set, Iterable}
+import scala.collection.immutable.{Set, Iterable}
 
 /**
  * Ancestor trait for a variety of Graphs.

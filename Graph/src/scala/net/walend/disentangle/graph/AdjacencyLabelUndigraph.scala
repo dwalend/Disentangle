@@ -1,6 +1,6 @@
 package net.walend.disentangle.graph
 
-import scala.collection.{Map, Seq, Iterable}
+import scala.collection.immutable.{Map, Seq, Iterable}
 
 /**
   * Provides constant-time access for edges of a node.
