@@ -34,7 +34,6 @@ object Graph extends ScalaJSModule {
   }
 }
 
-//todo move out the agglomerate experiment
 //todo then move the rest to Munit
 
 object GraphJvm extends ScalaModule {
@@ -108,6 +107,30 @@ object Benchmark extends ScalaModule {
 
     override def ivyDeps = Agg(
       ivy"org.scalatest::scalatest:3.2.15"
+    )
+  }
+}
+
+object Experiments extends ScalaModule {
+  override def artifactName: T[String] = "Disentangle-Experiments"
+
+  def scalaJSVersion = Shared.scalaJSVersion
+
+  override def scalaVersion: T[String] = Shared.scalaVersion
+
+  def javaVersion = Shared.javaVersion
+
+  override def scalacOptions: Target[Seq[String]] = Shared.scalacOptions
+
+  override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph)
+
+  object test extends Tests with TestModule.Munit {
+    override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
+
+    override def ivyDeps = Agg(
+      ivy"org.scalameta::munit::0.7.29",
+      ivy"net.sf.jung:jung-graph-impl:2.1.1",
+      ivy"net.sf.jung:jung-algorithms:2.1.1"
     )
   }
 }

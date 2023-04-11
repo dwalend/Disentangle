@@ -4,7 +4,6 @@ import munit.{FunSuite, IgnoreSuite}
 import net.walend.disentangle.graph.{AdjacencyUndigraph, NodePair, SomeGraph}
 import net.walend.disentangle.graph.cluster.Agglomerate.{Initial as I, *}
 
-@IgnoreSuite
 class AgglomerateTest extends FunSuite {
   import SomeGraph._
 
