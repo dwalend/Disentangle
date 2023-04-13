@@ -1,10 +1,8 @@
 package net.walend.disentangle.examples
 
-
-import net.walend.disentangle.graph.SomeGraph._
+import munit.FunSuite
+import net.walend.disentangle.graph.AdjacencyLabelDigraph
 import net.walend.disentangle.graph.semiring.Brandes.BrandesSteps
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 
 /**
  *
@@ -12,9 +10,10 @@ import org.scalatest.matchers.should.Matchers
  * @author dwalend
  * @since v0.2.0
  */
-class BrandesExampleTest extends AnyFlatSpec with Matchers {
+class BrandesExampleTest extends FunSuite {
+  import net.walend.disentangle.graph.SomeGraph.*
 
-  "The Brandes example" should "produce expected results" in {
+  test("The Brandes example should produce expected results") {
 
     val expectedShortestPaths = Vector(
                                       (A,A,Some(BrandesSteps(0,1,List()))),
@@ -57,12 +56,12 @@ class BrandesExampleTest extends AnyFlatSpec with Matchers {
                                       (H,H,Some(BrandesSteps(0,1,List())))
     )
     
-    val expectedBetweennesses = Map(E -> 13.0, F -> 0.0, A -> 0.0, B -> 6.5, C -> 13.0, H -> 1.5, D -> 13.0)
+    val expectedBetweennesses: Map[String, Double] = Map(E -> 13.0, F -> 0.0, A -> 0.0, B -> 6.5, C -> 13.0, H -> 1.5, D -> 13.0)
     
-    val shortestPathsAndBetweennesses = BrandesExample.shortestPathsAndBetweenness
+    val shortestPathsAndBetweennesses: (IndexedSeq[(String, String, Option[BrandesSteps[String, Int]])], Map[String, Double]) = BrandesExample.shortestPathsAndBetweenness
 
-    shortestPathsAndBetweennesses._1 should be (expectedShortestPaths)
-    shortestPathsAndBetweennesses._2 should be (expectedBetweennesses)
+    assert(shortestPathsAndBetweennesses._1 == expectedShortestPaths)
+    assertEquals(shortestPathsAndBetweennesses._2 ,expectedBetweennesses)
 /*
     val shortestPathsAndBetweennessesFromPar = BrandesExample.shortestPathsAndBetweennessFromPar
 
@@ -81,18 +80,18 @@ class BrandesExampleTest extends AnyFlatSpec with Matchers {
 
     val subgraph = BrandesExample.subgraph
 
-    subgraph should be(expectedSubgraphEdges)
+    assert(subgraph == expectedSubgraphEdges)
 
-    val expectedPaths = List(
+    val expectedPaths: Seq[List[labelDigraph.InnerNode]] = List(
       List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(B).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get),
       List(labelDigraph.innerNode(E).get, labelDigraph.innerNode(H).get, labelDigraph.innerNode(C).get, labelDigraph.innerNode(D).get)
     )
 
     val paths = BrandesExample.paths
-    paths should be(expectedPaths)
+    assert(paths == expectedPaths)
   }
 
-  "The BrandesImplicitsExample" should "produce expected results" in {
+  test("The BrandesImplicitsExample should produce expected results") {
 
     val expectedBetweenesses = Map(
       E -> 7.5,
@@ -105,6 +104,6 @@ class BrandesExampleTest extends AnyFlatSpec with Matchers {
     )
     val betweenesses = BrandesImplicitsExample.betweennessValues
 
-    betweenesses should be(expectedBetweenesses)
+    assertEquals(betweenesses ,expectedBetweenesses)
   }
 }

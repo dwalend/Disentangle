@@ -1,11 +1,9 @@
 package net.walend.disentangle.examples
 
+import munit.FunSuite
 import net.walend.disentangle.graph.IndexedLabelDigraph
 import net.walend.disentangle.graph.mutable.MatrixLabelDigraph
-import net.walend.disentangle.graph.semiring.{FirstStepsTrait, FloydWarshall}
-import net.walend.disentangle.graph.SomeGraph._
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import net.walend.disentangle.graph.semiring.{AllPathsFirstSteps, FirstStepsTrait, FloydWarshall}
 
 /**
  *
@@ -13,11 +11,12 @@ import org.scalatest.matchers.should.Matchers
  * @author dwalend
  * @since v0.2.0
  */
-class FloydWarshallExampleTest extends AnyFlatSpec with Matchers {
+class FloydWarshallExampleTest extends FunSuite {
+  import net.walend.disentangle.graph.SomeGraph.*
 
-  val support  = FloydWarshall.defaultSupport[String]
+  val support: AllPathsFirstSteps[String, Int, Int] = FloydWarshall.defaultSupport[String]
 
-  "The Floyd-Warshall example" should "produce expected results" in {
+  test("The Floyd-Warshall example should produce expected results") {
 
     val expectedShortPathGraph = MatrixLabelDigraph(
       edges = Vector((A,A,Some(support.FirstSteps(0,Set()))),
@@ -66,7 +65,7 @@ class FloydWarshallExampleTest extends AnyFlatSpec with Matchers {
 
     val shortPathGraph: IndexedLabelDigraph[String, Option[FirstStepsTrait[String, Int]]] = FloydWarshallExample.simpleShortPathGraph
 
-    shortPathGraph should be (expectedShortPathGraph)
+    assert(shortPathGraph == expectedShortPathGraph)
     
     val expectedSubgraphEdges: Set[shortPathGraph.InnerEdgeType] = Set(
       shortPathGraph.edge(H,C),
@@ -78,7 +77,7 @@ class FloydWarshallExampleTest extends AnyFlatSpec with Matchers {
 
     val subgraphEdges = FloydWarshallExample.subgraph
 
-    subgraphEdges should be (expectedSubgraphEdges)
+    assert(subgraphEdges == expectedSubgraphEdges)
 
     val expectedPaths = Vector(
       List(shortPathGraph.innerNode(E).get, shortPathGraph.innerNode(B).get, shortPathGraph.innerNode(C).get, shortPathGraph.innerNode(D).get),
@@ -87,6 +86,6 @@ class FloydWarshallExampleTest extends AnyFlatSpec with Matchers {
     
     val paths = FloydWarshallExample.paths
 
-    paths should be (expectedPaths)
+    assert(paths == expectedPaths)
   }
 }

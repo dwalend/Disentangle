@@ -1,9 +1,9 @@
 Disentangle
 ===================
 
-Disentangle is a kit for customizable graph algorithms in Scala. Disentangle's approach differs from other graph libraries by using Scala's existing collections and tuples wherever practical. Disentangle provides only the minimal traits and classes, and does not force you to use them. For example, Dijkstra's parAllPairsShortestPaths() requires only a GenTraversable of Tuple3 edges, and returns a ParSeq of minimal paths between nodes. A trait and class hierarchy for Graphs exist, but is not invasive and requires no type-system yoga on your part to use. Further, I only add new parts to that hierarchy when they have some pragmatic value.
+Disentangle is a kit for customizable graph algorithms in Scala. Disentangle's approach differs from other graph libraries by using Scala's existing collections and tuples wherever practical. Disentangle provides only the minimal traits and classes, and does not force you to use them. For example, Dijkstra's allPairsShortestPaths() requires only a Seq of Tuple3 edges, and returns a Seq of minimal paths between nodes. A trait and class hierarchy for Graphs exist, but is not invasive and requires no type-system yoga on your part to use. Further, I only add new parts to that hierarchy when they have some pragmatic value.
 
-Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and optimistic assumptions. Disentangle's semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 copy. The high-level semiring structures are composable, which allows for a great deal of customization.
+Most graph libraries available on the internet provide some way to find shortest paths, almost always via Dijkstra's algorithm. However, when you try to use the algorithm provided it doesn't match your needs and is sealed up in the black box of compiled code, custom data structures, and optimistic assumptions. Disentangle's semiring-based graph minimization algorithms let you define exactly what you want to minimize. The library's core is based on ideas presented in Cormen’s massive _Algorithms_, “A general framework for solving path problems in directed graphs,” 26.4 in my 1989 edition. The high-level semiring structures are composable, which allows for a great deal of customization.
 
 Further, the library provides support for computational stability. The same input will reliably result in the same output. Small changes in input typically result in small changes in output. The semiring-based algorithms offer an optional nodeOrder argument to provide that stability.
 
@@ -19,7 +19,7 @@ To get the latest snapshot in your build.sbt, add
 
     resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.2.3-SNAPSHOT"
+    libraryDependencies += "net.walend.disentangle" %% "graph" % "0.3.0-SNAPSHOT"
 
 ### Clone the Code
 
@@ -28,8 +28,8 @@ If you want to change Disentangle to meet your every whim, share your changes by
     git clone https://github.com/dwalend/Disentangle.git  
     cd Disentangle
     # bend Disentangle to your will
-    sbt test package
-    cp target/scala-2.11/scalagraphminimizer_2.11-0.2.1-SNAPSHOT.jar /your/project/lib
+    ./millw _.test
+    cp out/??? /your/project/lib
 
 ## Algorithms
 
@@ -50,7 +50,7 @@ Disentangle supplies
 
 ### Performance
 
-I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've [measured performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) on graphs with up to 16384 nodes on an ec2 r3.8xlarge. (Don't start a machoflops digression. I just wanted to check the algorithms' time complexity. I'm not that interested in playing.)
+I've used a profiler to quench hotspots where I could find ways to speed up algorithms. I've [measured performance](http://dwalend.github.io/blog/2015/11/10/Easy-Parallel/) on graphs with up to 16384 nodes on an ec2 r3.8xlarge. (Don't start a machoflops digression. I just wanted to check the algorithms' time complexity.)
 
 ## Using Disentangle
 
@@ -281,10 +281,10 @@ The HeapOrdering is actually trickier to get right than the Semiring. The Heap n
 
 ## Roadmap for Future Work
 
-### Next Release 0.3
+### Next Release 0.3, the seventh release
 
 * Build with mill
-* Update to latest Scala and Scala JS
+* Update to latest Scala and Scala JS - That's Scala 3.2 !
 
 ### New Algorithms
 

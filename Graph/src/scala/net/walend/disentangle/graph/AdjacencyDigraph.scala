@@ -18,11 +18,11 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
   case class InNode(override val value:Node,override val index:Int) extends this.DigraphInnerNodeTrait with this.InnerIndexedNodeTrait {
 
     override def successors: IndexedSet[InnerEdgeType] = {
-      inSuccessors.get(index)
+      inSuccessors.apply(index)
     }
 
     override def predecessors: IndexedSet[InnerEdgeType] = {
-      inPredecessors.get(index)
+      inPredecessors.apply(index)
     }
 
     override def hashCode(): Int = index
@@ -88,14 +88,14 @@ class AdjacencyDigraph[Node](outNodes:IndexedSet[Node], //provides the master in
     *
     * @return
     */
-  override def node(i: Int): Node = outNodes.get(i)
+  override def node(i: Int): Node = outNodes.apply(i)
 
   /**
     * O(1)
     *
     * @return
     */
-  override def innerNodeForIndex(i: Int): InNode = innerNodes.get(i)
+  override def innerNodeForIndex(i: Int): InNode = innerNodes.apply(i)
 
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"

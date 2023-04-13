@@ -89,7 +89,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
-      Seq.from(cellsWithEdges.map(x => InnerEdge(inNodes.get(rowIndex),inNodes.get(x._2),x._1)))
+      Seq.from(cellsWithEdges.map(x => InnerEdge(inNodes.apply(rowIndex),inNodes.apply(x._2),x._1)))
     }
 
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
@@ -106,7 +106,7 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
       val rowIndex = row._2
       val cellsWithIndex = row._1.zipWithIndex
       val cellsWithEdges = cellsWithIndex.filter(x => (x._1 != noEdgeExistsLabel))
-      Seq.from(cellsWithEdges.map(x => (outNodes.get(rowIndex),outNodes.get(x._2),x._1)))
+      Seq.from(cellsWithEdges.map(x => (outNodes.apply(rowIndex),outNodes.apply(x._2),x._1)))
     }
 
     edgeMatrix.zipWithIndex.map(row => edgesInRow(row)).flatten
@@ -129,12 +129,12 @@ case class MatrixLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides 
   /**
    * O(1)
    */
-  override def node(i: Int): Node = outNodes.get(i)
+  override def node(i: Int): Node = outNodes.apply(i)
 
   /**
    * O(1)
    */
-  override def innerNodeForIndex(i: Int): InnerNode = innerNodes.get(i)
+  override def innerNodeForIndex(i: Int): InnerNode = innerNodes.apply(i)
 
   /**
    * O(1)

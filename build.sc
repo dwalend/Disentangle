@@ -5,7 +5,7 @@ import mill.scalajslib.ScalaJSModule
 
 object Shared {
   val scalacOptions = Seq("-deprecation")
-  val scalaJSVersion = "1.13.0" //todo set up javascript again
+  val scalaJSVersion = "1.13.0" //todo see javascript work
   val scalaVersion = "3.2.2"
   val javaVersion = "17.0.6"
 }
@@ -73,12 +73,10 @@ object Examples extends ScalaModule {
 
   override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph,GraphJvm)
 
-  object test extends Tests with TestModule.ScalaTest {
-
+  object test extends Tests with TestModule.Munit {
     override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
-
     override def ivyDeps = Agg(
-      ivy"org.scalatest::scalatest:3.2.15"
+      ivy"org.scalameta::munit::0.7.29"
     )
   }
 }
@@ -128,9 +126,7 @@ object Experiments extends ScalaModule {
     override def moduleDeps: Seq[JavaModule] = super.moduleDeps ++ Seq(Graph.test)
 
     override def ivyDeps = Agg(
-      ivy"org.scalameta::munit::0.7.29",
-      ivy"net.sf.jung:jung-graph-impl:2.1.1",
-      ivy"net.sf.jung:jung-algorithms:2.1.1"
+      ivy"org.scalameta::munit::0.7.29"
     )
   }
 }

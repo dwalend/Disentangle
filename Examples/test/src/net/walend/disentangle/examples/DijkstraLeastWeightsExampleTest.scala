@@ -1,7 +1,6 @@
 package net.walend.disentangle.examples
 
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import munit.FunSuite
 
 /**
  *
@@ -9,9 +8,9 @@ import org.scalatest.matchers.should.Matchers
  * @author dwalend
  * @since v0.2.0
  */
-class DijkstraLeastWeightsExampleTest extends AnyFlatSpec with Matchers {
+class DijkstraLeastWeightsExampleTest extends FunSuite {
 
-  "The Dijkstra with least weights example" should "produce expected results" in {
+  test("The Dijkstra with least weights example should produce expected results"){
 
     val shortPathLabels = DijkstraLeastWeightsExample.leastPathLabels
 

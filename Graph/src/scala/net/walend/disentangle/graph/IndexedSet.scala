@@ -4,7 +4,6 @@ import scala.collection.immutable.{Set, SetOps}
 import scala.collection.mutable.{Buffer, ReusableBuilder}
 import scala.collection.{IterableFactory, IterableFactoryDefaults, mutable}
 
-
 /**
  *
  *
@@ -24,8 +23,7 @@ final class IndexedSet[A](outerSeq:IndexedSeq[A])
   if(outerSeq.size != asSet.size) throw new IllegalArgumentException(s"seq has duplicate members: ${outerSeq.groupBy(x => x).filter{(x: (A, IndexedSeq[A])) => x._2.size > 1}}")
 
   //Indexed access
-  //todo rename apply()
-  def get(index:Int): A = outerSeq(index)
+  def apply(index:Int): A = outerSeq(index)
 
   def indexOf(a:A): Int = outerSeq.indexOf(a)
 
@@ -37,7 +35,6 @@ final class IndexedSet[A](outerSeq:IndexedSeq[A])
   override def iterator: Iterator[A] = outerSeq.iterator
 
   override def concat(that: collection.IterableOnce[A]): IndexedSet[A] = {
-    println(s"concat2 $that")
     new IndexedSet((outerSeq ++ that).distinct)
   }
 

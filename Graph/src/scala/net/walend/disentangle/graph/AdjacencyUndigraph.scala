@@ -91,14 +91,14 @@ case class AdjacencyUndigraph[Node](outNodes:IndexedSet[Node], //provides the ma
     *
     * @return
     */
-  override def node(i: Int): Node = outNodes.get(i)
+  override def node(i: Int): Node = outNodes.apply(i)
 
   /**
     * O(1)
     *
     * @return
     */
-  override def innerNodeForIndex(i: Int): InNode = innerNodes.get(i)
+  override def innerNodeForIndex(i: Int): InNode = innerNodes.apply(i)
 
   override def toString:String = {
     s"${this.getClass.getSimpleName}(edges = $edges,nodes = $outNodes)"

@@ -94,7 +94,7 @@ class AgglomerateTest extends FunSuite {
       AdjacencyUndigraph(nodes = Seq(expectedCycle))
     )
 
-    println(clusters)
+//    println(clusters)
 
 //    clusters should be(expectedClusters)
 

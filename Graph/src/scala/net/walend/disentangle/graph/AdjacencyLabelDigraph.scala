@@ -103,14 +103,14 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    *
    * @return
    */
-  override def node(i: Int): Node = outNodes.get(i)
+  override def node(i: Int): Node = outNodes.apply(i)
 
   /**
    * O(1)
    *
    * @return
    */
-  override def innerNodeForIndex(i: Int): InnerNode = innerNodes.get(i)
+  override def innerNodeForIndex(i: Int): InnerNode = innerNodes.apply(i)
 
   /**
    * O(n)
@@ -118,7 +118,7 @@ class AdjacencyLabelDigraph[Node,Label](outNodes:IndexedSet[Node], //provides th
    * @return
    */
   override def label(i: Int, j: Int): Label = {
-    val indexedSet = inSuccessors(i).filter(x => x.to == inNodes.get(j))
+    val indexedSet = inSuccessors(i).filter(x => x.to == inNodes.apply(j))
     indexedSet.size match {
       case 0 => noEdgeExistsLabel
       case 1 => indexedSet.iterator.next().label
