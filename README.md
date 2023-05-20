@@ -329,3 +329,4 @@ Disentangle carries the MIT license and is (c) David Walend 2013,2014,2015,2016
 
 Special thanks to Peter Empen for [scala-graph](http://www.scala-graph.org/), advice, code, and patience. And thanks to Aleksandar Prokopec for some answers about the [parallel collections](http://docs.scala-lang.org/overviews/parallel-collections/overview.html).
 
+[![Latest version](https://index.scala-lang.org/net.walend.disentangle/<repository>/<artifact>/latest.svg)](https://index.scala-lang.org/<organization>/<repository>/<artifact>)
